@@ -8,9 +8,13 @@ publish.workspace = true
 [dependencies]
 tack-core.workspace = true
 image.workspace = true
+jpeg-decoder.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 tracing.workspace = true
+
+[dev-dependencies]
+image = { workspace = true, features = ["jpeg"] }
 
 [lints]
 workspace = true

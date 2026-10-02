@@ -103,11 +103,12 @@ fn obsolete_results_never_enter_cpu_cache_and_jobs_remain_bounded() -> Result<()
         .collect::<Result<_, _>>()?;
     let mut loader = Loader::new(fixture.0.join("cache"), 128 * 128 * 4, 1024 * 1024, 2)?;
     loader.request(&requests);
-    assert_eq!(loader.stats().pending, 2);
+    let pending = loader.stats().pending;
+    assert!(pending <= 2 * tack_assets::MAX_PENDING_PER_WORKER);
     loader.request(&[]);
     wait(&mut loader);
     assert_eq!(loader.stats().cpu_bytes, 0);
-    assert_eq!(loader.stats().stale, 2);
+    assert_eq!(loader.stats().stale, pending as u64);
     Ok(())
 }
 
@@ -124,5 +125,54 @@ fn oversized_encoded_input_is_rejected_without_unbounded_read() -> Result<(), As
     wait(&mut loader);
     assert!(!loader.has_cached(request.key));
     assert_eq!(loader.stats().errors, 1);
+    Ok(())
+}
+
+#[test]
+fn too_large_refinement_is_not_retried_and_thumbnail_survives() -> Result<(), AssetError> {
+    let fixture = Fixture::new()?;
+    let thumbnail = fixture.request(0)?;
+    let mut loader = Loader::new(fixture.0.join("cache"), 64 * 1024, 1024 * 1024, 1)?;
+    loader.request(std::slice::from_ref(&thumbnail));
+    wait(&mut loader);
+    let mut detail = thumbnail.clone();
+    detail.key.lod = Lod::Detail;
+    loader.request(std::slice::from_ref(&detail));
+    wait(&mut loader);
+    assert!(loader.has_cached(thumbnail.key));
+    assert!(!loader.has_cached(detail.key));
+    assert_eq!(loader.stats().rejected, 1);
+    for _ in 0..10 {
+        loader.request(std::slice::from_ref(&detail));
+        loader.poll();
+        assert_eq!(loader.stats().pending, 0);
+    }
+    Ok(())
+}
+
+#[test]
+fn cache_identity_survives_worker_count_changes_with_global_quota() -> Result<(), AssetError> {
+    let fixture = Fixture::new()?;
+    let requests: Vec<_> = (0..8)
+        .map(|id| fixture.request(id))
+        .collect::<Result<_, _>>()?;
+    let cache = fixture.0.join("cache");
+    let budget = 16 * 1024;
+    for workers in [4, 1, 2] {
+        let mut loader = Loader::new(cache.clone(), 1024 * 1024, budget, workers)?;
+        loader.request(&requests);
+        wait(&mut loader);
+        assert_eq!(loader.stats().completed, 8);
+        if workers != 4 {
+            assert_eq!(loader.stats().disk_hits, 8);
+        }
+        let mut bytes = 0;
+        for shard in fs::read_dir(&cache)? {
+            for entry in fs::read_dir(shard?.path())? {
+                bytes += entry?.metadata()?.len();
+            }
+        }
+        assert!(bytes <= budget as u64);
+    }
     Ok(())
 }

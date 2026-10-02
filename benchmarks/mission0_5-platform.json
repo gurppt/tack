@@ -1,0 +1,326 @@
+{
+  "raw_path": "benchmark-results/mission0_5-platform/smoke.json",
+  "raw_sha256": "6bfddc815e6add701596cedf1e8b8662fd4f238a22876106d6b25456d398f126",
+  "data": {
+    "schema": 1,
+    "session": "x11",
+    "display": ":0.0",
+    "wayland_display": null,
+    "wayland_tested": false,
+    "wayland_reason": "No Wayland session or weston/cage/labwc executable available",
+    "binary_sha256": "7425bbc0c018109c163999dc594a4f9721771424c5ffe22ef5624322839c51f2",
+    "source_sha256": "680d751c4cd3db49b5dad1982ce0f98077a7cb67646babf346cdbd47e44ff16c",
+    "smoke_harness_sha256": "44a4af2959e257e5a4112b24962c09a077ae841ddfef493928d123b847f8b6cd",
+    "tests": [
+      {
+        "scale_requested": "1",
+        "exit_code": 0,
+        "events": [
+          {
+            "event": "initialize",
+            "scale_factor": 1.0,
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "resize",
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "occluded",
+            "occluded": false
+          },
+          {
+            "event": "occluded",
+            "occluded": false
+          },
+          {
+            "event": "resize",
+            "size": [
+              640,
+              480
+            ]
+          },
+          {
+            "event": "occluded",
+            "occluded": false
+          },
+          {
+            "event": "resize",
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "occluded",
+            "occluded": false
+          }
+        ],
+        "idle_process_ticks_2s": 4,
+        "clock_ticks_per_second": 100,
+        "initial": {
+          "code": 0,
+          "stdout": "WM_STATE(WM_STATE):\n\t\twindow state: Normal\n\t\ticon window: 0x43b7d100\n_NET_WM_STATE(ATOM) = _NET_WM_STATE_FOCUSED\n",
+          "stderr": ""
+        },
+        "minimize_request": {
+          "code": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "minimized": {
+          "code": 0,
+          "stdout": "WM_STATE(WM_STATE):\n\t\twindow state: Iconic\n\t\ticon window: 0x43b7d100\n_NET_WM_STATE(ATOM) = _NET_WM_STATE_HIDDEN\n",
+          "stderr": ""
+        },
+        "restore_request": {
+          "code": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "activate": {
+          "code": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "restored": {
+          "code": 0,
+          "stdout": "WM_STATE(WM_STATE):\n\t\twindow state: Normal\n\t\ticon window: 0x43b7d100\n_NET_WM_STATE(ATOM) = _NET_WM_STATE_FOCUSED\n",
+          "stderr": ""
+        },
+        "geometry_small": {
+          "code": 0,
+          "stdout": "WINDOW=39845890\nX=2\nY=48\nWIDTH=640\nHEIGHT=480\nSCREEN=0\n",
+          "stderr": ""
+        },
+        "resize_requests": [
+          {
+            "code": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "code": 0,
+            "stdout": "",
+            "stderr": ""
+          }
+        ],
+        "frame_attempts": 17,
+        "surface_timeouts": 0,
+        "surface_other_errors": 0
+      },
+      {
+        "scale_requested": "1.5",
+        "exit_code": 0,
+        "events": [
+          {
+            "event": "initialize",
+            "scale_factor": 1.5,
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "resize",
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "occluded",
+            "occluded": false
+          },
+          {
+            "event": "occluded",
+            "occluded": false
+          },
+          {
+            "event": "resize",
+            "size": [
+              640,
+              480
+            ]
+          },
+          {
+            "event": "occluded",
+            "occluded": false
+          },
+          {
+            "event": "resize",
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "occluded",
+            "occluded": false
+          }
+        ],
+        "idle_process_ticks_2s": 5,
+        "clock_ticks_per_second": 100,
+        "initial": {
+          "code": 0,
+          "stdout": "WM_STATE(WM_STATE):\n\t\twindow state: Normal\n\t\ticon window: 0x43b7d100\n_NET_WM_STATE(ATOM) = _NET_WM_STATE_FOCUSED\n",
+          "stderr": ""
+        },
+        "minimize_request": {
+          "code": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "minimized": {
+          "code": 0,
+          "stdout": "WM_STATE(WM_STATE):\n\t\twindow state: Iconic\n\t\ticon window: 0x43b7d100\n_NET_WM_STATE(ATOM) = _NET_WM_STATE_HIDDEN\n",
+          "stderr": ""
+        },
+        "restore_request": {
+          "code": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "activate": {
+          "code": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "restored": {
+          "code": 0,
+          "stdout": "WM_STATE(WM_STATE):\n\t\twindow state: Normal\n\t\ticon window: 0x43b7d100\n_NET_WM_STATE(ATOM) = _NET_WM_STATE_FOCUSED\n",
+          "stderr": ""
+        },
+        "geometry_small": {
+          "code": 0,
+          "stdout": "WINDOW=39845890\nX=2\nY=48\nWIDTH=640\nHEIGHT=480\nSCREEN=0\n",
+          "stderr": ""
+        },
+        "resize_requests": [
+          {
+            "code": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "code": 0,
+            "stdout": "",
+            "stderr": ""
+          }
+        ],
+        "frame_attempts": 17,
+        "surface_timeouts": 0,
+        "surface_other_errors": 0
+      },
+      {
+        "scale_requested": "2",
+        "exit_code": 0,
+        "events": [
+          {
+            "event": "initialize",
+            "scale_factor": 2.0,
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "resize",
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "occluded",
+            "occluded": false
+          },
+          {
+            "event": "occluded",
+            "occluded": false
+          },
+          {
+            "event": "resize",
+            "size": [
+              640,
+              480
+            ]
+          },
+          {
+            "event": "occluded",
+            "occluded": false
+          },
+          {
+            "event": "resize",
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "occluded",
+            "occluded": false
+          }
+        ],
+        "idle_process_ticks_2s": 6,
+        "clock_ticks_per_second": 100,
+        "initial": {
+          "code": 0,
+          "stdout": "WM_STATE(WM_STATE):\n\t\twindow state: Normal\n\t\ticon window: 0x43b7d100\n_NET_WM_STATE(ATOM) = _NET_WM_STATE_FOCUSED\n",
+          "stderr": ""
+        },
+        "minimize_request": {
+          "code": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "minimized": {
+          "code": 0,
+          "stdout": "WM_STATE(WM_STATE):\n\t\twindow state: Iconic\n\t\ticon window: 0x43b7d100\n_NET_WM_STATE(ATOM) = _NET_WM_STATE_HIDDEN\n",
+          "stderr": ""
+        },
+        "restore_request": {
+          "code": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "activate": {
+          "code": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "restored": {
+          "code": 0,
+          "stdout": "WM_STATE(WM_STATE):\n\t\twindow state: Normal\n\t\ticon window: 0x43b7d100\n_NET_WM_STATE(ATOM) = _NET_WM_STATE_FOCUSED\n",
+          "stderr": ""
+        },
+        "geometry_small": {
+          "code": 0,
+          "stdout": "WINDOW=39845890\nX=2\nY=48\nWIDTH=640\nHEIGHT=480\nSCREEN=0\n",
+          "stderr": ""
+        },
+        "resize_requests": [
+          {
+            "code": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "code": 0,
+            "stdout": "",
+            "stderr": ""
+          }
+        ],
+        "frame_attempts": 17,
+        "surface_timeouts": 0,
+        "surface_other_errors": 0
+      }
+    ]
+  }
+}

@@ -36,7 +36,7 @@ impl App {
         let window = Arc::new(
             event_loop.create_window(
                 Window::default_attributes()
-                    .with_title("Tack — Mission 0")
+                    .with_title("Tack — Mission 0.5")
                     .with_resizable(self.options.scenario.is_none())
                     .with_inner_size(winit::dpi::PhysicalSize::new(1280, 720)),
             )?,
@@ -64,6 +64,7 @@ impl App {
         let board = self.board.take().ok_or("board already consumed")?;
         let mut session = Session::new(board, gpu, self.options.clone(), self.started)?;
         session.camera.resize([config.width, config.height]);
+        session.measurements.record_platform_event(serde_json::json!({"event":"initialize", "scale_factor":window.scale_factor(), "size":[config.width,config.height]}));
         self.session = Some(session);
         self.config = Some(config);
         self.surface = Some(surface);
@@ -126,6 +127,9 @@ impl App {
         };
         match event {
             WindowEvent::Resized(size) => {
+                session.measurements.record_platform_event(
+                    serde_json::json!({"event":"resize", "size":[size.width,size.height]}),
+                );
                 self.drawable = size.width > 0 && size.height > 0;
                 if !self.drawable {
                     return Ok(());
@@ -143,8 +147,16 @@ impl App {
                 }
             }
             WindowEvent::Occluded(occluded) => {
+                session.measurements.record_platform_event(
+                    serde_json::json!({"event":"occluded", "occluded":occluded}),
+                );
                 self.occluded = occluded;
                 self.dirty = true;
+            }
+            WindowEvent::ScaleFactorChanged { scale_factor, .. } => {
+                session.measurements.record_platform_event(
+                    serde_json::json!({"event":"scale", "scale_factor":scale_factor}),
+                );
             }
             WindowEvent::ModifiersChanged(modifiers) => self.alt = modifiers.state().alt_key(),
             WindowEvent::MouseInput { state, button, .. } => {

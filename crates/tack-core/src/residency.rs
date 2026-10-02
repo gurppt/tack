@@ -105,6 +105,10 @@ impl<K: Copy + Eq + Hash, V> ByteCache<K, V> {
         self.used_bytes
     }
 
+    pub fn budget_bytes(&self) -> usize {
+        self.budget_bytes
+    }
+
     pub fn evictions(&self) -> u64 {
         self.evictions
     }

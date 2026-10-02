@@ -1,0 +1,98 @@
+{
+  "schema": 1,
+  "date": "2026-10-02",
+  "checks": [
+    {
+      "name": "workspace_quality",
+      "command": "PATH=/tmp/tack-tools/bin:$PATH bash tools/check.sh",
+      "result": "PASS",
+      "log_path": "/tmp/tack-mission0_5-quality.log",
+      "log_sha256": "61d057a8c1caae28ba8d7acf6452a17aca35a462d6ada945acbb11d76ac03927"
+    },
+    {
+      "name": "native_gpu_smoke",
+      "command": "cargo test -p tack-render --test gpu_smoke --locked -- --ignored",
+      "result": "PASS",
+      "log_path": "/tmp/tack-mission0_5-gpu-test.log",
+      "log_sha256": "4ef27a57920928fab80343cd93da30a109c36a46107f531633d795b7e04e5b47"
+    },
+    {
+      "name": "release_build",
+      "command": "cargo build --release --locked -p tack-app",
+      "result": "PASS",
+      "log_path": "/tmp/tack-mission0_5-release.log",
+      "log_sha256": "6bafbbc6ecf66d3a989c8d7affc09e37d54876223c7306a405fcfaeb413f7fb2"
+    }
+  ],
+  "rust_tests": 12,
+  "python_tests": 2,
+  "explicit_gpu_tests": 1,
+  "dependency_result": "advisories ok, bans ok, licenses ok, sources ok",
+  "dependency_warnings": 14,
+  "normal_runtime_jpeg": "jpeg-decoder 0.3.2; no Rayon or zune-jpeg",
+  "independent_verifier": {
+    "agent": "/root/mission0_verifier",
+    "status": "PASS: no remaining material defect identified; product recommendation B REPEAT confirmed",
+    "checks": [
+      {
+        "command": "cargo test -p tack-assets -p tack-app --locked",
+        "result": "PASS: 7 tests"
+      },
+      {
+        "command": "cargo test -p tack-render --test gpu_smoke --locked -- --ignored",
+        "result": "PASS: 1 explicit native GPU test"
+      },
+      {
+        "command": "cargo fmt --all -- --check",
+        "result": "PASS"
+      },
+      {
+        "command": "cargo tree -p tack-app --edges normal --locked",
+        "result": "PASS: jpeg-decoder 0.3.2, no Rayon/zune-jpeg"
+      }
+    ],
+    "log_note": "Independent tool outputs retained in conversation; no separate filesystem logs. Main gate log SHA256 independently checked.",
+    "evidence_audit": {
+      "result": "PASS",
+      "unique_reports": 29,
+      "raw_frames": 25848,
+      "main_phases_and_workers": "Source ZIP and executable hashes recomputed, identical selected source/binary pair across cold/preparation/warm/comparable and worker1/4 trials.",
+      "bounds": "CPU/GPU payload and partitions; total pending; upload count/bytes; in-flight submissions; coverage/LOD equality; no decode errors, dropped profiles/episodes or GPU backpressure.",
+      "report_tables": "33 coverage/latency/resources rows and 6 presentation rows agree with measurements.",
+      "platform": "Confirmed Iconic/HIDDEN to Normal, resize, requested scales 1/1.5/2. Occluded(true) and Wayland limitations accurately documented."
+    },
+    "resolved_findings": [
+      "Cached offscreen prefetch caused redraw loop",
+      "Post-upload detail eviction missed retained tiny fallback",
+      "Worker-count changes broke disk quota accounting",
+      "Oversized refinement could repeat; GPU rejection occurred after staging",
+      "Unequal-duration warm comparison",
+      "Large pixel frees ran on event thread"
+    ],
+    "remaining_limits": [
+      "Cold useful-image supply fails gate",
+      "Sequential warm SSD enrichment",
+      "Synthetic content and unflushed OS page cache",
+      "Artist usefulness not validated",
+      "Allocator/codec scratch and actual driver VRAM not decomposed",
+      "Historical exploratory checkpoints lack executable snapshots"
+    ]
+  },
+  "principal_hashes_and_bounds": {
+    "result": "PASS",
+    "source": "680d751c4cd3db49b5dad1982ce0f98077a7cb67646babf346cdbd47e44ff16c",
+    "binary": "7425bbc0c018109c163999dc594a4f9721771424c5ffe22ef5624322839c51f2",
+    "phases": [
+      "cold",
+      "prepare-0",
+      "warm-board",
+      "selected-comparable"
+    ],
+    "note": "Recomputed every source ZIP digest and executable SHA256; checked all raw frame CPU/GPU payload, pending, upload count/bytes and in-flight bounds; no worker/coverage drops or decode errors."
+  },
+  "native_startup_context": {
+    "library": "target/native/libXi-1.8.3/lib/libXi.so.6.1.0",
+    "sha256": "803ceb41251189f2cb376f141ca16969ffe19588adbe5f920d753890897f277e",
+    "note": "Existing Mission 0 app-local correction unchanged; binary RUNPATH points to this checkout. Development evidence binary is not a portable package."
+  }
+}

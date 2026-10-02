@@ -4,13 +4,14 @@ use std::sync::{
     Arc,
     atomic::{AtomicUsize, Ordering},
 };
+use std::time::Instant;
 use tack_assets::{AssetError, AssetKey, Decoded};
-use tack_core::{ByteCache, Camera, WorldRect};
+use tack_core::{ByteCache, Camera, Lod, WorldRect};
 use wgpu::util::DeviceExt;
 
 const MAX_OBJECTS: usize = 10000;
 pub const UPLOAD_BUDGET_BYTES: usize = 16 * 1024 * 1024;
-const MAX_UPLOADS: usize = 2;
+pub const MAX_UPLOADS: usize = 8;
 const MAX_IN_FLIGHT: usize = 3;
 const BACKGROUND: wgpu::Color = wgpu::Color {
     r: 0.035,
@@ -44,6 +45,8 @@ pub struct RenderStats {
     pub upload_bytes: usize,
     pub completed_submissions: usize,
     pub in_flight: usize,
+    pub thumbnail_bytes: usize,
+    pub upload_cpu_ms: f64,
 }
 
 /// Texture ownership and GPU submission only; no file access or codec calls.
@@ -56,6 +59,7 @@ pub struct Gpu {
     layout: wgpu::BindGroupLayout,
     sampler: wgpu::Sampler,
     textures: ByteCache<AssetKey, Texture>,
+    thumbnails: ByteCache<AssetKey, Texture>,
     placeholder: Texture,
     vertices: Vec<Vertex>,
     buffer: wgpu::Buffer,
@@ -63,6 +67,7 @@ pub struct Gpu {
     completed: Arc<AtomicUsize>,
     uploads: usize,
     upload_bytes: usize,
+    upload_cpu_ms: f64,
     timings: Option<Timings>,
     submissions: usize,
 }
@@ -195,7 +200,8 @@ impl Gpu {
             pipeline,
             layout,
             sampler,
-            textures: ByteCache::new(budget_bytes),
+            textures: ByteCache::new(budget_bytes / 2),
+            thumbnails: ByteCache::new(budget_bytes - budget_bytes / 2),
             placeholder,
             vertices: Vec::with_capacity(MAX_OBJECTS * 6),
             buffer,
@@ -203,6 +209,7 @@ impl Gpu {
             completed: Arc::new(AtomicUsize::new(0)),
             uploads: 0,
             upload_bytes: 0,
+            upload_cpu_ms: 0.0,
             timings,
             submissions: 0,
         })
@@ -263,7 +270,11 @@ impl Gpu {
     }
 
     pub fn contains(&self, key: AssetKey) -> bool {
-        self.textures.contains(key)
+        if key.lod == Lod::Thumbnail {
+            self.thumbnails.contains(key)
+        } else {
+            self.textures.contains(key)
+        }
     }
 
     /// Non-blocking GPU completion polling; skip work when submission capacity is full.
@@ -274,6 +285,7 @@ impl Gpu {
         }
         self.uploads = 0;
         self.upload_bytes = 0;
+        self.upload_cpu_ms = 0.0;
         Ok(self.in_flight.load(Ordering::Relaxed) < MAX_IN_FLIGHT)
     }
 
@@ -282,9 +294,16 @@ impl Gpu {
         if self.contains(key)
             || self.uploads >= MAX_UPLOADS
             || bytes > UPLOAD_BUDGET_BYTES - self.upload_bytes
+            || bytes
+                > if key.lod == Lod::Thumbnail {
+                    self.thumbnails.budget_bytes()
+                } else {
+                    self.textures.budget_bytes()
+                }
         {
             return false;
         }
+        let started = Instant::now();
         let texture = Self::texture(
             &self.device,
             &self.queue,
@@ -292,11 +311,17 @@ impl Gpu {
             &self.sampler,
             image,
         );
-        if !self.textures.insert(key, texture, bytes) {
+        let cache = if key.lod == Lod::Thumbnail {
+            &mut self.thumbnails
+        } else {
+            &mut self.textures
+        };
+        if !cache.insert(key, texture, bytes) {
             return false;
         }
         self.uploads += 1;
         self.upload_bytes += bytes;
+        self.upload_cpu_ms += started.elapsed().as_secs_f64() * 1000.0;
         true
     }
 
@@ -357,7 +382,13 @@ impl Gpu {
             for (index, image) in images.iter().enumerate() {
                 let texture = image
                     .key
-                    .and_then(|key| self.textures.get(key))
+                    .and_then(|key| {
+                        if key.lod == Lod::Thumbnail {
+                            self.thumbnails.get(key)
+                        } else {
+                            self.textures.get(key)
+                        }
+                    })
                     .unwrap_or(&self.placeholder);
                 pass.set_bind_group(0, &texture.bind_group, &[]);
                 let first = index as u32 * 6;
@@ -388,12 +419,14 @@ impl Gpu {
 
     pub fn stats(&self) -> RenderStats {
         RenderStats {
-            gpu_bytes: self.textures.used_bytes(),
-            evictions: self.textures.evictions(),
+            gpu_bytes: self.textures.used_bytes() + self.thumbnails.used_bytes(),
+            evictions: self.textures.evictions() + self.thumbnails.evictions(),
             uploads: self.uploads,
             upload_bytes: self.upload_bytes,
             completed_submissions: self.completed.load(Ordering::Relaxed),
             in_flight: self.in_flight.load(Ordering::Relaxed),
+            thumbnail_bytes: self.thumbnails.used_bytes(),
+            upload_cpu_ms: self.upload_cpu_ms,
         }
     }
 

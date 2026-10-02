@@ -1,15 +1,18 @@
-use crate::{AssetError, decode};
+use crate::{AssetError, JobProfile, decode, profile::Stage};
 use std::{
     collections::HashSet,
     path::PathBuf,
     sync::{
         Arc,
-        atomic::{AtomicBool, Ordering},
+        atomic::{AtomicBool, AtomicUsize, Ordering},
         mpsc::{self, Receiver, SyncSender, TryRecvError},
     },
     thread,
+    time::Instant,
 };
 use tack_core::{ByteCache, Lod};
+
+pub const MAX_PENDING_PER_WORKER: usize = 8;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub struct AssetKey {
@@ -33,19 +36,22 @@ pub struct DecodeRequest {
 pub(crate) struct Job {
     pub request: DecodeRequest,
     pub cancelled: Arc<AtomicBool>,
+    pub queued: Instant,
 }
 
 pub(crate) struct Outcome {
     pub key: AssetKey,
-    pub result: Result<Option<Decoded>, AssetError>,
+    pub result: Result<Option<Arc<Decoded>>, AssetError>,
     pub disk_hit: bool,
     pub decode_ms: f64,
+    pub profile: JobProfile,
 }
 
 struct Worker {
     sender: Option<SyncSender<Job>>,
     receiver: Receiver<Outcome>,
-    active: Option<(AssetKey, Arc<AtomicBool>)>,
+    active: Vec<(AssetKey, Arc<AtomicBool>)>,
+    retention_peak: Arc<AtomicUsize>,
     thread: Option<thread::JoinHandle<()>>,
 }
 
@@ -59,16 +65,23 @@ pub struct LoaderStats {
     pub decode_ms: f64,
     pub cpu_bytes: usize,
     pub cpu_evictions: u64,
+    pub cpu_thumbnail_bytes: usize,
+    pub rejected: u64,
+    pub worker_retention_peak_bytes: usize,
 }
 
 /// Event thread owns cache and scheduling; workers own all I/O and decoding.
-/// At most one job and one result per worker, never a camera-motion backlog.
+/// At most eight cheap jobs/results or one large job per worker. Each large
+/// buffer retains a worker-owned Arc so eviction never frees its pages on a frame.
 pub struct Loader {
     workers: Vec<Worker>,
-    cache: ByteCache<AssetKey, Decoded>,
+    cache: ByteCache<AssetKey, Arc<Decoded>>,
+    thumbnails: ByteCache<AssetKey, Arc<Decoded>>,
     desired: HashSet<AssetKey>,
     failed: HashSet<AssetKey>,
     stats: LoaderStats,
+    profiles: Vec<JobProfile>,
+    profile_dropped: usize,
 }
 
 impl Loader {
@@ -78,21 +91,51 @@ impl Loader {
         disk_budget_bytes: usize,
         worker_count: usize,
     ) -> Result<Self, AssetError> {
-        if !(1..=4).contains(&worker_count) {
-            return Err("worker count must be 1..=4".into());
+        if ![1, 2, 4].contains(&worker_count) {
+            return Err("worker count must be 1, 2 or 4".into());
+        }
+        // Four stable disk shards give cache identity and quota independent of
+        // worker count. Powers-of-two worker ownership never overlaps a shard.
+        // Initial quota cleanup is an explicit startup boundary, not frame I/O.
+        let mut shards: Vec<_> = (0..4)
+            .map(|index| {
+                decode::DiskCache::new(
+                    cache_dir.join(format!("worker-{index}")),
+                    disk_budget_bytes / 4,
+                )
+            })
+            .collect();
+        for shard in &mut shards {
+            shard.prepare();
         }
         let mut workers = Vec::new();
         for index in 0..worker_count {
-            let dir = cache_dir.join(format!("worker-{index}"));
-            let quota = disk_budget_bytes / worker_count;
-            let (job_tx, job_rx) = mpsc::sync_channel::<Job>(1);
-            let (result_tx, result_rx) = mpsc::sync_channel(1);
+            let mut disks = shards.clone();
+            let retention_peak = Arc::new(AtomicUsize::new(0));
+            let worker_peak = Arc::clone(&retention_peak);
+            let (job_tx, job_rx) = mpsc::sync_channel::<Job>(MAX_PENDING_PER_WORKER);
+            let (result_tx, result_rx) = mpsc::sync_channel(MAX_PENDING_PER_WORKER);
             let thread = thread::Builder::new()
                 .name(format!("tack-decode-{index}"))
                 .spawn(move || {
-                    let mut disk = decode::DiskCache::new(dir, quota);
+                    let mut retained: Vec<Arc<Decoded>> = Vec::new();
                     while let Ok(job) = job_rx.recv() {
-                        let outcome = decode::run(&job, &mut disk);
+                        // Keep the last ownership reference on workers so eviction
+                        // of a large display buffer cannot unmap pages on a frame.
+                        let reclaim = Instant::now();
+                        retained.retain(|image| Arc::strong_count(image) > 1);
+                        let reclaim_ms = reclaim.elapsed().as_secs_f64() * 1000.0;
+                        let shard = job.request.key.id as usize % 4;
+                        let mut outcome = decode::run(&job, &mut disks[shard]);
+                        outcome.profile.stage_ms[Stage::Retire as usize] = reclaim_ms;
+                        outcome.profile.active_ms += reclaim_ms;
+                        if let Ok(Some(image)) = &outcome.result {
+                            retained.push(Arc::clone(image));
+                        }
+                        worker_peak.fetch_max(
+                            retained.iter().map(|image| image.rgba.len()).sum(),
+                            Ordering::Relaxed,
+                        );
                         if result_tx.send(outcome).is_err() {
                             break;
                         }
@@ -101,16 +144,25 @@ impl Loader {
             workers.push(Worker {
                 sender: Some(job_tx),
                 receiver: result_rx,
-                active: None,
+                active: Vec::new(),
+                retention_peak,
                 thread: Some(thread),
             });
         }
+        let thumbnail_budget = if cpu_budget_bytes >= 16 * 1024 * 1024 {
+            (cpu_budget_bytes / 2).min(cpu_budget_bytes - 12 * 1024 * 1024)
+        } else {
+            cpu_budget_bytes
+        };
         Ok(Self {
             workers,
-            cache: ByteCache::new(cpu_budget_bytes),
+            cache: ByteCache::new(cpu_budget_bytes - thumbnail_budget),
+            thumbnails: ByteCache::new(thumbnail_budget),
             desired: HashSet::new(),
             failed: HashSet::new(),
             stats: LoaderStats::default(),
+            profiles: Vec::new(),
+            profile_dropped: 0,
         })
     }
 
@@ -121,26 +173,33 @@ impl Loader {
         self.desired.extend(requests.iter().map(|r| r.key));
         self.failed.retain(|key| self.desired.contains(key));
         for worker in &mut self.workers {
-            if let Some((key, cancelled)) = &worker.active
-                && !self.desired.contains(key)
-            {
-                cancelled.store(true, Ordering::Relaxed);
+            for (key, cancelled) in &worker.active {
+                if !self.desired.contains(key) {
+                    cancelled.store(true, Ordering::Relaxed);
+                }
             }
         }
         for request in requests {
-            if self.cache.contains(request.key)
+            if self.has_cached(request.key)
                 || self.failed.contains(&request.key)
                 || self
                     .workers
                     .iter()
-                    .any(|w| w.active.as_ref().is_some_and(|(k, _)| *k == request.key))
+                    .any(|w| w.active.iter().any(|(key, _)| *key == request.key))
             {
                 continue;
             }
             // Stable sharding also stabilizes persistent cache identity across sessions.
             let index = request.key.id as usize % self.workers.len();
             let worker = &mut self.workers[index];
-            if worker.active.is_some() {
+            let thumbnail = request.key.lod == Lod::Thumbnail;
+            if worker.active.len() >= MAX_PENDING_PER_WORKER
+                || (!thumbnail && !worker.active.is_empty())
+                || worker
+                    .active
+                    .iter()
+                    .any(|(key, _)| key.lod != Lod::Thumbnail)
+            {
                 continue;
             }
             let Some(sender) = &worker.sender else {
@@ -150,70 +209,119 @@ impl Loader {
             let job = Job {
                 request: request.clone(),
                 cancelled: Arc::clone(&cancelled),
+                queued: Instant::now(),
             };
             if sender.try_send(job).is_ok() {
-                worker.active = Some((request.key, cancelled));
+                worker.active.push((request.key, cancelled));
             }
         }
     }
 
-    /// Non-blocking; maximum results handled per call equals worker count.
+    /// Non-blocking; at most eight outcomes per worker per call.
     pub fn poll(&mut self) -> bool {
         let mut changed = false;
         for worker in &mut self.workers {
-            match worker.receiver.try_recv() {
-                Ok(outcome) => {
-                    worker.active = None;
-                    self.stats.decode_ms += outcome.decode_ms;
-                    if !self.desired.contains(&outcome.key) {
-                        self.stats.stale += 1;
-                        continue;
-                    }
-                    match outcome.result {
-                        Ok(Some(image)) => {
-                            let bytes = image.rgba.len();
-                            changed |= self.cache.insert(outcome.key, image, bytes);
-                            self.stats.completed += 1;
-                            self.stats.disk_hits += u64::from(outcome.disk_hit);
-                        }
-                        Ok(None) => {
+            for _ in 0..MAX_PENDING_PER_WORKER {
+                match worker.receiver.try_recv() {
+                    Ok(mut outcome) => {
+                        worker.active.retain(|(key, _)| *key != outcome.key);
+                        self.stats.decode_ms += outcome.decode_ms;
+                        if !self.desired.contains(&outcome.key) {
                             self.stats.stale += 1;
+                            outcome.profile.cancelled_after.get_or_insert("result");
+                            if self.profiles.len() < 20000 {
+                                self.profiles.push(outcome.profile);
+                            } else {
+                                self.profile_dropped += 1;
+                            }
+                            continue;
                         }
-                        Err(error) => {
-                            tracing::warn!(asset_id = outcome.key.id, %error, "display image unavailable");
-                            self.failed.insert(outcome.key);
+                        match outcome.result {
+                            Ok(Some(image)) => {
+                                let bytes = image.rgba.len();
+                                let cache = if outcome.key.lod == Lod::Thumbnail {
+                                    &mut self.thumbnails
+                                } else {
+                                    &mut self.cache
+                                };
+                                let inserted = outcome.profile.measure(Stage::CpuInsert, || {
+                                    cache.insert(outcome.key, image, bytes)
+                                });
+                                changed |= inserted;
+                                if !inserted {
+                                    self.failed.insert(outcome.key);
+                                    self.stats.rejected += 1;
+                                }
+                                outcome.profile.bytes(Stage::CpuInsert, bytes);
+                                self.stats.completed += u64::from(inserted);
+                                self.stats.disk_hits += u64::from(outcome.disk_hit);
+                            }
+                            Ok(None) => {
+                                self.stats.stale += 1;
+                            }
+                            Err(error) => {
+                                tracing::warn!(asset_id = outcome.key.id, %error, "display image unavailable");
+                                self.failed.insert(outcome.key);
+                                self.stats.errors += 1;
+                            }
+                        }
+                        if self.profiles.len() < 20000 {
+                            self.profiles.push(outcome.profile);
+                        } else {
+                            self.profile_dropped += 1;
+                        }
+                    }
+                    Err(TryRecvError::Disconnected) => {
+                        for (key, _) in worker.active.drain(..) {
+                            self.failed.insert(key);
                             self.stats.errors += 1;
                         }
+                        worker.sender = None;
                     }
+                    Err(TryRecvError::Empty) => break,
                 }
-                Err(TryRecvError::Disconnected) => {
-                    if let Some((key, _)) = worker.active.take() {
-                        self.failed.insert(key);
-                        self.stats.errors += 1;
-                    }
-                    worker.sender = None;
-                }
-                Err(TryRecvError::Empty) => {}
             }
         }
         changed
     }
 
     pub fn get(&mut self, key: AssetKey) -> Option<&Decoded> {
-        self.cache.get(key)
+        if key.lod == Lod::Thumbnail {
+            self.thumbnails.get(key).map(Arc::as_ref)
+        } else {
+            self.cache.get(key).map(Arc::as_ref)
+        }
     }
 
     pub fn has_cached(&self, key: AssetKey) -> bool {
-        self.cache.contains(key)
+        if key.lod == Lod::Thumbnail {
+            self.thumbnails.contains(key)
+        } else {
+            self.cache.contains(key)
+        }
     }
 
     pub fn stats(&self) -> LoaderStats {
         LoaderStats {
-            pending: self.workers.iter().filter(|w| w.active.is_some()).count(),
-            cpu_bytes: self.cache.used_bytes(),
-            cpu_evictions: self.cache.evictions(),
+            pending: self.workers.iter().map(|w| w.active.len()).sum(),
+            cpu_bytes: self.cache.used_bytes() + self.thumbnails.used_bytes(),
+            cpu_evictions: self.cache.evictions() + self.thumbnails.evictions(),
+            cpu_thumbnail_bytes: self.thumbnails.used_bytes(),
+            worker_retention_peak_bytes: self
+                .workers
+                .iter()
+                .map(|w| w.retention_peak.load(Ordering::Relaxed))
+                .sum(),
             ..self.stats
         }
+    }
+
+    pub fn profiles(&self) -> &[JobProfile] {
+        &self.profiles
+    }
+
+    pub fn profile_dropped(&self) -> usize {
+        self.profile_dropped
     }
 }
 
@@ -222,7 +330,7 @@ impl Drop for Loader {
         // Joining would wait for an uninterruptible codec. Signal shutdown and let
         // threads finish naturally; process teardown is outside frame timing.
         for worker in &mut self.workers {
-            if let Some((_, cancelled)) = &worker.active {
+            for (_, cancelled) in &worker.active {
                 cancelled.store(true, Ordering::Relaxed);
             }
             worker.sender.take();

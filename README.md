@@ -1,9 +1,11 @@
 # Tack
 
 Native, local-first reference board. This repository currently contains
-**Mission 0: a measured renderer experiment**, before product development.
-See [the report](docs/MISSION_0_REPORT.md), [architecture](docs/architecture.md)
-and [prior art](docs/research/renderer_prior_art.md).
+**Mission 0.5: measured asset streaming**, before product development.
+See [the current report](docs/MISSION_0_5_REPORT.md),
+[the first prototype report](docs/MISSION_0_REPORT.md),
+[architecture](docs/architecture.md) and
+[asset experiments](docs/research/asset_pipeline_experiments.md).
 
 Rust 1.95.0 with rustfmt/Clippy is pinned. Python 3 + Pillow 10.2.0 generates
 the reproducible corpus. No private images or network are needed at runtime.
@@ -33,7 +35,7 @@ window-manager decorations; Wayland requires compositor decorations (no bundled
 client titlebar).
 The full UI and final document format are intentionally outside this mission.
 
-Run the five scripted scenarios on your desktop GPU:
+Run the original five scripted scenarios on your desktop GPU:
 
 ```bash
 cargo build --release --locked
@@ -56,5 +58,22 @@ bash tools/check.sh
 cargo test -p tack-render --test gpu_smoke --locked -- --ignored
 ```
 
+Run the Mission 0.5 adjacent pan, zoom/scan and full-board cold/warm suite:
+
+```bash
+cargo build --release --locked -p tack-app
+python3 tools/run_streaming.py
+```
+
+It takes roughly six minutes, checks that all 1,000 overview thumbnails exist
+on SSD, then reopens each trace with empty CPU/GPU caches. Later warm traces
+progressively enrich the shared SSD cache. Two workers and no prefetch are the
+default; `--workers 1|2|4` compares bounded concurrency. Individual experiments
+can select `--scenarios pan-slow pan-normal pan-fast zoom-traverse scan board-tour`
+and `--prefetch none|symmetric|directional` through `tools/run_benchmarks.py`.
+The harness retains the executed binary and a source ZIP alongside raw JSON;
+compact measurements live in [benchmarks](benchmarks/).
+
 The code license/contribution model is pending; dependency license checks are
-separate. Mission 0 ends with human review of its report before Phase 1.
+separate. Mission 0.5 recommends one more decoder experiment before Phase 1.
+Human review of its report is the stop gate.

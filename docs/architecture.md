@@ -1,90 +1,116 @@
-# Mission 0 architecture
+# Mission 0.5 architecture
 
-The repository originally contained README, local briefs and `gfx/tak.jpg`,
-with one initial Git commit and no application, tests or configuration.
+Four crates retain the renderer/document separation established in
+[Mission 0](MISSION_0_REPORT.md): core geometry/LOD/byte-cache policy, assets
+(manifest, scheduling, decode and disposable caches), render (textures and
+submissions) and app (native input, traces and evidence). There is no production
+UI, document persistence, server or collaboration implementation.
 
-Four crates own distinct responsibilities:
+The static board is an immutable validated snapshot. A linear visibility scan
+is measured at 1,000 objects; it is not an arbitrary-board scalability claim.
+The same GPU renderer serves the native window and offscreen target. Renderer
+code never calls filesystem or codec operations.
 
-- `tack-core`: f64 world geometry/camera, viewport intersection, projected-size
-  LOD choice and byte-accounted LRU policy. No GPU/window/storage dependencies.
-- `tack-assets`: bounded manifest validation, immutable object snapshot, worker
-  scheduling, JPEG/PNG decode, persistent display cache and decoded CPU cache.
-- `tack-render`: texture ownership, vertex generation, submission and completion
-  polling. It receives rectangles/asset representations, without a local/shared
-  document distinction. No filesystem access or decoder invocation.
-- `tack-app`: native window/input, composition and scripted benchmark telemetry.
+## Supply and ownership
 
-The static benchmark geometry uses a linear visibility scan. At 1,000 objects
-this is a simple measurable baseline, not a claim of sufficient scaling to
-arbitrary boards. Objects outside the camera rectangle never emit quads. The
-same renderer is used by the window and a 1280×720 offscreen target.
+Visible demands are ordered tiny → medium → detail, followed by optional tiny
+prefetch. Already cached/pending keys are deduplicated. Two workers are default;
+only 1, 2 and 4 are accepted. ID modulo worker count gives stable ownership.
+Each worker's active accounting includes execution, queued jobs and unpublished
+results: at most eight **total** tiny requests, or one medium/detail request.
+Large requests only enter an empty worker and prevent further publication until
+the outcome is polled. Both channels have capacity eight; capacities are not
+added to the eight-request invariant. Frame polling never blocks.
 
-Display levels have longest edges 128, 512 and 2048 pixels. Originals are decoded
-only by workers and dropped after downsampling. An absent image first requests a
-thumbnail, then the projected-size LOD. Existing lower LOD stays visible during
-refinement; otherwise a quiet placeholder is used. Detail beyond 2048 pixels,
-tiling, EXIF/color management, prefetch and production import are not implemented.
+Every demand update marks obsolete jobs cancelled. Workers check at queue,
+source read/header, decode, resize, encode and result boundaries. A codec in
+progress is not preemptible. Stale encoded output is not written to disk when
+cancellation was detected after encoding. Failed or oversized display keys are
+suppressed while desired, preventing repeated expensive rejection.
 
-The frame path polls channels and GPU completion without waiting. Each worker
-has one bounded job channel, one bounded result channel and at most one active
-job. Stable ID sharding keeps cache paths reusable across process restarts.
-Current visible demand is reconsidered every frame; obsolete active jobs receive
-an atomic cancellation flag. The codec itself cannot be interrupted, but flags
-are checked before/after decode, LOD generation and cache writing. Obsolete
-results are discarded before cache insertion. Failed visible keys are suppressed
-until demand leaves the viewport, preventing error retry loops.
+JPEG sources use jpeg-decoder 0.3.2, with optional Rayon disabled, metadata
+validation, DCT scaling followed by image's thumbnail resize and RGBA conversion.
+Only RGB8/grayscale8 JPEG source inputs are accepted in this prototype. PNG is
+the disposable display-cache format. Display levels have longest edges 128,
+512 and 2048; lower levels remain available during refinement. Texture selection
+is recomputed after all uploads so an evicted detail can fall back to its retained
+tiny image. No tiling, EXIF/color management or production media import is claimed.
 
-| Resource | Initial policy |
+The event thread owns the CPU byte caches of Arc<Decoded>. Workers keep another
+Arc for each handed-off pixel buffer; before the next job they release those
+that have no other owner. Thus eviction drops a cheap reference on the event
+thread and returns large allocations on workers. Idle workers can retain evicted
+buffers until the next request or shutdown; this is bounded and visible in RSS.
+Worker-retention peak counters overlap CPU payload and represent a sum of
+individual historical peaks, not simultaneous extra allocation.
+
+## Bounds and accounting
+
+| Resource | Selected policy |
 | --- | --- |
-| Immutable manifest | <= 4 MiB, <= 10,000 objects |
-| Decoders | 2; API permits 1–4 |
-| CPU display cache | 64 MiB; pressure scenario 16 MiB |
-| GPU display cache estimate | 128 MiB; pressure scenario 24 MiB |
-| Persistent display cache | 512 MiB total, stable per-worker quotas |
-| Encoded input | Capped read of 64 MiB + sentinel; growth beyond cap rejected |
-| Decoded dimensions | <= 6000×4500 original; <= requested LOD in cache |
-| Decoder allocation hint | 192 MiB per decoder; image library's best-effort limit |
-| GPU uploads | <= 2 textures and <= 16 MiB RGBA per submitted frame |
-| GPU submissions | <= 3 outstanding; skip rendering when saturated |
-| Retained telemetry | <= 7,200 frames; benchmark duration <= 120 s |
-| GPU timestamps, when supported | 3 fixed resolve/readback slots; <= 7,200 samples |
+| Manifest | ≤4 MiB; ≤10,000 objects |
+| Workers | 2 default; explicit comparisons 1/2/4 |
+| Pending | ≤8 × worker count, tiny batches; large jobs alone |
+| CPU display payload | 64 MiB = 32 MiB tiny + 32 MiB refinement |
+| GPU display payload estimate | 128 MiB = 64 MiB tiny + 64 MiB refinement |
+| Pressure CPU/GPU | 16 MiB (4+12), 24 MiB (12+12) |
+| Disposable SSD | 512 MiB across four fixed 128 MiB shards |
+| Encoded source read | ≤64 MiB + oversize sentinel |
+| Source dimensions | ≤6000×4500, validated before JPEG decode |
+| Codec output limit hint | 192 MiB/worker; does not bound all codec scratch |
+| Upload | ≤8 textures and ≤16 MiB RGBA/frame |
+| Submissions | ≤3 outstanding; saturated renderer skips submission |
+| Telemetry | 7,200 frame/GPU samples; 20,000 job profiles/coverage episodes; 256 platform events |
+| GPU readback | Three fixed asynchronous timing slots; busy slot drops sample |
 
-Cache counters are payload budgets, not total RAM/VRAM. CPU memory also includes
-two capped encoded buffers (with Vec capacity growth), transient JPEG decoder
-copies, original pixels, resize/PNG scratch, one result per worker, bookkeeping
-and telemetry. Limits on file bytes, dimensions and concurrency bound this work,
-but max_alloc is not an OS memory sandbox. Peak process RSS is measured separately.
-GPU accounting excludes the fixed vertex buffer (~0.96 MB), timestamp buffers,
-placeholder,
-target/swapchain, driver overhead, aligned allocations and staging. Outstanding
-submissions may retain evicted textures; at most three submissions and a bounded
-upload volume prevent an arbitrarily growing submission backlog. Actual driver
-memory needs hardware profiling before production budget claims.
+Memory budgets count payload, not RSS or actual driver VRAM. Source Vec capacity,
+codec coefficients (up to roughly 162 MB for this dimension limit), RGB output,
+resizer/encoder scratch, unpublished results, retained worker references and
+telemetry contribute to process RSS. DCT 1/8 output is much smaller without
+eliminating entropy decoding or all progressive JPEG coefficient storage.
+Per-job telemetry observes output/source/resize buffers, not allocator internals.
+Source counters use byte length; cached encoded input uses a conservative
+two-times-length estimate. These are not exact allocation high-water marks.
+The report keeps RSS separate rather than subtracting a misleading exact total.
 
-Worker-owned disk cache evicts oldest-written entries (FIFO on disk, LRU in RAM),
-uses temporary files followed by rename, recovers corrupt entries and disables
-itself if unavailable. Cache failure never hides a valid original. This is
-disposable cache persistence, not the final document/save format. The benchmark
-manifest supplies hash identities; originals are not rehashed during loading.
+GPU accounting excludes staging, aligned allocations, fixed vertex/timestamp
+buffers, placeholder, swapchain and driver overhead. Capacity is checked before
+texture creation/write. At most three outstanding submissions and bounded
+upload bytes prevent an unbounded backlog of staging and evicted textures.
+No claim that 128 MiB payload means 128 MiB physical VRAM is made.
 
-The GPU baseline uses one draw/bind group per visible image, one reused vertex
-buffer, and explicit display textures without mip chains. No elaborate batching
-framework is introduced before measurement. Input redraw is coalesced; when no
-input/loading work remains, GPU callbacks are polled briefly without submitting
-new frames and the event loop then sleeps. Hidden/zero-size windows skip surface
-acquisition and redraw until restoration. Scripted runs disable manual camera
-input and resizing so the prescribed demand stays reproducible.
+Fixed SSD shard identity is ID modulo four, independent of worker count. Powers
+of two give exclusive shard ownership without filesystem locks. Startup creates
+and trims all four shards before the frame loop. Warm hits do not repeatedly
+scan directory metadata; writes evict refinement entries first, then thumbnails,
+oldest-written first. Temporary write then rename publishes entries. Corrupt
+cache entries fall back to originals; an unavailable cache disables itself.
+Manifest hashes provide identity; this prototype trusts them without rehashing
+originals. Multiple simultaneous processes sharing one cache are not supported.
 
-Optional GPU timestamps surround the canvas render pass, excluding uploads and
-presentation. Three readback slots are mapped asynchronously; busy slots drop
-a timing sample instead of waiting. Only shutdown drains outstanding work, for
-at most five seconds. Native telemetry separately measures acquisition, present
-and the entire redraw callback, and counts failed surface acquisitions. Attempt
-intervals remain scheduling cadence, not monitor presentation timing.
+## Presentation and evidence
 
-Tests cover cursor-anchor stability, invalid geometry, LOD thresholds, LRU byte
-eviction, corrupt/unavailable caches, warm reuse, stale results, encoded input
-limits, and a GPU readback proving uploaded red pixels reach the target. Linux
-and Windows CI are configured; running locally does not establish a remote CI
-result. No production persistence, collaboration, media player or product UI
-has been added.
+Native acquisition, present and redraw callback are separately timed. GPU
+queries cover only the canvas render pass, not texture uploads or monitor
+latency. CPU frame timing includes scheduling, GPU polling, upload submission,
+visibility and coverage telemetry, but excludes native acquisition/present.
+No frame path performs source/cache I/O or waits for workers. Startup and final
+report writing are explicit I/O boundaries; shutdown GPU draining is bounded
+to five seconds. Worker shutdown signals cancellation and detaches rather than
+waiting for an uninterruptible codec on the event thread.
+
+Interactive redraw coalesces input and sleeps when demand/loading finishes;
+zero-size/occluded windows skip acquisition until restoration. Scripted traces
+fix dimensions and camera speed without consulting loader progress. Adjacent
+pan is 320/1280/3840 screen pixels per second at zoom 0.1. Zoom traversal is an
+8-second logarithmic cycle from 0.006 to 0.6; combined scan adds fixed adjacent
+motion. The old 20 distant jumps/s trace remains a backpressure torture test.
+Board-tour spans the width and traverses every row in 12 seconds, returning in
+another 12. Cache preparation uses this ordinary loader, never preloaded RGBA.
+
+Episode metrics record first submitted lower image and first requested LOD,
+with unresolved episodes explicitly censored. Source/binary snapshots and SHA256
+are retained in ignored raw results; compact summaries are tracked under
+benchmarks/. Synthetic hardlinked JPEGs, OS page-cache reuse, single trials and
+lack of artist-rated usefulness limit product conclusions. See
+[the measured report](MISSION_0_5_REPORT.md).

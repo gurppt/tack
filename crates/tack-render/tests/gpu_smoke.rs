@@ -32,6 +32,18 @@ fn uploaded_texture_reaches_render_target() -> Result<(), AssetError> {
         lod: Lod::Thumbnail,
     };
     assert!(gpu.begin_frame()?);
+    // A representation larger than its partition must never reach GPU staging.
+    assert!(!gpu.upload(
+        key,
+        &Decoded {
+            width: 512,
+            height: 512,
+            rgba: vec![255; 512 * 512 * 4],
+        }
+    ));
+    assert_eq!(gpu.stats().uploads, 0);
+    assert_eq!(gpu.stats().upload_bytes, 0);
+    assert_eq!(gpu.stats().gpu_bytes, 0);
     assert!(gpu.upload(
         key,
         &Decoded {

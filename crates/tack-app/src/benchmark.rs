@@ -18,6 +18,10 @@ pub struct Frame {
     pub culled: usize,
     pub placeholders: usize,
     pub lods: [usize; 3],
+    pub requested_covered: usize,
+    pub cpu_thumbnail_bytes: usize,
+    pub gpu_thumbnail_bytes: usize,
+    pub upload_cpu_ms: f64,
     pub cpu_cache_bytes: usize,
     pub gpu_resident_bytes: usize,
     pub pending: usize,
@@ -42,6 +46,7 @@ pub struct Measurements {
     surface_reconfigures: usize,
     surface_other_errors: usize,
     failed_acquire_max_ms: f64,
+    platform_events: Vec<serde_json::Value>,
 }
 
 impl Measurements {
@@ -54,6 +59,13 @@ impl Measurements {
             surface_reconfigures: 0,
             surface_other_errors: 0,
             failed_acquire_max_ms: 0.0,
+            platform_events: Vec::new(),
+        }
+    }
+
+    pub fn record_platform_event(&mut self, value: serde_json::Value) {
+        if self.platform_events.len() < 256 {
+            self.platform_events.push(value);
         }
     }
 
@@ -121,36 +133,57 @@ impl Measurements {
                 .map(|s| serde_json::json!({"submission": s.submission, "pass_ms": s.pass_ms}))
                 .collect::<Vec<_>>()
         });
-        serde_json::json!({
-            "schema": 1, "scenario": session.options.scenario,
-            "headless": session.options.headless, "adapter": info.name,
-            "backend": format!("{:?}", info.backend), "device_type": format!("{:?}", info.device_type),
-            "driver": info.driver, "driver_info": info.driver_info,
-            "objects": session.board.objects.len(), "duration_seconds": session.options.seconds,
-            "startup_ms": self.startup_ms,
-            "first_visible_content_ms": self.frames.iter().find(|f| f.submitted && f.placeholders < f.visible).map(|f| f.elapsed_ms),
-            "cpu_p50_ms": percentile(0.5), "cpu_p99_ms": percentile(0.99), "cpu_max_ms": cpu.last(),
-            "interval_p50_ms": wall(0.5), "interval_p99_ms": wall(0.99),
-            "gpu_pass": session.gpu.timing_samples().map(|samples| summarize(samples.iter().map(|s| s.pass_ms).collect())),
-            "gpu_pass_samples": gpu_samples,
-            "gpu_timing_dropped": session.gpu.dropped_timings(),
-            "gpu_timing_note": "Optional asynchronous timestamps measure the canvas render pass only, excluding uploads, surface acquisition and presentation. CPU callback and attempt cadence do not measure monitor presentation latency.",
-            "acquire": summarize(self.frames.iter().filter_map(|f| f.acquire_ms).collect()),
-            "present": summarize(self.frames.iter().filter_map(|f| f.present_ms).collect()),
-            "callback": summarize(self.frames.iter().filter_map(|f| f.callback_ms).collect()),
-            "surface_timeouts": self.surface_timeouts,
-            "surface_reconfigures": self.surface_reconfigures,
-            "surface_other_errors": self.surface_other_errors,
-            "failed_acquire_max_ms": self.failed_acquire_max_ms,
-            "frame_attempts": self.frames.len(), "submitted_frames": self.frames.iter().filter(|f| f.submitted).count(),
-            "completed_submissions_at_report": session.gpu.stats().completed_submissions,
-            "gpu_backpressure_frames": self.frames.iter().filter(|f| !f.submitted).count(),
-            "cpu_cache_peak_bytes": self.frames.iter().map(|f| f.cpu_cache_bytes).max(),
-            "gpu_resident_peak_bytes": self.frames.iter().map(|f| f.gpu_resident_bytes).max(),
-            "pending_peak": self.frames.iter().map(|f| f.pending).max(),
-            "rss_high_water_kib": rss_high_water(),
-            "final": self.frames.last(), "frames": self.frames,
-        })
+        let streaming = serde_json::json!({
+            "platform_events": self.platform_events,
+            "pending_limit": session.options.workers * tack_assets::MAX_PENDING_PER_WORKER,
+            "upload_count_limit": tack_render::MAX_UPLOADS,
+            "worker_retention_peak_bytes": session.loader.stats().worker_retention_peak_bytes,
+            "rejected_cache_entries": session.loader.stats().rejected,
+            "worker_stage_names": tack_assets::STAGE_NAMES,
+            "worker_profiles": session.loader.profiles(),
+            "worker_profile_dropped": session.loader.profile_dropped(),
+            "coverage_episodes": session.coverage.episodes,
+            "coverage_episodes_dropped": session.coverage.dropped,
+        });
+        let mut report = serde_json::json!({
+           "schema": 1, "scenario": session.options.scenario,
+           "headless": session.options.headless, "adapter": info.name,
+           "backend": format!("{:?}", info.backend), "device_type": format!("{:?}", info.device_type),
+           "driver": info.driver, "driver_info": info.driver_info,
+           "objects": session.board.objects.len(), "duration_seconds": session.options.seconds,
+           "workers": session.options.workers, "prefetch": session.options.prefetch,
+           "startup_ms": self.startup_ms,
+           "first_visible_content_ms": self.frames.iter().find(|f| f.submitted && f.placeholders < f.visible).map(|f| f.elapsed_ms),
+           "cpu_p50_ms": percentile(0.5), "cpu_p99_ms": percentile(0.99), "cpu_max_ms": cpu.last(),
+           "interval_p50_ms": wall(0.5), "interval_p99_ms": wall(0.99),
+           "gpu_pass": session.gpu.timing_samples().map(|samples| summarize(samples.iter().map(|s| s.pass_ms).collect())),
+           "gpu_pass_samples": gpu_samples,
+           "gpu_timing_dropped": session.gpu.dropped_timings(),
+           "gpu_timing_note": "Optional asynchronous timestamps measure the canvas render pass only, excluding uploads, surface acquisition and presentation. CPU callback and attempt cadence do not measure monitor presentation latency.",
+           "acquire": summarize(self.frames.iter().filter_map(|f| f.acquire_ms).collect()),
+           "present": summarize(self.frames.iter().filter_map(|f| f.present_ms).collect()),
+           "callback": summarize(self.frames.iter().filter_map(|f| f.callback_ms).collect()),
+           "surface_timeouts": self.surface_timeouts,
+           "surface_reconfigures": self.surface_reconfigures,
+           "surface_other_errors": self.surface_other_errors,
+           "failed_acquire_max_ms": self.failed_acquire_max_ms,
+           "frame_attempts": self.frames.len(), "submitted_frames": self.frames.iter().filter(|f| f.submitted).count(),
+           "completed_submissions_at_report": session.gpu.stats().completed_submissions,
+           "gpu_backpressure_frames": self.frames.iter().filter(|f| !f.submitted).count(),
+           "cpu_cache_peak_bytes": self.frames.iter().map(|f| f.cpu_cache_bytes).max(),
+           "gpu_resident_peak_bytes": self.frames.iter().map(|f| f.gpu_resident_bytes).max(),
+           "pending_peak": self.frames.iter().map(|f| f.pending).max(),
+           "rss_high_water_kib": rss_high_water(),
+           "final": self.frames.last(), "frames": self.frames,
+        });
+        if let (Some(report), Some(streaming)) = (report.as_object_mut(), streaming.as_object()) {
+            report.extend(
+                streaming
+                    .iter()
+                    .map(|(key, value)| (key.clone(), value.clone())),
+            );
+        }
+        report
     }
 }
 
@@ -188,6 +221,8 @@ pub fn save_report(session: &mut Session) -> Result<(), AssetError> {
     if let Some(object) = summary.as_object_mut() {
         object.remove("frames");
         object.remove("gpu_pass_samples");
+        object.remove("worker_profiles");
+        object.remove("coverage_episodes");
     }
     println!("{}", serde_json::to_string(&summary)?);
     Ok(())
