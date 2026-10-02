@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "checks": {
+    "fmt": "PASS",
+    "check": "PASS",
+    "clippy": "PASS",
+    "rust_tests_passed": 19,
+    "rust_gpu_test_ignored_in_general_suite": 1,
+    "explicit_hardware_gpu_smoke": "PASS (NVIDIA GeForce RTX 2060, Vulkan, DiscreteGpu; 1 test)",
+    "docs": "PASS",
+    "python_harness_tests_passed": 4,
+    "cargo_deny": "advisories/bans/licenses/sources OK; duplicate-version warnings remain",
+    "native_malformed_tests": "PASS (5 integration + checked-layout unit; 1000 deterministic mutations)",
+    "worker_error_recovery": "PASS (malformed source suppressed, worker continues)"
+  },
+  "logs_sha256": {
+    "benchmark-results/mission0_6-checks/quality.log": "84f853a867b537f3beee2fbf5f0aa4334c8c9e611b2b8031ab2e1af822208743",
+    "benchmark-results/mission0_6-checks/native-build.log": "2f4ee98be3605b86c842e80cf78ae8efbebeedbf0202b3c78b00aaf8462f6ec7",
+    "benchmark-results/mission0_6-checks/malformed-release.log": "6dbd1071f5242d16863a73f0a5c0140c14449fb2cb73ef5bb299bae98bd3ee99",
+    "benchmark-results/mission0_6-checks/gpu.log": "cc555656ca987a12a255538dbd10d64e045fa31a5d090660fd499215efbe8fba",
+    "benchmark-results/mission0_6-checks/gpu-clippy.log": "b59e3894cd33f40d30ccc1a2bdb8babbeed4cb9a910c54a0935fe21ddd439a8b",
+    "benchmark-results/mission0_6-checks/gpu-adapter.log": "76fd0ff7f7edb43bc01708d5b9ec03c15e9e803e9cd0e3a66d1ab9de69cde97c"
+  },
+  "windows": "Not executed",
+  "remote_ci": "Not executed",
+  "independent_verification": {
+    "agent": "/root/mission0_verifier",
+    "verdict": "B \u2014 REPEAT; native selected; STOP before Phase 1",
+    "material_findings_remaining": 0,
+    "executed_checks": [
+      "cargo test -p tack-assets --locked --offline: 13 PASS",
+      "python3 -m unittest discover -s tools -p test_*.py: 4 PASS",
+      "cargo fmt --all -- --check: PASS"
+    ],
+    "audited_native_traces": 20,
+    "audited_frames": 14192,
+    "audited_micro_samples": 640,
+    "audited_png_comparisons": 16,
+    "audited_report_table_rows": 32,
+    "checks": "ZIP/binary/harness/manifest/source hashes; frame/partition/upload/queue/SSD bounds; latency/censoring and CPU/GPU/presentation percentiles; warm 1000 PNG/source identities; runtime equality; notices; source/FFI/ownership/memory/cancellation",
+    "limits": "Independent check outputs retained in tool conversation; no separate audit log written. Not a proof against every native bug/leak; Windows and remote CI not run."
+  },
+  "native_compiler_build_record": {
+    "file": "target/native/turbojpeg-build/CMakeFiles/3.28.3/CMakeCCompiler.cmake",
+    "sha256": "b5aad1667b4986e327d85cefeec26e17c6cb3dedf285649b05c522599a3cb824",
+    "compiler_id": "GNU",
+    "compiler_version": "13.3.0"
+  },
+  "selected_release_binary_sha256": "66042cb6ab783a49319ef150e0557ec353e7af44a2d6cdb03427417d80a73524",
+  "selected_release_matches_measured_candidate": true
+}

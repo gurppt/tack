@@ -170,6 +170,17 @@ fn read_source(
         profile.cancelled_after = Some("source_read");
         return Ok(None);
     }
+    if job.request.key.lod == tack_core::Lod::Thumbnail {
+        let decoder = profile.measure(Stage::Header, || crate::NativeThumbnail::new(&bytes))?;
+        if job.cancelled.load(Ordering::Relaxed) {
+            profile.cancelled_after = Some("header");
+            return Ok(None);
+        }
+        let pixels = profile.measure(Stage::Decode, || decoder.decode())?;
+        profile.decoded_peak_bytes = pixels.as_raw().len();
+        profile.bytes(Stage::Decode, pixels.as_raw().len());
+        return Ok(Some(image::DynamicImage::ImageRgb8(pixels)));
+    }
     let mut decoder = jpeg_decoder::Decoder::new(Cursor::new(&bytes));
     decoder.set_max_decoding_buffer_size(192 * 1024 * 1024);
     profile.measure(Stage::Header, || decoder.read_info())?;

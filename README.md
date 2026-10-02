@@ -1,8 +1,9 @@
 # Tack
 
 Native, local-first reference board. This repository currently contains
-**Mission 0.5: measured asset streaming**, before product development.
-See [the current report](docs/MISSION_0_5_REPORT.md),
+**Mission 0.6: native thumbnail decode gate**, before product development.
+See [the current report](docs/MISSION_0_6_REPORT.md),
+[Mission 0.5](docs/MISSION_0_5_REPORT.md),
 [the first prototype report](docs/MISSION_0_REPORT.md),
 [architecture](docs/architecture.md) and
 [asset experiments](docs/research/asset_pipeline_experiments.md).
@@ -13,8 +14,18 @@ the reproducible corpus. No private images or network are needed at runtime.
 ```bash
 python3 -m pip install Pillow==10.2.0
 python3 tools/generate_corpus.py benchmark-data/mission0
+python3 tools/prepare_turbojpeg.py
 cargo run --release --locked -p tack-app
 ```
+
+The native thumbnail build needs Python 3.12+, CMake, a C compiler and NASM
+on PATH. It verifies the official libjpeg-turbo 3.2.0 archive and installs a
+static library only into `target/native/`; Cargo performs no native download.
+Run this preparation once before any Rust build, including tests. For MSVC,
+use an appropriate compiler environment; Windows CI is configured but has not
+been executed locally. See [decoder review](docs/research/native_thumbnail_decoder.md)
+and [dependency notices](docs/THIRD_PARTY_NOTICES.md). Runtime needs no native
+decoder DLL or network. The separate Linux libXi workaround below still applies.
 
 On Linux/X11 with an old libXi (notably 1.8.1), mouse movement during startup
 can crash inside the system library. Use this optional local build once:
@@ -75,5 +86,5 @@ The harness retains the executed binary and a source ZIP alongside raw JSON;
 compact measurements live in [benchmarks](benchmarks/).
 
 The code license/contribution model is pending; dependency license checks are
-separate. Mission 0.5 recommends one more decoder experiment before Phase 1.
-Human review of its report is the stop gate.
+separate. Mission 0.6's report records the selected path, measurements and next
+experiment. Human review of that report is the stop gate; Phase 1 has not begun.

@@ -11,6 +11,29 @@ import shutil
 import zipfile
 
 
+def distribution(values):
+    values = sorted(values)
+    def at(p):
+        return values[min(len(values)-1, int((len(values)-1)*p + 0.999999))] if values else None
+    return {"samples": len(values), "p50_ms": at(.5), "p95_ms": at(.95),
+            "p99_ms": at(.99), "total_ms": sum(values)}
+
+
+def demand_latency(episodes, field):
+    return dict(distribution([e[field] for e in episodes if e[field] is not None]),
+                censored=sum(e[field] is None for e in episodes))
+
+
+def check_frame_bounds(frames, pressure, pending_limit, upload_limit):
+    for frame in frames:
+        if frame["cpu_cache_bytes"] > (16 if pressure else 64) * 1024**2:
+            raise RuntimeError("CPU cache budget violated")
+        if frame["gpu_resident_bytes"] > (24 if pressure else 128) * 1024**2:
+            raise RuntimeError("GPU cache budget violated")
+        if frame["pending"] > pending_limit or frame["in_flight"] > 3 or frame["upload_bytes"] > 16 * 1024**2 or frame["uploads"] > upload_limit:
+            raise RuntimeError("queue or upload budget violated")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--binary", type=Path, default=Path("target/release/tack-app"))
@@ -30,6 +53,7 @@ def main():
     shutil.copy2(args.binary, binary_snapshot)
     corpus = json.loads(args.manifest.read_text(encoding="utf-8"))
     environment = {"platform": platform.platform(), "processor": platform.processor(),
+                   "manifest_sha256": hashlib.sha256(args.manifest.read_bytes()).hexdigest(),
                    "headless": args.headless, "corpus_objects": len(corpus["objects"]),
                    "corpus_seed": corpus["seed"], "corpus_sources": corpus["source_count"],
                    "pillow_version": corpus["pillow_version"], "limitations": corpus["limitation"]}
@@ -37,6 +61,7 @@ def main():
     source_paths = [source_root / "Cargo.toml", source_root / "Cargo.lock", source_root / "rust-toolchain.toml"]
     source_paths += [p for p in (source_root / "crates").rglob("*") if p.suffix in [".rs", ".wgsl", ".toml"]]
     source_paths += list((source_root / "tools").glob("*.py"))
+    source_paths += [p for p in (source_root / ".cargo").glob("*.toml")]
     digest = hashlib.sha256()
     if args.source_snapshot is not None:
         shutil.copy2(args.source_snapshot, root / "source-snapshot.zip")
@@ -53,6 +78,9 @@ def main():
     environment["source_sha256"] = digest.hexdigest()
     environment["binary_sha256"] = hashlib.sha256(binary_snapshot.read_bytes()).hexdigest()
     environment["executed_harness_sha256"] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+    native_build = source_root / "target/native/libjpeg-turbo-3.2.0/native-build.json"
+    if native_build.exists():
+        environment["available_native_build"] = json.loads(native_build.read_text())
     for tool, command in {"cpu": ["lscpu"], "memory": ["free", "-b"], "gpu_pci": ["lspci", "-nn"],
                           "rustc": ["rustc", "--version"], "cargo": ["cargo", "--version"],
                           "nvidia": ["nvidia-smi", "--query-gpu=name,driver_version,memory.total", "--format=csv"]}.items():
@@ -81,23 +109,13 @@ def main():
         profiles = report.pop("worker_profiles", [])
         episodes = report.pop("coverage_episodes", [])
         names = report.get("worker_stage_names", [])
-        def distribution(values):
-            values = sorted(values)
-            at = lambda p: values[min(len(values)-1, int((len(values)-1)*p + 0.999999))] if values else None
-            return {"samples": len(values), "p50_ms": at(.5), "p95_ms": at(.95), "p99_ms": at(.99), "total_ms": sum(values)}
         report["worker_stages"] = {name: dict(distribution([p["stage_ms"][i] for p in profiles if p["stage_ms"][i] > 0]), bytes=sum(p["stage_bytes"][i] for p in profiles)) for i,name in enumerate(names)}
         report["worker_active"] = distribution([p["active_ms"] for p in profiles])
-        report["first_image_after_demand"] = dict(distribution([e["first_image_delay_ms"] for e in episodes if e["first_image_delay_ms"] is not None]), censored=sum(e["first_image_delay_ms"] is None for e in episodes))
-        report["requested_lod_after_demand"] = dict(distribution([e["requested_delay_ms"] for e in episodes if e["requested_delay_ms"] is not None]), censored=sum(e["requested_delay_ms"] is None for e in episodes))
+        report["first_image_after_demand"] = demand_latency(episodes, "first_image_delay_ms")
+        report["requested_lod_after_demand"] = demand_latency(episodes, "requested_delay_ms")
         report["cancelled_by_stage"] = {stage: sum(p["cancelled_after"] == stage for p in profiles) for stage in sorted({p["cancelled_after"] for p in profiles if p["cancelled_after"]})}
         report["worker_memory_observed_peaks"] = {name: max((p[name] for p in profiles), default=0) for name in ["encoded_peak_bytes", "decoded_peak_bytes", "resize_peak_bytes"]}
-        for frame in frames:
-            if frame["cpu_cache_bytes"] > (16 if scenario == "pressure" else 64) * 1024**2:
-                raise RuntimeError("CPU cache budget violated")
-            if frame["gpu_resident_bytes"] > (24 if scenario == "pressure" else 128) * 1024**2:
-                raise RuntimeError("GPU cache budget violated")
-            if frame["pending"] > report.get("pending_limit", args.workers) or frame["in_flight"] > 3 or frame["upload_bytes"] > 16 * 1024**2 or frame["uploads"] > report.get("upload_count_limit", 2):
-                raise RuntimeError("queue or upload budget violated")
+        check_frame_bounds(frames, scenario == "pressure", report.get("pending_limit", args.workers), report.get("upload_count_limit", 2))
         visible = sum(f["visible"] for f in frames)
         report["content_coverage_fraction"] = (sum(f["visible"] - f["placeholders"] for f in frames) / visible) if visible else None
         report["lod_coverage_fractions"] = [sum(f["lods"][i] for f in frames)/visible if visible else None for i in range(3)]

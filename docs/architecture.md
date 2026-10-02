@@ -1,4 +1,4 @@
-# Mission 0.5 architecture
+# Mission 0.6 architecture
 
 Four crates retain the renderer/document separation established in
 [Mission 0](MISSION_0_REPORT.md): core geometry/LOD/byte-cache policy, assets
@@ -28,9 +28,16 @@ progress is not preemptible. Stale encoded output is not written to disk when
 cancellation was detected after encoding. Failed or oversized display keys are
 suppressed while desired, preventing repeated expensive rejection.
 
-JPEG sources use jpeg-decoder 0.3.2, with optional Rayon disabled, metadata
-validation, DCT scaling followed by image's thumbnail resize and RGBA conversion.
-Only RGB8/grayscale8 JPEG source inputs are accepted in this prototype. PNG is
+The retained 128 tier uses the safe `NativeThumbnail` boundary backed by
+turbojpeg 1.5.1 / statically linked libjpeg-turbo 3.2.0. Each job owns a fresh
+native decoder, borrows immutable capped input and writes scaled RGB directly
+into a checked Rust allocation ≤2 MiB. Native scratch is separate and depends
+on full dimensions/progressive coefficients; see [the decoder review](research/native_thumbnail_decoder.md).
+Medium/detail continue to use jpeg-decoder 0.3.2 with optional Rayon disabled.
+Both paths validate metadata and use DCT scaling followed by the same image
+thumbnail resize and RGBA conversion. Only supported lossy RGB8/grayscale8
+JPEG inputs are accepted by the thumbnail path; rare subsampling, CMYK,
+arithmetic and lossless inputs are recoverable errors. PNG is
 the disposable display-cache format. Display levels have longest edges 128,
 512 and 2048; lower levels remain available during refinement. Texture selection
 is recomputed after all uploads so an evicted detail can fall back to its retained
@@ -57,7 +64,8 @@ individual historical peaks, not simultaneous extra allocation.
 | Disposable SSD | 512 MiB across four fixed 128 MiB shards |
 | Encoded source read | ≤64 MiB + oversize sentinel |
 | Source dimensions | ≤6000×4500, validated before JPEG decode |
-| Codec output limit hint | 192 MiB/worker; does not bound all codec scratch |
+| Native thumbnail RGB output | ≤2 MiB, checked before allocation; progressive scan limit 100 |
+| Medium/detail codec output hint | 192 MiB/worker; neither path's output bound limits all scratch |
 | Upload | ≤8 textures and ≤16 MiB RGBA/frame |
 | Submissions | ≤3 outstanding; saturated renderer skips submission |
 | Telemetry | 7,200 frame/GPU samples; 20,000 job profiles/coverage episodes; 256 platform events |
@@ -113,4 +121,5 @@ with unresolved episodes explicitly censored. Source/binary snapshots and SHA256
 are retained in ignored raw results; compact summaries are tracked under
 benchmarks/. Synthetic hardlinked JPEGs, OS page-cache reuse, single trials and
 lack of artist-rated usefulness limit product conclusions. See
-[the measured report](MISSION_0_5_REPORT.md).
+[the measured report](MISSION_0_6_REPORT.md), including the increased CPU p99
+under faster cold supply and the remaining native presentation outliers.

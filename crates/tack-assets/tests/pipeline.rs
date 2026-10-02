@@ -129,6 +129,25 @@ fn oversized_encoded_input_is_rejected_without_unbounded_read() -> Result<(), As
 }
 
 #[test]
+fn malformed_source_is_suppressed_and_worker_continues() -> Result<(), AssetError> {
+    let fixture = Fixture::new()?;
+    let bad = fixture.request(0)?;
+    fs::write(&bad.path, [0xff, 0xd8, 0xff, 0xc0, 0, 1])?;
+    let good = fixture.request(1)?;
+    let mut loader = Loader::new(fixture.0.join("cache"), 1024 * 1024, 1024 * 1024, 1)?;
+    loader.request(&[bad.clone(), good.clone()]);
+    wait(&mut loader);
+    assert_eq!(loader.stats().errors, 1);
+    assert!(!loader.has_cached(bad.key));
+    assert!(loader.has_cached(good.key));
+    loader.request(&[bad, good]);
+    loader.poll();
+    assert_eq!(loader.stats().pending, 0);
+    assert_eq!(loader.stats().errors, 1);
+    Ok(())
+}
+
+#[test]
 fn too_large_refinement_is_not_retried_and_thumbnail_survives() -> Result<(), AssetError> {
     let fixture = Fixture::new()?;
     let thumbnail = fixture.request(0)?;

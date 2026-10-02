@@ -1,0 +1,894 @@
+{
+  "schema": 1,
+  "experiments": {
+    "micro": {
+      "schema": 1,
+      "harness_sha256": "cbc150f6fe0a9c1e33a03ec886a4322f0d016a4bd6f7375b60b4ecf15d56f931",
+      "binary_sha256": "6c9bb28d82bfd3fc4ef6748e07ea1492ac4a09bfaf06f03292df7435044e9061",
+      "comparisons": [
+        {
+          "source": "source-0000.jpg",
+          "source_sha256": "5bb69aa7390972dc65f8e6a85edb67ee4deff21f33d54136b58be341c172ff4b",
+          "dimensions": [
+            128,
+            96
+          ],
+          "mean_absolute_rgb_difference": [
+            1.181640625,
+            0.10563151041666667,
+            1.367919921875
+          ],
+          "psnr_db": 47.10803242184899
+        },
+        {
+          "source": "source-0001.jpg",
+          "source_sha256": "7831f07a61bfa8ef1a6131d441987af78310fbd5f95a6ffd46c2358d80da0763",
+          "dimensions": [
+            128,
+            96
+          ],
+          "mean_absolute_rgb_difference": [
+            1.1844075520833333,
+            0.10660807291666667,
+            1.371337890625
+          ],
+          "psnr_db": 47.08704479324573
+        },
+        {
+          "source": "source-0002.jpg",
+          "source_sha256": "4eec894722ade05cad976a18e376e4bba5eb124061d52b436a4ffc8e9b992cb8",
+          "dimensions": [
+            128,
+            96
+          ],
+          "mean_absolute_rgb_difference": [
+            1.1803385416666667,
+            0.11490885416666667,
+            1.3728841145833333
+          ],
+          "psnr_db": 47.086396350569046
+        },
+        {
+          "source": "source-0003.jpg",
+          "source_sha256": "343706d89098dd166943959b4439724b5f5c03da7b8784e17321c43f6ffc2569",
+          "dimensions": [
+            128,
+            96
+          ],
+          "mean_absolute_rgb_difference": [
+            1.18798828125,
+            0.10758463541666667,
+            1.37109375
+          ],
+          "psnr_db": 47.07769805833422
+        },
+        {
+          "source": "source-0004.jpg",
+          "source_sha256": "954444b89bc2e6ad1b6a51092008d60337690e0c69be809d592296e86ad5495a",
+          "dimensions": [
+            128,
+            96
+          ],
+          "mean_absolute_rgb_difference": [
+            1.1949055989583333,
+            0.111083984375,
+            1.3804524739583333
+          ],
+          "psnr_db": 47.01556118167488
+        },
+        {
+          "source": "source-0005.jpg",
+          "source_sha256": "e3a6d0a9ba9b97daf505adcc36582c76ffc287f9bcd3716a27f89138d249f301",
+          "dimensions": [
+            128,
+            96
+          ],
+          "mean_absolute_rgb_difference": [
+            1.1790364583333333,
+            0.10734049479166667,
+            1.3744303385416667
+          ],
+          "psnr_db": 47.08880534014065
+        },
+        {
+          "source": "source-0006.jpg",
+          "source_sha256": "18be11d0b2be21df0dc9f56fb96d2d871ef56a38bd5cd71f7f6496bcbb7afcf2",
+          "dimensions": [
+            128,
+            96
+          ],
+          "mean_absolute_rgb_difference": [
+            1.1854654947916667,
+            0.110595703125,
+            1.3656412760416667
+          ],
+          "psnr_db": 47.09724734214802
+        },
+        {
+          "source": "source-0007.jpg",
+          "source_sha256": "610ee5ee1cada863481d3e3f32360b64453f412f433fceb11b673f9b60d33753",
+          "dimensions": [
+            128,
+            96
+          ],
+          "mean_absolute_rgb_difference": [
+            1.1883951822916667,
+            0.10888671875,
+            1.3767903645833333
+          ],
+          "psnr_db": 47.05179911603136
+        }
+      ],
+      "variants": {
+        "reference": {
+          "limits": "Source read outside timing; total = header + decode + identical image::thumbnail/RGBA. RSS Linux sampled after decode, not peak scratch.",
+          "mode": "reference",
+          "repetitions": 20,
+          "rss_after_kib": 18868,
+          "rss_before_kib": 2468,
+          "process_peak_rss_kib": 18684,
+          "distributions": {
+            "header_ms": {
+              "samples": 160,
+              "p50_ms": 0.00658,
+              "p95_ms": 0.01042,
+              "p99_ms": 0.01631,
+              "total_ms": 1.127114
+            },
+            "decode_ms": {
+              "samples": 160,
+              "p50_ms": 135.94523999999998,
+              "p95_ms": 142.797296,
+              "p99_ms": 148.341479,
+              "total_ms": 21770.497859
+            },
+            "resize_ms": {
+              "samples": 160,
+              "p50_ms": 1.690944,
+              "p95_ms": 1.943594,
+              "p99_ms": 2.431946,
+              "total_ms": 278.140358
+            },
+            "total_ms": {
+              "samples": 160,
+              "p50_ms": 137.657493,
+              "p95_ms": 144.57025000000002,
+              "p99_ms": 150.075434,
+              "total_ms": 22050.060011
+            }
+          },
+          "rss_per_iteration_kib": [
+            18456,
+            18456,
+            18456,
+            18456,
+            18456,
+            18456,
+            18456,
+            18868,
+            18868,
+            18868,
+            18868,
+            18868,
+            18868,
+            18868,
+            18868,
+            18868,
+            18868,
+            18868,
+            18868,
+            18868
+          ],
+          "output_layouts": [
+            {
+              "decoded_bytes": 1266750,
+              "decoded_dimensions": [
+                750,
+                563
+              ],
+              "thumbnail_bytes": 49152,
+              "thumbnail_dimensions": [
+                128,
+                96
+              ]
+            }
+          ],
+          "encoded_bytes_range": [
+            7099911,
+            7121942
+          ]
+        },
+        "native": {
+          "limits": "Source read outside timing; total = header + decode + identical image::thumbnail/RGBA. RSS Linux sampled after decode, not peak scratch.",
+          "mode": "native",
+          "repetitions": 20,
+          "rss_after_kib": 17504,
+          "rss_before_kib": 2532,
+          "process_peak_rss_kib": 18780,
+          "distributions": {
+            "header_ms": {
+              "samples": 160,
+              "p50_ms": 0.00923,
+              "p95_ms": 0.01217,
+              "p99_ms": 0.02016,
+              "total_ms": 1.562925
+            },
+            "decode_ms": {
+              "samples": 160,
+              "p50_ms": 65.92660000000001,
+              "p95_ms": 67.52538299999999,
+              "p99_ms": 69.96379,
+              "total_ms": 10584.384426
+            },
+            "resize_ms": {
+              "samples": 160,
+              "p50_ms": 1.702614,
+              "p95_ms": 1.775454,
+              "p99_ms": 2.091465,
+              "total_ms": 274.554815
+            },
+            "total_ms": {
+              "samples": 160,
+              "p50_ms": 67.64619400000001,
+              "p95_ms": 69.307167,
+              "p99_ms": 72.222445,
+              "total_ms": 10860.611786
+            }
+          },
+          "rss_per_iteration_kib": [
+            11868,
+            18824,
+            17504,
+            17504,
+            17504,
+            17504,
+            17504,
+            17504,
+            17504,
+            17504,
+            17504,
+            17504,
+            17504,
+            17504,
+            17504,
+            17504,
+            17504,
+            17504,
+            17504,
+            17504
+          ],
+          "output_layouts": [
+            {
+              "decoded_bytes": 1266750,
+              "decoded_dimensions": [
+                750,
+                563
+              ],
+              "thumbnail_bytes": 49152,
+              "thumbnail_dimensions": [
+                128,
+                96
+              ]
+            }
+          ],
+          "encoded_bytes_range": [
+            7099911,
+            7121942
+          ]
+        }
+      },
+      "native_build": {
+        "version": "3.2.0",
+        "source_url": "https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.2.0/libjpeg-turbo-3.2.0.tar.gz",
+        "source_sha256": "6f30092cef9fb839779646608f4ee14ae3cbac989c47fa05e841b0841f09878e",
+        "cmake_command": [
+          "cmake",
+          "-S",
+          "/home/gurp/softs/tack/target/native/source/libjpeg-turbo-3.2.0",
+          "-B",
+          "/home/gurp/softs/tack/target/native/turbojpeg-build",
+          "-DCMAKE_INSTALL_PREFIX=/home/gurp/softs/tack/target/native/libjpeg-turbo-3.2.0",
+          "-DCMAKE_INSTALL_LIBDIR=lib",
+          "-DCMAKE_BUILD_TYPE=Release",
+          "-DENABLE_SHARED=OFF",
+          "-DENABLE_STATIC=ON",
+          "-DWITH_TURBOJPEG=ON",
+          "-DREQUIRE_SIMD=ON",
+          "-DWITH_JAVA=OFF"
+        ],
+        "nasm": "NASM version 2.16.01",
+        "library_sha256": {
+          "libturbojpeg.a": "e3fb98a1b4e3814c1e620b6e599b4a293badfde689a49430e0d1a43455269658"
+        }
+      },
+      "limitation": "Fresh processes; source I/O outside codec timings; same resize; no PNG encoding. Postdecode RSS samples miss scratch peaks; time -v captures process peak. Repeated-cycle plateau is a diagnostic, not a proof against all leaks.",
+      "raw": "benchmark-results/mission0_6-micro/summary.json",
+      "raw_sha256": "19d819d5158c51baf94ca8a7f89adbfbafa9bb892fcb84d1764597579110b0ec"
+    },
+    "photo": {
+      "schema": 1,
+      "harness_sha256": "cbc150f6fe0a9c1e33a03ec886a4322f0d016a4bd6f7375b60b4ecf15d56f931",
+      "binary_sha256": "6c9bb28d82bfd3fc4ef6748e07ea1492ac4a09bfaf06f03292df7435044e9061",
+      "comparisons": [
+        {
+          "source": "baseline420.jpg",
+          "source_sha256": "9924dafdb3951e4c31d5391e730b43cc5bc5fed8f90ffd89b32e45f97edc5638",
+          "dimensions": [
+            128,
+            85
+          ],
+          "mean_absolute_rgb_difference": [
+            1.1022058823529413,
+            0.4225183823529412,
+            1.8596507352941176
+          ],
+          "psnr_db": 43.46608910066859
+        },
+        {
+          "source": "baseline444.jpg",
+          "source_sha256": "48b1b421c67df0651f2889af356f53f8a01af9ac8f1a8a3cae34edde4a555690",
+          "dimensions": [
+            128,
+            85
+          ],
+          "mean_absolute_rgb_difference": [
+            1.1583639705882354,
+            0.21323529411764705,
+            1.3613970588235293
+          ],
+          "psnr_db": 46.802797573093926
+        },
+        {
+          "source": "narrow.jpg",
+          "source_sha256": "d76d6d8ca77ba944ab15653bbae7da30526cdc1a65863e7952279bd407d23df0",
+          "dimensions": [
+            7,
+            128
+          ],
+          "mean_absolute_rgb_difference": [
+            1.0915178571428572,
+            0.46875,
+            1.7544642857142858
+          ],
+          "psnr_db": 44.00025200838128
+        },
+        {
+          "source": "orientation6.jpg",
+          "source_sha256": "fee5dfef0074dc957eb134fd431bbbd08a473d3ff4f11d42db4dba84ee479d50",
+          "dimensions": [
+            128,
+            85
+          ],
+          "mean_absolute_rgb_difference": [
+            1.1022058823529413,
+            0.4225183823529412,
+            1.8596507352941176
+          ],
+          "psnr_db": 43.46608910066859
+        },
+        {
+          "source": "original.jpg",
+          "source_sha256": "5619a95628ab5a3a6f12ee9fc284abe7c9dd64910052543d831af0f167386b14",
+          "dimensions": [
+            128,
+            85
+          ],
+          "mean_absolute_rgb_difference": [
+            1.1493566176470589,
+            0.20220588235294118,
+            1.339705882352941
+          ],
+          "psnr_db": 47.01075757740722
+        },
+        {
+          "source": "progressive420.jpg",
+          "source_sha256": "33f656a22c09baf0e3543b7cb5cbf5e9be0dd48296282a23dbebfd0f00381070",
+          "dimensions": [
+            128,
+            85
+          ],
+          "mean_absolute_rgb_difference": [
+            1.1022058823529413,
+            0.4225183823529412,
+            1.8596507352941176
+          ],
+          "psnr_db": 43.46608910066859
+        }
+      ],
+      "variants": {
+        "reference": {
+          "limits": "Source read outside timing; total = header + decode + identical image::thumbnail/RGBA. RSS Linux sampled after decode, not peak scratch.",
+          "mode": "reference",
+          "repetitions": 20,
+          "rss_after_kib": 24540,
+          "rss_before_kib": 2500,
+          "process_peak_rss_kib": 24120,
+          "distributions": {
+            "header_ms": {
+              "samples": 120,
+              "p50_ms": 0.00404,
+              "p95_ms": 0.00818,
+              "p99_ms": 0.00992,
+              "total_ms": 0.515971
+            },
+            "decode_ms": {
+              "samples": 120,
+              "p50_ms": 38.633114000000006,
+              "p95_ms": 92.634955,
+              "p99_ms": 96.943055,
+              "total_ms": 4728.54595
+            },
+            "resize_ms": {
+              "samples": 120,
+              "p50_ms": 0.700832,
+              "p95_ms": 0.8524719999999999,
+              "p99_ms": 1.120492,
+              "total_ms": 74.134249
+            },
+            "total_ms": {
+              "samples": 120,
+              "p50_ms": 39.342285,
+              "p95_ms": 93.334217,
+              "p99_ms": 98.517468,
+              "total_ms": 4805.315394
+            }
+          },
+          "rss_per_iteration_kib": [
+            8628,
+            24152,
+            24200,
+            24200,
+            24200,
+            24200,
+            24200,
+            24200,
+            24200,
+            24200,
+            24200,
+            24248,
+            24248,
+            24248,
+            24308,
+            24308,
+            24540,
+            24540,
+            24540,
+            24540
+          ],
+          "output_layouts": [
+            {
+              "decoded_bytes": 294912,
+              "decoded_dimensions": [
+                384,
+                256
+              ],
+              "thumbnail_bytes": 43520,
+              "thumbnail_dimensions": [
+                128,
+                85
+              ]
+            },
+            {
+              "decoded_bytes": 9984,
+              "decoded_dimensions": [
+                13,
+                256
+              ],
+              "thumbnail_bytes": 3584,
+              "thumbnail_dimensions": [
+                7,
+                128
+              ]
+            }
+          ],
+          "encoded_bytes_range": [
+            50980,
+            2954043
+          ]
+        },
+        "native": {
+          "limits": "Source read outside timing; total = header + decode + identical image::thumbnail/RGBA. RSS Linux sampled after decode, not peak scratch.",
+          "mode": "native",
+          "repetitions": 20,
+          "rss_after_kib": 25220,
+          "rss_before_kib": 2492,
+          "process_peak_rss_kib": 25072,
+          "distributions": {
+            "header_ms": {
+              "samples": 120,
+              "p50_ms": 0.00463,
+              "p95_ms": 0.01098,
+              "p99_ms": 0.013730000000000001,
+              "total_ms": 0.711821
+            },
+            "decode_ms": {
+              "samples": 120,
+              "p50_ms": 20.410119,
+              "p95_ms": 65.751229,
+              "p99_ms": 73.792668,
+              "total_ms": 2875.94458
+            },
+            "resize_ms": {
+              "samples": 120,
+              "p50_ms": 0.703772,
+              "p95_ms": 0.733232,
+              "p99_ms": 0.7608619999999999,
+              "total_ms": 71.851503
+            },
+            "total_ms": {
+              "samples": 120,
+              "p50_ms": 21.108141,
+              "p95_ms": 66.46864099999999,
+              "p99_ms": 74.50345,
+              "total_ms": 2948.559954
+            }
+          },
+          "rss_per_iteration_kib": [
+            8568,
+            25220,
+            25220,
+            25220,
+            25220,
+            25220,
+            25220,
+            25220,
+            25220,
+            25220,
+            25220,
+            25220,
+            25220,
+            25220,
+            25220,
+            25220,
+            25220,
+            25220,
+            25220,
+            25220
+          ],
+          "output_layouts": [
+            {
+              "decoded_bytes": 294912,
+              "decoded_dimensions": [
+                384,
+                256
+              ],
+              "thumbnail_bytes": 43520,
+              "thumbnail_dimensions": [
+                128,
+                85
+              ]
+            },
+            {
+              "decoded_bytes": 9984,
+              "decoded_dimensions": [
+                13,
+                256
+              ],
+              "thumbnail_bytes": 3584,
+              "thumbnail_dimensions": [
+                7,
+                128
+              ]
+            }
+          ],
+          "encoded_bytes_range": [
+            50980,
+            2954043
+          ]
+        }
+      },
+      "native_build": {
+        "version": "3.2.0",
+        "source_url": "https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.2.0/libjpeg-turbo-3.2.0.tar.gz",
+        "source_sha256": "6f30092cef9fb839779646608f4ee14ae3cbac989c47fa05e841b0841f09878e",
+        "cmake_command": [
+          "cmake",
+          "-S",
+          "/home/gurp/softs/tack/target/native/source/libjpeg-turbo-3.2.0",
+          "-B",
+          "/home/gurp/softs/tack/target/native/turbojpeg-build",
+          "-DCMAKE_INSTALL_PREFIX=/home/gurp/softs/tack/target/native/libjpeg-turbo-3.2.0",
+          "-DCMAKE_INSTALL_LIBDIR=lib",
+          "-DCMAKE_BUILD_TYPE=Release",
+          "-DENABLE_SHARED=OFF",
+          "-DENABLE_STATIC=ON",
+          "-DWITH_TURBOJPEG=ON",
+          "-DREQUIRE_SIMD=ON",
+          "-DWITH_JAVA=OFF"
+        ],
+        "nasm": "NASM version 2.16.01",
+        "library_sha256": {
+          "libturbojpeg.a": "e3fb98a1b4e3814c1e620b6e599b4a293badfde689a49430e0d1a43455269658"
+        }
+      },
+      "limitation": "Fresh processes; source I/O outside codec timings; same resize; no PNG encoding. Postdecode RSS samples miss scratch peaks; time -v captures process peak. Repeated-cycle plateau is a diagnostic, not a proof against all leaks.",
+      "photo_attribution": {
+        "source": "https://upload.wikimedia.org/wikipedia/commons/3/36/Hopetoun_falls.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Hopetoun_falls.jpg",
+        "author": "DAVID ILIFF",
+        "license": "https://creativecommons.org/licenses/by-sa/3.0/",
+        "changes": "JPEG reencoding, narrow crop, EXIF orientation test; derivatives CC BY-SA 3.0; images not committed",
+        "original_sha256": "5619a95628ab5a3a6f12ee9fc284abe7c9dd64910052543d831af0f167386b14",
+        "variants": [
+          {
+            "name": "baseline420",
+            "dimensions": [
+              3072,
+              2048
+            ],
+            "progressive": false,
+            "subsampling": 2,
+            "sha256": "9924dafdb3951e4c31d5391e730b43cc5bc5fed8f90ffd89b32e45f97edc5638",
+            "orientation": 1
+          },
+          {
+            "name": "progressive420",
+            "dimensions": [
+              3072,
+              2048
+            ],
+            "progressive": true,
+            "subsampling": 2,
+            "sha256": "33f656a22c09baf0e3543b7cb5cbf5e9be0dd48296282a23dbebfd0f00381070",
+            "orientation": 1
+          },
+          {
+            "name": "baseline444",
+            "dimensions": [
+              3072,
+              2048
+            ],
+            "progressive": false,
+            "subsampling": 0,
+            "sha256": "48b1b421c67df0651f2889af356f53f8a01af9ac8f1a8a3cae34edde4a555690",
+            "orientation": 1
+          },
+          {
+            "name": "narrow",
+            "dimensions": [
+              100,
+              2048
+            ],
+            "progressive": false,
+            "subsampling": 2,
+            "sha256": "d76d6d8ca77ba944ab15653bbae7da30526cdc1a65863e7952279bd407d23df0",
+            "orientation": 1
+          },
+          {
+            "name": "orientation6",
+            "dimensions": [
+              3072,
+              2048
+            ],
+            "progressive": false,
+            "subsampling": 2,
+            "sha256": "fee5dfef0074dc957eb134fd431bbbd08a473d3ff4f11d42db4dba84ee479d50",
+            "orientation": 6
+          }
+        ]
+      },
+      "raw": "benchmark-results/mission0_6-photo/summary.json",
+      "raw_sha256": "c609c6b195c114f7c42f95948df058dc57069affec8641ce7bea8573279e376f"
+    },
+    "progressive": {
+      "schema": 1,
+      "harness_sha256": "cbc150f6fe0a9c1e33a03ec886a4322f0d016a4bd6f7375b60b4ecf15d56f931",
+      "binary_sha256": "6c9bb28d82bfd3fc4ef6748e07ea1492ac4a09bfaf06f03292df7435044e9061",
+      "comparisons": [
+        {
+          "source": "progressive-0.jpg",
+          "source_sha256": "30c263f0dd25097dd6e3eb68ab0f4721e7fdf014773ca2f6a2abae85f3957792",
+          "dimensions": [
+            128,
+            96
+          ],
+          "mean_absolute_rgb_difference": [
+            1.18212890625,
+            0.105712890625,
+            1.3680826822916667
+          ],
+          "psnr_db": 47.10551970901677
+        },
+        {
+          "source": "progressive-2.jpg",
+          "source_sha256": "adf1aee6c184f0f52f12a6010bad0726ec000b17ae8bb1b4f14516ff1c305710",
+          "dimensions": [
+            128,
+            96
+          ],
+          "mean_absolute_rgb_difference": [
+            3.3900553385416665,
+            1.8844401041666667,
+            4.065348307291667
+          ],
+          "psnr_db": 35.85863109223362
+        }
+      ],
+      "variants": {
+        "reference": {
+          "limits": "Source read outside timing; total = header + decode + identical image::thumbnail/RGBA. RSS Linux sampled after decode, not peak scratch.",
+          "mode": "reference",
+          "repetitions": 20,
+          "rss_after_kib": 11044,
+          "rss_before_kib": 2484,
+          "process_peak_rss_kib": 175620,
+          "distributions": {
+            "header_ms": {
+              "samples": 40,
+              "p50_ms": 0.00665,
+              "p95_ms": 0.01829,
+              "p99_ms": 0.019020000000000002,
+              "total_ms": 0.303002
+            },
+            "decode_ms": {
+              "samples": 40,
+              "p50_ms": 467.454313,
+              "p95_ms": 486.356334,
+              "p99_ms": 487.816849,
+              "total_ms": 15295.847373999999
+            },
+            "resize_ms": {
+              "samples": 40,
+              "p50_ms": 1.734217,
+              "p95_ms": 1.979177,
+              "p99_ms": 1.9898569999999998,
+              "total_ms": 70.035605
+            },
+            "total_ms": {
+              "samples": 40,
+              "p50_ms": 485.520741,
+              "p95_ms": 505.886018,
+              "p99_ms": 505.977188,
+              "total_ms": 15874.561418
+            }
+          },
+          "rss_per_iteration_kib": [
+            10816,
+            36232,
+            12236,
+            12236,
+            12236,
+            12240,
+            12248,
+            17368,
+            17368,
+            17368,
+            17368,
+            17368,
+            17368,
+            17368,
+            17368,
+            17368,
+            17368,
+            17368,
+            17368,
+            17368
+          ],
+          "output_layouts": [
+            {
+              "decoded_bytes": 1266750,
+              "decoded_dimensions": [
+                750,
+                563
+              ],
+              "thumbnail_bytes": 49152,
+              "thumbnail_dimensions": [
+                128,
+                96
+              ]
+            }
+          ],
+          "encoded_bytes_range": [
+            4205423,
+            6606024
+          ]
+        },
+        "native": {
+          "limits": "Source read outside timing; total = header + decode + identical image::thumbnail/RGBA. RSS Linux sampled after decode, not peak scratch.",
+          "mode": "native",
+          "repetitions": 20,
+          "rss_after_kib": 10044,
+          "rss_before_kib": 2464,
+          "process_peak_rss_kib": 174696,
+          "distributions": {
+            "header_ms": {
+              "samples": 40,
+              "p50_ms": 0.00977,
+              "p95_ms": 0.012289999999999999,
+              "p99_ms": 0.02268,
+              "total_ms": 0.394661
+            },
+            "decode_ms": {
+              "samples": 40,
+              "p50_ms": 370.001955,
+              "p95_ms": 377.029182,
+              "p99_ms": 378.705848,
+              "total_ms": 11928.224482
+            },
+            "resize_ms": {
+              "samples": 40,
+              "p50_ms": 1.741437,
+              "p95_ms": 1.793856,
+              "p99_ms": 1.8261370000000001,
+              "total_ms": 69.816515
+            },
+            "total_ms": {
+              "samples": 40,
+              "p50_ms": 371.76368199999996,
+              "p95_ms": 378.852838,
+              "p99_ms": 380.468974,
+              "total_ms": 11998.472538
+            }
+          },
+          "rss_per_iteration_kib": [
+            11108,
+            11236,
+            11236,
+            11236,
+            11236,
+            16368,
+            16368,
+            16368,
+            16368,
+            16368,
+            16368,
+            16368,
+            16368,
+            16368,
+            16368,
+            16368,
+            16368,
+            16368,
+            16368,
+            16368
+          ],
+          "output_layouts": [
+            {
+              "decoded_bytes": 1266750,
+              "decoded_dimensions": [
+                750,
+                563
+              ],
+              "thumbnail_bytes": 49152,
+              "thumbnail_dimensions": [
+                128,
+                96
+              ]
+            }
+          ],
+          "encoded_bytes_range": [
+            4205423,
+            6606024
+          ]
+        }
+      },
+      "native_build": {
+        "version": "3.2.0",
+        "source_url": "https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.2.0/libjpeg-turbo-3.2.0.tar.gz",
+        "source_sha256": "6f30092cef9fb839779646608f4ee14ae3cbac989c47fa05e841b0841f09878e",
+        "cmake_command": [
+          "cmake",
+          "-S",
+          "/home/gurp/softs/tack/target/native/source/libjpeg-turbo-3.2.0",
+          "-B",
+          "/home/gurp/softs/tack/target/native/turbojpeg-build",
+          "-DCMAKE_INSTALL_PREFIX=/home/gurp/softs/tack/target/native/libjpeg-turbo-3.2.0",
+          "-DCMAKE_INSTALL_LIBDIR=lib",
+          "-DCMAKE_BUILD_TYPE=Release",
+          "-DENABLE_SHARED=OFF",
+          "-DENABLE_STATIC=ON",
+          "-DWITH_TURBOJPEG=ON",
+          "-DREQUIRE_SIMD=ON",
+          "-DWITH_JAVA=OFF"
+        ],
+        "nasm": "NASM version 2.16.01",
+        "library_sha256": {
+          "libturbojpeg.a": "e3fb98a1b4e3814c1e620b6e599b4a293badfde689a49430e0d1a43455269658"
+        }
+      },
+      "limitation": "Fresh processes; source I/O outside codec timings; same resize; no PNG encoding. Postdecode RSS samples miss scratch peaks; time -v captures process peak. Repeated-cycle plateau is a diagnostic, not a proof against all leaks.",
+      "raw": "benchmark-results/mission0_6-progressive/summary.json",
+      "raw_sha256": "64241d26449e4a7fa2f08075afb7a68a0562a0be18ab2cca01e9b840c7923d8a"
+    }
+  }
+}

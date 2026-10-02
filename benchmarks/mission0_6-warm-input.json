@@ -1,0 +1,8 @@
+{
+  "count": 1000,
+  "bytes": 46821679,
+  "origin": "benchmark-results/mission0_5-selected/cold/board-tour-cache",
+  "limitation": "Only Mission0.5 Rust-derived 128px PNGs copied, identical A/B inputs; no medium/detail representations; original cache unchanged.",
+  "raw": "benchmark-results/mission0_6-warm-input/provenance.json",
+  "sha256": "27e2026bcdde26c4e56c165431bc7a0620ee89fa9b245060b4b0777768c5e9ab"
+}

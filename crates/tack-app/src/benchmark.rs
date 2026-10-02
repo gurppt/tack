@@ -134,6 +134,7 @@ impl Measurements {
                 .collect::<Vec<_>>()
         });
         let streaming = serde_json::json!({
+            "thumbnail_decoder": tack_assets::THUMBNAIL_DECODER_ID,
             "platform_events": self.platform_events,
             "pending_limit": session.options.workers * tack_assets::MAX_PENDING_PER_WORKER,
             "upload_count_limit": tack_render::MAX_UPLOADS,

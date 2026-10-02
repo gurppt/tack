@@ -14,6 +14,7 @@ tack-assets = { version = "=0.0.1", path = "crates/tack-assets" }
 tack-render = { version = "=0.0.1", path = "crates/tack-render" }
 image = { version = "0.25.10", default-features = false, features = ["png"] }
 jpeg-decoder = { version = "=0.3.2", default-features = false }
+turbojpeg = { version = "=1.5.1", default-features = false }
 wgpu = { version = "27.0.1", default-features = false, features = ["std", "vulkan", "dx12", "gles", "wgsl"] }
 winit = { version = "0.30.12", default-features = false, features = ["rwh_06", "x11", "wayland", "wayland-dlopen"] }
 pollster = "0.4.0"

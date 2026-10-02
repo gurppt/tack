@@ -13,6 +13,10 @@ fn uploaded_texture_reaches_render_target() -> Result<(), AssetError> {
         wgpu::TextureFormat::Rgba8UnormSrgb,
         1024 * 1024,
     ))?;
+    eprintln!(
+        "GPU smoke adapter: {} ({:?}, {:?})",
+        gpu.adapter_info.name, gpu.adapter_info.backend, gpu.adapter_info.device_type
+    );
     let target = gpu.device.create_texture(&wgpu::TextureDescriptor {
         label: Some("smoke target"),
         size: wgpu::Extent3d {

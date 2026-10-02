@@ -1,0 +1,2853 @@
+{
+  "schema": 1,
+  "cold": {
+    "environment": {
+      "platform": "Linux-7.1.5-76070105-generic-x86_64-with-glibc2.39",
+      "processor": "x86_64",
+      "manifest_sha256": "8bd27d9631560213365df47b842e37720421703608b13e79ee54f8524ad44af6",
+      "headless": false,
+      "corpus_objects": 1000,
+      "corpus_seed": 20261002,
+      "corpus_sources": 32,
+      "pillow_version": "10.2.0",
+      "limitations": "Distinct asset IDs and paths reuse hardlinked JPEG content. OS filesystem caching and visual diversity differ from 1000 unique photographs.",
+      "source_sha256": "bef6584c18f8d087fb4dab8f21e03f990bb4ebcc2298670a25a6f3f51b472b91",
+      "binary_sha256": "275a1e7902397c89ce0e519423bf6d3042bb2a57f3ea2191be8252954d3fdd4c",
+      "executed_harness_sha256": "f2fcec04401de39b50c3188c272f31bbe1c6851827a2b719dabee201076491aa",
+      "available_native_build": {
+        "version": "3.2.0",
+        "source_url": "https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.2.0/libjpeg-turbo-3.2.0.tar.gz",
+        "source_sha256": "6f30092cef9fb839779646608f4ee14ae3cbac989c47fa05e841b0841f09878e",
+        "cmake_command": [
+          "cmake",
+          "-S",
+          "/home/gurp/softs/tack/target/native/source/libjpeg-turbo-3.2.0",
+          "-B",
+          "/home/gurp/softs/tack/target/native/turbojpeg-build",
+          "-DCMAKE_INSTALL_PREFIX=/home/gurp/softs/tack/target/native/libjpeg-turbo-3.2.0",
+          "-DCMAKE_INSTALL_LIBDIR=lib",
+          "-DCMAKE_BUILD_TYPE=Release",
+          "-DENABLE_SHARED=OFF",
+          "-DENABLE_STATIC=ON",
+          "-DWITH_TURBOJPEG=ON",
+          "-DREQUIRE_SIMD=ON",
+          "-DWITH_JAVA=OFF"
+        ],
+        "nasm": "NASM version 2.16.01"
+      },
+      "cpu": "Architecture:                            x86_64\nCPU op-mode(s):                          32-bit, 64-bit\nAddress sizes:                           43 bits physical, 48 bits virtual\nByte Order:                              Little Endian\nCPU(s):                                  16\nOn-line CPU(s) list:                     0-15\nVendor ID:                               AuthenticAMD\nModel name:                              AMD Ryzen 7 2700X Eight-Core Processor\nCPU family:                              23\nModel:                                   8\nThread(s) per core:                      2\nCore(s) per socket:                      8\nSocket(s):                               1\nStepping:                                2\nFrequency boost:                         disabled\nCPU(s) scaling MHz:                      53%\nCPU max MHz:                             4350.0000\nCPU min MHz:                             2200.0000\nBogoMIPS:                                7799.56\nFlags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl nonstop_tsc cpuid extd_apicid aperfmperf rapl pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpb hw_pstate ssbd ibpb vmmcall fsgsbase bmi1 avx2 smep bmi2 rdseed adx smap clflushopt sha_ni xsaveopt xsavec xgetbv1 clzero xsaveerptr arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif overflow_recov succor smca sev sev_es\nVirtualization:                          AMD-V\nL1d cache:                               256 KiB (8 instances)\nL1i cache:                               512 KiB (8 instances)\nL2 cache:                                4 MiB (8 instances)\nL3 cache:                                16 MiB (2 instances)\nNUMA node(s):                            1\nNUMA node0 CPU(s):                       0-15\nVulnerability Gather data sampling:      Not affected\nVulnerability Ghostwrite:                Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Old microcode:             Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Mitigation; untrained return thunk; SMT vulnerable\nVulnerability Spec rstack overflow:      Mitigation; Safe RET\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; Retpolines; IBPB conditional; STIBP disabled; RSB filling; PBRSB-eIBRS Not affected; BHI Not affected\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Mitigation; IBPB before exit to userspace\n",
+      "memory": "               total        used        free      shared  buff/cache   available\nMem:     33549754368  7325933568  7971860480    21999616 21062758400 26223820800\nSwap:    21474299904   158973952 21315325952\n",
+      "gpu_pci": "00:00.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Root Complex [1022:1450]\n00:00.2 IOMMU [0806]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) I/O Memory Management Unit [1022:1451]\n00:01.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-1fh) PCIe Dummy Host Bridge [1022:1452]\n00:01.3 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) PCIe GPP Bridge [1022:1453]\n00:02.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-1fh) PCIe Dummy Host Bridge [1022:1452]\n00:03.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-1fh) PCIe Dummy Host Bridge [1022:1452]\n00:03.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) PCIe GPP Bridge [1022:1453]\n00:03.2 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) PCIe GPP Bridge [1022:1453]\n00:04.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-1fh) PCIe Dummy Host Bridge [1022:1452]\n00:07.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-1fh) PCIe Dummy Host Bridge [1022:1452]\n00:07.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Internal PCIe GPP Bridge 0 to Bus B [1022:1454]\n00:08.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-1fh) PCIe Dummy Host Bridge [1022:1452]\n00:08.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Internal PCIe GPP Bridge 0 to Bus B [1022:1454]\n00:14.0 SMBus [0c05]: Advanced Micro Devices, Inc. [AMD] FCH SMBus Controller [1022:790b] (rev 59)\n00:14.3 ISA bridge [0601]: Advanced Micro Devices, Inc. [AMD] FCH LPC Bridge [1022:790e] (rev 51)\n00:18.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 0 [1022:1460]\n00:18.1 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 1 [1022:1461]\n00:18.2 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 2 [1022:1462]\n00:18.3 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 3 [1022:1463]\n00:18.4 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 4 [1022:1464]\n00:18.5 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 5 [1022:1465]\n00:18.6 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 6 [1022:1466]\n00:18.7 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 7 [1022:1467]\n01:00.0 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] Device [1022:43d0] (rev 01)\n01:00.1 SATA controller [0106]: Advanced Micro Devices, Inc. [AMD] 400 Series Chipset SATA Controller [1022:43c8] (rev 01)\n01:00.2 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] 400 Series Chipset PCIe Bridge [1022:43c6] (rev 01)\n02:00.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] 400 Series Chipset PCIe Port [1022:43c7] (rev 01)\n02:04.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] 400 Series Chipset PCIe Port [1022:43c7] (rev 01)\n02:06.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] 400 Series Chipset PCIe Port [1022:43c7] (rev 01)\n02:07.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] 400 Series Chipset PCIe Port [1022:43c7] (rev 01)\n02:09.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] 400 Series Chipset PCIe Port [1022:43c7] (rev 01)\n04:00.0 USB controller [0c03]: ASMedia Technology Inc. ASM1142 USB 3.1 Host Controller [1b21:1242]\n06:00.0 Ethernet controller [0200]: Intel Corporation I211 Gigabit Network Connection [8086:1539] (rev 03)\n08:00.0 VGA compatible controller [0300]: NVIDIA Corporation TU106 [GeForce RTX 2060 Rev. A] [10de:1f08] (rev a1)\n08:00.1 Audio device [0403]: NVIDIA Corporation TU106 High Definition Audio Controller [10de:10f9] (rev a1)\n08:00.2 USB controller [0c03]: NVIDIA Corporation TU106 USB 3.1 Host Controller [10de:1ada] (rev a1)\n08:00.3 Serial bus controller [0c80]: NVIDIA Corporation TU106 USB Type-C UCSI Controller [10de:1adb] (rev a1)\n09:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc. [AMD/ATI] Hawaii PRO [Radeon R9 290/390] [1002:67b1]\n09:00.1 Audio device [0403]: Advanced Micro Devices, Inc. [AMD/ATI] Hawaii HDMI Audio [Radeon R9 290/290X / 390/390X] [1002:aac8]\n0a:00.0 Non-Essential Instrumentation [1300]: Advanced Micro Devices, Inc. [AMD] Zeppelin/Raven/Raven2 PCIe Dummy Function [1022:145a]\n0a:00.2 Encryption controller [1080]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Platform Security Processor (PSP) 3.0 Device [1022:1456]\n0a:00.3 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] Zeppelin USB 3.0 xHCI Compliant Host Controller [1022:145f]\n0b:00.0 Non-Essential Instrumentation [1300]: Advanced Micro Devices, Inc. [AMD] Zeppelin/Renoir PCIe Dummy Function [1022:1455]\n0b:00.2 SATA controller [0106]: Advanced Micro Devices, Inc. [AMD] FCH SATA Controller [AHCI mode] [1022:7901] (rev 51)\n0b:00.3 Audio device [0403]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) HD Audio Controller [1022:1457]\n",
+      "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\n",
+      "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)\n",
+      "nvidia": "name, driver_version, memory.total [MiB]\nNVIDIA GeForce RTX 2060, 580.173.02, 6144 MiB\n"
+    },
+    "traces": [
+      {
+        "acquire": {
+          "max_ms": 0.367301,
+          "p50_ms": 0.01946,
+          "p99_ms": 0.0513,
+          "samples": 709
+        },
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "callback": {
+          "max_ms": 12.11399,
+          "p50_ms": 0.324151,
+          "p99_ms": 11.082226,
+          "samples": 709
+        },
+        "completed_submissions_at_report": 709,
+        "coverage_episodes_dropped": 0,
+        "cpu_cache_peak_bytes": 32047104,
+        "cpu_max_ms": 6.200075,
+        "cpu_p50_ms": 0.18943000000000002,
+        "cpu_p99_ms": 2.529066,
+        "device_type": "DiscreteGpu",
+        "driver": "NVIDIA",
+        "driver_info": "580.173.02",
+        "duration_seconds": 12.0,
+        "failed_acquire_max_ms": 0.0,
+        "final": {
+          "acquire_ms": 0.015909999999999997,
+          "callback_ms": 0.254211,
+          "completed_submissions": 708,
+          "cpu_cache_bytes": 30720000,
+          "cpu_evictions": 72,
+          "cpu_ms": 0.154161,
+          "cpu_thumbnail_bytes": 2408448,
+          "culled": 994,
+          "decode_errors": 0,
+          "decode_ms": 22614.275162999995,
+          "disk_hits": 0,
+          "elapsed_ms": 12591.968839,
+          "gpu_evictions": 68,
+          "gpu_resident_bytes": 69255168,
+          "gpu_thumbnail_bytes": 2408448,
+          "in_flight": 1,
+          "lods": [
+            1,
+            3,
+            1
+          ],
+          "pending": 2,
+          "placeholders": 1,
+          "present_ms": 0.07843,
+          "requested_covered": 1,
+          "stale": 1,
+          "submitted": true,
+          "upload_bytes": 0,
+          "upload_cpu_ms": 0.0,
+          "uploads": 0,
+          "visible": 6
+        },
+        "first_visible_content_ms": 863.335951,
+        "frame_attempts": 709,
+        "gpu_backpressure_frames": 0,
+        "gpu_pass": {
+          "max_ms": 0.645056,
+          "p50_ms": 0.126976,
+          "p99_ms": 0.559232,
+          "samples": 709
+        },
+        "gpu_resident_peak_bytes": 69255168,
+        "gpu_timing_dropped": 0,
+        "gpu_timing_note": "Optional asynchronous timestamps measure the canvas render pass only, excluding uploads, surface acquisition and presentation. CPU callback and attempt cadence do not measure monitor presentation latency.",
+        "headless": false,
+        "interval_p50_ms": 16.76579099999981,
+        "interval_p99_ms": 19.12132600000041,
+        "objects": 1000,
+        "pending_limit": 16,
+        "pending_peak": 4,
+        "platform_events": [
+          {
+            "event": "initialize",
+            "scale_factor": 1.0,
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "resize",
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "occluded",
+            "occluded": false
+          }
+        ],
+        "prefetch": "none",
+        "present": {
+          "max_ms": 11.979649,
+          "p50_ms": 0.080751,
+          "p99_ms": 10.919997,
+          "samples": 709
+        },
+        "rejected_cache_entries": 0,
+        "rss_high_water_kib": 533044,
+        "scenario": "pan-normal",
+        "schema": 1,
+        "startup_ms": 604.6159250000001,
+        "submitted_frames": 709,
+        "surface_other_errors": 0,
+        "surface_reconfigures": 0,
+        "surface_timeouts": 0,
+        "thumbnail_decoder": "jpeg-decoder 0.3.2 DCT",
+        "upload_count_limit": 8,
+        "worker_profile_dropped": 0,
+        "worker_retention_peak_bytes": 58589184,
+        "worker_stage_names": [
+          "source_read",
+          "header",
+          "decode",
+          "resize",
+          "encode",
+          "cache_write",
+          "cache_read",
+          "cache_maintenance",
+          "queue_wait",
+          "cpu_insert",
+          "retire"
+        ],
+        "workers": 2,
+        "worker_stages": {
+          "source_read": {
+            "samples": 128,
+            "p50_ms": 1.464303,
+            "p95_ms": 4.191751,
+            "p99_ms": 9.162602000000001,
+            "total_ms": 233.52791100000002,
+            "bytes": 910009810
+          },
+          "header": {
+            "samples": 128,
+            "p50_ms": 0.00589,
+            "p95_ms": 0.00933,
+            "p99_ms": 0.01203,
+            "total_ms": 0.802582,
+            "bytes": 0
+          },
+          "decode": {
+            "samples": 128,
+            "p50_ms": 129.059943,
+            "p95_ms": 141.838984,
+            "p99_ms": 152.89256,
+            "total_ms": 16655.642138,
+            "bytes": 769608000
+          },
+          "resize": {
+            "samples": 127,
+            "p50_ms": 7.5397989999999995,
+            "p95_ms": 135.286698,
+            "p99_ms": 141.919923,
+            "total_ms": 4648.178652,
+            "bytes": 1209578754
+          },
+          "encode": {
+            "samples": 127,
+            "p50_ms": 1.676594,
+            "p95_ms": 27.972327,
+            "p99_ms": 28.78348,
+            "total_ms": 968.443386,
+            "bytes": 256268346
+          },
+          "cache_write": {
+            "samples": 127,
+            "p50_ms": 0.269401,
+            "p95_ms": 2.257765,
+            "p99_ms": 2.503166,
+            "total_ms": 85.456289,
+            "bytes": 256268346
+          },
+          "cache_read": {
+            "samples": 0,
+            "p50_ms": null,
+            "p95_ms": null,
+            "p99_ms": null,
+            "total_ms": 0,
+            "bytes": 0
+          },
+          "cache_maintenance": {
+            "samples": 128,
+            "p50_ms": 0.08978,
+            "p95_ms": 0.13298,
+            "p99_ms": 0.160131,
+            "total_ms": 11.626271,
+            "bytes": 0
+          },
+          "queue_wait": {
+            "samples": 128,
+            "p50_ms": 0.022189999999999998,
+            "p95_ms": 136.36121,
+            "p99_ms": 150.367894,
+            "total_ms": 3378.980086,
+            "bytes": 0
+          },
+          "cpu_insert": {
+            "samples": 127,
+            "p50_ms": 0.00087,
+            "p95_ms": 0.00206,
+            "p99_ms": 0.00524,
+            "total_ms": 0.146571,
+            "bytes": 441237504
+          },
+          "retire": {
+            "samples": 128,
+            "p50_ms": 0.00032,
+            "p95_ms": 1.414404,
+            "p99_ms": 6.5711260000000005,
+            "total_ms": 38.519784,
+            "bytes": 0
+          }
+        },
+        "worker_active": {
+          "samples": 128,
+          "p50_ms": 137.631384,
+          "p95_ms": 311.387754,
+          "p99_ms": 323.45995300000004,
+          "total_ms": 22652.754986
+        },
+        "first_image_after_demand": {
+          "samples": 49,
+          "p50_ms": 335.3699520000001,
+          "p95_ms": 502.7273469999982,
+          "p99_ms": 520.0601300000008,
+          "total_ms": 16033.265880999994,
+          "censored": 1
+        },
+        "requested_lod_after_demand": {
+          "samples": 32,
+          "p50_ms": 1091.8231849999984,
+          "p95_ms": 1260.5455930000007,
+          "p99_ms": 1261.2310749999997,
+          "total_ms": 34641.97164999999,
+          "censored": 18
+        },
+        "cancelled_by_stage": {
+          "decode": 1
+        },
+        "worker_memory_observed_peaks": {
+          "encoded_peak_bytes": 7123639,
+          "decoded_peak_bytes": 20250000,
+          "resize_peak_bytes": 12582912
+        },
+        "content_coverage_fraction": 0.757455268389662,
+        "lod_coverage_fractions": [
+          0.21346918489065606,
+          0.3665506958250497,
+          0.17743538767395625
+        ],
+        "requested_coverage_fraction": 0.17743538767395625,
+        "worker_utilization_fraction": 0.9438647910833333,
+        "worker_utilization_note": "Completed observed worker time / run worker capacity; excludes jobs still active at exit, therefore a lower bound.",
+        "cpu_thumbnail_peak_bytes": 2408448,
+        "gpu_thumbnail_peak_bytes": 2408448,
+        "gpu_completion_fps": 59.083333333333336,
+        "display_cache_bytes_after_run": 256315230,
+        "display_cache_files_after_run": 128
+      },
+      {
+        "acquire": {
+          "max_ms": 0.05002,
+          "p50_ms": 0.01893,
+          "p99_ms": 0.03452,
+          "samples": 710
+        },
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "callback": {
+          "max_ms": 16.089139,
+          "p50_ms": 0.30878,
+          "p99_ms": 7.605168,
+          "samples": 710
+        },
+        "completed_submissions_at_report": 710,
+        "coverage_episodes_dropped": 0,
+        "cpu_cache_peak_bytes": 38043648,
+        "cpu_max_ms": 3.027387,
+        "cpu_p50_ms": 0.19879000000000002,
+        "cpu_p99_ms": 1.5553629999999998,
+        "device_type": "DiscreteGpu",
+        "driver": "NVIDIA",
+        "driver_info": "580.173.02",
+        "duration_seconds": 12.0,
+        "failed_acquire_max_ms": 0.0,
+        "final": {
+          "acquire_ms": 0.022500000000000003,
+          "callback_ms": 2.6222760000000003,
+          "completed_submissions": 709,
+          "cpu_cache_bytes": 38043648,
+          "cpu_evictions": 21,
+          "cpu_ms": 0.256181,
+          "cpu_thumbnail_bytes": 5013504,
+          "culled": 991,
+          "decode_errors": 0,
+          "decode_ms": 22516.76023,
+          "disk_hits": 0,
+          "elapsed_ms": 12604.99828,
+          "gpu_evictions": 0,
+          "gpu_resident_bytes": 54509568,
+          "gpu_thumbnail_bytes": 4964352,
+          "in_flight": 1,
+          "lods": [
+            4,
+            3,
+            0
+          ],
+          "pending": 2,
+          "placeholders": 2,
+          "present_ms": 2.336855,
+          "requested_covered": 0,
+          "stale": 4,
+          "submitted": true,
+          "upload_bytes": 0,
+          "upload_cpu_ms": 0.0,
+          "uploads": 0,
+          "visible": 9
+        },
+        "first_visible_content_ms": 876.8851239999999,
+        "frame_attempts": 710,
+        "gpu_backpressure_frames": 0,
+        "gpu_pass": {
+          "max_ms": 0.218176,
+          "p50_ms": 0.08384,
+          "p99_ms": 0.160192,
+          "samples": 710
+        },
+        "gpu_resident_peak_bytes": 54509568,
+        "gpu_timing_dropped": 0,
+        "gpu_timing_note": "Optional asynchronous timestamps measure the canvas render pass only, excluding uploads, surface acquisition and presentation. CPU callback and attempt cadence do not measure monitor presentation latency.",
+        "headless": false,
+        "interval_p50_ms": 16.773300000000745,
+        "interval_p99_ms": 18.14964399999917,
+        "objects": 1000,
+        "pending_limit": 16,
+        "pending_peak": 6,
+        "platform_events": [
+          {
+            "event": "initialize",
+            "scale_factor": 1.0,
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "resize",
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "occluded",
+            "occluded": false
+          }
+        ],
+        "prefetch": "none",
+        "present": {
+          "max_ms": 15.131507000000001,
+          "p50_ms": 0.07679,
+          "p99_ms": 7.443587,
+          "samples": 710
+        },
+        "rejected_cache_entries": 0,
+        "rss_high_water_kib": 428660,
+        "scenario": "pan-fast",
+        "schema": 1,
+        "startup_ms": 613.885937,
+        "submitted_frames": 710,
+        "surface_other_errors": 0,
+        "surface_reconfigures": 0,
+        "surface_timeouts": 0,
+        "thumbnail_decoder": "jpeg-decoder 0.3.2 DCT",
+        "upload_count_limit": 8,
+        "worker_profile_dropped": 0,
+        "worker_retention_peak_bytes": 41631744,
+        "worker_stage_names": [
+          "source_read",
+          "header",
+          "decode",
+          "resize",
+          "encode",
+          "cache_write",
+          "cache_read",
+          "cache_maintenance",
+          "queue_wait",
+          "cpu_insert",
+          "retire"
+        ],
+        "workers": 2,
+        "worker_stages": {
+          "source_read": {
+            "samples": 168,
+            "p50_ms": 1.485314,
+            "p95_ms": 2.4899459999999998,
+            "p99_ms": 9.261103,
+            "total_ms": 287.434667,
+            "bytes": 1194506884
+          },
+          "header": {
+            "samples": 168,
+            "p50_ms": 0.005710000000000001,
+            "p95_ms": 0.00902,
+            "p99_ms": 0.014369999999999999,
+            "total_ms": 1.054533,
+            "bytes": 0
+          },
+          "decode": {
+            "samples": 168,
+            "p50_ms": 126.75619699999999,
+            "p95_ms": 136.556141,
+            "p99_ms": 145.891303,
+            "total_ms": 21312.398731,
+            "bytes": 231797250
+          },
+          "resize": {
+            "samples": 166,
+            "p50_ms": 1.9380840000000001,
+            "p95_ms": 9.513363,
+            "p99_ms": 10.331105,
+            "total_ms": 724.509785,
+            "bytes": 265625652
+          },
+          "encode": {
+            "samples": 166,
+            "p50_ms": 0.14584,
+            "p95_ms": 1.913635,
+            "p99_ms": 2.0636449999999997,
+            "total_ms": 127.869356,
+            "bytes": 50042474
+          },
+          "cache_write": {
+            "samples": 165,
+            "p50_ms": 0.09235,
+            "p95_ms": 0.296361,
+            "p99_ms": 0.308991,
+            "total_ms": 26.240683,
+            "bytes": 49335080
+          },
+          "cache_read": {
+            "samples": 0,
+            "p50_ms": null,
+            "p95_ms": null,
+            "p99_ms": null,
+            "total_ms": 0,
+            "bytes": 0
+          },
+          "cache_maintenance": {
+            "samples": 168,
+            "p50_ms": 0.09959,
+            "p95_ms": 0.14885099999999998,
+            "p99_ms": 0.16399100000000003,
+            "total_ms": 16.280933,
+            "bytes": 0
+          },
+          "queue_wait": {
+            "samples": 169,
+            "p50_ms": 0.01543,
+            "p95_ms": 176.046837,
+            "p99_ms": 260.02397,
+            "total_ms": 6530.285309,
+            "bytes": 0
+          },
+          "cpu_insert": {
+            "samples": 165,
+            "p50_ms": 0.00081,
+            "p95_ms": 0.00203,
+            "p99_ms": 0.00671,
+            "total_ms": 0.17598,
+            "bytes": 54558720
+          },
+          "retire": {
+            "samples": 169,
+            "p50_ms": 0.00033999999999999997,
+            "p95_ms": 0.00171,
+            "p99_ms": 0.00269,
+            "total_ms": 0.08803,
+            "bytes": 0
+          }
+        },
+        "worker_active": {
+          "samples": 169,
+          "p50_ms": 133.278453,
+          "p95_ms": 146.49339500000002,
+          "p99_ms": 154.078683,
+          "total_ms": 22516.80905
+        },
+        "first_image_after_demand": {
+          "samples": 171,
+          "p50_ms": 167.9104470000002,
+          "p95_ms": 385.82165499999996,
+          "p99_ms": 438.57451299999957,
+          "total_ms": 25600.50709599999,
+          "censored": 5
+        },
+        "requested_lod_after_demand": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "censored": 176
+        },
+        "cancelled_by_stage": {
+          "decode": 2,
+          "encode": 1,
+          "queue": 1
+        },
+        "worker_memory_observed_peaks": {
+          "encoded_peak_bytes": 7123639,
+          "decoded_peak_bytes": 20250000,
+          "resize_peak_bytes": 786432
+        },
+        "content_coverage_fraction": 0.6877220686932491,
+        "lod_coverage_fractions": [
+          0.5120410580339518,
+          0.17568101065929728,
+          0.0
+        ],
+        "requested_coverage_fraction": 0.0,
+        "worker_utilization_fraction": 0.9382003770833334,
+        "worker_utilization_note": "Completed observed worker time / run worker capacity; excludes jobs still active at exit, therefore a lower bound.",
+        "cpu_thumbnail_peak_bytes": 5013504,
+        "gpu_thumbnail_peak_bytes": 4964352,
+        "gpu_completion_fps": 59.166666666666664,
+        "display_cache_bytes_after_run": 49381847,
+        "display_cache_files_after_run": 166
+      },
+      {
+        "acquire": {
+          "max_ms": 0.06711,
+          "p50_ms": 0.01396,
+          "p99_ms": 0.035120000000000005,
+          "samples": 711
+        },
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "callback": {
+          "max_ms": 11.104447,
+          "p50_ms": 0.298261,
+          "p99_ms": 8.01664,
+          "samples": 711
+        },
+        "completed_submissions_at_report": 711,
+        "coverage_episodes_dropped": 0,
+        "cpu_cache_peak_bytes": 34504704,
+        "cpu_max_ms": 5.8022849999999995,
+        "cpu_p50_ms": 0.15542,
+        "cpu_p99_ms": 0.630592,
+        "device_type": "DiscreteGpu",
+        "driver": "NVIDIA",
+        "driver_info": "580.173.02",
+        "duration_seconds": 12.0,
+        "failed_acquire_max_ms": 0.0,
+        "final": {
+          "acquire_ms": 0.012639999999999998,
+          "callback_ms": 0.1837,
+          "completed_submissions": 710,
+          "cpu_cache_bytes": 34504704,
+          "cpu_evictions": 7,
+          "cpu_ms": 0.10673,
+          "cpu_thumbnail_bytes": 3047424,
+          "culled": 996,
+          "decode_errors": 0,
+          "decode_ms": 13062.246432999995,
+          "disk_hits": 0,
+          "elapsed_ms": 12599.136015999999,
+          "gpu_evictions": 0,
+          "gpu_resident_bytes": 63553536,
+          "gpu_thumbnail_bytes": 2998272,
+          "in_flight": 1,
+          "lods": [
+            0,
+            0,
+            4
+          ],
+          "pending": 0,
+          "placeholders": 0,
+          "present_ms": 0.06024,
+          "requested_covered": 4,
+          "stale": 60,
+          "submitted": true,
+          "upload_bytes": 0,
+          "upload_cpu_ms": 0.0,
+          "uploads": 0,
+          "visible": 4
+        },
+        "first_visible_content_ms": 828.715517,
+        "frame_attempts": 711,
+        "gpu_backpressure_frames": 0,
+        "gpu_pass": {
+          "max_ms": 1.609728,
+          "p50_ms": 0.114688,
+          "p99_ms": 1.455424,
+          "samples": 711
+        },
+        "gpu_resident_peak_bytes": 63553536,
+        "gpu_timing_dropped": 0,
+        "gpu_timing_note": "Optional asynchronous timestamps measure the canvas render pass only, excluding uploads, surface acquisition and presentation. CPU callback and attempt cadence do not measure monitor presentation latency.",
+        "headless": false,
+        "interval_p50_ms": 16.763200999999754,
+        "interval_p99_ms": 17.24218200000007,
+        "objects": 1000,
+        "pending_limit": 16,
+        "pending_peak": 16,
+        "platform_events": [
+          {
+            "event": "initialize",
+            "scale_factor": 1.0,
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "resize",
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "occluded",
+            "occluded": false
+          }
+        ],
+        "prefetch": "none",
+        "present": {
+          "max_ms": 10.978127,
+          "p50_ms": 0.06877,
+          "p99_ms": 7.835770000000001,
+          "samples": 711
+        },
+        "rejected_cache_entries": 0,
+        "rss_high_water_kib": 489964,
+        "scenario": "zoom-traverse",
+        "schema": 1,
+        "startup_ms": 603.748612,
+        "submitted_frames": 711,
+        "surface_other_errors": 0,
+        "surface_reconfigures": 0,
+        "surface_timeouts": 0,
+        "thumbnail_decoder": "jpeg-decoder 0.3.2 DCT",
+        "upload_count_limit": 8,
+        "worker_profile_dropped": 0,
+        "worker_retention_peak_bytes": 55296000,
+        "worker_stage_names": [
+          "source_read",
+          "header",
+          "decode",
+          "resize",
+          "encode",
+          "cache_write",
+          "cache_read",
+          "cache_maintenance",
+          "queue_wait",
+          "cpu_insert",
+          "retire"
+        ],
+        "workers": 2,
+        "worker_stages": {
+          "source_read": {
+            "samples": 94,
+            "p50_ms": 1.244393,
+            "p95_ms": 2.234225,
+            "p99_ms": 10.458925,
+            "total_ms": 143.572522,
+            "bytes": 668302777
+          },
+          "header": {
+            "samples": 94,
+            "p50_ms": 0.00536,
+            "p95_ms": 0.007730000000000001,
+            "p99_ms": 0.01663,
+            "total_ms": 0.5336,
+            "bytes": 0
+          },
+          "decode": {
+            "samples": 94,
+            "p50_ms": 126.25656599999999,
+            "p95_ms": 138.863236,
+            "p99_ms": 161.094751,
+            "total_ms": 11989.663973,
+            "bytes": 213990750
+          },
+          "resize": {
+            "samples": 79,
+            "p50_ms": 1.842015,
+            "p95_ms": 129.210853,
+            "p99_ms": 140.004388,
+            "total_ms": 748.520809,
+            "bytes": 239608938
+          },
+          "encode": {
+            "samples": 79,
+            "p50_ms": 0.137081,
+            "p95_ms": 27.189255999999997,
+            "p99_ms": 34.246463,
+            "total_ms": 147.38672499999998,
+            "bytes": 39759773
+          },
+          "cache_write": {
+            "samples": 79,
+            "p50_ms": 0.08427000000000001,
+            "p95_ms": 1.904575,
+            "p99_ms": 2.488166,
+            "total_ms": 17.423623,
+            "bytes": 39759773
+          },
+          "cache_read": {
+            "samples": 0,
+            "p50_ms": null,
+            "p95_ms": null,
+            "p99_ms": null,
+            "total_ms": 0,
+            "bytes": 0
+          },
+          "cache_maintenance": {
+            "samples": 94,
+            "p50_ms": 0.06691000000000001,
+            "p95_ms": 0.09928,
+            "p99_ms": 0.10717,
+            "total_ms": 5.476661,
+            "bytes": 0
+          },
+          "queue_wait": {
+            "samples": 139,
+            "p50_ms": 394.170815,
+            "p95_ms": 904.514582,
+            "p99_ms": 916.2312900000001,
+            "total_ms": 59719.164492,
+            "bytes": 0
+          },
+          "cpu_insert": {
+            "samples": 79,
+            "p50_ms": 0.00082,
+            "p95_ms": 0.00234,
+            "p99_ms": 0.00541,
+            "total_ms": 0.0826,
+            "bytes": 63602688
+          },
+          "retire": {
+            "samples": 139,
+            "p50_ms": 0.00011,
+            "p95_ms": 0.00053,
+            "p99_ms": 0.00418,
+            "total_ms": 2.057225,
+            "bytes": 0
+          }
+        },
+        "worker_active": {
+          "samples": 139,
+          "p50_ms": 125.025492,
+          "p95_ms": 143.89192799999998,
+          "p99_ms": 319.39701399999996,
+          "total_ms": 13064.278418
+        },
+        "first_image_after_demand": {
+          "samples": 156,
+          "p50_ms": 0.0,
+          "p95_ms": 1425.0308750000004,
+          "p99_ms": 2397.253797999999,
+          "total_ms": 51564.468819,
+          "censored": 416
+        },
+        "requested_lod_after_demand": {
+          "samples": 114,
+          "p50_ms": 284.97901100000126,
+          "p95_ms": 1810.670158,
+          "p99_ms": 2397.253797999999,
+          "total_ms": 56751.877055000004,
+          "censored": 458
+        },
+        "cancelled_by_stage": {
+          "decode": 15,
+          "queue": 45
+        },
+        "worker_memory_observed_peaks": {
+          "encoded_peak_bytes": 7123639,
+          "decoded_peak_bytes": 20250000,
+          "resize_peak_bytes": 12582912
+        },
+        "content_coverage_fraction": 0.2953598458006179,
+        "lod_coverage_fractions": [
+          0.2321494373423283,
+          0.030443039768700927,
+          0.03276736868958871
+        ],
+        "requested_coverage_fraction": 0.26894186343150317,
+        "worker_utilization_fraction": 0.5443449340833333,
+        "worker_utilization_note": "Completed observed worker time / run worker capacity; excludes jobs still active at exit, therefore a lower bound.",
+        "cpu_thumbnail_peak_bytes": 3047424,
+        "gpu_thumbnail_peak_bytes": 2998272,
+        "gpu_completion_fps": 59.25,
+        "display_cache_bytes_after_run": 39759773,
+        "display_cache_files_after_run": 79
+      },
+      {
+        "acquire": {
+          "max_ms": 1.859245,
+          "p50_ms": 0.01569,
+          "p99_ms": 0.041281,
+          "samples": 710
+        },
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "callback": {
+          "max_ms": 18.817866,
+          "p50_ms": 0.36544099999999996,
+          "p99_ms": 14.295894,
+          "samples": 710
+        },
+        "completed_submissions_at_report": 710,
+        "coverage_episodes_dropped": 0,
+        "cpu_cache_peak_bytes": 36618240,
+        "cpu_max_ms": 6.030304999999999,
+        "cpu_p50_ms": 0.19485,
+        "cpu_p99_ms": 1.724064,
+        "device_type": "DiscreteGpu",
+        "driver": "NVIDIA",
+        "driver_info": "580.173.02",
+        "duration_seconds": 12.0,
+        "failed_acquire_max_ms": 0.0,
+        "final": {
+          "acquire_ms": 0.01821,
+          "callback_ms": 0.252531,
+          "completed_submissions": 709,
+          "cpu_cache_bytes": 36618240,
+          "cpu_evictions": 19,
+          "cpu_ms": 0.160091,
+          "cpu_thumbnail_bytes": 3588096,
+          "culled": 999,
+          "decode_errors": 0,
+          "decode_ms": 16044.927412999996,
+          "disk_hits": 0,
+          "elapsed_ms": 12582.549341,
+          "gpu_evictions": 10,
+          "gpu_resident_bytes": 67239936,
+          "gpu_thumbnail_bytes": 3538944,
+          "in_flight": 1,
+          "lods": [
+            0,
+            1,
+            0
+          ],
+          "pending": 1,
+          "placeholders": 0,
+          "present_ms": 0.0679,
+          "requested_covered": 0,
+          "stale": 48,
+          "submitted": true,
+          "upload_bytes": 0,
+          "upload_cpu_ms": 0.0,
+          "uploads": 0,
+          "visible": 1
+        },
+        "first_visible_content_ms": 860.565904,
+        "frame_attempts": 710,
+        "gpu_backpressure_frames": 0,
+        "gpu_pass": {
+          "max_ms": 0.970848,
+          "p50_ms": 0.135584,
+          "p99_ms": 0.548864,
+          "samples": 710
+        },
+        "gpu_resident_peak_bytes": 68026368,
+        "gpu_timing_dropped": 0,
+        "gpu_timing_note": "Optional asynchronous timestamps measure the canvas render pass only, excluding uploads, surface acquisition and presentation. CPU callback and attempt cadence do not measure monitor presentation latency.",
+        "headless": false,
+        "interval_p50_ms": 16.75999100000081,
+        "interval_p99_ms": 18.390835000000152,
+        "objects": 1000,
+        "pending_limit": 16,
+        "pending_peak": 16,
+        "platform_events": [
+          {
+            "event": "initialize",
+            "scale_factor": 1.0,
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "resize",
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "occluded",
+            "occluded": false
+          }
+        ],
+        "prefetch": "none",
+        "present": {
+          "max_ms": 16.446189999999998,
+          "p50_ms": 0.072881,
+          "p99_ms": 14.142014,
+          "samples": 710
+        },
+        "rejected_cache_entries": 0,
+        "rss_high_water_kib": 513416,
+        "scenario": "scan",
+        "schema": 1,
+        "startup_ms": 588.362245,
+        "submitted_frames": 710,
+        "surface_other_errors": 0,
+        "surface_reconfigures": 0,
+        "surface_timeouts": 0,
+        "thumbnail_decoder": "jpeg-decoder 0.3.2 DCT",
+        "upload_count_limit": 8,
+        "worker_profile_dropped": 0,
+        "worker_retention_peak_bytes": 59768832,
+        "worker_stage_names": [
+          "source_read",
+          "header",
+          "decode",
+          "resize",
+          "encode",
+          "cache_write",
+          "cache_read",
+          "cache_maintenance",
+          "queue_wait",
+          "cpu_insert",
+          "retire"
+        ],
+        "workers": 2,
+        "worker_stages": {
+          "source_read": {
+            "samples": 110,
+            "p50_ms": 1.293993,
+            "p95_ms": 2.430665,
+            "p99_ms": 8.908871000000001,
+            "total_ms": 173.049284,
+            "bytes": 782125859
+          },
+          "header": {
+            "samples": 110,
+            "p50_ms": 0.0054199999999999995,
+            "p95_ms": 0.008151,
+            "p99_ms": 0.01259,
+            "total_ms": 0.622011,
+            "bytes": 0
+          },
+          "decode": {
+            "samples": 110,
+            "p50_ms": 127.393158,
+            "p95_ms": 145.382872,
+            "p99_ms": 154.281364,
+            "total_ms": 14193.332423,
+            "bytes": 310191750
+          },
+          "resize": {
+            "samples": 105,
+            "p50_ms": 1.927665,
+            "p95_ms": 126.89973700000002,
+            "p99_ms": 136.28557999999998,
+            "total_ms": 1379.5730310000001,
+            "bytes": 408000510
+          },
+          "encode": {
+            "samples": 104,
+            "p50_ms": 0.14009100000000002,
+            "p95_ms": 26.922726,
+            "p99_ms": 28.226748,
+            "total_ms": 245.94824,
+            "bytes": 68821491
+          },
+          "cache_write": {
+            "samples": 104,
+            "p50_ms": 0.08853,
+            "p95_ms": 1.925515,
+            "p99_ms": 2.000404,
+            "total_ms": 26.694741,
+            "bytes": 68821491
+          },
+          "cache_read": {
+            "samples": 0,
+            "p50_ms": null,
+            "p95_ms": null,
+            "p99_ms": null,
+            "total_ms": 0,
+            "bytes": 0
+          },
+          "cache_maintenance": {
+            "samples": 110,
+            "p50_ms": 0.07724,
+            "p95_ms": 0.1148,
+            "p99_ms": 0.120961,
+            "total_ms": 8.146853,
+            "bytes": 0
+          },
+          "queue_wait": {
+            "samples": 152,
+            "p50_ms": 487.756711,
+            "p95_ms": 913.960394,
+            "p99_ms": 926.362504,
+            "total_ms": 63829.613552,
+            "bytes": 0
+          },
+          "cpu_insert": {
+            "samples": 104,
+            "p50_ms": 0.0007700000000000001,
+            "p95_ms": 0.00249,
+            "p99_ms": 0.00457,
+            "total_ms": 0.10446,
+            "bytes": 110542848
+          },
+          "retire": {
+            "samples": 152,
+            "p50_ms": 0.00014000000000000001,
+            "p95_ms": 0.00086,
+            "p99_ms": 1.244233,
+            "total_ms": 2.626506,
+            "bytes": 0
+          }
+        },
+        "worker_active": {
+          "samples": 152,
+          "p50_ms": 129.40869399999997,
+          "p95_ms": 288.486278,
+          "p99_ms": 313.207629,
+          "total_ms": 16047.522139
+        },
+        "first_image_after_demand": {
+          "samples": 190,
+          "p50_ms": 0.0,
+          "p95_ms": 1677.2045119999993,
+          "p99_ms": 2616.3548769999998,
+          "total_ms": 61500.71848299998,
+          "censored": 484
+        },
+        "requested_lod_after_demand": {
+          "samples": 123,
+          "p50_ms": 418.9199749999998,
+          "p95_ms": 1744.8072159999992,
+          "p99_ms": 2616.3548769999998,
+          "total_ms": 69725.70293099999,
+          "censored": 551
+        },
+        "cancelled_by_stage": {
+          "decode": 5,
+          "queue": 42,
+          "resize": 1
+        },
+        "worker_memory_observed_peaks": {
+          "encoded_peak_bytes": 7123639,
+          "decoded_peak_bytes": 20250000,
+          "resize_peak_bytes": 12582912
+        },
+        "content_coverage_fraction": 0.25585429314830876,
+        "lod_coverage_fractions": [
+          0.22846578719130872,
+          0.020701145752499202,
+          0.006687360204500845
+        ],
+        "requested_coverage_fraction": 0.21698543844433285,
+        "worker_utilization_fraction": 0.6686467557916667,
+        "worker_utilization_note": "Completed observed worker time / run worker capacity; excludes jobs still active at exit, therefore a lower bound.",
+        "cpu_thumbnail_peak_bytes": 3588096,
+        "gpu_thumbnail_peak_bytes": 3538944,
+        "gpu_completion_fps": 59.166666666666664,
+        "display_cache_bytes_after_run": 68821491,
+        "display_cache_files_after_run": 104
+      },
+      {
+        "acquire": {
+          "max_ms": 0.37350099999999997,
+          "p50_ms": 0.01686,
+          "p99_ms": 0.034780000000000005,
+          "samples": 711
+        },
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "callback": {
+          "max_ms": 26.192683000000002,
+          "p50_ms": 0.921052,
+          "p99_ms": 11.522558,
+          "samples": 711
+        },
+        "completed_submissions_at_report": 711,
+        "coverage_episodes_dropped": 0,
+        "cpu_cache_peak_bytes": 7028736,
+        "cpu_max_ms": 3.437199,
+        "cpu_p50_ms": 0.748352,
+        "cpu_p99_ms": 1.567393,
+        "device_type": "DiscreteGpu",
+        "driver": "NVIDIA",
+        "driver_info": "580.173.02",
+        "duration_seconds": 12.0,
+        "failed_acquire_max_ms": 0.0,
+        "final": {
+          "acquire_ms": 0.02041,
+          "callback_ms": 0.605221,
+          "completed_submissions": 710,
+          "cpu_cache_bytes": 7028736,
+          "cpu_evictions": 0,
+          "cpu_ms": 0.513501,
+          "cpu_thumbnail_bytes": 7028736,
+          "culled": 608,
+          "decode_errors": 0,
+          "decode_ms": 23399.94087900004,
+          "disk_hits": 0,
+          "elapsed_ms": 12564.593778,
+          "gpu_evictions": 0,
+          "gpu_resident_bytes": 6979584,
+          "gpu_thumbnail_bytes": 6979584,
+          "in_flight": 1,
+          "lods": [
+            0,
+            0,
+            0
+          ],
+          "pending": 16,
+          "placeholders": 392,
+          "present_ms": 0.06489,
+          "requested_covered": 0,
+          "stale": 270,
+          "submitted": true,
+          "upload_bytes": 0,
+          "upload_cpu_ms": 0.0,
+          "uploads": 0,
+          "visible": 392
+        },
+        "first_visible_content_ms": 803.405218,
+        "frame_attempts": 711,
+        "gpu_backpressure_frames": 0,
+        "gpu_pass": {
+          "max_ms": 0.218112,
+          "p50_ms": 0.047104,
+          "p99_ms": 0.194464,
+          "samples": 711
+        },
+        "gpu_resident_peak_bytes": 6979584,
+        "gpu_timing_dropped": 0,
+        "gpu_timing_note": "Optional asynchronous timestamps measure the canvas render pass only, excluding uploads, surface acquisition and presentation. CPU callback and attempt cadence do not measure monitor presentation latency.",
+        "headless": false,
+        "interval_p50_ms": 16.751960999999937,
+        "interval_p99_ms": 17.71042299999999,
+        "objects": 1000,
+        "pending_limit": 16,
+        "pending_peak": 16,
+        "platform_events": [
+          {
+            "event": "initialize",
+            "scale_factor": 1.0,
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "resize",
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "occluded",
+            "occluded": false
+          }
+        ],
+        "prefetch": "none",
+        "present": {
+          "max_ms": 25.569152000000003,
+          "p50_ms": 0.075,
+          "p99_ms": 10.732225999999999,
+          "samples": 711
+        },
+        "rejected_cache_entries": 0,
+        "rss_high_water_kib": 355496,
+        "scenario": "board-tour",
+        "schema": 1,
+        "startup_ms": 576.665918,
+        "submitted_frames": 711,
+        "surface_other_errors": 0,
+        "surface_reconfigures": 0,
+        "surface_timeouts": 0,
+        "thumbnail_decoder": "jpeg-decoder 0.3.2 DCT",
+        "upload_count_limit": 8,
+        "worker_profile_dropped": 0,
+        "worker_retention_peak_bytes": 7028736,
+        "worker_stage_names": [
+          "source_read",
+          "header",
+          "decode",
+          "resize",
+          "encode",
+          "cache_write",
+          "cache_read",
+          "cache_maintenance",
+          "queue_wait",
+          "cpu_insert",
+          "retire"
+        ],
+        "workers": 2,
+        "worker_stages": {
+          "source_read": {
+            "samples": 177,
+            "p50_ms": 1.2397440000000002,
+            "p95_ms": 1.849035,
+            "p99_ms": 5.665573,
+            "total_ms": 247.39460400000002,
+            "bytes": 1258335915
+          },
+          "header": {
+            "samples": 177,
+            "p50_ms": 0.00519,
+            "p95_ms": 0.00758,
+            "p99_ms": 0.01095,
+            "total_ms": 0.967212,
+            "bytes": 0
+          },
+          "decode": {
+            "samples": 177,
+            "p50_ms": 127.54768,
+            "p95_ms": 141.11019199999998,
+            "p99_ms": 145.943424,
+            "total_ms": 22831.358252,
+            "bytes": 224214750
+          },
+          "resize": {
+            "samples": 143,
+            "p50_ms": 1.809764,
+            "p95_ms": 2.118655,
+            "p99_ms": 2.325566,
+            "total_ms": 262.389281,
+            "bytes": 188173986
+          },
+          "encode": {
+            "samples": 143,
+            "p50_ms": 0.12886,
+            "p95_ms": 0.14487,
+            "p99_ms": 0.2981,
+            "total_ms": 19.13507,
+            "bytes": 6691024
+          },
+          "cache_write": {
+            "samples": 143,
+            "p50_ms": 0.08511,
+            "p95_ms": 0.09801099999999999,
+            "p99_ms": 0.10506,
+            "total_ms": 12.315845,
+            "bytes": 6691024
+          },
+          "cache_read": {
+            "samples": 0,
+            "p50_ms": null,
+            "p95_ms": null,
+            "p99_ms": null,
+            "total_ms": 0,
+            "bytes": 0
+          },
+          "cache_maintenance": {
+            "samples": 177,
+            "p50_ms": 0.07859,
+            "p95_ms": 0.13974999999999999,
+            "p99_ms": 0.16972,
+            "total_ms": 13.122136,
+            "bytes": 0
+          },
+          "queue_wait": {
+            "samples": 413,
+            "p50_ms": 383.880339,
+            "p95_ms": 916.1988690000001,
+            "p99_ms": 1001.0061850000001,
+            "total_ms": 162363.411078,
+            "bytes": 0
+          },
+          "cpu_insert": {
+            "samples": 143,
+            "p50_ms": 0.0007700000000000001,
+            "p95_ms": 0.0020099999999999996,
+            "p99_ms": 0.0057599999999999995,
+            "total_ms": 0.142733,
+            "bytes": 7028736
+          },
+          "retire": {
+            "samples": 413,
+            "p50_ms": 8.999999999999999e-05,
+            "p95_ms": 0.00044,
+            "p99_ms": 0.0007899999999999999,
+            "total_ms": 0.06955,
+            "bytes": 0
+          }
+        },
+        "worker_active": {
+          "samples": 413,
+          "p50_ms": 0.0004,
+          "p95_ms": 140.945552,
+          "p99_ms": 147.250726,
+          "total_ms": 23399.969159
+        },
+        "first_image_after_demand": {
+          "samples": 142,
+          "p50_ms": 4772.22097,
+          "p95_ms": 9648.548534,
+          "p99_ms": 9698.053154000001,
+          "total_ms": 724492.456576,
+          "censored": 858
+        },
+        "requested_lod_after_demand": {
+          "samples": 142,
+          "p50_ms": 4772.22097,
+          "p95_ms": 9648.548534,
+          "p99_ms": 9698.053154000001,
+          "total_ms": 724492.456576,
+          "censored": 858
+        },
+        "cancelled_by_stage": {
+          "decode": 34,
+          "queue": 236
+        },
+        "worker_memory_observed_peaks": {
+          "encoded_peak_bytes": 7123639,
+          "decoded_peak_bytes": 1266750,
+          "resize_peak_bytes": 49152
+        },
+        "content_coverage_fraction": 0.024787653972897245,
+        "lod_coverage_fractions": [
+          0.024787653972897245,
+          0.0,
+          0.0
+        ],
+        "requested_coverage_fraction": 0.024787653972897245,
+        "worker_utilization_fraction": 0.9749987149583333,
+        "worker_utilization_note": "Completed observed worker time / run worker capacity; excludes jobs still active at exit, therefore a lower bound.",
+        "cpu_thumbnail_peak_bytes": 7028736,
+        "gpu_thumbnail_peak_bytes": 6979584,
+        "gpu_completion_fps": 59.25,
+        "display_cache_bytes_after_run": 6737774,
+        "display_cache_files_after_run": 144
+      },
+      {
+        "acquire": {
+          "max_ms": 0.03427,
+          "p50_ms": 0.01414,
+          "p99_ms": 0.025320000000000002,
+          "samples": 711
+        },
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "callback": {
+          "max_ms": 11.618358,
+          "p50_ms": 0.257591,
+          "p99_ms": 8.462901,
+          "samples": 711
+        },
+        "completed_submissions_at_report": 711,
+        "coverage_episodes_dropped": 0,
+        "cpu_cache_peak_bytes": 0,
+        "cpu_max_ms": 0.7436609999999999,
+        "cpu_p50_ms": 0.1536,
+        "cpu_p99_ms": 0.313551,
+        "device_type": "DiscreteGpu",
+        "driver": "NVIDIA",
+        "driver_info": "580.173.02",
+        "duration_seconds": 12.0,
+        "failed_acquire_max_ms": 0.0,
+        "final": {
+          "acquire_ms": 0.013600000000000001,
+          "callback_ms": 0.276691,
+          "completed_submissions": 710,
+          "cpu_cache_bytes": 0,
+          "cpu_evictions": 0,
+          "cpu_ms": 0.17257,
+          "cpu_thumbnail_bytes": 0,
+          "culled": 991,
+          "decode_errors": 0,
+          "decode_ms": 22359.401244999986,
+          "disk_hits": 0,
+          "elapsed_ms": 12620.427346999999,
+          "gpu_evictions": 0,
+          "gpu_resident_bytes": 0,
+          "gpu_thumbnail_bytes": 0,
+          "in_flight": 1,
+          "lods": [
+            0,
+            0,
+            0
+          ],
+          "pending": 11,
+          "placeholders": 9,
+          "present_ms": 0.085681,
+          "requested_covered": 0,
+          "stale": 1376,
+          "submitted": true,
+          "upload_bytes": 0,
+          "upload_cpu_ms": 0.0,
+          "uploads": 0,
+          "visible": 9
+        },
+        "first_visible_content_ms": null,
+        "frame_attempts": 711,
+        "gpu_backpressure_frames": 0,
+        "gpu_pass": {
+          "max_ms": 0.063712,
+          "p50_ms": 0.043008,
+          "p99_ms": 0.055296,
+          "samples": 711
+        },
+        "gpu_resident_peak_bytes": 0,
+        "gpu_timing_dropped": 0,
+        "gpu_timing_note": "Optional asynchronous timestamps measure the canvas render pass only, excluding uploads, surface acquisition and presentation. CPU callback and attempt cadence do not measure monitor presentation latency.",
+        "headless": false,
+        "interval_p50_ms": 16.75702099999944,
+        "interval_p99_ms": 16.916001000000506,
+        "objects": 1000,
+        "pending_limit": 16,
+        "pending_peak": 16,
+        "platform_events": [
+          {
+            "event": "initialize",
+            "scale_factor": 1.0,
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "resize",
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "occluded",
+            "occluded": false
+          }
+        ],
+        "prefetch": "none",
+        "present": {
+          "max_ms": 11.439677,
+          "p50_ms": 0.072901,
+          "p99_ms": 8.298359999999999,
+          "samples": 711
+        },
+        "rejected_cache_entries": 0,
+        "rss_high_water_kib": 349636,
+        "scenario": "pan",
+        "schema": 1,
+        "startup_ms": 632.956693,
+        "submitted_frames": 711,
+        "surface_other_errors": 0,
+        "surface_reconfigures": 0,
+        "surface_timeouts": 0,
+        "thumbnail_decoder": "jpeg-decoder 0.3.2 DCT",
+        "upload_count_limit": 8,
+        "worker_profile_dropped": 0,
+        "worker_retention_peak_bytes": 0,
+        "worker_stage_names": [
+          "source_read",
+          "header",
+          "decode",
+          "resize",
+          "encode",
+          "cache_write",
+          "cache_read",
+          "cache_maintenance",
+          "queue_wait",
+          "cpu_insert",
+          "retire"
+        ],
+        "workers": 2,
+        "worker_stages": {
+          "source_read": {
+            "samples": 174,
+            "p50_ms": 1.203953,
+            "p95_ms": 2.0182949999999997,
+            "p99_ms": 9.553901999999999,
+            "total_ms": 243.005324,
+            "bytes": 1237008660
+          },
+          "header": {
+            "samples": 174,
+            "p50_ms": 0.005169999999999999,
+            "p95_ms": 0.00853,
+            "p99_ms": 0.01116,
+            "total_ms": 0.970792,
+            "bytes": 0
+          },
+          "decode": {
+            "samples": 174,
+            "p50_ms": 126.61409700000002,
+            "p95_ms": 135.450568,
+            "p99_ms": 142.178425,
+            "total_ms": 22108.718772,
+            "bytes": 220414500
+          },
+          "resize": {
+            "samples": 0,
+            "p50_ms": null,
+            "p95_ms": null,
+            "p99_ms": null,
+            "total_ms": 0,
+            "bytes": 0
+          },
+          "encode": {
+            "samples": 0,
+            "p50_ms": null,
+            "p95_ms": null,
+            "p99_ms": null,
+            "total_ms": 0,
+            "bytes": 0
+          },
+          "cache_write": {
+            "samples": 0,
+            "p50_ms": null,
+            "p95_ms": null,
+            "p99_ms": null,
+            "total_ms": 0,
+            "bytes": 0
+          },
+          "cache_read": {
+            "samples": 0,
+            "p50_ms": null,
+            "p95_ms": null,
+            "p99_ms": null,
+            "total_ms": 0,
+            "bytes": 0
+          },
+          "cache_maintenance": {
+            "samples": 174,
+            "p50_ms": 0.00016,
+            "p95_ms": 0.00028000000000000003,
+            "p99_ms": 0.0005,
+            "total_ms": 0.02886,
+            "bytes": 0
+          },
+          "queue_wait": {
+            "samples": 1376,
+            "p50_ms": 112.058501,
+            "p95_ms": 134.663926,
+            "p99_ms": 143.363878,
+            "total_ms": 134371.045122,
+            "bytes": 0
+          },
+          "cpu_insert": {
+            "samples": 0,
+            "p50_ms": null,
+            "p95_ms": null,
+            "p99_ms": null,
+            "total_ms": 0,
+            "bytes": 0
+          },
+          "retire": {
+            "samples": 1376,
+            "p50_ms": 2.9999999999999997e-05,
+            "p95_ms": 8.999999999999999e-05,
+            "p99_ms": 9.999999999999999e-05,
+            "total_ms": 0.04317,
+            "bytes": 0
+          }
+        },
+        "worker_active": {
+          "samples": 1376,
+          "p50_ms": 0.00015,
+          "p95_ms": 128.68661199999997,
+          "p99_ms": 135.58723799999999,
+          "total_ms": 22359.391325
+        },
+        "first_image_after_demand": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "censored": 2074
+        },
+        "requested_lod_after_demand": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "censored": 2074
+        },
+        "cancelled_by_stage": {
+          "decode": 174,
+          "queue": 1202
+        },
+        "worker_memory_observed_peaks": {
+          "encoded_peak_bytes": 7122428,
+          "decoded_peak_bytes": 1266750,
+          "resize_peak_bytes": 0
+        },
+        "content_coverage_fraction": 0.0,
+        "lod_coverage_fractions": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "requested_coverage_fraction": 0.0,
+        "worker_utilization_fraction": 0.9316413052083333,
+        "worker_utilization_note": "Completed observed worker time / run worker capacity; excludes jobs still active at exit, therefore a lower bound.",
+        "cpu_thumbnail_peak_bytes": 0,
+        "gpu_thumbnail_peak_bytes": 0,
+        "gpu_completion_fps": 59.25,
+        "display_cache_bytes_after_run": 0,
+        "display_cache_files_after_run": 0
+      }
+    ],
+    "artifacts_sha256": {
+      "benchmark-results/mission0_6-baseline/environment.json": "ec483f4a8e43e89b5669e0f75f28e2e183ffb9069da8e8fcde41598bedcdb9d6",
+      "benchmark-results/mission0_6-baseline/summary.json": "1c9f05098404baa67a34d6cbcabd10986dff999ee2e73df7a63990834a017942",
+      "benchmark-results/mission0_6-baseline/source-snapshot.zip": "02fdd908d49e1baa312feb9063d4514fdfe1aaf6ab1e044c2ec2a67f8fb304ab",
+      "benchmark-results/mission0_6-baseline/pan-normal.json": "91bd7a3dbbfda24deccd108ede61e6449e52e3e99ff9c256c648e667635f7d5d",
+      "benchmark-results/mission0_6-baseline/pan-fast.json": "95e26b6d7247cbe34f1b2794cf02658d8e790157ad86031789a65686e015aca5",
+      "benchmark-results/mission0_6-baseline/zoom-traverse.json": "8a540defb8f569dcc1d939674500005a83d077335b397c6875204c9b96be86cd",
+      "benchmark-results/mission0_6-baseline/scan.json": "1092a51239e00b75986b14fa1636f963f094ac582b26c21c005c987c1d00c0e8",
+      "benchmark-results/mission0_6-baseline/board-tour.json": "e903a9c379bcd65a13cf368704d54437c6909bb5fc2c881650da99c0eedf5fa5",
+      "benchmark-results/mission0_6-baseline/pan.json": "c8bdd477c1aef9b3769a7590949142025bb3506ffb5eb6731de303dd9a46e5b3"
+    }
+  },
+  "repeat": {
+    "environment": {
+      "platform": "Linux-7.1.5-76070105-generic-x86_64-with-glibc2.39",
+      "processor": "x86_64",
+      "manifest_sha256": "8bd27d9631560213365df47b842e37720421703608b13e79ee54f8524ad44af6",
+      "headless": false,
+      "corpus_objects": 1000,
+      "corpus_seed": 20261002,
+      "corpus_sources": 32,
+      "pillow_version": "10.2.0",
+      "limitations": "Distinct asset IDs and paths reuse hardlinked JPEG content. OS filesystem caching and visual diversity differ from 1000 unique photographs.",
+      "source_sha256": "bef6584c18f8d087fb4dab8f21e03f990bb4ebcc2298670a25a6f3f51b472b91",
+      "binary_sha256": "275a1e7902397c89ce0e519423bf6d3042bb2a57f3ea2191be8252954d3fdd4c",
+      "executed_harness_sha256": "f2fcec04401de39b50c3188c272f31bbe1c6851827a2b719dabee201076491aa",
+      "available_native_build": {
+        "version": "3.2.0",
+        "source_url": "https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.2.0/libjpeg-turbo-3.2.0.tar.gz",
+        "source_sha256": "6f30092cef9fb839779646608f4ee14ae3cbac989c47fa05e841b0841f09878e",
+        "cmake_command": [
+          "cmake",
+          "-S",
+          "/home/gurp/softs/tack/target/native/source/libjpeg-turbo-3.2.0",
+          "-B",
+          "/home/gurp/softs/tack/target/native/turbojpeg-build",
+          "-DCMAKE_INSTALL_PREFIX=/home/gurp/softs/tack/target/native/libjpeg-turbo-3.2.0",
+          "-DCMAKE_INSTALL_LIBDIR=lib",
+          "-DCMAKE_BUILD_TYPE=Release",
+          "-DENABLE_SHARED=OFF",
+          "-DENABLE_STATIC=ON",
+          "-DWITH_TURBOJPEG=ON",
+          "-DREQUIRE_SIMD=ON",
+          "-DWITH_JAVA=OFF"
+        ],
+        "nasm": "NASM version 2.16.01",
+        "library_sha256": {
+          "libturbojpeg.a": "e3fb98a1b4e3814c1e620b6e599b4a293badfde689a49430e0d1a43455269658"
+        }
+      },
+      "cpu": "Architecture:                            x86_64\nCPU op-mode(s):                          32-bit, 64-bit\nAddress sizes:                           43 bits physical, 48 bits virtual\nByte Order:                              Little Endian\nCPU(s):                                  16\nOn-line CPU(s) list:                     0-15\nVendor ID:                               AuthenticAMD\nModel name:                              AMD Ryzen 7 2700X Eight-Core Processor\nCPU family:                              23\nModel:                                   8\nThread(s) per core:                      2\nCore(s) per socket:                      8\nSocket(s):                               1\nStepping:                                2\nFrequency boost:                         disabled\nCPU(s) scaling MHz:                      52%\nCPU max MHz:                             4350.0000\nCPU min MHz:                             2200.0000\nBogoMIPS:                                7799.56\nFlags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl nonstop_tsc cpuid extd_apicid aperfmperf rapl pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpb hw_pstate ssbd ibpb vmmcall fsgsbase bmi1 avx2 smep bmi2 rdseed adx smap clflushopt sha_ni xsaveopt xsavec xgetbv1 clzero xsaveerptr arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif overflow_recov succor smca sev sev_es\nVirtualization:                          AMD-V\nL1d cache:                               256 KiB (8 instances)\nL1i cache:                               512 KiB (8 instances)\nL2 cache:                                4 MiB (8 instances)\nL3 cache:                                16 MiB (2 instances)\nNUMA node(s):                            1\nNUMA node0 CPU(s):                       0-15\nVulnerability Gather data sampling:      Not affected\nVulnerability Ghostwrite:                Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Old microcode:             Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Mitigation; untrained return thunk; SMT vulnerable\nVulnerability Spec rstack overflow:      Mitigation; Safe RET\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; Retpolines; IBPB conditional; STIBP disabled; RSB filling; PBRSB-eIBRS Not affected; BHI Not affected\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Mitigation; IBPB before exit to userspace\n",
+      "memory": "               total        used        free      shared  buff/cache   available\nMem:     33549754368  7299649536  5167587328    22003712 23923134464 26250104832\nSwap:    21474299904   158937088 21315362816\n",
+      "gpu_pci": "00:00.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Root Complex [1022:1450]\n00:00.2 IOMMU [0806]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) I/O Memory Management Unit [1022:1451]\n00:01.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-1fh) PCIe Dummy Host Bridge [1022:1452]\n00:01.3 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) PCIe GPP Bridge [1022:1453]\n00:02.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-1fh) PCIe Dummy Host Bridge [1022:1452]\n00:03.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-1fh) PCIe Dummy Host Bridge [1022:1452]\n00:03.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) PCIe GPP Bridge [1022:1453]\n00:03.2 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) PCIe GPP Bridge [1022:1453]\n00:04.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-1fh) PCIe Dummy Host Bridge [1022:1452]\n00:07.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-1fh) PCIe Dummy Host Bridge [1022:1452]\n00:07.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Internal PCIe GPP Bridge 0 to Bus B [1022:1454]\n00:08.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-1fh) PCIe Dummy Host Bridge [1022:1452]\n00:08.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Internal PCIe GPP Bridge 0 to Bus B [1022:1454]\n00:14.0 SMBus [0c05]: Advanced Micro Devices, Inc. [AMD] FCH SMBus Controller [1022:790b] (rev 59)\n00:14.3 ISA bridge [0601]: Advanced Micro Devices, Inc. [AMD] FCH LPC Bridge [1022:790e] (rev 51)\n00:18.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 0 [1022:1460]\n00:18.1 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 1 [1022:1461]\n00:18.2 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 2 [1022:1462]\n00:18.3 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 3 [1022:1463]\n00:18.4 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 4 [1022:1464]\n00:18.5 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 5 [1022:1465]\n00:18.6 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 6 [1022:1466]\n00:18.7 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 7 [1022:1467]\n01:00.0 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] Device [1022:43d0] (rev 01)\n01:00.1 SATA controller [0106]: Advanced Micro Devices, Inc. [AMD] 400 Series Chipset SATA Controller [1022:43c8] (rev 01)\n01:00.2 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] 400 Series Chipset PCIe Bridge [1022:43c6] (rev 01)\n02:00.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] 400 Series Chipset PCIe Port [1022:43c7] (rev 01)\n02:04.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] 400 Series Chipset PCIe Port [1022:43c7] (rev 01)\n02:06.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] 400 Series Chipset PCIe Port [1022:43c7] (rev 01)\n02:07.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] 400 Series Chipset PCIe Port [1022:43c7] (rev 01)\n02:09.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] 400 Series Chipset PCIe Port [1022:43c7] (rev 01)\n04:00.0 USB controller [0c03]: ASMedia Technology Inc. ASM1142 USB 3.1 Host Controller [1b21:1242]\n06:00.0 Ethernet controller [0200]: Intel Corporation I211 Gigabit Network Connection [8086:1539] (rev 03)\n08:00.0 VGA compatible controller [0300]: NVIDIA Corporation TU106 [GeForce RTX 2060 Rev. A] [10de:1f08] (rev a1)\n08:00.1 Audio device [0403]: NVIDIA Corporation TU106 High Definition Audio Controller [10de:10f9] (rev a1)\n08:00.2 USB controller [0c03]: NVIDIA Corporation TU106 USB 3.1 Host Controller [10de:1ada] (rev a1)\n08:00.3 Serial bus controller [0c80]: NVIDIA Corporation TU106 USB Type-C UCSI Controller [10de:1adb] (rev a1)\n09:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc. [AMD/ATI] Hawaii PRO [Radeon R9 290/390] [1002:67b1]\n09:00.1 Audio device [0403]: Advanced Micro Devices, Inc. [AMD/ATI] Hawaii HDMI Audio [Radeon R9 290/290X / 390/390X] [1002:aac8]\n0a:00.0 Non-Essential Instrumentation [1300]: Advanced Micro Devices, Inc. [AMD] Zeppelin/Raven/Raven2 PCIe Dummy Function [1022:145a]\n0a:00.2 Encryption controller [1080]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Platform Security Processor (PSP) 3.0 Device [1022:1456]\n0a:00.3 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] Zeppelin USB 3.0 xHCI Compliant Host Controller [1022:145f]\n0b:00.0 Non-Essential Instrumentation [1300]: Advanced Micro Devices, Inc. [AMD] Zeppelin/Renoir PCIe Dummy Function [1022:1455]\n0b:00.2 SATA controller [0106]: Advanced Micro Devices, Inc. [AMD] FCH SATA Controller [AHCI mode] [1022:7901] (rev 51)\n0b:00.3 Audio device [0403]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) HD Audio Controller [1022:1457]\n",
+      "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\n",
+      "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)\n",
+      "nvidia": "name, driver_version, memory.total [MiB]\nNVIDIA GeForce RTX 2060, 580.173.02, 6144 MiB\n"
+    },
+    "traces": [
+      {
+        "acquire": {
+          "max_ms": 0.10026099999999999,
+          "p50_ms": 0.01941,
+          "p99_ms": 0.051541000000000003,
+          "samples": 710
+        },
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "callback": {
+          "max_ms": 20.322286,
+          "p50_ms": 0.318021,
+          "p99_ms": 11.837693999999999,
+          "samples": 710
+        },
+        "completed_submissions_at_report": 710,
+        "coverage_episodes_dropped": 0,
+        "cpu_cache_peak_bytes": 32833536,
+        "cpu_max_ms": 5.859693,
+        "cpu_p50_ms": 0.18892,
+        "cpu_p99_ms": 2.270518,
+        "device_type": "DiscreteGpu",
+        "driver": "NVIDIA",
+        "driver_info": "580.173.02",
+        "duration_seconds": 12.0,
+        "failed_acquire_max_ms": 0.0,
+        "final": {
+          "acquire_ms": 0.02142,
+          "callback_ms": 0.323551,
+          "completed_submissions": 709,
+          "cpu_cache_bytes": 29982720,
+          "cpu_evictions": 68,
+          "cpu_ms": 0.20983100000000002,
+          "cpu_thumbnail_bytes": 2457600,
+          "culled": 994,
+          "decode_errors": 0,
+          "decode_ms": 22806.569760000002,
+          "disk_hits": 0,
+          "elapsed_ms": 12611.019540000001,
+          "gpu_evictions": 61,
+          "gpu_resident_bytes": 59080704,
+          "gpu_thumbnail_bytes": 2457600,
+          "in_flight": 1,
+          "lods": [
+            3,
+            2,
+            1
+          ],
+          "pending": 2,
+          "placeholders": 0,
+          "present_ms": 0.08561,
+          "requested_covered": 1,
+          "stale": 1,
+          "submitted": true,
+          "upload_bytes": 0,
+          "upload_cpu_ms": 0.0,
+          "uploads": 0,
+          "visible": 6
+        },
+        "first_visible_content_ms": 879.841817,
+        "frame_attempts": 710,
+        "gpu_backpressure_frames": 0,
+        "gpu_pass": {
+          "max_ms": 0.58592,
+          "p50_ms": 0.140832,
+          "p99_ms": 0.544704,
+          "samples": 710
+        },
+        "gpu_resident_peak_bytes": 68763648,
+        "gpu_timing_dropped": 0,
+        "gpu_timing_note": "Optional asynchronous timestamps measure the canvas render pass only, excluding uploads, surface acquisition and presentation. CPU callback and attempt cadence do not measure monitor presentation latency.",
+        "headless": false,
+        "interval_p50_ms": 16.770722999999634,
+        "interval_p99_ms": 18.887330999998085,
+        "objects": 1000,
+        "pending_limit": 16,
+        "pending_peak": 4,
+        "platform_events": [
+          {
+            "event": "initialize",
+            "scale_factor": 1.0,
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "resize",
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "occluded",
+            "occluded": false
+          }
+        ],
+        "prefetch": "none",
+        "present": {
+          "max_ms": 20.083955,
+          "p50_ms": 0.0787,
+          "p99_ms": 11.460473,
+          "samples": 710
+        },
+        "rejected_cache_entries": 0,
+        "rss_high_water_kib": 545204,
+        "scenario": "pan-normal",
+        "schema": 1,
+        "startup_ms": 626.9600939999999,
+        "submitted_frames": 710,
+        "surface_other_errors": 0,
+        "surface_reconfigures": 0,
+        "surface_timeouts": 0,
+        "thumbnail_decoder": "jpeg-decoder 0.3.2 DCT",
+        "upload_count_limit": 8,
+        "worker_profile_dropped": 0,
+        "worker_retention_peak_bytes": 58392576,
+        "worker_stage_names": [
+          "source_read",
+          "header",
+          "decode",
+          "resize",
+          "encode",
+          "cache_write",
+          "cache_read",
+          "cache_maintenance",
+          "queue_wait",
+          "cpu_insert",
+          "retire"
+        ],
+        "workers": 2,
+        "worker_stages": {
+          "source_read": {
+            "samples": 124,
+            "p50_ms": 1.4318359999999999,
+            "p95_ms": 2.915101,
+            "p99_ms": 8.843112999999999,
+            "total_ms": 211.710355,
+            "bytes": 881593409
+          },
+          "header": {
+            "samples": 124,
+            "p50_ms": 0.00586,
+            "p95_ms": 0.010801,
+            "p99_ms": 0.01337,
+            "total_ms": 0.786566,
+            "bytes": 0
+          },
+          "decode": {
+            "samples": 124,
+            "p50_ms": 139.36676500000002,
+            "p95_ms": 159.215811,
+            "p99_ms": 166.334938,
+            "total_ms": 17506.030495,
+            "bytes": 688608000
+          },
+          "resize": {
+            "samples": 123,
+            "p50_ms": 7.530868,
+            "p95_ms": 133.970645,
+            "p99_ms": 142.303537,
+            "total_ms": 4119.85508,
+            "bytes": 1077509826
+          },
+          "encode": {
+            "samples": 123,
+            "p50_ms": 1.677937,
+            "p95_ms": 28.036156,
+            "p99_ms": 28.900209,
+            "total_ms": 866.458217,
+            "bytes": 227915417
+          },
+          "cache_write": {
+            "samples": 123,
+            "p50_ms": 0.27032100000000003,
+            "p95_ms": 2.1187379999999996,
+            "p99_ms": 2.2079679999999997,
+            "total_ms": 75.28160799999999,
+            "bytes": 227915417
+          },
+          "cache_read": {
+            "samples": 0,
+            "p50_ms": null,
+            "p95_ms": null,
+            "p99_ms": null,
+            "total_ms": 0,
+            "bytes": 0
+          },
+          "cache_maintenance": {
+            "samples": 124,
+            "p50_ms": 0.08877999999999998,
+            "p95_ms": 0.12961,
+            "p99_ms": 0.15113000000000001,
+            "total_ms": 10.97069,
+            "bytes": 0
+          },
+          "queue_wait": {
+            "samples": 124,
+            "p50_ms": 0.01916,
+            "p95_ms": 152.229784,
+            "p99_ms": 172.327329,
+            "total_ms": 3841.70463,
+            "bytes": 0
+          },
+          "cpu_insert": {
+            "samples": 123,
+            "p50_ms": 0.00088,
+            "p95_ms": 0.0018599999999999999,
+            "p99_ms": 0.0038,
+            "total_ms": 0.12994,
+            "bytes": 390168576
+          },
+          "retire": {
+            "samples": 124,
+            "p50_ms": 0.00031,
+            "p95_ms": 1.505856,
+            "p99_ms": 6.283114,
+            "total_ms": 29.513473,
+            "bytes": 0
+          }
+        },
+        "worker_active": {
+          "samples": 124,
+          "p50_ms": 150.32930700000003,
+          "p95_ms": 321.13487999999995,
+          "p99_ms": 336.98054099999996,
+          "total_ms": 22836.039963
+        },
+        "first_image_after_demand": {
+          "samples": 50,
+          "p50_ms": 369.2200620000003,
+          "p95_ms": 572.7129490000002,
+          "p99_ms": 604.6072100000001,
+          "total_ms": 18197.194298000002,
+          "censored": 0
+        },
+        "requested_lod_after_demand": {
+          "samples": 28,
+          "p50_ms": 1142.9312989999999,
+          "p95_ms": 1328.1593479999997,
+          "p99_ms": 1344.764240999999,
+          "total_ms": 31694.996995,
+          "censored": 22
+        },
+        "cancelled_by_stage": {
+          "decode": 1
+        },
+        "worker_memory_observed_peaks": {
+          "encoded_peak_bytes": 7123639,
+          "decoded_peak_bytes": 20250000,
+          "resize_peak_bytes": 12582912
+        },
+        "content_coverage_fraction": 0.7310173697270471,
+        "lod_coverage_fractions": [
+          0.22779156327543423,
+          0.36823821339950374,
+          0.1349875930521092
+        ],
+        "requested_coverage_fraction": 0.1349875930521092,
+        "worker_utilization_fraction": 0.951501665125,
+        "worker_utilization_note": "Completed observed worker time / run worker capacity; excludes jobs still active at exit, therefore a lower bound.",
+        "cpu_thumbnail_peak_bytes": 2457600,
+        "gpu_thumbnail_peak_bytes": 2457600,
+        "gpu_completion_fps": 59.166666666666664,
+        "display_cache_bytes_after_run": 227915417,
+        "display_cache_files_after_run": 123
+      },
+      {
+        "acquire": {
+          "max_ms": 0.08220000000000001,
+          "p50_ms": 0.01897,
+          "p99_ms": 0.033951,
+          "samples": 710
+        },
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "callback": {
+          "max_ms": 21.676102,
+          "p50_ms": 0.297561,
+          "p99_ms": 10.093608,
+          "samples": 710
+        },
+        "completed_submissions_at_report": 710,
+        "coverage_episodes_dropped": 0,
+        "cpu_cache_peak_bytes": 0,
+        "cpu_max_ms": 0.731563,
+        "cpu_p50_ms": 0.185921,
+        "cpu_p99_ms": 0.419161,
+        "device_type": "DiscreteGpu",
+        "driver": "NVIDIA",
+        "driver_info": "580.173.02",
+        "duration_seconds": 12.0,
+        "failed_acquire_max_ms": 0.0,
+        "final": {
+          "acquire_ms": 0.012639999999999998,
+          "callback_ms": 0.20003100000000001,
+          "completed_submissions": 709,
+          "cpu_cache_bytes": 0,
+          "cpu_evictions": 0,
+          "cpu_ms": 0.131101,
+          "cpu_thumbnail_bytes": 0,
+          "culled": 991,
+          "decode_errors": 0,
+          "decode_ms": 22345.115814999906,
+          "disk_hits": 0,
+          "elapsed_ms": 12608.534951,
+          "gpu_evictions": 0,
+          "gpu_resident_bytes": 0,
+          "gpu_thumbnail_bytes": 0,
+          "in_flight": 1,
+          "lods": [
+            0,
+            0,
+            0
+          ],
+          "pending": 14,
+          "placeholders": 9,
+          "present_ms": 0.0521,
+          "requested_covered": 0,
+          "stale": 1371,
+          "submitted": true,
+          "upload_bytes": 0,
+          "upload_cpu_ms": 0.0,
+          "uploads": 0,
+          "visible": 9
+        },
+        "first_visible_content_ms": null,
+        "frame_attempts": 710,
+        "gpu_backpressure_frames": 0,
+        "gpu_pass": {
+          "max_ms": 0.05936,
+          "p50_ms": 0.043552,
+          "p99_ms": 0.057344,
+          "samples": 710
+        },
+        "gpu_resident_peak_bytes": 0,
+        "gpu_timing_dropped": 0,
+        "gpu_timing_note": "Optional asynchronous timestamps measure the canvas render pass only, excluding uploads, surface acquisition and presentation. CPU callback and attempt cadence do not measure monitor presentation latency.",
+        "headless": false,
+        "interval_p50_ms": 16.76664299999993,
+        "interval_p99_ms": 16.99730499999987,
+        "objects": 1000,
+        "pending_limit": 16,
+        "pending_peak": 16,
+        "platform_events": [
+          {
+            "event": "initialize",
+            "scale_factor": 1.0,
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "resize",
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "occluded",
+            "occluded": false
+          }
+        ],
+        "prefetch": "none",
+        "present": {
+          "max_ms": 21.485541,
+          "p50_ms": 0.07695,
+          "p99_ms": 9.842727,
+          "samples": 710
+        },
+        "rejected_cache_entries": 0,
+        "rss_high_water_kib": 351008,
+        "scenario": "pan",
+        "schema": 1,
+        "startup_ms": 613.132562,
+        "submitted_frames": 710,
+        "surface_other_errors": 0,
+        "surface_reconfigures": 0,
+        "surface_timeouts": 0,
+        "thumbnail_decoder": "jpeg-decoder 0.3.2 DCT",
+        "upload_count_limit": 8,
+        "worker_profile_dropped": 0,
+        "worker_retention_peak_bytes": 0,
+        "worker_stage_names": [
+          "source_read",
+          "header",
+          "decode",
+          "resize",
+          "encode",
+          "cache_write",
+          "cache_read",
+          "cache_maintenance",
+          "queue_wait",
+          "cpu_insert",
+          "retire"
+        ],
+        "workers": 2,
+        "worker_stages": {
+          "source_read": {
+            "samples": 175,
+            "p50_ms": 1.2178950000000002,
+            "p95_ms": 2.1692690000000003,
+            "p99_ms": 9.125064,
+            "total_ms": 251.158863,
+            "bytes": 1244489022
+          },
+          "header": {
+            "samples": 175,
+            "p50_ms": 0.00513,
+            "p95_ms": 0.01039,
+            "p99_ms": 0.014070000000000001,
+            "total_ms": 0.995103,
+            "bytes": 0
+          },
+          "decode": {
+            "samples": 175,
+            "p50_ms": 125.50329299999999,
+            "p95_ms": 136.444225,
+            "p99_ms": 138.848173,
+            "total_ms": 22086.169478,
+            "bytes": 221681250
+          },
+          "resize": {
+            "samples": 0,
+            "p50_ms": null,
+            "p95_ms": null,
+            "p99_ms": null,
+            "total_ms": 0,
+            "bytes": 0
+          },
+          "encode": {
+            "samples": 0,
+            "p50_ms": null,
+            "p95_ms": null,
+            "p99_ms": null,
+            "total_ms": 0,
+            "bytes": 0
+          },
+          "cache_write": {
+            "samples": 0,
+            "p50_ms": null,
+            "p95_ms": null,
+            "p99_ms": null,
+            "total_ms": 0,
+            "bytes": 0
+          },
+          "cache_read": {
+            "samples": 0,
+            "p50_ms": null,
+            "p95_ms": null,
+            "p99_ms": null,
+            "total_ms": 0,
+            "bytes": 0
+          },
+          "cache_maintenance": {
+            "samples": 175,
+            "p50_ms": 0.00016999999999999999,
+            "p95_ms": 0.00035999999999999997,
+            "p99_ms": 0.00054,
+            "total_ms": 0.03381,
+            "bytes": 0
+          },
+          "queue_wait": {
+            "samples": 1371,
+            "p50_ms": 111.42626,
+            "p95_ms": 135.18775,
+            "p99_ms": 155.098825,
+            "total_ms": 133461.123692,
+            "bytes": 0
+          },
+          "cpu_insert": {
+            "samples": 0,
+            "p50_ms": null,
+            "p95_ms": null,
+            "p99_ms": null,
+            "total_ms": 0,
+            "bytes": 0
+          },
+          "retire": {
+            "samples": 1371,
+            "p50_ms": 2.9999999999999997e-05,
+            "p95_ms": 8e-05,
+            "p99_ms": 9.999999999999999e-05,
+            "total_ms": 0.04313,
+            "bytes": 0
+          }
+        },
+        "worker_active": {
+          "samples": 1371,
+          "p50_ms": 0.00015999999999999999,
+          "p95_ms": 128.411864,
+          "p99_ms": 135.997333,
+          "total_ms": 22345.105675
+        },
+        "first_image_after_demand": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "censored": 2074
+        },
+        "requested_lod_after_demand": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "censored": 2074
+        },
+        "cancelled_by_stage": {
+          "decode": 175,
+          "queue": 1196
+        },
+        "worker_memory_observed_peaks": {
+          "encoded_peak_bytes": 7123639,
+          "decoded_peak_bytes": 1266750,
+          "resize_peak_bytes": 0
+        },
+        "content_coverage_fraction": 0.0,
+        "lod_coverage_fractions": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "requested_coverage_fraction": 0.0,
+        "worker_utilization_fraction": 0.9310460697916666,
+        "worker_utilization_note": "Completed observed worker time / run worker capacity; excludes jobs still active at exit, therefore a lower bound.",
+        "cpu_thumbnail_peak_bytes": 0,
+        "gpu_thumbnail_peak_bytes": 0,
+        "gpu_completion_fps": 59.166666666666664,
+        "display_cache_bytes_after_run": 0,
+        "display_cache_files_after_run": 0
+      },
+      {
+        "acquire": {
+          "max_ms": 0.0354,
+          "p50_ms": 0.013600000000000001,
+          "p99_ms": 0.02799,
+          "samples": 710
+        },
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "callback": {
+          "max_ms": 25.356695,
+          "p50_ms": 0.204781,
+          "p99_ms": 11.061032,
+          "samples": 710
+        },
+        "completed_submissions_at_report": 710,
+        "coverage_episodes_dropped": 0,
+        "cpu_cache_peak_bytes": 12877824,
+        "cpu_max_ms": 6.248773,
+        "cpu_p50_ms": 0.112301,
+        "cpu_p99_ms": 2.337639,
+        "device_type": "DiscreteGpu",
+        "driver": "NVIDIA",
+        "driver_info": "580.173.02",
+        "duration_seconds": 12.0,
+        "failed_acquire_max_ms": 0.0,
+        "final": {
+          "acquire_ms": 0.0224,
+          "callback_ms": 0.291201,
+          "completed_submissions": 709,
+          "cpu_cache_bytes": 12877824,
+          "cpu_evictions": 11,
+          "cpu_ms": 0.19512100000000002,
+          "cpu_thumbnail_bytes": 294912,
+          "culled": 999,
+          "decode_errors": 0,
+          "decode_ms": 3557.1875119999995,
+          "disk_hits": 0,
+          "elapsed_ms": 12606.461563,
+          "gpu_evictions": 11,
+          "gpu_resident_bytes": 12877824,
+          "gpu_thumbnail_bytes": 294912,
+          "in_flight": 1,
+          "lods": [
+            0,
+            0,
+            1
+          ],
+          "pending": 0,
+          "placeholders": 0,
+          "present_ms": 0.06655,
+          "requested_covered": 1,
+          "stale": 0,
+          "submitted": true,
+          "upload_bytes": 0,
+          "upload_cpu_ms": 0.0,
+          "uploads": 0,
+          "visible": 1
+        },
+        "first_visible_content_ms": 874.665428,
+        "frame_attempts": 710,
+        "gpu_backpressure_frames": 0,
+        "gpu_pass": {
+          "max_ms": 0.246976,
+          "p50_ms": 0.116832,
+          "p99_ms": 0.192768,
+          "samples": 710
+        },
+        "gpu_resident_peak_bytes": 12877824,
+        "gpu_timing_dropped": 0,
+        "gpu_timing_note": "Optional asynchronous timestamps measure the canvas render pass only, excluding uploads, surface acquisition and presentation. CPU callback and attempt cadence do not measure monitor presentation latency.",
+        "headless": false,
+        "interval_p50_ms": 16.76838299999963,
+        "interval_p99_ms": 19.53540299999986,
+        "objects": 1000,
+        "pending_limit": 16,
+        "pending_peak": 1,
+        "platform_events": [
+          {
+            "event": "initialize",
+            "scale_factor": 1.0,
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "resize",
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "occluded",
+            "occluded": false
+          }
+        ],
+        "prefetch": "none",
+        "present": {
+          "max_ms": 25.214775,
+          "p50_ms": 0.06451100000000001,
+          "p99_ms": 10.945892,
+          "samples": 710
+        },
+        "rejected_cache_entries": 0,
+        "rss_high_water_kib": 455804,
+        "scenario": "pressure",
+        "schema": 1,
+        "startup_ms": 610.9969629999999,
+        "submitted_frames": 710,
+        "surface_other_errors": 0,
+        "surface_reconfigures": 0,
+        "surface_timeouts": 0,
+        "thumbnail_decoder": "jpeg-decoder 0.3.2 DCT",
+        "upload_count_limit": 8,
+        "worker_profile_dropped": 0,
+        "worker_retention_peak_bytes": 27033600,
+        "worker_stage_names": [
+          "source_read",
+          "header",
+          "decode",
+          "resize",
+          "encode",
+          "cache_write",
+          "cache_read",
+          "cache_maintenance",
+          "queue_wait",
+          "cpu_insert",
+          "retire"
+        ],
+        "workers": 2,
+        "worker_stages": {
+          "source_read": {
+            "samples": 18,
+            "p50_ms": 1.9188370000000001,
+            "p95_ms": 9.423205000000001,
+            "p99_ms": 9.423205000000001,
+            "total_ms": 55.106739000000005,
+            "bytes": 127909284
+          },
+          "header": {
+            "samples": 18,
+            "p50_ms": 0.0057799999999999995,
+            "p95_ms": 0.00683,
+            "p99_ms": 0.00683,
+            "total_ms": 0.10296,
+            "bytes": 0
+          },
+          "decode": {
+            "samples": 18,
+            "p50_ms": 135.796012,
+            "p95_ms": 150.774659,
+            "p99_ms": 150.774659,
+            "total_ms": 2461.163252,
+            "bytes": 136701000
+          },
+          "resize": {
+            "samples": 18,
+            "p50_ms": 7.7940190000000005,
+            "p95_ms": 133.92553500000002,
+            "p99_ms": 133.92553500000002,
+            "total_ms": 844.760151,
+            "bytes": 217211976
+          },
+          "encode": {
+            "samples": 18,
+            "p50_ms": 1.652046,
+            "p95_ms": 28.103485000000003,
+            "p99_ms": 28.103485000000003,
+            "total_ms": 176.86544700000002,
+            "bytes": 46035802
+          },
+          "cache_write": {
+            "samples": 18,
+            "p50_ms": 0.270501,
+            "p95_ms": 2.258579,
+            "p99_ms": 2.258579,
+            "total_ms": 14.431351,
+            "bytes": 46035802
+          },
+          "cache_read": {
+            "samples": 0,
+            "p50_ms": null,
+            "p95_ms": null,
+            "p99_ms": null,
+            "total_ms": 0,
+            "bytes": 0
+          },
+          "cache_maintenance": {
+            "samples": 18,
+            "p50_ms": 0.052901,
+            "p95_ms": 0.06365,
+            "p99_ms": 0.06365,
+            "total_ms": 0.909687,
+            "bytes": 0
+          },
+          "queue_wait": {
+            "samples": 18,
+            "p50_ms": 0.02422,
+            "p95_ms": 6.847016,
+            "p99_ms": 6.847016,
+            "total_ms": 22.148844,
+            "bytes": 0
+          },
+          "cpu_insert": {
+            "samples": 18,
+            "p50_ms": 0.00091,
+            "p95_ms": 0.00139,
+            "p99_ms": 0.00139,
+            "total_ms": 0.01781,
+            "bytes": 80510976
+          },
+          "retire": {
+            "samples": 18,
+            "p50_ms": 0.00015,
+            "p95_ms": 6.798156,
+            "p99_ms": 6.798156,
+            "total_ms": 21.738191999999998,
+            "bytes": 0
+          }
+        },
+        "worker_active": {
+          "samples": 18,
+          "p50_ms": 147.306975,
+          "p95_ms": 316.54610299999996,
+          "p99_ms": 316.54610299999996,
+          "total_ms": 3578.919904
+        },
+        "first_image_after_demand": {
+          "samples": 6,
+          "p50_ms": 151.08180999999968,
+          "p95_ms": 167.83229299999994,
+          "p99_ms": 167.83229299999994,
+          "total_ms": 922.5122309999978,
+          "censored": 0
+        },
+        "requested_lod_after_demand": {
+          "samples": 6,
+          "p50_ms": 626.8789639999995,
+          "p95_ms": 643.1179950000001,
+          "p99_ms": 643.1179950000001,
+          "total_ms": 3775.096465999999,
+          "censored": 0
+        },
+        "cancelled_by_stage": {},
+        "worker_memory_observed_peaks": {
+          "encoded_peak_bytes": 7112991,
+          "decoded_peak_bytes": 20250000,
+          "resize_peak_bytes": 12582912
+        },
+        "content_coverage_fraction": 0.9225352112676056,
+        "lod_coverage_fractions": [
+          0.07605633802816901,
+          0.16056338028169015,
+          0.6859154929577465
+        ],
+        "requested_coverage_fraction": 0.6859154929577465,
+        "worker_utilization_fraction": 0.14912166266666665,
+        "worker_utilization_note": "Completed observed worker time / run worker capacity; excludes jobs still active at exit, therefore a lower bound.",
+        "cpu_thumbnail_peak_bytes": 294912,
+        "gpu_thumbnail_peak_bytes": 294912,
+        "gpu_completion_fps": 59.166666666666664,
+        "display_cache_bytes_after_run": 46035802,
+        "display_cache_files_after_run": 18
+      }
+    ],
+    "artifacts_sha256": {
+      "benchmark-results/mission0_6-repeat-baseline/environment.json": "c18370ae3838fa85dc4b252090f430f76d0be35e98d498f81104a20155ce84fd",
+      "benchmark-results/mission0_6-repeat-baseline/summary.json": "2e5834502b69fd23ddb470e1becd03d831800e8ecf64699e648c2f6138a92300",
+      "benchmark-results/mission0_6-repeat-baseline/source-snapshot.zip": "02fdd908d49e1baa312feb9063d4514fdfe1aaf6ab1e044c2ec2a67f8fb304ab",
+      "benchmark-results/mission0_6-repeat-baseline/pan-normal.json": "7c6abb58cc9c4c808d41dfaa4511141a3b0897df14d017e4944237388c9a4260",
+      "benchmark-results/mission0_6-repeat-baseline/pan.json": "02f05e7f160fba6f931b1857ca08c8803fddb2b4f570ed840f96820deca252e7",
+      "benchmark-results/mission0_6-repeat-baseline/pressure.json": "3a112baa2b2c0a3716e7d34b971c3b1b9f2ba01f9aae5227dbcdd4e2608a3d64"
+    }
+  },
+  "warm": {
+    "environment": {
+      "platform": "Linux-7.1.5-76070105-generic-x86_64-with-glibc2.39",
+      "processor": "x86_64",
+      "manifest_sha256": "8bd27d9631560213365df47b842e37720421703608b13e79ee54f8524ad44af6",
+      "headless": false,
+      "corpus_objects": 1000,
+      "corpus_seed": 20261002,
+      "corpus_sources": 32,
+      "pillow_version": "10.2.0",
+      "limitations": "Distinct asset IDs and paths reuse hardlinked JPEG content. OS filesystem caching and visual diversity differ from 1000 unique photographs.",
+      "source_sha256": "bef6584c18f8d087fb4dab8f21e03f990bb4ebcc2298670a25a6f3f51b472b91",
+      "binary_sha256": "275a1e7902397c89ce0e519423bf6d3042bb2a57f3ea2191be8252954d3fdd4c",
+      "executed_harness_sha256": "f2fcec04401de39b50c3188c272f31bbe1c6851827a2b719dabee201076491aa",
+      "available_native_build": {
+        "version": "3.2.0",
+        "source_url": "https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.2.0/libjpeg-turbo-3.2.0.tar.gz",
+        "source_sha256": "6f30092cef9fb839779646608f4ee14ae3cbac989c47fa05e841b0841f09878e",
+        "cmake_command": [
+          "cmake",
+          "-S",
+          "/home/gurp/softs/tack/target/native/source/libjpeg-turbo-3.2.0",
+          "-B",
+          "/home/gurp/softs/tack/target/native/turbojpeg-build",
+          "-DCMAKE_INSTALL_PREFIX=/home/gurp/softs/tack/target/native/libjpeg-turbo-3.2.0",
+          "-DCMAKE_INSTALL_LIBDIR=lib",
+          "-DCMAKE_BUILD_TYPE=Release",
+          "-DENABLE_SHARED=OFF",
+          "-DENABLE_STATIC=ON",
+          "-DWITH_TURBOJPEG=ON",
+          "-DREQUIRE_SIMD=ON",
+          "-DWITH_JAVA=OFF"
+        ],
+        "nasm": "NASM version 2.16.01",
+        "library_sha256": {
+          "libturbojpeg.a": "e3fb98a1b4e3814c1e620b6e599b4a293badfde689a49430e0d1a43455269658"
+        }
+      },
+      "cpu": "Architecture:                            x86_64\nCPU op-mode(s):                          32-bit, 64-bit\nAddress sizes:                           43 bits physical, 48 bits virtual\nByte Order:                              Little Endian\nCPU(s):                                  16\nOn-line CPU(s) list:                     0-15\nVendor ID:                               AuthenticAMD\nModel name:                              AMD Ryzen 7 2700X Eight-Core Processor\nCPU family:                              23\nModel:                                   8\nThread(s) per core:                      2\nCore(s) per socket:                      8\nSocket(s):                               1\nStepping:                                2\nFrequency boost:                         disabled\nCPU(s) scaling MHz:                      55%\nCPU max MHz:                             4350.0000\nCPU min MHz:                             2200.0000\nBogoMIPS:                                7799.56\nFlags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl nonstop_tsc cpuid extd_apicid aperfmperf rapl pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpb hw_pstate ssbd ibpb vmmcall fsgsbase bmi1 avx2 smep bmi2 rdseed adx smap clflushopt sha_ni xsaveopt xsavec xgetbv1 clzero xsaveerptr arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif overflow_recov succor smca sev sev_es\nVirtualization:                          AMD-V\nL1d cache:                               256 KiB (8 instances)\nL1i cache:                               512 KiB (8 instances)\nL2 cache:                                4 MiB (8 instances)\nL3 cache:                                16 MiB (2 instances)\nNUMA node(s):                            1\nNUMA node0 CPU(s):                       0-15\nVulnerability Gather data sampling:      Not affected\nVulnerability Ghostwrite:                Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Old microcode:             Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Mitigation; untrained return thunk; SMT vulnerable\nVulnerability Spec rstack overflow:      Mitigation; Safe RET\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; Retpolines; IBPB conditional; STIBP disabled; RSB filling; PBRSB-eIBRS Not affected; BHI Not affected\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Mitigation; IBPB before exit to userspace\n",
+      "memory": "               total        used        free      shared  buff/cache   available\nMem:     33549754368  7267901440  5855789056    21983232 23259914240 26281852928\nSwap:    21474299904   158949376 21315350528\n",
+      "gpu_pci": "00:00.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Root Complex [1022:1450]\n00:00.2 IOMMU [0806]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) I/O Memory Management Unit [1022:1451]\n00:01.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-1fh) PCIe Dummy Host Bridge [1022:1452]\n00:01.3 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) PCIe GPP Bridge [1022:1453]\n00:02.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-1fh) PCIe Dummy Host Bridge [1022:1452]\n00:03.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-1fh) PCIe Dummy Host Bridge [1022:1452]\n00:03.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) PCIe GPP Bridge [1022:1453]\n00:03.2 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) PCIe GPP Bridge [1022:1453]\n00:04.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-1fh) PCIe Dummy Host Bridge [1022:1452]\n00:07.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-1fh) PCIe Dummy Host Bridge [1022:1452]\n00:07.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Internal PCIe GPP Bridge 0 to Bus B [1022:1454]\n00:08.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-1fh) PCIe Dummy Host Bridge [1022:1452]\n00:08.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Internal PCIe GPP Bridge 0 to Bus B [1022:1454]\n00:14.0 SMBus [0c05]: Advanced Micro Devices, Inc. [AMD] FCH SMBus Controller [1022:790b] (rev 59)\n00:14.3 ISA bridge [0601]: Advanced Micro Devices, Inc. [AMD] FCH LPC Bridge [1022:790e] (rev 51)\n00:18.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 0 [1022:1460]\n00:18.1 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 1 [1022:1461]\n00:18.2 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 2 [1022:1462]\n00:18.3 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 3 [1022:1463]\n00:18.4 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 4 [1022:1464]\n00:18.5 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 5 [1022:1465]\n00:18.6 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 6 [1022:1466]\n00:18.7 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Data Fabric: Device 18h; Function 7 [1022:1467]\n01:00.0 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] Device [1022:43d0] (rev 01)\n01:00.1 SATA controller [0106]: Advanced Micro Devices, Inc. [AMD] 400 Series Chipset SATA Controller [1022:43c8] (rev 01)\n01:00.2 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] 400 Series Chipset PCIe Bridge [1022:43c6] (rev 01)\n02:00.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] 400 Series Chipset PCIe Port [1022:43c7] (rev 01)\n02:04.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] 400 Series Chipset PCIe Port [1022:43c7] (rev 01)\n02:06.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] 400 Series Chipset PCIe Port [1022:43c7] (rev 01)\n02:07.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] 400 Series Chipset PCIe Port [1022:43c7] (rev 01)\n02:09.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] 400 Series Chipset PCIe Port [1022:43c7] (rev 01)\n04:00.0 USB controller [0c03]: ASMedia Technology Inc. ASM1142 USB 3.1 Host Controller [1b21:1242]\n06:00.0 Ethernet controller [0200]: Intel Corporation I211 Gigabit Network Connection [8086:1539] (rev 03)\n08:00.0 VGA compatible controller [0300]: NVIDIA Corporation TU106 [GeForce RTX 2060 Rev. A] [10de:1f08] (rev a1)\n08:00.1 Audio device [0403]: NVIDIA Corporation TU106 High Definition Audio Controller [10de:10f9] (rev a1)\n08:00.2 USB controller [0c03]: NVIDIA Corporation TU106 USB 3.1 Host Controller [10de:1ada] (rev a1)\n08:00.3 Serial bus controller [0c80]: NVIDIA Corporation TU106 USB Type-C UCSI Controller [10de:1adb] (rev a1)\n09:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc. [AMD/ATI] Hawaii PRO [Radeon R9 290/390] [1002:67b1]\n09:00.1 Audio device [0403]: Advanced Micro Devices, Inc. [AMD/ATI] Hawaii HDMI Audio [Radeon R9 290/290X / 390/390X] [1002:aac8]\n0a:00.0 Non-Essential Instrumentation [1300]: Advanced Micro Devices, Inc. [AMD] Zeppelin/Raven/Raven2 PCIe Dummy Function [1022:145a]\n0a:00.2 Encryption controller [1080]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) Platform Security Processor (PSP) 3.0 Device [1022:1456]\n0a:00.3 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] Zeppelin USB 3.0 xHCI Compliant Host Controller [1022:145f]\n0b:00.0 Non-Essential Instrumentation [1300]: Advanced Micro Devices, Inc. [AMD] Zeppelin/Renoir PCIe Dummy Function [1022:1455]\n0b:00.2 SATA controller [0106]: Advanced Micro Devices, Inc. [AMD] FCH SATA Controller [AHCI mode] [1022:7901] (rev 51)\n0b:00.3 Audio device [0403]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 00h-0fh) HD Audio Controller [1022:1457]\n",
+      "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\n",
+      "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)\n",
+      "nvidia": "name, driver_version, memory.total [MiB]\nNVIDIA GeForce RTX 2060, 580.173.02, 6144 MiB\n"
+    },
+    "traces": [
+      {
+        "acquire": {
+          "max_ms": 0.0375,
+          "p50_ms": 0.01285,
+          "p99_ms": 0.02674,
+          "samples": 710
+        },
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "callback": {
+          "max_ms": 14.282095,
+          "p50_ms": 0.9554929999999999,
+          "p99_ms": 9.929044,
+          "samples": 710
+        },
+        "completed_submissions_at_report": 710,
+        "coverage_episodes_dropped": 0,
+        "cpu_cache_peak_bytes": 33521664,
+        "cpu_max_ms": 4.04066,
+        "cpu_p50_ms": 0.819342,
+        "cpu_p99_ms": 2.783837,
+        "device_type": "DiscreteGpu",
+        "driver": "NVIDIA",
+        "driver_info": "580.173.02",
+        "duration_seconds": 12.0,
+        "failed_acquire_max_ms": 0.0,
+        "final": {
+          "acquire_ms": 0.013940999999999999,
+          "callback_ms": 0.610052,
+          "completed_submissions": 709,
+          "cpu_cache_bytes": 33521664,
+          "cpu_evictions": 318,
+          "cpu_ms": 0.525141,
+          "cpu_thumbnail_bytes": 33521664,
+          "culled": 608,
+          "decode_errors": 0,
+          "decode_ms": 309.9351150000001,
+          "disk_hits": 1000,
+          "elapsed_ms": 12632.345261999999,
+          "gpu_evictions": 0,
+          "gpu_resident_bytes": 49152000,
+          "gpu_thumbnail_bytes": 49152000,
+          "in_flight": 1,
+          "lods": [
+            392,
+            0,
+            0
+          ],
+          "pending": 0,
+          "placeholders": 0,
+          "present_ms": 0.06654,
+          "requested_covered": 392,
+          "stale": 0,
+          "submitted": true,
+          "upload_bytes": 0,
+          "upload_cpu_ms": 0.0,
+          "uploads": 0,
+          "visible": 392
+        },
+        "first_visible_content_ms": 747.14258,
+        "frame_attempts": 710,
+        "gpu_backpressure_frames": 0,
+        "gpu_pass": {
+          "max_ms": 1.641824,
+          "p50_ms": 0.141312,
+          "p99_ms": 1.570624,
+          "samples": 710
+        },
+        "gpu_resident_peak_bytes": 49152000,
+        "gpu_timing_dropped": 0,
+        "gpu_timing_note": "Optional asynchronous timestamps measure the canvas render pass only, excluding uploads, surface acquisition and presentation. CPU callback and attempt cadence do not measure monitor presentation latency.",
+        "headless": false,
+        "interval_p50_ms": 16.77429999999913,
+        "interval_p99_ms": 18.712494999999763,
+        "objects": 1000,
+        "pending_limit": 16,
+        "pending_peak": 16,
+        "platform_events": [
+          {
+            "event": "initialize",
+            "scale_factor": 1.0,
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "resize",
+            "size": [
+              1280,
+              720
+            ]
+          },
+          {
+            "event": "occluded",
+            "occluded": false
+          }
+        ],
+        "prefetch": "none",
+        "present": {
+          "max_ms": 13.425793,
+          "p50_ms": 0.068,
+          "p99_ms": 8.885171000000001,
+          "samples": 710
+        },
+        "rejected_cache_entries": 0,
+        "rss_high_water_kib": 368096,
+        "scenario": "board-tour",
+        "schema": 1,
+        "startup_ms": 633.374364,
+        "submitted_frames": 710,
+        "surface_other_errors": 0,
+        "surface_reconfigures": 0,
+        "surface_timeouts": 0,
+        "thumbnail_decoder": "jpeg-decoder 0.3.2 DCT",
+        "upload_count_limit": 8,
+        "worker_profile_dropped": 0,
+        "worker_retention_peak_bytes": 34308096,
+        "worker_stage_names": [
+          "source_read",
+          "header",
+          "decode",
+          "resize",
+          "encode",
+          "cache_write",
+          "cache_read",
+          "cache_maintenance",
+          "queue_wait",
+          "cpu_insert",
+          "retire"
+        ],
+        "workers": 2,
+        "worker_stages": {
+          "source_read": {
+            "samples": 0,
+            "p50_ms": null,
+            "p95_ms": null,
+            "p99_ms": null,
+            "total_ms": 0,
+            "bytes": 0
+          },
+          "header": {
+            "samples": 1000,
+            "p50_ms": 0.0026699999999999996,
+            "p95_ms": 0.00971,
+            "p99_ms": 0.0135,
+            "total_ms": 3.710469,
+            "bytes": 0
+          },
+          "decode": {
+            "samples": 1000,
+            "p50_ms": 0.261681,
+            "p95_ms": 0.322581,
+            "p99_ms": 0.430961,
+            "total_ms": 261.846999,
+            "bytes": 0
+          },
+          "resize": {
+            "samples": 0,
+            "p50_ms": null,
+            "p95_ms": null,
+            "p99_ms": null,
+            "total_ms": 0,
+            "bytes": 0
+          },
+          "encode": {
+            "samples": 0,
+            "p50_ms": null,
+            "p95_ms": null,
+            "p99_ms": null,
+            "total_ms": 0,
+            "bytes": 0
+          },
+          "cache_write": {
+            "samples": 0,
+            "p50_ms": null,
+            "p95_ms": null,
+            "p99_ms": null,
+            "total_ms": 0,
+            "bytes": 0
+          },
+          "cache_read": {
+            "samples": 1000,
+            "p50_ms": 0.03103,
+            "p95_ms": 0.0539,
+            "p99_ms": 0.06285,
+            "total_ms": 34.599452,
+            "bytes": 46821679
+          },
+          "cache_maintenance": {
+            "samples": 1000,
+            "p50_ms": 4.9999999999999996e-05,
+            "p95_ms": 0.00027,
+            "p99_ms": 0.00052,
+            "total_ms": 0.090401,
+            "bytes": 0
+          },
+          "queue_wait": {
+            "samples": 1000,
+            "p50_ms": 1.1549019999999999,
+            "p95_ms": 2.254356,
+            "p99_ms": 2.591376,
+            "total_ms": 1157.502896,
+            "bytes": 0
+          },
+          "cpu_insert": {
+            "samples": 1000,
+            "p50_ms": 0.00016999999999999999,
+            "p95_ms": 0.00245,
+            "p99_ms": 0.00382,
+            "total_ms": 0.9339810000000001,
+            "bytes": 49152000
+          },
+          "retire": {
+            "samples": 1000,
+            "p50_ms": 0.00038,
+            "p95_ms": 0.00241,
+            "p99_ms": 0.00661,
+            "total_ms": 0.619853,
+            "bytes": 0
+          }
+        },
+        "worker_active": {
+          "samples": 1000,
+          "p50_ms": 0.30291,
+          "p95_ms": 0.398001,
+          "p99_ms": 0.5261910000000001,
+          "total_ms": 310.252308
+        },
+        "first_image_after_demand": {
+          "samples": 1000,
+          "p50_ms": 67.36547399999927,
+          "p95_ms": 839.2645620000002,
+          "p99_ms": 873.2290729999999,
+          "total_ms": 256348.479624,
+          "censored": 0
+        },
+        "requested_lod_after_demand": {
+          "samples": 1000,
+          "p50_ms": 67.36547399999927,
+          "p95_ms": 839.2645620000002,
+          "p99_ms": 873.2290729999999,
+          "total_ms": 256348.479624,
+          "censored": 0
+        },
+        "cancelled_by_stage": {},
+        "worker_memory_observed_peaks": {
+          "encoded_peak_bytes": 93868,
+          "decoded_peak_bytes": 49152,
+          "resize_peak_bytes": 0
+        },
+        "content_coverage_fraction": 0.9663478506388085,
+        "lod_coverage_fractions": [
+          0.9663478506388085,
+          0.0,
+          0.0
+        ],
+        "requested_coverage_fraction": 0.9663478506388085,
+        "worker_utilization_fraction": 0.012927179500000002,
+        "worker_utilization_note": "Completed observed worker time / run worker capacity; excludes jobs still active at exit, therefore a lower bound.",
+        "cpu_thumbnail_peak_bytes": 33521664,
+        "gpu_thumbnail_peak_bytes": 49152000,
+        "gpu_completion_fps": 59.166666666666664,
+        "display_cache_bytes_after_run": 46821679,
+        "display_cache_files_after_run": 1000
+      }
+    ],
+    "artifacts_sha256": {
+      "benchmark-results/mission0_6-warm-baseline/environment.json": "b6a4a8058fbbc3a80596de35b84280c6c3c9e75f1a57a83e7bcab2e6dd42f306",
+      "benchmark-results/mission0_6-warm-baseline/summary.json": "faff21e882eecd0f177a745ed46a9cebb4318a766fb8b8b30955f926f0f21ce7",
+      "benchmark-results/mission0_6-warm-baseline/source-snapshot.zip": "02fdd908d49e1baa312feb9063d4514fdfe1aaf6ab1e044c2ec2a67f8fb304ab",
+      "benchmark-results/mission0_6-warm-baseline/board-tour.json": "190a9818410281bbbfd53af458040bc683ba7ebe801e282f36a3d011db31b6fa"
+    }
+  }
+}

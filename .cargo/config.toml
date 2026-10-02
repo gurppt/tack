@@ -1,0 +1,6 @@
+# Prepared explicitly by tools/prepare_turbojpeg.py, never downloaded by Cargo.
+[env]
+TURBOJPEG_SOURCE = "explicit"
+TURBOJPEG_STATIC = "1"
+TURBOJPEG_LIB_DIR = { value = "target/native/libjpeg-turbo-3.2.0/lib", relative = true }
+TURBOJPEG_INCLUDE_DIR = { value = "target/native/libjpeg-turbo-3.2.0/include", relative = true }
