@@ -1,0 +1,35 @@
+[workspace]
+resolver = "3"
+members = ["crates/tack-core", "crates/tack-assets", "crates/tack-render", "crates/tack-app"]
+
+[workspace.package]
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.95"
+publish = false
+
+[workspace.dependencies]
+tack-core = { version = "=0.0.1", path = "crates/tack-core" }
+tack-assets = { version = "=0.0.1", path = "crates/tack-assets" }
+tack-render = { version = "=0.0.1", path = "crates/tack-render" }
+image = { version = "0.25.10", default-features = false, features = ["jpeg", "png"] }
+wgpu = { version = "27.0.1", default-features = false, features = ["std", "vulkan", "dx12", "gles", "wgsl"] }
+winit = { version = "0.30.12", default-features = false, features = ["rwh_06", "x11", "wayland", "wayland-dlopen"] }
+pollster = "0.4.0"
+bytemuck = { version = "1.24", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+unused_must_use = "deny"
+
+[workspace.lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+
+[profile.release]
+debug = 1

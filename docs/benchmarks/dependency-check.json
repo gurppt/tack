@@ -1,0 +1,28 @@
+{
+  "date_utc": "2026-10-02T01:07:43.829071+00:00",
+  "tool": "cargo-deny 0.20.2",
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "command": "CARGO_HOME=/tmp/tack-cargo /tmp/tack-tools/bin/cargo-deny --locked check --hide-inclusion-graph",
+  "exit_code": 0,
+  "result": "advisories ok, bans ok, licenses ok, sources ok",
+  "advisory_database_commit": "6de4455103aced2cba86e3b86e5c090b22827cf1",
+  "cargo_lock_sha256": "20856db54a73924fc670749d25a773705b80cf7e66f122163afce3c405e021f4",
+  "warning_crates": [
+    "bitflags",
+    "foldhash",
+    "getrandom",
+    "hashbrown",
+    "jni-sys",
+    "linux-raw-sys",
+    "miniz_oxide",
+    "r-efi",
+    "redox_syscall",
+    "rustix",
+    "syn",
+    "thiserror",
+    "thiserror-impl",
+    "windows-sys"
+  ],
+  "warning_policy": "Multiple transitive versions are reported as warnings; no dependency advisory is ignored.",
+  "raw_log_sha256": "26c0031f1c7cc90a72904c8b82a9b5af2d5b705f97ebe4e09d8dc5574f2b6ba1"
+}

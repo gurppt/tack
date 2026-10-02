@@ -1,0 +1,189 @@
+{
+  "date": "2026-10-02",
+  "library": "libXi 1.8.3",
+  "source_url": "https://www.x.org/releases/individual/lib/libXi-1.8.3.tar.xz",
+  "source_sha256": "7ad60056f01af4f786cfe93b3a7707447711626fc8da2637bec71a90409babe5",
+  "local_library_sha256": "803ceb41251189f2cb376f141ca16969ffe19588adbe5f920d753890897f277e",
+  "loaded_local_library_confirmed": true,
+  "system_packages_modified": false,
+  "fixed_startups": [
+    {
+      "attempt": 0,
+      "exit": 0,
+      "adapter": "NVIDIA GeForce RTX 2060",
+      "first_image_ms": 784.3279990000001,
+      "frames": 55
+    },
+    {
+      "attempt": 1,
+      "exit": 0,
+      "adapter": "NVIDIA GeForce RTX 2060",
+      "first_image_ms": 674.129521,
+      "frames": 55
+    },
+    {
+      "attempt": 2,
+      "exit": 0,
+      "adapter": "NVIDIA GeForce RTX 2060",
+      "first_image_ms": 661.870561,
+      "frames": 55
+    },
+    {
+      "attempt": 3,
+      "exit": 0,
+      "adapter": "NVIDIA GeForce RTX 2060",
+      "first_image_ms": 654.0215390000001,
+      "frames": 56
+    },
+    {
+      "attempt": 4,
+      "exit": 0,
+      "adapter": "NVIDIA GeForce RTX 2060",
+      "first_image_ms": 650.374523,
+      "frames": 55
+    },
+    {
+      "attempt": 5,
+      "exit": 0,
+      "adapter": "NVIDIA GeForce RTX 2060",
+      "first_image_ms": 681.0482890000001,
+      "frames": 54
+    },
+    {
+      "attempt": 6,
+      "exit": 0,
+      "adapter": "NVIDIA GeForce RTX 2060",
+      "first_image_ms": 678.3386380000001,
+      "frames": 56
+    },
+    {
+      "attempt": 7,
+      "exit": 0,
+      "adapter": "NVIDIA GeForce RTX 2060",
+      "first_image_ms": 645.645435,
+      "frames": 56
+    },
+    {
+      "attempt": 8,
+      "exit": 0,
+      "adapter": "NVIDIA GeForce RTX 2060",
+      "first_image_ms": 656.5973389999999,
+      "frames": 56
+    },
+    {
+      "attempt": 9,
+      "exit": 0,
+      "adapter": "NVIDIA GeForce RTX 2060",
+      "first_image_ms": 686.205571,
+      "frames": 54
+    },
+    {
+      "attempt": 10,
+      "exit": 0,
+      "adapter": "NVIDIA GeForce RTX 2060",
+      "first_image_ms": 619.845459,
+      "frames": 56
+    },
+    {
+      "attempt": 11,
+      "exit": 0,
+      "adapter": "NVIDIA GeForce RTX 2060",
+      "first_image_ms": 663.1944960000001,
+      "frames": 55
+    }
+  ],
+  "original_quiet_startups": [
+    {
+      "attempt": 0,
+      "exit": 0
+    },
+    {
+      "attempt": 1,
+      "exit": 0
+    },
+    {
+      "attempt": 2,
+      "exit": 0
+    },
+    {
+      "attempt": 3,
+      "exit": 0
+    },
+    {
+      "attempt": 4,
+      "exit": 0
+    },
+    {
+      "attempt": 5,
+      "exit": 0
+    },
+    {
+      "attempt": 6,
+      "exit": 0
+    },
+    {
+      "attempt": 7,
+      "exit": 0
+    },
+    {
+      "attempt": 8,
+      "exit": 0
+    },
+    {
+      "attempt": 9,
+      "exit": 0
+    },
+    {
+      "attempt": 10,
+      "exit": 0
+    },
+    {
+      "attempt": 11,
+      "exit": 0
+    }
+  ],
+  "original_synthetic_motion_startups": [
+    {
+      "attempt": 0,
+      "exit": 0
+    },
+    {
+      "attempt": 1,
+      "exit": 0
+    },
+    {
+      "attempt": 2,
+      "exit": 0
+    },
+    {
+      "attempt": 3,
+      "exit": 0
+    },
+    {
+      "attempt": 4,
+      "exit": 0
+    },
+    {
+      "attempt": 5,
+      "exit": 0
+    }
+  ],
+  "qualification": "The original crash is established by core analysis; synthetic motion did not reproduce it reliably. Successful relaunches alone do not prove the trigger was exercised. Corrected source zero-initializes the pointer read by the recorded reentrant RawMotion callback.",
+  "interactive_startup": {
+    "command": "cargo run --release --locked -p tack-app",
+    "alive_after_seconds": 5,
+    "window_geometry": "WINDOW=88080386\nX=2\nY=1463\nWIDTH=1280\nHEIGHT=720\nSCREEN=0\n",
+    "gpu_initialized": "NVIDIA GeForce RTX 2060",
+    "cleanup": "Test process group intentionally terminated after the five-second observation."
+  },
+  "app_binary_sha256": "32cb11ec8a0b34a0e4d325910d7ec2ac169fb488c7f1a7ad552a14b85172d77c",
+  "quality_checks": {
+    "format": "passed",
+    "workspace_check": "passed",
+    "clippy": "passed",
+    "rust_tests_passed": 9,
+    "documentation": "passed",
+    "python_tests_passed": 2,
+    "cargo_deny": "passed; existing upstream duplicate-version warnings retained"
+  }
+}

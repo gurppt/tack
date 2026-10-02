@@ -1,0 +1,16 @@
+[package]
+name = "tack-assets"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+tack-core.workspace = true
+image.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tracing.workspace = true
+
+[lints]
+workspace = true
