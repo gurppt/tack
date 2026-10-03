@@ -45,7 +45,7 @@ impl DiskCache {
         self.enabled = false;
     }
 
-    fn trim_for(&self, additional: usize) -> Result<(), AssetError> {
+    pub(crate) fn trim_for(&self, additional: usize) -> Result<(), AssetError> {
         fs::create_dir_all(&self.dir)?;
         let mut entries = Vec::new();
         let mut used = 0_u64;

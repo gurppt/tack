@@ -1,11 +1,66 @@
-# Phase 1A architecture
+# Phase 1B architecture
 
-Four crates retain the renderer/document separation established in
-[Mission 0](MISSION_0_REPORT.md): core geometry/LOD/byte-cache policy, assets
-(manifest, scheduling, decode and disposable caches), render (textures and
-submissions) and app (native input, traces and evidence). Phase 1A adds a resident
-document kernel to core and semantic action/binding foundations to app. There is
-no production UI, document persistence, server or collaboration implementation.
+Five crates separate resident domain (`tack-core`, no dependencies), source and
+representation supply (`tack-assets`), explicit snapshot I/O (`tack-storage`),
+GPU (`tack-render`) and native/CLI composition (`tack-app`). Phase 1A's document,
+command/history and action/keymap kernel remains authoritative. Phase 1B connects
+it to real save/reopen/image rendering; no selection/manipulation UI is built.
+See [the 1B report](MISSION_1B_REPORT.md), [storage decision](design/tack_storage_decision.md)
+and [format](design/tack_file_format_v1.md).
+
+## Product vertical slice
+
+`Source` holds identity, lossless native/foreign descriptor, revision and cheap
+optional size/mtime fingerprint; original bytes live outside core. `SetSource`
+changes it explicitly with undo and revision high-water protection. Editor dirty
+state is conservative: effective edits/undo/redo set it, successful exact-current
+save clears it. Persisted history is excluded. IDs use OS 128-bit entropy outside
+core; table/reference validation catches imported duplicates.
+
+`tack-storage` reads only bounded header/metadata/directories on open. Original
+and preview ranges share an open generation via positional reads, not reopened
+paths or shared seek cursors. Authority versions/CRC/reference/geometry failures
+refuse editable open; derived-directory/entry/payload failures discard only
+reproducible previews. Save streams 128KiB to private exclusive sibling temp,
+checks copied stored CRC, syncs, replaces, then syncs the Unix parent. Explicit
+post-publication sync errors distinguish a new published file. Failed prepublish
+save retains the old target; abandoned crash temps are never auto-promoted.
+Whole-file replacement space/I/O, deferred original CRC and untested power loss
+remain visible boundaries.
+
+The CLI creates linked or embedded documents through existing commands, prepares
+only overview representations, saves, and later opens them in a native window.
+Product metadata open and stat/read/decode/cache work run on workers. Two workers
+admit at most 16 outstanding jobs/results, CPU RGBA 64 MiB; process-owned repair
+SSD 512 MiB reuses the existing cache trim policy under a worker mutex. Stable
+asset/revision/generator cache names survive CPU eviction without growing disk
+with repeated requests. Preparation can fail if its complete generated set
+exceeds the quota; this never overwrites the target. No large-board import UI is
+claimed. Missing/changed/foreign/unavailable requested sources remain explicit;
+valid last-known previews may still display. There is no synchronous content hash,
+watcher, automatic rebinding or product high-LOD decoder.
+
+GPU accepts Copy query metadata, bounded decoded overview pixels, and typed
+AssetId+revision keys. Common quad generation honors center/size/rotation, flip,
+crop, opacity and Default/Smooth/Nearest sampling with shared textures. It knows
+no storage/source/path concepts and does no I/O. Product residence is rechecked
+after all uploads; final coverage uses actual residency. CPU query remains the
+ordered O(n log n) scan behind `DocumentQuery`, measured at 1k/5k/10k. Initial
+camera coordinates are clamped to the existing ±1e8 camera limit with an explicit
+report flag; valid document coordinates farther out remain preserved but are
+not fully navigable in this slice.
+
+Native open is demand-driven: ordinary idle sleeps after supply/completions;
+zero-size/occluded windows stop redraw. Scripted traces intentionally keep a
+bounded timer to reach their deadline. Shutdown drains already requested assets
+and GPU work outside event/navigation callbacks before report export. Source
+counts apply to requested assets only. Product first-content timestamps are CPU
+submission before present; frame/present/GPU pass durations remain distinct.
+
+The remainder records the retained benchmark foundations. Their u32 manifest
+identities, multi-LOD loader, cancellation, pressure scenarios and performance
+telemetry remain explicitly benchmark-only; they are not a competing product
+object model or evidence of implemented product selection/high-LOD interaction.
 
 ## Document and interaction foundations
 
@@ -22,9 +77,8 @@ source resolver, I/O, decode, hash or locks. Ordered visibility is initially an
 allocation-free O(n log n) scan through BTreeMap identities, not a production
 spatial-scale claim. A later measured spatial index can remain behind this query
 contract. The old manifest snapshot is explicitly named BenchmarkBoard and
-BenchmarkImage: its u32 asset/cache keys are not product identities. The current
-GPU benchmark still draws that validated axis-aligned snapshot; the new domain
-query is exercised at the render crate boundary without claiming a product canvas.
+BenchmarkImage: its u32 asset/cache keys are not product identities. The GPU benchmark still draws that validated axis-aligned snapshot; the separate
+product composition now renders `DocumentQuery` objects through the common GPU path.
 
 `tack-app` owns Action/Tool, immediate action dispatch, Keymap, normalized physical
 events and InputState. The map has at most 256 bindings, assigned held inputs at
@@ -36,7 +90,7 @@ the window. Menus and shortcuts share Undo/Redo dispatch through DocumentEditor.
 Only existing prototype pan/zoom defaults are shipped, reverified against PureRef.
 
 Source size is not working-set size: document/history retain metadata, never
-source or decoded buffers. No storage codec or source I/O is added. Portable IDs,
+source or decoded buffers. Storage/source I/O is owned by the separate 1B storage/assets adapters. Portable IDs,
 unknown newer data retention, non-destructive old-writer behavior and migrations
 are specified for Phase 1B in the [compatibility contract](design/tack_document_compatibility.md).
 See [the Phase 1A report](MISSION_1A_REPORT.md) for checks and regression evidence.

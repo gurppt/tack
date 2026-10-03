@@ -2,5 +2,7 @@
 mod gpu;
 mod timing;
 
-pub use gpu::{DrawImage, Gpu, MAX_UPLOADS, RenderStats};
+pub use gpu::{
+    DrawImage, DrawProductImage, Gpu, MAX_UPLOADS, ProductKey, RenderStats, product_quad,
+};
 pub use timing::GpuSample;

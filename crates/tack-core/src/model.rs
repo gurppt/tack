@@ -1,9 +1,5 @@
 use crate::{AssetId, Crop, ObjectId, Opacity, SourceId, Transform};
-use std::{
-    error::Error,
-    fmt,
-    path::{Path, PathBuf},
-};
+use std::{error::Error, fmt, path::Path};
 
 /// Document override; Default delegates to a local user preference.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -16,36 +12,60 @@ pub enum ImageFiltering {
 
 pub const MAX_SOURCE_PATH_BYTES: usize = 4096;
 
-/// Locator only. Embedded bytes will be resolved by storage using SourceId;
-/// linked paths are opaque platform paths. Constructing this performs no I/O.
+/// Metadata only. Embedded bytes are resolved outside core using SourceId.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum SourceLocation {
     Embedded,
-    Linked(PathBuf),
+    Linked(crate::LinkedPath),
+}
+
+/// Cheap observed file metadata, not a strong content identity or freshness proof.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct SourceFingerprint {
+    pub size: u64,
+    pub modified_seconds: i64,
+    pub modified_nanos: u32,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Source {
     id: SourceId,
     location: SourceLocation,
+    revision: u64,
+    fingerprint: Option<SourceFingerprint>,
 }
 impl Source {
     pub fn embedded(id: SourceId) -> Self {
         Self {
             id,
             location: SourceLocation::Embedded,
+            revision: 1,
+            fingerprint: None,
         }
     }
     pub fn linked(id: SourceId, path: impl AsRef<Path>) -> Result<Self, ModelError> {
-        let path = path.as_ref();
-        let bytes = path.as_os_str().as_encoded_bytes();
-        if bytes.is_empty() || bytes.len() > MAX_SOURCE_PATH_BYTES || bytes.contains(&0) {
-            return Err(ModelError::InvalidSourcePath);
+        Self::from_descriptor(
+            id,
+            SourceLocation::Linked(crate::LinkedPath::native(path.as_ref())?),
+            1,
+            None,
+        )
+    }
+    /// Validated source replacement also serves the explicit persistence adapter.
+    pub fn from_descriptor(
+        id: SourceId,
+        location: SourceLocation,
+        revision: u64,
+        fingerprint: Option<SourceFingerprint>,
+    ) -> Result<Self, ModelError> {
+        if revision == 0 || fingerprint.is_some_and(|f| f.modified_nanos >= 1_000_000_000) {
+            return Err(ModelError::InvalidSourceRevision);
         }
-        // Copy only the bounded descriptor, not a possibly over-capacity input.
         Ok(Self {
             id,
-            location: SourceLocation::Linked(path.to_path_buf()),
+            location,
+            revision,
+            fingerprint,
         })
     }
     pub fn id(&self) -> SourceId {
@@ -53,6 +73,12 @@ impl Source {
     }
     pub fn location(&self) -> &SourceLocation {
         &self.location
+    }
+    pub fn revision(&self) -> u64 {
+        self.revision
+    }
+    pub fn fingerprint(&self) -> Option<SourceFingerprint> {
+        self.fingerprint
     }
 }
 
@@ -155,6 +181,7 @@ impl DocumentObject {
 pub enum ModelError {
     InvalidSourcePath,
     InvalidPixelSize,
+    InvalidSourceRevision,
 }
 impl fmt::Display for ModelError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

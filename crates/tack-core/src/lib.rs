@@ -18,8 +18,11 @@ pub use history::DocumentEditor;
 pub use ids::{AssetId, DocumentId, InvalidId, ObjectId, SourceId};
 pub use model::{
     DocumentObject, ImageAsset, ImageFiltering, ImageObject, MAX_SOURCE_PATH_BYTES, ModelError,
-    ObjectKind, Source, SourceLocation,
+    ObjectKind, Source, SourceFingerprint, SourceLocation,
 };
 pub use query::{DocumentQuery, ImageRenderData};
 pub use residency::{ByteCache, Lod};
 pub use transform::{Crop, Opacity, Transform};
+
+mod source_path;
+pub use source_path::{LinkedPath, PathPlatform};

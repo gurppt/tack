@@ -9,15 +9,21 @@ pub struct DocumentEditor {
     capacity: usize,
     undo: VecDeque<Command>,
     redo: Vec<Command>,
+    dirty: bool,
+    source_revision_high_water: u64,
 }
 impl DocumentEditor {
     /// Zero capacity disables recording. Capacity is chosen explicitly by owner.
     pub fn new(document: Document, capacity: usize) -> Self {
+        let source_revision_high_water =
+            document.sources().map(|s| s.revision()).max().unwrap_or(0);
         Self {
             document,
             capacity,
             undo: VecDeque::new(),
             redo: Vec::new(),
+            dirty: false,
+            source_revision_high_water,
         }
     }
     pub fn document(&self) -> &Document {
@@ -29,13 +35,35 @@ impl DocumentEditor {
     pub fn redo_len(&self) -> usize {
         self.redo.len()
     }
+    /// Conservative: undoing back to a saved state may remain dirty, never falsely clean.
+    /// Revisions issued in this editing session are never recycled by undo/divergence.
+    pub fn next_source_revision(&self) -> Option<u64> {
+        self.source_revision_high_water.checked_add(1)
+    }
+    pub fn is_dirty(&self) -> bool {
+        self.dirty
+    }
+    /// Call only after the exact current document has been saved successfully.
+    pub fn mark_saved(&mut self) {
+        self.dirty = false;
+    }
     pub fn capacity(&self) -> usize {
         self.capacity
     }
     pub fn execute(&mut self, command: Command) -> Result<bool, CommandError> {
+        self.document
+            .validate_source_revision(&command, self.source_revision_high_water)?;
+        let next_high_water = match &command {
+            Command::SetSource(s) | Command::AddSource(s) => {
+                self.source_revision_high_water.max(s.revision())
+            }
+            _ => self.source_revision_high_water,
+        };
         let Some(inverse) = self.document.apply_reversible(command)? else {
             return Ok(false);
         };
+        self.source_revision_high_water = next_high_water;
+        self.dirty = true;
         self.redo.clear();
         if self.capacity > 0 {
             if self.undo.len() == self.capacity {
@@ -50,6 +78,7 @@ impl DocumentEditor {
             return Ok(false);
         };
         let inverse = self.document.apply_reversible(command)?;
+        self.dirty = true;
         self.undo.pop_back();
         if let Some(inverse) = inverse {
             self.redo.push(inverse);
@@ -61,6 +90,7 @@ impl DocumentEditor {
             return Ok(false);
         };
         let inverse = self.document.apply_reversible(command)?;
+        self.dirty = true;
         self.redo.pop();
         if let Some(inverse) = inverse {
             self.undo.push_back(inverse);

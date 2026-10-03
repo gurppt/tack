@@ -1,9 +1,10 @@
 # Tack
 
 Native, local-first reference board. This repository currently contains
-**Phase 1A: document kernel and action foundations**. The executable remains the
-renderer benchmark; product persistence/import/tools are later slices.
-See [the current report](docs/MISSION_1A_REPORT.md),
+**Phase 1B: local `.tack` persistence and product image rendering**. The executable
+provides a minimal product CLI alongside the existing renderer benchmarks.
+See [the current report](docs/MISSION_1B_REPORT.md),
+[Phase 1A](docs/MISSION_1A_REPORT.md),
 [Mission 0.7](docs/MISSION_0_7_REPORT.md),
 [Mission 0.6](docs/MISSION_0_6_REPORT.md),
 [Mission 0.5](docs/MISSION_0_5_REPORT.md),
@@ -47,7 +48,9 @@ Pan with middle-button drag or Alt + left-button drag; zoom with the wheel.
 The prototype uses a native window and progressive image loading. X11 uses
 window-manager decorations; Wayland requires compositor decorations (no bundled
 client titlebar).
-The full UI and final document format are intentionally outside this mission.
+Product creation/open commands are below; selection and image manipulation UI
+remain outside this mission. An ordinary launch without a product subcommand
+still runs the benchmark prototype.
 
 Run the original five scripted scenarios on your desktop GPU:
 
@@ -112,6 +115,39 @@ queries. App foundations normalize input into bounded bindings and semantic
 actions; the prototype retains its existing pan/zoom gestures. No final keyboard
 preset is selected. See the [.tack compatibility contract](docs/design/tack_document_compatibility.md).
 
+Create and reopen a real local document after building:
+
+```bash
+cargo build --release --locked -p tack-app
+target/release/tack-app create /tmp/reference.tack --embedded /absolute/path/image.jpg
+target/release/tack-app inspect /tmp/reference.tack
+target/release/tack-app open /tmp/reference.tack
+```
+
+`create` requires a new output path; it refuses existing files/symlinks.
+`--linked` stores an absolute external descriptor instead of source bytes.
+Embedded documents retain their originals after external deletion. Both store
+cheap previews; open resolves visible previews on workers. JPEG/PNG import is
+bounded to 6000×4500 and 64 MiB encoded parser work. No selection/manipulation UI or
+higher-LOD product refinement is built. Pan/zoom remain available. A missing or
+changed linked source retains explicit state and may show a last-known preview.
+
+```bash
+target/release/tack-app repair /tmp/reference.tack /tmp/repaired.tack /tmp/repair.json
+python3 tools/run_product_persistence.py --output benchmark-results/my-product-run
+cargo test -p tack-render --test product_gpu --locked -- --include-ignored
+```
+
+Repair preserves authority and regenerates damaged/missing previews only. It
+refuses a different parent directory if relative links exist; a future explicit
+Save As/relink operation must preserve their bindings. See [format v1](docs/design/tack_file_format_v1.md)
+for compatibility, streaming, save/recovery guarantees and limitations.
+
 The code license/contribution model is pending; dependency license checks are
-separate. Human review of Phase 1A's report is the stop gate before Phase 1B.
-No production import, persistence or final UI is implemented.
+separate. Human review of Phase 1B's report is the stop gate before Phase 1C.
+
+Diagnostic `--output` / repair report destinations must be new files. Existing
+files and document aliases are refused to protect saved work and source images.
+
+`repair` accepts a new destination or the original canonical input path. It
+refuses a distinct existing destination, including another `.tack` document.

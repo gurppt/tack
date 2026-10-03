@@ -242,7 +242,7 @@ pub fn save_report(session: &mut Session) -> Result<(), AssetError> {
         {
             fs::create_dir_all(parent)?;
         }
-        fs::write(path, serde_json::to_vec_pretty(&value)?)?;
+        crate::report_output::write_new(path, &serde_json::to_vec_pretty(&value)?)?;
     }
     let mut summary = value;
     if let Some(object) = summary.as_object_mut() {

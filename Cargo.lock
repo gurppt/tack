@@ -1735,6 +1735,7 @@ dependencies = [
  "tack-assets",
  "tack-core",
  "tack-render",
+ "tack-storage",
  "tracing-subscriber",
  "wgpu",
  "winit",
@@ -1744,11 +1745,13 @@ dependencies = [
 name = "tack-assets"
 version = "0.0.1"
 dependencies = [
+ "crc32fast",
  "image",
  "jpeg-decoder",
  "serde",
  "serde_json",
  "tack-core",
+ "tack-storage",
  "tracing",
  "turbojpeg",
 ]
@@ -1767,6 +1770,15 @@ dependencies = [
  "tack-core",
  "tracing",
  "wgpu",
+]
+
+[[package]]
+name = "tack-storage"
+version = "0.0.1"
+dependencies = [
+ "crc32fast",
+ "getrandom 0.3.4",
+ "tack-core",
 ]
 
 [[package]]

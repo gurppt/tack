@@ -1,0 +1,63 @@
+{
+  "date": "2026-10-03",
+  "base_commit": "c03d24b5260fec152e533fe368a7b034714b7c5f",
+  "quality_command": "PATH=/tmp/tack-tools/bin:$PATH bash tools/check.sh",
+  "quality_exit_code": 0,
+  "full_suite_passed_including_doctests": 67,
+  "full_suite_ignored": 2,
+  "gpu_command": "cargo test -p tack-render --test gpu_smoke --test product_gpu --locked -- --include-ignored",
+  "gpu_exit_code": 0,
+  "gpu_tests_passed": 3,
+  "gpu_test_overlap_with_default_suite": 1,
+  "python_tests_passed": 6,
+  "independent_review": "two read-only contexts; security/code and verifier evidence reviewed separately",
+  "storage_final_command": "cargo test -p tack-storage --test persistence --locked (Unix sparse fixture scope)",
+  "storage_tests_passed": 10,
+  "windows_ci": "pending first phase1b push",
+  "logs": {
+    "/tmp/tack-phase1b-quality-release.log": {
+      "sha256": "b70d3a34229ecdb79ed6dd3d9d8cd27c02f116608f11a523b1e78a611f9a7b70",
+      "bytes": 57129
+    },
+    "/tmp/tack-phase1b-gpu.log": {
+      "sha256": "389cd7f0f953296932021988bbf28b90b04f6a471d0283c66f6da184021571be",
+      "bytes": 802
+    },
+    "/tmp/tack-phase1b-storage-final.log": {
+      "sha256": "c365ee2c8f48f6168aad7cba827232b51530b344e45f952eb88abbec6844a376",
+      "bytes": 1063
+    },
+    "/tmp/tack-phase1b-quality-final-check.log": {
+      "sha256": "60580b0074fa432a8bb664d83acdfc583b3c63e77fe6aa308ec8be9fc8fcade3",
+      "bytes": 57543
+    },
+    "/tmp/tack-phase1b-report-safety-quality.log": {
+      "sha256": "50968468197ba10678884adfc68b714a1f358493410a251ba8a5a229b06ec688",
+      "bytes": 57289
+    },
+    "/tmp/tack-phase1b-target-safety-quality.log": {
+      "sha256": "ed414c2c10a8ae65426bdb42ee1e00af33ee193680d597685254d4ffcc7c0e97",
+      "bytes": 57289
+    }
+  },
+  "quality_log": "/tmp/tack-phase1b-target-safety-quality.log",
+  "product_assets_tests_passed": 7,
+  "product_cli_tests_passed": 3,
+  "unique_rust_tests_passed": 66,
+  "doctests_compile_fail_passed": 3,
+  "independent_review_results": {
+    "security": "PASS; final CLI 3/3 independently rerun including distinct newer-target preservation + same-input repair; prior storage 10 and assets 7 apply",
+    "verifier": "A \u2014 PASS; 45 Rust + 3 compile-fail independently rerun; all final measurements, hashes, tables and bounds audited"
+  },
+  "shipping_binary_sha256": "5052180737a83bc1427ae51220711ac037568a977e2b18c54c04ab4aa661c8a8",
+  "independent_audit": {
+    "product_raw_reports": 10,
+    "product_frames": 653,
+    "regression_raw_traces": 16,
+    "regression_frames": 11364,
+    "regression_gpu_samples": 11364,
+    "runtime_configuration_files_exact_archive_match": 50,
+    "retained_gate_log_hashes": 6,
+    "code_and_evidence_verdict": "A \u2014 PASS; STOP before Phase 1C"
+  }
+}

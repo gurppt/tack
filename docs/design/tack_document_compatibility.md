@@ -1,8 +1,9 @@
 # `.tack` compatibility contract for Phase 1B
 
-Phase 1A design only, 2026-10-03. No file reader/writer, schema codec or container
-is implemented. SQLite, ZIP and other containers remain candidates to compare
-against measured opening, interruption, recovery and allocation requirements.
+Phase 1A contract, 2026-10-03, retained as the design requirements. Phase 1B now
+implements a bounded indexed snapshot reader/writer; see the concrete
+[format v1](tack_file_format_v1.md) and [storage decision](tack_storage_decision.md).
+Future-tense requirements below describe the contract, not missing 1B features.
 
 ## Identity and authoritative state
 

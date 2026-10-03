@@ -1,6 +1,9 @@
 mod benchmark;
 mod coverage;
 mod navigation;
+mod product_cli;
+mod product_window;
+mod report_output;
 mod session;
 mod window;
 
@@ -45,7 +48,7 @@ impl Options {
             }
             if arg == "--help" {
                 println!(
-                    "tack-app [--manifest PATH] [--cache PATH] [--scenario NAME] [--seconds 12] [--output PATH] [--headless] [--workers 1|2|4] [--prefetch none|symmetric|directional] [--prepare-overview (benchmark only)]\nScenarios: {}\nNavigation: middle drag or Alt + left drag; wheel zoom. Close window to exit.",
+                    "Product: tack-app create OUTPUT.tack --linked|--embedded IMAGE... | open FILE.tack | inspect FILE.tack | repair INPUT.tack OUTPUT.tack | query-scale [REPORT.json]\nBenchmark-only: tack-app [--manifest PATH] [--cache PATH] [--scenario NAME] [--seconds 12] [--output PATH] [--headless] [--workers 1|2|4] [--prefetch none|symmetric|directional] [--prepare-overview (benchmark only)]\nScenarios: {}\nNavigation: middle drag or Alt + left drag; wheel zoom. Close window to exit.",
                     navigation::SCENARIOS.join(", ")
                 );
                 std::process::exit(0);
@@ -96,7 +99,15 @@ fn main() -> Result<(), AssetError> {
         .with_writer(std::io::stderr)
         .init();
     let started = Instant::now();
+    let mut product_args = std::env::args_os().skip(1);
+    if let Some(command) = product_args.next()
+        && let Some(command) = command.to_str()
+        && ["create", "repair", "inspect", "open", "query-scale"].contains(&command)
+    {
+        return product_cli::run(command, product_args.collect(), started);
+    }
     let options = Options::parse()?;
+    report_output::preflight(options.output.as_deref(), None)?;
     if options.headless {
         benchmark::headless(options, started)
     } else {

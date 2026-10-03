@@ -9,6 +9,8 @@ use std::{error::Error, fmt};
 pub enum Command {
     AddSource(Source),
     RemoveSource(SourceId),
+    /// Explicit revision/binding replacement; inverse retains the previous source.
+    SetSource(Source),
     AddAsset(ImageAsset),
     RemoveAsset(AssetId),
     AddObject {
@@ -49,6 +51,7 @@ pub enum CommandError {
     MissingSource(SourceId),
     AssetInUse(AssetId),
     SourceInUse(SourceId),
+    SourceRevisionMustIncrease(SourceId),
     InvalidOrder { index: usize, len: usize },
     LimitReached(&'static str),
 }
@@ -68,6 +71,23 @@ fn replace<T: Copy + PartialEq>(field: &mut T, value: T) -> Option<T> {
 }
 
 impl Document {
+    pub(crate) fn validate_source_revision(
+        &self,
+        command: &Command,
+        high_water: u64,
+    ) -> Result<(), CommandError> {
+        if let Command::SetSource(source) = command {
+            let previous = self
+                .sources
+                .get(&source.id())
+                .ok_or(CommandError::MissingSource(source.id()))?;
+            if previous != source && source.revision() <= high_water {
+                return Err(CommandError::SourceRevisionMustIncrease(source.id()));
+            }
+        }
+        Ok(())
+    }
+
     /// Returns the inverse only when state changed. Validate before mutation.
     pub(crate) fn apply_reversible(
         &mut self,
@@ -85,6 +105,20 @@ impl Document {
                 }
                 self.sources.insert(id, source);
                 Some(RemoveSource(id))
+            }
+            SetSource(source) => {
+                let id = source.id();
+                let previous = self
+                    .sources
+                    .get(&id)
+                    .ok_or(CommandError::MissingSource(id))?;
+                if previous == &source {
+                    None
+                } else {
+                    let previous = previous.clone();
+                    self.sources.insert(id, source);
+                    Some(SetSource(previous))
+                }
             }
             RemoveSource(id) => {
                 if !self.sources.contains_key(&id) {

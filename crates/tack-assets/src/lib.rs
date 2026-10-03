@@ -4,7 +4,11 @@ mod decode;
 mod loader;
 mod native_thumbnail;
 mod preparation;
+mod product;
 mod profile;
+mod representation;
+pub use product::{PreparedOverview, ProductAssetStats, ProductAssets, SourceState};
+pub use representation::{image_metadata, source_fingerprint};
 
 pub use board::{BenchmarkBoard, BenchmarkImage};
 pub use loader::{AssetKey, DecodeRequest, Decoded, Loader, LoaderStats, MAX_PENDING_PER_WORKER};

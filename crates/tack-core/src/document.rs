@@ -71,6 +71,12 @@ impl Document {
     /// Apply a single atomic deterministic mutation without retaining history.
     /// Editors use their own execute API so undo cannot become inconsistent.
     pub fn apply(&mut self, command: Command) -> Result<bool, CommandError> {
+        let high_water = if matches!(command, Command::SetSource(_)) {
+            self.sources().map(|s| s.revision()).max().unwrap_or(0)
+        } else {
+            0
+        };
+        self.validate_source_revision(&command, high_water)?;
         Ok(self.apply_reversible(command)?.is_some())
     }
 }

@@ -6,7 +6,7 @@ use std::sync::{
 };
 use std::time::Instant;
 use tack_assets::{AssetError, AssetKey, Decoded};
-use tack_core::{ByteCache, Camera, Lod, WorldRect};
+use tack_core::{AssetId, ByteCache, Camera, ImageFiltering, ImageRenderData, Lod, WorldRect};
 use wgpu::util::DeviceExt;
 
 const MAX_OBJECTS: usize = 10000;
@@ -25,16 +25,103 @@ const BACKGROUND: wgpu::Color = wgpu::Color {
 struct Vertex {
     position: [f32; 2],
     uv: [f32; 2],
+    opacity: f32,
 }
 
 struct Texture {
     bind_group: wgpu::BindGroup,
+    nearest: wgpu::BindGroup,
 }
 
 #[derive(Clone, Copy)]
 pub struct DrawImage {
     pub rect: WorldRect,
     pub key: Option<AssetKey>,
+}
+
+/// Stable product representation identity, independent of benchmark u32 keys.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub struct ProductKey {
+    pub asset: AssetId,
+    pub revision: u64,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+enum TextureKey {
+    Benchmark(AssetKey),
+    Product(ProductKey),
+}
+impl TextureKey {
+    fn is_thumbnail(self) -> bool {
+        match self {
+            Self::Benchmark(k) => k.lod == Lod::Thumbnail,
+            Self::Product(_) => true,
+        }
+    }
+}
+#[derive(Clone, Copy)]
+pub struct DrawProductImage {
+    pub data: ImageRenderData,
+    pub key: Option<ProductKey>,
+}
+trait CanvasImage {
+    fn quad(&self) -> ([[f64; 2]; 4], [[f32; 2]; 4], f32);
+    fn key(&self) -> Option<TextureKey>;
+    fn nearest(&self) -> bool;
+}
+impl CanvasImage for DrawImage {
+    fn quad(&self) -> ([[f64; 2]; 4], [[f32; 2]; 4], f32) {
+        let r = self.rect;
+        (
+            [
+                [r.x, r.y],
+                [r.x, r.y + r.height],
+                [r.x + r.width, r.y],
+                [r.x + r.width, r.y + r.height],
+            ],
+            [[0., 0.], [0., 1.], [1., 0.], [1., 1.]],
+            1.,
+        )
+    }
+    fn key(&self) -> Option<TextureKey> {
+        self.key.map(TextureKey::Benchmark)
+    }
+    fn nearest(&self) -> bool {
+        false
+    }
+}
+/// Numeric adapter used by the GPU and correctness tests; AABB is culling only.
+pub fn product_quad(data: ImageRenderData) -> ([[f64; 2]; 4], [[f32; 2]; 4], f32) {
+    let t = data.transform;
+    let c = t.center();
+    let size = t.size();
+    let (sin, cos) = t.rotation().sin_cos();
+    let flip = t.flips();
+    let uv = data.crop.uv_rect();
+    let mut corners = [[0.; 2]; 4];
+    let mut tex = [[0f32; 2]; 4];
+    for (i, [x, y]) in [[0., 0.], [0., 1.], [1., 0.], [1., 1.]]
+        .into_iter()
+        .enumerate()
+    {
+        let dx = (x - 0.5) * size[0];
+        let dy = (y - 0.5) * size[1];
+        corners[i] = [c[0] + cos * dx - sin * dy, c[1] + sin * dx + cos * dy];
+        let x = if flip[0] { 1. - x } else { x };
+        let y = if flip[1] { 1. - y } else { y };
+        tex[i] = [(uv[0] + x * uv[2]) as f32, (uv[1] + y * uv[3]) as f32];
+    }
+    (corners, tex, data.opacity.value() as f32)
+}
+impl CanvasImage for DrawProductImage {
+    fn quad(&self) -> ([[f64; 2]; 4], [[f32; 2]; 4], f32) {
+        product_quad(self.data)
+    }
+    fn key(&self) -> Option<TextureKey> {
+        self.key.map(TextureKey::Product)
+    }
+    fn nearest(&self) -> bool {
+        self.data.filtering == ImageFiltering::Nearest
+    }
 }
 
 #[derive(Default, Clone, Copy)]
@@ -58,8 +145,9 @@ pub struct Gpu {
     pipeline: wgpu::RenderPipeline,
     layout: wgpu::BindGroupLayout,
     sampler: wgpu::Sampler,
-    textures: ByteCache<AssetKey, Texture>,
-    thumbnails: ByteCache<AssetKey, Texture>,
+    nearest_sampler: wgpu::Sampler,
+    textures: ByteCache<TextureKey, Texture>,
+    thumbnails: ByteCache<TextureKey, Texture>,
     placeholder: Texture,
     vertices: Vec<Vertex>,
     buffer: wgpu::Buffer,
@@ -135,6 +223,11 @@ impl Gpu {
             min_filter: wgpu::FilterMode::Linear,
             ..Default::default()
         });
+        let nearest_sampler = device.create_sampler(&wgpu::SamplerDescriptor {
+            mag_filter: wgpu::FilterMode::Nearest,
+            min_filter: wgpu::FilterMode::Nearest,
+            ..Default::default()
+        });
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("canvas"),
             source: wgpu::ShaderSource::Wgsl(include_str!("canvas.wgsl").into()),
@@ -154,7 +247,7 @@ impl Gpu {
                 buffers: &[wgpu::VertexBufferLayout {
                     array_stride: std::mem::size_of::<Vertex>() as u64,
                     step_mode: wgpu::VertexStepMode::Vertex,
-                    attributes: &wgpu::vertex_attr_array![0 => Float32x2, 1 => Float32x2],
+                    attributes: &wgpu::vertex_attr_array![0 => Float32x2, 1 => Float32x2, 2 => Float32],
                 }],
             },
             fragment: Some(wgpu::FragmentState {
@@ -178,6 +271,7 @@ impl Gpu {
             &queue,
             &layout,
             &sampler,
+            &nearest_sampler,
             &Decoded {
                 width: 1,
                 height: 1,
@@ -200,6 +294,7 @@ impl Gpu {
             pipeline,
             layout,
             sampler,
+            nearest_sampler,
             textures: ByteCache::new(budget_bytes / 2),
             thumbnails: ByteCache::new(budget_bytes - budget_bytes / 2),
             placeholder,
@@ -220,6 +315,7 @@ impl Gpu {
         queue: &wgpu::Queue,
         layout: &wgpu::BindGroupLayout,
         sampler: &wgpu::Sampler,
+        nearest_sampler: &wgpu::Sampler,
         image: &Decoded,
     ) -> Texture {
         let texture = device.create_texture(&wgpu::TextureDescriptor {
@@ -252,28 +348,33 @@ impl Gpu {
             texture.size(),
         );
         let view = texture.create_view(&Default::default());
-        let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("display LOD"),
-            layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: wgpu::BindingResource::TextureView(&view),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: wgpu::BindingResource::Sampler(sampler),
-                },
-            ],
-        });
-        Texture { bind_group }
+        let make_group = |sampler: &wgpu::Sampler| {
+            device.create_bind_group(&wgpu::BindGroupDescriptor {
+                label: Some("display LOD"),
+                layout,
+                entries: &[
+                    wgpu::BindGroupEntry {
+                        binding: 0,
+                        resource: wgpu::BindingResource::TextureView(&view),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 1,
+                        resource: wgpu::BindingResource::Sampler(sampler),
+                    },
+                ],
+            })
+        };
+        Texture {
+            bind_group: make_group(sampler),
+            nearest: make_group(nearest_sampler),
+        }
     }
 
     pub fn contains(&self, key: AssetKey) -> bool {
         if key.lod == Lod::Thumbnail {
-            self.thumbnails.contains(key)
+            self.thumbnails.contains(TextureKey::Benchmark(key))
         } else {
-            self.textures.contains(key)
+            self.textures.contains(TextureKey::Benchmark(key))
         }
     }
 
@@ -289,13 +390,25 @@ impl Gpu {
         Ok(self.in_flight.load(Ordering::Relaxed) < MAX_IN_FLIGHT)
     }
 
+    pub fn contains_product(&self, key: ProductKey) -> bool {
+        self.thumbnails.contains(TextureKey::Product(key))
+    }
+    pub fn upload_product(&mut self, key: ProductKey, image: &Decoded) -> bool {
+        self.upload_key(TextureKey::Product(key), image)
+    }
     pub fn upload(&mut self, key: AssetKey, image: &Decoded) -> bool {
+        self.upload_key(TextureKey::Benchmark(key), image)
+    }
+    fn upload_key(&mut self, key: TextureKey, image: &Decoded) -> bool {
         let bytes = image.rgba.len();
-        if self.contains(key)
-            || self.uploads >= MAX_UPLOADS
+        if (if key.is_thumbnail() {
+            self.thumbnails.contains(key)
+        } else {
+            self.textures.contains(key)
+        }) || self.uploads >= MAX_UPLOADS
             || bytes > UPLOAD_BUDGET_BYTES - self.upload_bytes
             || bytes
-                > if key.lod == Lod::Thumbnail {
+                > if key.is_thumbnail() {
                     self.thumbnails.budget_bytes()
                 } else {
                     self.textures.budget_bytes()
@@ -309,9 +422,10 @@ impl Gpu {
             &self.queue,
             &self.layout,
             &self.sampler,
+            &self.nearest_sampler,
             image,
         );
-        let cache = if key.lod == Lod::Thumbnail {
+        let cache = if key.is_thumbnail() {
             &mut self.thumbnails
         } else {
             &mut self.textures
@@ -331,23 +445,33 @@ impl Gpu {
         camera: &Camera,
         images: &[DrawImage],
     ) -> Result<(), AssetError> {
+        self.render_images(target, camera, images)
+    }
+    pub fn render_product(
+        &mut self,
+        target: &wgpu::TextureView,
+        camera: &Camera,
+        images: &[DrawProductImage],
+    ) -> Result<(), AssetError> {
+        self.render_images(target, camera, images)
+    }
+    fn render_images<T: CanvasImage>(
+        &mut self,
+        target: &wgpu::TextureView,
+        camera: &Camera,
+        images: &[T],
+    ) -> Result<(), AssetError> {
         if images.len() > MAX_OBJECTS {
             return Err("too many visible objects".into());
         }
         self.vertices.clear();
         for image in images {
-            let r = image.rect;
-            for (point, uv) in [
-                ([r.x, r.y], [0.0, 0.0]),
-                ([r.x, r.y + r.height], [0.0, 1.0]),
-                ([r.x + r.width, r.y], [1.0, 0.0]),
-                ([r.x + r.width, r.y], [1.0, 0.0]),
-                ([r.x, r.y + r.height], [0.0, 1.0]),
-                ([r.x + r.width, r.y + r.height], [1.0, 1.0]),
-            ] {
+            let (points, uvs, opacity) = image.quad();
+            for i in [0usize, 1, 2, 2, 1, 3] {
                 self.vertices.push(Vertex {
-                    position: camera.world_to_clip(point),
-                    uv,
+                    position: camera.world_to_clip(points[i]),
+                    uv: uvs[i],
+                    opacity,
                 });
             }
         }
@@ -381,16 +505,24 @@ impl Gpu {
             pass.set_vertex_buffer(0, self.buffer.slice(..));
             for (index, image) in images.iter().enumerate() {
                 let texture = image
-                    .key
+                    .key()
                     .and_then(|key| {
-                        if key.lod == Lod::Thumbnail {
+                        if key.is_thumbnail() {
                             self.thumbnails.get(key)
                         } else {
                             self.textures.get(key)
                         }
                     })
                     .unwrap_or(&self.placeholder);
-                pass.set_bind_group(0, &texture.bind_group, &[]);
+                pass.set_bind_group(
+                    0,
+                    if image.nearest() {
+                        &texture.nearest
+                    } else {
+                        &texture.bind_group
+                    },
+                    &[],
+                );
                 let first = index as u32 * 6;
                 pass.draw(first..first + 6, 0..1);
             }
