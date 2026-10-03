@@ -5,7 +5,7 @@ use std::{
     thread,
     time::{Duration, Instant},
 };
-use tack_assets::{AssetError, Board, Loader, OverviewPreparation, STAGE_NAMES};
+use tack_assets::{AssetError, BenchmarkBoard, Loader, OverviewPreparation, STAGE_NAMES};
 
 fn main() -> Result<(), AssetError> {
     let started = Instant::now();
@@ -31,7 +31,7 @@ fn main() -> Result<(), AssetError> {
     if !(0.0..=1.0).contains(&fraction) || !(1.0..=600.0).contains(&seconds) {
         return Err("fraction must be 0..=1 and duration 1..=600".into());
     }
-    let board = Board::read_manifest(&manifest)?;
+    let board = BenchmarkBoard::read_manifest(&manifest)?;
     let mut loader = Loader::new(cache, 64 * 1024 * 1024, 512 * 1024 * 1024, workers)?;
     let mut preparation = OverviewPreparation::new(&board, started);
     let mut requests = Vec::new();

@@ -1,8 +1,10 @@
 # Tack
 
 Native, local-first reference board. This repository currently contains
-**Mission 0.7: first-open overview preparation gate**, before product development.
-See [the current report](docs/MISSION_0_7_REPORT.md),
+**Phase 1A: document kernel and action foundations**. The executable remains the
+renderer benchmark; product persistence/import/tools are later slices.
+See [the current report](docs/MISSION_1A_REPORT.md),
+[Mission 0.7](docs/MISSION_0_7_REPORT.md),
 [Mission 0.6](docs/MISSION_0_6_REPORT.md),
 [Mission 0.5](docs/MISSION_0_5_REPORT.md),
 [the first prototype report](docs/MISSION_0_REPORT.md),
@@ -104,6 +106,12 @@ charged to startup; kernel page cache is not flushed. `--prepare-overview` on
 `tack-app` is available only with a scripted `--scenario`; ordinary interactive
 launch is unchanged. See [experiment details](docs/research/overview_preparation_experiment.md).
 
+The core now supplies typed document/object/asset/source identities, validated
+image metadata, reversible commands, bounded undo/redo and immutable render
+queries. App foundations normalize input into bounded bindings and semantic
+actions; the prototype retains its existing pan/zoom gestures. No final keyboard
+preset is selected. See the [.tack compatibility contract](docs/design/tack_document_compatibility.md).
+
 The code license/contribution model is pending; dependency license checks are
-separate. Human review of Mission 0.7's report is the stop gate. Phase 1 has not
-begun; no production import, persistence or final UI is implemented.
+separate. Human review of Phase 1A's report is the stop gate before Phase 1B.
+No production import, persistence or final UI is implemented.

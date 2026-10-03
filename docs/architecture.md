@@ -1,10 +1,45 @@
-# Mission 0.7 architecture
+# Phase 1A architecture
 
 Four crates retain the renderer/document separation established in
 [Mission 0](MISSION_0_REPORT.md): core geometry/LOD/byte-cache policy, assets
 (manifest, scheduling, decode and disposable caches), render (textures and
-submissions) and app (native input, traces and evidence). There is no production
-UI, document persistence, server or collaboration implementation.
+submissions) and app (native input, traces and evidence). Phase 1A adds a resident
+document kernel to core and semantic action/binding foundations to app. There is
+no production UI, document persistence, server or collaboration implementation.
+
+## Document and interaction foundations
+
+`tack-core` has no dependencies. Distinct nonzero 128-bit DocumentId/ObjectId/
+AssetId/SourceId values describe private document tables. Image objects reference
+assets, assets reference embedded/linked source descriptors; sources contain no
+pixels. Commands validate references, metadata limits and order before mutating.
+Validated transforms/crop/opacity have private durable fields. Camera remains
+local view state, and Lod/ByteCache remain independent streaming policies.
+
+DocumentEditor exclusively owns its document and explicit capped inverse-command
+history. Renderer queries only return immutable Copy image metadata, with no
+source resolver, I/O, decode, hash or locks. Ordered visibility is initially an
+allocation-free O(n log n) scan through BTreeMap identities, not a production
+spatial-scale claim. A later measured spatial index can remain behind this query
+contract. The old manifest snapshot is explicitly named BenchmarkBoard and
+BenchmarkImage: its u32 asset/cache keys are not product identities. The current
+GPU benchmark still draws that validated axis-aligned snapshot; the new domain
+query is exercised at the render crate boundary without claiming a product canvas.
+
+`tack-app` owns Action/Tool, immediate action dispatch, Keymap, normalized physical
+events and InputState. The map has at most 256 bindings, assigned held inputs at
+most 32; no event queue. Temporary tool gestures capture their semantic action
+and opaque token through modifier/keymap changes, auto-repeat, overlapping holds
+and focus loss. Pan holds follow current modifiers, preserving late Alt. Unassigned
+inputs retain no state; invalid/excess native input is dropped without closing
+the window. Menus and shortcuts share Undo/Redo dispatch through DocumentEditor.
+Only existing prototype pan/zoom defaults are shipped, reverified against PureRef.
+
+Source size is not working-set size: document/history retain metadata, never
+source or decoded buffers. No storage codec or source I/O is added. Portable IDs,
+unknown newer data retention, non-destructive old-writer behavior and migrations
+are specified for Phase 1B in the [compatibility contract](design/tack_document_compatibility.md).
+See [the Phase 1A report](MISSION_1A_REPORT.md) for checks and regression evidence.
 
 The static board is an immutable validated snapshot. A linear visibility scan
 is measured at 1,000 objects; it is not an arbitrary-board scalability claim.

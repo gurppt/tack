@@ -25,20 +25,21 @@ struct ManifestObject {
     height: f64,
 }
 
-pub struct ImageObject {
+/// Benchmark-only manifest row; u32 identity/path/hash are not product IDs.
+pub struct BenchmarkImage {
     pub id: u32,
     pub path: PathBuf,
     pub source_sha256: String,
     pub rect: WorldRect,
 }
 
-/// Immutable geometry snapshot. A linear cull is the initial measured baseline;
+/// Immutable benchmark geometry snapshot. A linear cull is the initial measured baseline;
 /// no speculative index until its cost is established for the 1,000-object board.
-pub struct Board {
-    pub objects: Vec<ImageObject>,
+pub struct BenchmarkBoard {
+    pub objects: Vec<BenchmarkImage>,
 }
 
-impl Board {
+impl BenchmarkBoard {
     /// Startup boundary; call before entering the render/event loop.
     pub fn read_manifest(path: &Path) -> Result<Self, AssetError> {
         let mut bytes = Vec::new();
@@ -69,7 +70,7 @@ impl Board {
             if !path.starts_with(&root) {
                 return Err("asset path escapes corpus".into());
             }
-            objects.push(ImageObject {
+            objects.push(BenchmarkImage {
                 id: obj.id,
                 path,
                 source_sha256: obj.source_sha256,
@@ -79,7 +80,7 @@ impl Board {
         Ok(Self { objects })
     }
 
-    pub fn visible(&self, viewport: WorldRect) -> impl Iterator<Item = &ImageObject> {
+    pub fn visible(&self, viewport: WorldRect) -> impl Iterator<Item = &BenchmarkImage> {
         self.objects
             .iter()
             .filter(move |obj| obj.rect.intersects(viewport))

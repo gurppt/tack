@@ -1,5 +1,5 @@
 //! Deterministic camera traces. Speeds are fixed independently of loader progress.
-use tack_assets::Board;
+use tack_assets::BenchmarkBoard;
 use tack_core::{Camera, GeometryError};
 
 pub const SCENARIOS: [&str; 11] = [
@@ -16,7 +16,7 @@ pub const SCENARIOS: [&str; 11] = [
     "board-tour",
 ];
 
-fn adjacent(board: &Board, distance: f64) -> [f64; 2] {
+fn adjacent(board: &BenchmarkBoard, distance: f64) -> [f64; 2] {
     let first = board.objects[0].rect;
     let max_x = board
         .objects
@@ -48,7 +48,7 @@ fn adjacent(board: &Board, distance: f64) -> [f64; 2] {
 
 pub fn apply(
     camera: &mut Camera,
-    board: &Board,
+    board: &BenchmarkBoard,
     scenario: &str,
     seconds: f64,
 ) -> Result<(), GeometryError> {

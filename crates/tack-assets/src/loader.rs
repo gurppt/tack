@@ -15,6 +15,7 @@ use tack_core::{ByteCache, Lod};
 pub const MAX_PENDING_PER_WORKER: usize = 8;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+/// Benchmark display-cache key; not a stable product AssetId.
 pub struct AssetKey {
     pub id: u32,
     pub lod: Lod,

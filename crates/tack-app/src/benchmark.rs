@@ -4,7 +4,7 @@ use std::{
     fs, thread,
     time::{Duration, Instant},
 };
-use tack_assets::{AssetError, Board};
+use tack_assets::{AssetError, BenchmarkBoard};
 use tack_render::Gpu;
 
 #[derive(Serialize, Clone)]
@@ -256,7 +256,7 @@ pub fn save_report(session: &mut Session) -> Result<(), AssetError> {
 }
 
 pub fn headless(options: Options, started: Instant) -> Result<(), AssetError> {
-    let board = Board::read_manifest(&options.manifest)?;
+    let board = BenchmarkBoard::read_manifest(&options.manifest)?;
     let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::from_env_or_default());
     let gpu = pollster::block_on(Gpu::new(
         &instance,

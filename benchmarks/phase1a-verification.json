@@ -1,0 +1,50 @@
+{
+  "mission": "Phase 1A",
+  "verdict": "A — PASS",
+  "stop_gate": "Human review before Phase 1B implementation",
+  "independent_verifier": "mission0_verifier",
+  "material_defects_remaining": 0,
+  "resolved_issue": "Native held-input saturation must not close the window; unassigned controls retain no state and invalid/excess input is dropped by the live adapter.",
+  "independent_commands": [
+    "cargo test -p tack-core -p tack-app --locked --offline",
+    "cargo test -p tack-render --test document_query -p tack-assets --test benchmark_board --locked --offline",
+    "cargo test -p tack-app --locked --offline"
+  ],
+  "independent_toolchain": "Rust 1.95.0",
+  "independent_distinct_tests": {
+    "core": 12,
+    "app": 10,
+    "renderer_query_consumer": 1,
+    "benchmark_board": 1,
+    "compile_fail_doctests": 3
+  },
+  "independent_audit": {
+    "raw_traces": 22,
+    "recorded_frames": 15628,
+    "provenance_and_report_hashes": "PASS",
+    "recorded_resource_bounds": "PASS",
+    "coverage_censure_percentiles_stages_bytes_concurrency": "PASS",
+    "actual_cache_inventories_and_quotas": "PASS",
+    "report_tables": "PASS",
+    "architecture_compatibility_and_cleanup": "PASS"
+  },
+  "main_quality_gate": {
+    "checks_log": "benchmark-results/phase1a-final/checks.log",
+    "checks_log_sha256": "c55e9d9b13dc48abba6e5223f193119700e8a3defd31077772c8f05cc4c07e19",
+    "rust_tests": 42,
+    "compile_fail_doctests": 3,
+    "python_tests": 6,
+    "fmt_check_clippy_docs_deny": "PASS",
+    "gpu_log": "benchmark-results/phase1a-final/gpu.log",
+    "gpu_log_sha256": "56fbcf314d88b0e40a725b69645b58bb54a9c9a71ad148ccb9d6ade2cfe30347",
+    "gpu_readback_tests": 1
+  },
+  "independent_log_file": null,
+  "independent_output_location": "Verifier tool outputs in this session",
+  "limits": [
+    "Pressure CPU p99 increases in both paired trials; measured upload-stage difference has no established causal explanation.",
+    "Native acquisition/presentation outliers remain; frame CPU/GPU bounds do not prove absence of window jitter.",
+    "Product document GPU integration and large-board query performance are not established by the manifest renderer benchmark.",
+    "Persistence, portable paths, unique-ID generation, source revision commands and production device/platform coverage remain future work."
+  ]
+}

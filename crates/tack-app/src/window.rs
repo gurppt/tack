@@ -3,28 +3,26 @@ use std::{
     sync::Arc,
     time::{Duration, Instant},
 };
-use tack_assets::{AssetError, Board};
+use tack_app::navigation_input::NavigationInput;
+use tack_assets::{AssetError, BenchmarkBoard};
 use tack_render::Gpu;
 use winit::{
     application::ApplicationHandler,
-    event::{ElementState, MouseButton, MouseScrollDelta, WindowEvent},
+    event::WindowEvent,
     event_loop::{ActiveEventLoop, ControlFlow, EventLoop},
     window::{Window, WindowId},
 };
 
 struct App {
     options: Options,
-    board: Option<Board>,
+    board: Option<BenchmarkBoard>,
     session: Option<Session>,
     window: Option<Arc<Window>>,
     surface: Option<wgpu::Surface<'static>>,
     config: Option<wgpu::SurfaceConfiguration>,
     started: Instant,
     error: Option<AssetError>,
-    cursor: [f64; 2],
-    middle_down: bool,
-    left_down: bool,
-    alt: bool,
+    input: NavigationInput,
     dirty: bool,
     next_frame: Instant,
     drawable: bool,
@@ -125,6 +123,11 @@ impl App {
         let Some(session) = &mut self.session else {
             return Ok(());
         };
+        self.dirty |= self.input.handle(
+            &event,
+            &mut session.camera,
+            session.options.scenario.is_none(),
+        );
         match event {
             WindowEvent::Resized(size) => {
                 session.measurements.record_platform_event(
@@ -157,42 +160,6 @@ impl App {
                 session.measurements.record_platform_event(
                     serde_json::json!({"event":"scale", "scale_factor":scale_factor}),
                 );
-            }
-            WindowEvent::ModifiersChanged(modifiers) => self.alt = modifiers.state().alt_key(),
-            WindowEvent::MouseInput { state, button, .. } => {
-                if button == MouseButton::Middle {
-                    self.middle_down = state == ElementState::Pressed;
-                }
-                if button == MouseButton::Left {
-                    self.left_down = state == ElementState::Pressed;
-                }
-            }
-            WindowEvent::Focused(false) => {
-                self.middle_down = false;
-                self.left_down = false;
-                self.alt = false;
-            }
-            WindowEvent::CursorMoved { position, .. } => {
-                let next = [position.x, position.y];
-                if session.options.scenario.is_none()
-                    && (self.middle_down || (self.left_down && self.alt))
-                {
-                    session
-                        .camera
-                        .pan([next[0] - self.cursor[0], next[1] - self.cursor[1]])?;
-                    self.dirty = true;
-                }
-                self.cursor = next;
-            }
-            WindowEvent::MouseWheel { delta, .. } if session.options.scenario.is_none() => {
-                let steps = match delta {
-                    MouseScrollDelta::LineDelta(_, y) => f64::from(y),
-                    MouseScrollDelta::PixelDelta(p) => p.y / 100.0,
-                };
-                session
-                    .camera
-                    .zoom_at(self.cursor, (steps.clamp(-20.0, 20.0) * 0.15).exp())?;
-                self.dirty = true;
             }
             _ => {}
         }
@@ -271,7 +238,7 @@ impl ApplicationHandler for App {
 }
 
 pub fn run(options: Options, started: Instant) -> Result<(), AssetError> {
-    let board = Board::read_manifest(&options.manifest)?;
+    let board = BenchmarkBoard::read_manifest(&options.manifest)?;
     let mut app = App {
         options,
         board: Some(board),
@@ -281,10 +248,7 @@ pub fn run(options: Options, started: Instant) -> Result<(), AssetError> {
         config: None,
         started,
         error: None,
-        cursor: [0.0; 2],
-        middle_down: false,
-        left_down: false,
-        alt: false,
+        input: NavigationInput::prototype()?,
         dirty: true,
         next_frame: Instant::now(),
         drawable: true,

@@ -3,12 +3,14 @@ use crate::{
     benchmark::{Frame, Measurements},
 };
 use std::time::Instant;
-use tack_assets::{AssetError, AssetKey, Board, DecodeRequest, Loader, OverviewPreparation};
+use tack_assets::{
+    AssetError, AssetKey, BenchmarkBoard, DecodeRequest, Loader, OverviewPreparation,
+};
 use tack_core::{Camera, Lod};
 use tack_render::{DrawImage, Gpu};
 
 pub struct Session {
-    pub board: Board,
+    pub board: BenchmarkBoard,
     pub camera: Camera,
     pub gpu: Gpu,
     pub loader: Loader,
@@ -27,7 +29,7 @@ pub struct Session {
 
 impl Session {
     pub fn new(
-        board: Board,
+        board: BenchmarkBoard,
         gpu: Gpu,
         options: Options,
         started: Instant,
@@ -271,7 +273,7 @@ impl Session {
             .filter(|o| !o.rect.intersects(viewport))
             .collect();
         nearby.sort_by(|a, b| {
-            let distance = |o: &tack_assets::ImageObject| {
+            let distance = |o: &tack_assets::BenchmarkImage| {
                 (o.rect.x + o.rect.width / 2.0 - center[0])
                     .hypot(o.rect.y + o.rect.height / 2.0 - center[1])
             };

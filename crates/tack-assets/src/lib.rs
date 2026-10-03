@@ -6,7 +6,7 @@ mod native_thumbnail;
 mod preparation;
 mod profile;
 
-pub use board::{Board, ImageObject};
+pub use board::{BenchmarkBoard, BenchmarkImage};
 pub use loader::{AssetKey, DecodeRequest, Decoded, Loader, LoaderStats, MAX_PENDING_PER_WORKER};
 pub use native_thumbnail::NativeThumbnail;
 pub use preparation::OverviewPreparation;

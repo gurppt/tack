@@ -6,7 +6,8 @@ use std::{
     time::{Duration, Instant},
 };
 use tack_assets::{
-    AssetError, AssetKey, Board, DecodeRequest, ImageObject, Loader, OverviewPreparation,
+    AssetError, AssetKey, BenchmarkBoard, BenchmarkImage, DecodeRequest, Loader,
+    OverviewPreparation,
 };
 use tack_core::Lod;
 
@@ -56,12 +57,12 @@ fn wait(loader: &mut Loader) {
     }
 }
 
-fn board(requests: &[DecodeRequest]) -> Result<Board, AssetError> {
-    Ok(Board {
+fn board(requests: &[DecodeRequest]) -> Result<BenchmarkBoard, AssetError> {
+    Ok(BenchmarkBoard {
         objects: requests
             .iter()
             .map(|r| {
-                Ok(ImageObject {
+                Ok(BenchmarkImage {
                     id: r.key.id,
                     path: r.path.clone(),
                     source_sha256: r.source_sha256.clone(),

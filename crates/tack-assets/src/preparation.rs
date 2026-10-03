@@ -1,6 +1,6 @@
 //! Benchmark-only accounting for the immutable board's 128-pixel cache set.
 //! This is historical validated progress, not a persistent-cache inventory.
-use crate::{AssetKey, Board, DecodeRequest, JobProfile, Loader};
+use crate::{AssetKey, BenchmarkBoard, DecodeRequest, JobProfile, Loader};
 use serde::Serialize;
 use std::{
     collections::{HashMap, HashSet},
@@ -30,7 +30,7 @@ pub struct OverviewPreparation {
 impl OverviewPreparation {
     /// Clock includes manifest loading and cache initialization when the caller
     /// passes its process-start Instant. No filesystem access happens here.
-    pub fn new(board: &Board, started: Instant) -> Self {
+    pub fn new(board: &BenchmarkBoard, started: Instant) -> Self {
         let mut requests: Vec<_> = board
             .objects
             .iter()
