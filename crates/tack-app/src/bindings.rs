@@ -57,14 +57,12 @@ impl Keymap {
         let valid = match binding.trigger {
             Trigger::Wheel => wheel && binding.action == Action::ZoomView,
             Trigger::Hold => {
-                !wheel && matches!(binding.action, Action::PanView | Action::TemporaryTool(_))
+                !wheel && (binding.action == Action::PanView || binding.action.captured_hold())
             }
             Trigger::Press | Trigger::Release => {
                 !wheel
-                    && matches!(
-                        binding.action,
-                        Action::SelectTool(_) | Action::Undo | Action::Redo
-                    )
+                    && !binding.action.captured_hold()
+                    && !matches!(binding.action, Action::PanView | Action::ZoomView)
             }
         };
         if !valid {

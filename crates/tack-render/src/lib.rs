@@ -6,3 +6,6 @@ pub use gpu::{
     DrawImage, DrawProductImage, Gpu, MAX_UPLOADS, ProductKey, RenderStats, product_quad,
 };
 pub use timing::GpuSample;
+
+mod overlay;
+pub use overlay::{MAX_OVERLAY_QUADS, OverlayQuad};

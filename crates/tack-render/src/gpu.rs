@@ -143,6 +143,7 @@ pub struct Gpu {
     pub adapter_info: wgpu::AdapterInfo,
     pub format: wgpu::TextureFormat,
     pipeline: wgpu::RenderPipeline,
+    overlay: crate::overlay::Overlay,
     layout: wgpu::BindGroupLayout,
     sampler: wgpu::Sampler,
     nearest_sampler: wgpu::Sampler,
@@ -286,11 +287,13 @@ impl Gpu {
         let timings = features
             .contains(wgpu::Features::TIMESTAMP_QUERY)
             .then(|| Timings::new(&device, &queue));
+        let overlay = crate::overlay::Overlay::new(&device, format);
         Ok(Self {
             device,
             queue,
             adapter_info,
             format,
+            overlay,
             pipeline,
             layout,
             sampler,
@@ -445,7 +448,7 @@ impl Gpu {
         camera: &Camera,
         images: &[DrawImage],
     ) -> Result<(), AssetError> {
-        self.render_images(target, camera, images)
+        self.render_images(target, camera, images, &[])
     }
     pub fn render_product(
         &mut self,
@@ -453,13 +456,23 @@ impl Gpu {
         camera: &Camera,
         images: &[DrawProductImage],
     ) -> Result<(), AssetError> {
-        self.render_images(target, camera, images)
+        self.render_images(target, camera, images, &[])
+    }
+    pub fn render_product_overlay(
+        &mut self,
+        target: &wgpu::TextureView,
+        camera: &Camera,
+        images: &[DrawProductImage],
+        overlay: &[crate::OverlayQuad],
+    ) -> Result<(), AssetError> {
+        self.render_images(target, camera, images, overlay)
     }
     fn render_images<T: CanvasImage>(
         &mut self,
         target: &wgpu::TextureView,
         camera: &Camera,
         images: &[T],
+        overlay: &[crate::OverlayQuad],
     ) -> Result<(), AssetError> {
         if images.len() > MAX_OBJECTS {
             return Err("too many visible objects".into());
@@ -479,6 +492,7 @@ impl Gpu {
             self.queue
                 .write_buffer(&self.buffer, 0, bytemuck::cast_slice(&self.vertices));
         }
+        self.overlay.prepare(&self.queue, camera, overlay)?;
         let mut encoder = self.device.create_command_encoder(&Default::default());
         let timing_slot = self
             .timings
@@ -526,6 +540,7 @@ impl Gpu {
                 let first = index as u32 * 6;
                 pass.draw(first..first + 6, 0..1);
             }
+            self.overlay.draw(&mut pass);
         }
         if let Some(index) = timing_slot
             && let Some(timings) = &self.timings

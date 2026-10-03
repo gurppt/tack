@@ -7,6 +7,8 @@ use std::{error::Error, fmt};
 /// Metadata-only deterministic commands. No renderer/UI/storage payloads.
 #[derive(Clone, Debug, PartialEq)]
 pub enum Command {
+    /// Flat image edits only; one atomic operation and one inverse.
+    Batch(Vec<Command>),
     AddSource(Source),
     RemoveSource(SourceId),
     /// Explicit revision/binding replacement; inverse retains the previous source.
@@ -70,6 +72,30 @@ fn replace<T: Copy + PartialEq>(field: &mut T, value: T) -> Option<T> {
     }
 }
 
+impl Command {
+    /// Conservative retained allocation accounting; no image payloads are commands.
+    pub fn retained_bytes(&self) -> usize {
+        let extra = match self {
+            Self::Batch(edits) => edits.capacity() * std::mem::size_of::<Command>(),
+            Self::AddSource(_) | Self::SetSource(_) => crate::MAX_SOURCE_PATH_BYTES,
+            _ => 0,
+        };
+        std::mem::size_of::<Self>() + extra
+    }
+    fn image_edit(&self) -> bool {
+        matches!(
+            self,
+            Self::AddObject { .. }
+                | Self::RemoveObject(_)
+                | Self::SetTransform { .. }
+                | Self::SetCrop { .. }
+                | Self::SetOpacity { .. }
+                | Self::SetImageFiltering { .. }
+                | Self::SetZOrder { .. }
+        )
+    }
+}
+
 impl Document {
     pub(crate) fn validate_source_revision(
         &self,
@@ -95,6 +121,32 @@ impl Document {
     ) -> Result<Option<Command>, CommandError> {
         use Command::*;
         let inverse = match command {
+            Batch(edits) => {
+                if edits.len() > 200_000 || edits.iter().any(|e| !e.image_edit()) {
+                    return Err(CommandError::LimitReached("flat image batch"));
+                }
+                let mut inverses = Vec::with_capacity(edits.len());
+                for edit in edits {
+                    match self.apply_reversible(edit) {
+                        Ok(Some(inverse)) => inverses.push(inverse),
+                        Ok(None) => {}
+                        Err(error) => {
+                            // Reverse edits restore both records and ordered indices.
+                            for inverse in inverses.into_iter().rev() {
+                                self.apply_reversible(inverse)?;
+                            }
+                            return Err(error);
+                        }
+                    }
+                }
+                if inverses.is_empty() {
+                    None
+                } else {
+                    inverses.reverse();
+                    inverses.shrink_to_fit();
+                    Some(Batch(inverses))
+                }
+            }
             AddSource(source) => {
                 let id = source.id();
                 if self.sources.contains_key(&id) {

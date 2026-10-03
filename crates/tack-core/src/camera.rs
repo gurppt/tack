@@ -90,6 +90,13 @@ impl Camera {
         ]
     }
 
+    pub fn world_to_screen(&self, world: [f64; 2]) -> [f64; 2] {
+        [
+            (world[0] - self.center[0]) * self.zoom + f64::from(self.screen[0]) / 2.,
+            (world[1] - self.center[1]) * self.zoom + f64::from(self.screen[1]) / 2.,
+        ]
+    }
+
     pub fn world_to_clip(&self, world: [f64; 2]) -> [f32; 2] {
         [
             ((world[0] - self.center[0]) * self.zoom * 2.0 / f64::from(self.screen[0])) as f32,

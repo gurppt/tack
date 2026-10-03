@@ -6,9 +6,9 @@ use std::{
     sync::Arc,
     time::{Duration, Instant},
 };
-use tack_app::navigation_input::NavigationInput;
+use tack_app::{image_benchmark::ImageBenchmark, image_input::ImageInput, image_save::ImageSave};
 use tack_assets::{AssetError, ProductAssets, SourceState};
-use tack_core::{Camera, DocumentQuery};
+use tack_core::{Camera, DocumentEditor, DocumentQuery};
 use tack_render::{DrawProductImage, Gpu, ProductKey};
 use tack_storage::TackFile;
 use winit::{
@@ -22,6 +22,7 @@ struct OpenOptions {
     seconds: Option<f64>,
     output: Option<PathBuf>,
     tour: bool,
+    interaction: Option<String>,
 }
 enum Event {
     Loaded(Result<(TackFile, f64), AssetError>),
@@ -36,7 +37,10 @@ struct App {
     board: Option<Arc<TackFile>>,
     assets: Option<ProductAssets>,
     camera: Camera,
-    input: NavigationInput,
+    input: ImageInput,
+    editor: Option<DocumentEditor>,
+    save: ImageSave,
+    benchmark: Option<ImageBenchmark>,
     draws: Vec<DrawProductImage>,
     error: Option<AssetError>,
     dirty: bool,
@@ -53,6 +57,8 @@ struct App {
     camera_clamped: bool,
     navigation_end_pending: usize,
     drain_ms: f64,
+    title: String,
+    interaction_error: Option<String>,
 }
 impl App {
     fn initialize(&mut self, event_loop: &ActiveEventLoop) -> Result<(), AssetError> {
@@ -82,6 +88,7 @@ impl App {
             view_formats: vec![],
         };
         surface.configure(&gpu.device, &config);
+        self.input.gizmo.set_scale(window.scale_factor());
         self.window = Some(window);
         self.gpu = Some(gpu);
         self.surface = Some(surface);
@@ -115,6 +122,7 @@ impl App {
             &self.options.path,
             self.work.clone(),
         )?);
+        self.editor = Some(DocumentEditor::new(board.document.clone(), 200));
         self.board = Some(board);
         self.dirty = true;
         if let Some(w) = &self.window {
@@ -149,10 +157,15 @@ impl App {
             Err(e) => return Err(e.into()),
         };
         let acquire_ms = start.elapsed().as_secs_f64() * 1000.;
+        if self.started.elapsed().as_secs_f64() > 1.0
+            && let (Some(script), Some(editor)) = (&mut self.benchmark, &mut self.editor)
+        {
+            script.drive(&mut self.input, editor, &mut self.camera)?;
+        }
         let cpu_start = Instant::now();
         self.draws.clear();
         let mut recognizable = 0;
-        if let (Some(board), Some(assets)) = (&self.board, &mut self.assets) {
+        if let (Some(editor), Some(assets)) = (&self.editor, &mut self.assets) {
             assets.poll();
             if self.options.tour {
                 let fraction = (self.started.elapsed().as_secs_f64() / 12.).min(1.);
@@ -164,11 +177,18 @@ impl App {
                     0.006,
                 )?;
             }
-            for data in board.document.objects_in_view(self.camera.viewport()) {
-                let source = board
-                    .document
+            let document = editor.document();
+            // Apply preview before culling: moved objects can enter the viewport.
+            for data in document
+                .object_order()
+                .iter()
+                .filter_map(|id| document.object_render_data(*id))
+                .map(|d| self.input.images.preview(d))
+                .filter(|d| d.transform.bounds().intersects(self.camera.viewport()))
+            {
+                let source = document
                     .asset(data.asset_id)
-                    .and_then(|a| board.document.source(a.source_id()))
+                    .and_then(|a| document.source(a.source_id()))
                     .ok_or("render source reference")?;
                 let key = ProductKey {
                     asset: data.asset_id,
@@ -194,10 +214,14 @@ impl App {
             draw.key = draw.key.filter(|key| gpu.contains_product(*key));
             recognizable += usize::from(draw.key.is_some());
         }
-        gpu.render_product(
+        if let Some(editor) = &self.editor {
+            self.input.build_overlay(editor, &self.camera);
+        }
+        gpu.render_product_overlay(
             &frame.texture.create_view(&Default::default()),
             &self.camera,
             &self.draws,
+            &self.input.gizmo.quads,
         )?;
         let cpu_ms = cpu_start.elapsed().as_secs_f64() * 1000.;
         let elapsed_ms = self.started.elapsed().as_secs_f64() * 1000.;
@@ -271,7 +295,7 @@ impl App {
             .and_then(|g| g.timing_samples())
             .map(|s| s.iter().map(|s| json!({"pass_ms":s.pass_ms})).collect())
             .unwrap_or_default();
-        let report = json!({"operation":"open","native_startup_ms":self.native_startup_ms,"camera_clamped":self.camera_clamped,"navigation_end_pending":self.navigation_end_pending,"drain_ms":self.drain_ms,"state_counts_scope":"requested sources only","recognizable_clock":"CPU submission before present","metadata_load_ms":self.metadata_ms,"metadata_bytes":self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"first_recognizable_ms":self.first_content_ms,"ordinary_view_80_percent_ms":self.useful_ms,"source_bytes_before_detail":stats.source_bytes,"container_bytes":stats.container_bytes+self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"overview_reused":stats.reused,"overview_regenerated":stats.regenerated,"errors":stats.errors,"source_missing":counts(SourceState::Missing),"source_changed":counts(SourceState::Changed),"source_foreign":counts(SourceState::Foreign),"peak_pending":stats.peak_pending,"cpu_payload_bytes":stats.cpu_bytes,"adapter":gpu.map(|g|g.adapter_info.name.clone()),"backend":gpu.map(|g|format!("{:?}",g.adapter_info.backend)),"frames":self.frames,"gpu_samples":samples,"detail":"overview-only vertical slice; no detail request issued"});
+        let report = json!({"operation":"open","editing":self.editor.as_ref().map(|e|json!({"dirty":e.is_dirty(),"generation":e.generation(),"undo_entries":e.undo_len(),"redo_entries":e.redo_len(),"selected":self.input.images.selection.len(),"save_completed":self.save.completed})),"interaction":self.benchmark.as_ref().map(|b|json!({"scenario":b.name(),"input_ms":b.samples,"commits":b.commits,"cancels":b.cancels,"invariants":b.invariants})),"native_startup_ms":self.native_startup_ms,"camera_clamped":self.camera_clamped,"navigation_end_pending":self.navigation_end_pending,"drain_ms":self.drain_ms,"state_counts_scope":"requested sources only","recognizable_clock":"CPU submission before present","metadata_load_ms":self.metadata_ms,"metadata_bytes":self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"first_recognizable_ms":self.first_content_ms,"ordinary_view_80_percent_ms":self.useful_ms,"source_bytes_before_detail":stats.source_bytes,"container_bytes":stats.container_bytes+self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"overview_reused":stats.reused,"overview_regenerated":stats.regenerated,"errors":stats.errors,"source_missing":counts(SourceState::Missing),"source_changed":counts(SourceState::Changed),"source_foreign":counts(SourceState::Foreign),"peak_pending":stats.peak_pending,"cpu_payload_bytes":stats.cpu_bytes,"adapter":gpu.map(|g|g.adapter_info.name.clone()),"backend":gpu.map(|g|format!("{:?}",g.adapter_info.backend)),"frames":self.frames,"gpu_samples":samples,"detail":"overview-only vertical slice; no detail request issued"});
         crate::report_output::write_new(path, &serde_json::to_vec_pretty(&report)?)?;
         Ok(())
     }
@@ -295,15 +319,36 @@ impl ApplicationHandler<Event> for App {
     }
     fn window_event(&mut self, e: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
         if matches!(event, WindowEvent::CloseRequested) {
+            self.input.cancel();
             e.exit();
             return;
         }
         let result = if matches!(event, WindowEvent::RedrawRequested) {
             self.redraw()
         } else {
-            self.dirty |= self
-                .input
-                .handle(&event, &mut self.camera, !self.options.tour);
+            if !self.options.tour
+                && self.benchmark.is_none()
+                && let Some(editor) = &mut self.editor
+            {
+                match self.input.handle(&event, editor, &mut self.camera) {
+                    Ok(requested) => {
+                        self.interaction_error = None;
+                        if requested
+                            && let (Some(board), Some(assets)) = (&self.board, &self.assets)
+                            && let Err(error) = self.save.start(
+                                self.options.path.clone(),
+                                Arc::clone(board),
+                                editor,
+                                &assets.prepared,
+                            )
+                        {
+                            self.save.last_error = Some(error.to_string());
+                        }
+                    }
+                    Err(error) => self.interaction_error = Some(error.to_string()),
+                }
+                self.dirty = true;
+            }
             match event {
                 WindowEvent::Resized(size) => {
                     self.drawable = size.width > 0 && size.height > 0;
@@ -329,6 +374,9 @@ impl ApplicationHandler<Event> for App {
         }
     }
     fn about_to_wait(&mut self, e: &ActiveEventLoop) {
+        if let Some(editor) = &mut self.editor {
+            self.dirty |= self.save.poll(editor);
+        }
         if self
             .options
             .seconds
@@ -339,27 +387,62 @@ impl ApplicationHandler<Event> for App {
         }
         if let Some(a) = &mut self.assets {
             self.dirty |= a.poll();
-            if let Some(w) = &self.window {
-                let missing = a
-                    .states
-                    .values()
-                    .filter(|s| {
-                        matches!(
-                            s,
-                            SourceState::Missing | SourceState::Foreign | SourceState::Unavailable
-                        )
-                    })
-                    .count();
-                let changed = a
-                    .states
-                    .values()
-                    .filter(|s| **s == SourceState::Changed)
-                    .count();
-                if self.dirty && (missing > 0 || changed > 0) {
-                    w.set_title(&format!(
-                        "Tack — {missing} missing / {changed} changed sources · last-known previews"
-                    ));
-                }
+        }
+        if let (Some(editor), Some(window)) = (&self.editor, &self.window) {
+            let state = if self.save.active() {
+                "saving"
+            } else if self.save.last_error.is_some() {
+                "save failed"
+            } else if editor.is_dirty() {
+                "modified"
+            } else {
+                "saved"
+            };
+            let mode = if self.input.images.crop_mode {
+                "crop"
+            } else {
+                "transform"
+            };
+            let missing = self
+                .assets
+                .as_ref()
+                .map(|a| {
+                    a.states
+                        .values()
+                        .filter(|s| {
+                            matches!(
+                                s,
+                                SourceState::Missing
+                                    | SourceState::Foreign
+                                    | SourceState::Unavailable
+                            )
+                        })
+                        .count()
+                })
+                .unwrap_or(0);
+            let changed = self
+                .assets
+                .as_ref()
+                .map(|a| {
+                    a.states
+                        .values()
+                        .filter(|s| **s == SourceState::Changed)
+                        .count()
+                })
+                .unwrap_or(0);
+            let title = format!(
+                "Tack — {state} · {mode} · {} selected · {missing} missing / {changed} changed sources{}",
+                self.input.images.selection.len(),
+                self.save
+                    .last_error
+                    .as_ref()
+                    .or(self.interaction_error.as_ref())
+                    .map(|s| format!(" · {s}"))
+                    .unwrap_or_default()
+            );
+            if self.title != title {
+                window.set_title(&title);
+                self.title = title;
             }
         }
         let pending = self.assets.as_ref().is_some_and(|a| a.stats().pending > 0);
@@ -375,7 +458,9 @@ impl ApplicationHandler<Event> for App {
             e.exit();
             return;
         }
-        let active = (self.dirty || self.options.tour) && self.drawable && !self.occluded;
+        let active = (self.dirty || self.options.tour || self.benchmark.is_some())
+            && self.drawable
+            && !self.occluded;
         if active && self.drawable && !self.occluded && Instant::now() >= self.next_frame {
             if let Some(w) = &self.window {
                 w.request_redraw();
@@ -383,7 +468,12 @@ impl ApplicationHandler<Event> for App {
             self.next_frame = Instant::now() + Duration::from_millis(16);
         }
         e.set_control_flow(
-            if active || pending || completing || self.options.seconds.is_some() {
+            if active
+                || pending
+                || completing
+                || self.save.active()
+                || self.options.seconds.is_some()
+            {
                 ControlFlow::WaitUntil(Instant::now() + Duration::from_millis(16))
             } else {
                 ControlFlow::Wait
@@ -391,88 +481,5 @@ impl ApplicationHandler<Event> for App {
         );
     }
 }
-pub fn run(args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
-    let path = PathBuf::from(
-        args.first()
-            .ok_or("open FILE.tack [--seconds N] [--output REPORT] [--board-tour]")?,
-    );
-    let mut options = OpenOptions {
-        path,
-        seconds: None,
-        output: None,
-        tour: false,
-    };
-    let mut it = args.into_iter().skip(1);
-    while let Some(a) = it.next() {
-        match a.to_str() {
-            Some("--seconds") => {
-                let value = it.next().ok_or("duration")?;
-                let seconds: f64 = value.to_str().ok_or("duration text")?.parse()?;
-                if !(1.0..=120.).contains(&seconds) {
-                    return Err("duration 1..120 seconds".into());
-                }
-                options.seconds = Some(seconds);
-            }
-            Some("--output") => {
-                options.output = Some(PathBuf::from(it.next().ok_or("output path")?))
-            }
-            Some("--board-tour") => options.tour = true,
-            _ => return Err("unknown open option".into()),
-        }
-    }
-    crate::report_output::preflight(options.output.as_deref(), Some(&options.path))?;
-    let events = EventLoop::<Event>::with_user_event().build()?;
-    let proxy = events.create_proxy();
-    let input = options.path.clone();
-    std::thread::Builder::new()
-        .name("tack-document-read".into())
-        .spawn(move || {
-            let start = Instant::now();
-            let result = TackFile::open(input)
-                .map(|b| (b, start.elapsed().as_secs_f64() * 1000.))
-                .map_err(|e| Box::new(e) as AssetError);
-            let _ = proxy.send_event(Event::Loaded(result));
-        })?;
-    let work = std::env::temp_dir().join(format!(
-        "tack-product-open-{:032x}",
-        tack_storage::new_document_id()?.value()
-    ));
-    let mut app = App {
-        options,
-        started,
-        window: None,
-        gpu: None,
-        surface: None,
-        config: None,
-        board: None,
-        assets: None,
-        camera: Camera::new([1280, 720]),
-        input: NavigationInput::prototype()?,
-        draws: Vec::with_capacity(10000),
-        error: None,
-        dirty: true,
-        drawable: true,
-        occluded: false,
-        next_frame: Instant::now(),
-        metadata_ms: 0.,
-        native_startup_ms: 0.,
-        first_content_ms: None,
-        useful_ms: None,
-        frames: Vec::new(),
-        extent: [0.; 2],
-        work: work.clone(),
-        camera_clamped: false,
-        navigation_end_pending: 0,
-        drain_ms: 0.,
-    };
-    events.run_app(&mut app)?;
-    app.drain()?;
-    app.report()?;
-    let error = app.error.take();
-    drop(app);
-    let _ = std::fs::remove_dir_all(work);
-    if let Some(error) = error {
-        return Err(error);
-    }
-    Ok(())
-}
+mod launch;
+pub use launch::run;

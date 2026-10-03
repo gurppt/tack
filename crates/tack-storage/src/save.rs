@@ -13,6 +13,41 @@ pub enum Payload {
     Stored { file: Arc<File>, range: BlobRange },
 }
 impl Payload {
+    /// Pin a bounded disposable overview's inode and checksum on a storage worker.
+    /// Cache eviction after this call cannot invalidate an active save.
+    pub fn pin_overview(path: impl AsRef<Path>) -> Result<Self> {
+        let mut file = File::open(path)?;
+        let len = file.metadata()?.len();
+        if len == 0 || len > MAX_OVERVIEW_BYTES {
+            return Err(StorageError::Invalid("pinned overview length"));
+        }
+        let mut crc = crc32fast::Hasher::new();
+        let mut read = 0u64;
+        let mut buffer = [0u8; 32 * 1024];
+        loop {
+            let count = file.read(&mut buffer)?;
+            if count == 0 {
+                break;
+            }
+            read += count as u64;
+            if read > len {
+                return Err(StorageError::Invalid("overview changed while pinning"));
+            }
+            crc.update(&buffer[..count]);
+        }
+        if read != len {
+            return Err(StorageError::Invalid("overview changed while pinning"));
+        }
+        Ok(Self::Stored {
+            file: Arc::new(file),
+            range: BlobRange {
+                offset: 0,
+                len,
+                crc32: crc.finalize(),
+            },
+        })
+    }
+
     pub fn len(&self) -> Result<u64> {
         match self {
             Self::File(p) => Ok(std::fs::metadata(p)?.len()),

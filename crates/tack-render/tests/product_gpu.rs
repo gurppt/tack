@@ -1,7 +1,7 @@
 #![allow(clippy::unwrap_used)]
 use tack_assets::{AssetError, Decoded};
 use tack_core::*;
-use tack_render::{DrawProductImage, Gpu, ProductKey, product_quad};
+use tack_render::{DrawProductImage, Gpu, OverlayQuad, ProductKey, product_quad};
 fn data() -> ImageRenderData {
     ImageRenderData {
         object_id: ObjectId::new(1).unwrap(),
@@ -39,6 +39,14 @@ fn rotated_cropped_flipped_quad_keeps_source_geometry() {
     assert!((opacity - 0.3).abs() < 1e-6);
 }
 fn pixels(gpu: &mut Gpu, d: ImageRenderData, key: ProductKey) -> Result<Vec<u8>, AssetError> {
+    pixels_overlay(gpu, d, key, &[])
+}
+fn pixels_overlay(
+    gpu: &mut Gpu,
+    d: ImageRenderData,
+    key: ProductKey,
+    overlay: &[OverlayQuad],
+) -> Result<Vec<u8>, AssetError> {
     let target = gpu.device.create_texture(&wgpu::TextureDescriptor {
         label: Some("product readback"),
         size: wgpu::Extent3d {
@@ -56,13 +64,14 @@ fn pixels(gpu: &mut Gpu, d: ImageRenderData, key: ProductKey) -> Result<Vec<u8>,
     let mut camera = Camera::new([64, 64]);
     camera.set_view([32., 32.], 1.)?;
     gpu.begin_frame()?;
-    gpu.render_product(
+    gpu.render_product_overlay(
         &target.create_view(&Default::default()),
         &camera,
         &[DrawProductImage {
             data: d,
             key: Some(key),
         }],
+        overlay,
     )?;
     let buffer = gpu.device.create_buffer(&wgpu::BufferDescriptor {
         label: None,
@@ -186,5 +195,59 @@ fn product_gpu_honors_sampling_alpha_crop_flip_rotation_and_revision() -> Result
     d.opacity = Opacity::OPAQUE;
     let green = pixels(&mut gpu, d, changed)?;
     assert!(pixel(&green, 32, 32)[1] > 240);
+    Ok(())
+}
+
+#[test]
+#[ignore = "explicit native GPU overlay readback"]
+fn canvas_overlay_is_on_top_without_asset_or_document_changes() -> Result<(), AssetError> {
+    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::from_env_or_default());
+    let mut gpu = pollster::block_on(Gpu::new(
+        &instance,
+        None,
+        wgpu::TextureFormat::Rgba8UnormSrgb,
+        1024 * 1024,
+    ))?;
+    let d = data();
+    let key = ProductKey {
+        asset: d.asset_id,
+        revision: 1,
+    };
+    gpu.begin_frame()?;
+    gpu.upload_product(
+        key,
+        &Decoded {
+            width: 1,
+            height: 1,
+            rgba: vec![255, 0, 0, 255],
+        },
+    );
+    let bytes = pixels_overlay(
+        &mut gpu,
+        d,
+        key,
+        &[OverlayQuad {
+            points: [[20., 20.], [20., 40.], [40., 20.], [40., 40.]],
+            color: [0., 1., 0., 1.],
+        }],
+    )?;
+    assert_eq!(pixel(&bytes, 30, 30), [0, 255, 0, 255]);
+    assert_eq!(pixel(&bytes, 10, 10), [255, 0, 0, 255]);
+    assert!(gpu.contains_product(key));
+    assert!(
+        pixels_overlay(
+            &mut gpu,
+            d,
+            key,
+            &vec![
+                OverlayQuad {
+                    points: [[0.; 2]; 4],
+                    color: [1.; 4]
+                };
+                tack_render::MAX_OVERLAY_QUADS + 1
+            ]
+        )
+        .is_err()
+    );
     Ok(())
 }

@@ -130,7 +130,7 @@ impl InputState {
         self.held.len()
     }
     pub fn is_action_held(&self, keymap: &Keymap, action: Action) -> bool {
-        if matches!(action, Action::TemporaryTool(_)) {
+        if action.captured_hold() && action != Action::CenterPointer {
             return self.held.iter().any(|held| {
                 held.temporary
                     .is_some_and(|(captured, _)| captured == action)
@@ -157,7 +157,11 @@ impl InputState {
                     if let Some((action, token)) = held.temporary {
                         emit(ActionEvent {
                             action,
-                            phase: ActionPhase::End(token),
+                            phase: if matches!(action, Action::TemporaryTool(_)) {
+                                ActionPhase::End(token)
+                            } else {
+                                ActionPhase::Cancel(token)
+                            },
                         });
                     }
                 }
@@ -201,7 +205,7 @@ impl InputState {
                 }
                 let mut temporary = None;
                 for binding in keymap.matching(control, self.modifiers, Trigger::Hold) {
-                    if matches!(binding.action, Action::TemporaryTool(_)) {
+                    if binding.action.captured_hold() || binding.action == Action::PanView {
                         self.next_token = self
                             .next_token
                             .checked_add(1)

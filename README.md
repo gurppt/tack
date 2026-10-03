@@ -1,9 +1,10 @@
 # Tack
 
 Native, local-first reference board. This repository currently contains
-**Phase 1B: local `.tack` persistence and product image rendering**. The executable
+**Phase 1C: native image selection, manipulation and save**. The executable
 provides a minimal product CLI alongside the existing renderer benchmarks.
-See [the current report](docs/MISSION_1B_REPORT.md),
+See [the current report](docs/MISSION_1C_REPORT.md),
+[Phase 1B](docs/MISSION_1B_REPORT.md),
 [Phase 1A](docs/MISSION_1A_REPORT.md),
 [Mission 0.7](docs/MISSION_0_7_REPORT.md),
 [Mission 0.6](docs/MISSION_0_6_REPORT.md),
@@ -48,8 +49,7 @@ Pan with middle-button drag or Alt + left-button drag; zoom with the wheel.
 The prototype uses a native window and progressive image loading. X11 uses
 window-manager decorations; Wayland requires compositor decorations (no bundled
 client titlebar).
-Product creation/open commands are below; selection and image manipulation UI
-remain outside this mission. An ordinary launch without a product subcommand
+Product creation/open commands and manipulation shortcuts are below. An ordinary launch without a product subcommand
 still runs the benchmark prototype.
 
 Run the original five scripted scenarios on your desktop GPU:
@@ -112,8 +112,7 @@ launch is unchanged. See [experiment details](docs/research/overview_preparation
 The core now supplies typed document/object/asset/source identities, validated
 image metadata, reversible commands, bounded undo/redo and immutable render
 queries. App foundations normalize input into bounded bindings and semantic
-actions; the prototype retains its existing pan/zoom gestures. No final keyboard
-preset is selected. See the [.tack compatibility contract](docs/design/tack_document_compatibility.md).
+actions; the prototype retains its existing pan/zoom gestures. The product image window uses the initial documented manipulation preset. See the [.tack compatibility contract](docs/design/tack_document_compatibility.md).
 
 Create and reopen a real local document after building:
 
@@ -128,8 +127,8 @@ target/release/tack-app open /tmp/reference.tack
 `--linked` stores an absolute external descriptor instead of source bytes.
 Embedded documents retain their originals after external deletion. Both store
 cheap previews; open resolves visible previews on workers. JPEG/PNG import is
-bounded to 6000×4500 and 64 MiB encoded parser work. No selection/manipulation UI or
-higher-LOD product refinement is built. Pan/zoom remain available. A missing or
+bounded to 6000×4500 and 64 MiB encoded parser work. Selection and manipulation are available in the product window. Higher-LOD
+product refinement remains deferred. A missing or
 changed linked source retains explicit state and may show a last-known preview.
 
 ```bash
@@ -144,10 +143,51 @@ Save As/relink operation must preserve their bindings. See [format v1](docs/desi
 for compatibility, streaming, save/recovery guarantees and limitations.
 
 The code license/contribution model is pending; dependency license checks are
-separate. Human review of Phase 1B's report is the stop gate before Phase 1C.
+separate. Human review of Phase 1C's report is the stop gate before Phase 1D.
 
 Diagnostic `--output` / repair report destinations must be new files. Existing
 files and document aliases are refused to protect saved work and source images.
 
 `repair` accepts a new destination or the original canonical input path. It
 refuses a distinct existing destination, including another `.tack` document.
+
+Open a `.tack` board to manipulate its images (the ordinary prototype launch
+without `open` remains a navigation benchmark). Selection and camera are local;
+image edits are undoable document state.
+
+| Input | Product action |
+| --- | --- |
+| Left click / drag image | Select / move selected images |
+| Shift + click | Add/remove selection |
+| Empty click / drag | Clear / marquee selection |
+| Corner / edge handles | Proportional / one-axis resize |
+| Alt + handle drag | Resize about center |
+| Rotation handle or Ctrl + left drag | Rotate about image/selection center |
+| Ctrl + Alt + left drag | Uniform resize |
+| Ctrl + Alt + Shift + C | Toggle single-image crop mode |
+| Crop handles | Trim/restore pixels without stretching |
+| Alt + Shift + H / V | Flip selected images horizontally / vertically |
+| Alt + T | Cycle Default / Smooth / Nearest filtering |
+| Ctrl + Alt + Shift + left drag | Adjust selected image opacity |
+| Delete / Ctrl + A | Delete / select all images |
+| Ctrl + Z / Ctrl + Shift + Z or Ctrl + Y | Undo / redo |
+| Escape | Cancel current preview |
+| Middle drag / Alt + left drag off handles | Pan |
+| Wheel / double click image | Zoom / focus image |
+| Ctrl + S | Save committed edits on a worker |
+
+One gesture makes one undo step; crop is non-destructive and single-image only.
+The title reports selection, dirty/save status and missing links. Close does not
+autosave; use Ctrl + S. Window-manager shortcuts can intercept Alt combinations.
+
+```bash
+python3 tools/run_image_interaction.py --board /path/to/generated.tack --output benchmark-results/my-interactions
+python3 tools/run_native_image_checks.py --output benchmark-results/my-native-checks
+```
+
+Interaction benchmarks modify RAM and undo each cycle; they never save the input
+board. Native checks generate and save their own two-image board. Run native
+measurements separately from other GPU tests. See the
+[interaction contract](docs/design/image_interaction.md),
+[PureRef research](docs/research/pureref_image_interaction.md) and
+[desktop freeze incident](docs/INCIDENT_2026_10_03_DESKTOP_FREEZE.md).

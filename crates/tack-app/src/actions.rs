@@ -19,10 +19,25 @@ pub enum Action {
     Redo,
     PanView,
     ZoomView,
+    ImagePointer,
+    ToggleSelection,
+    RotateImage,
+    ScaleImage,
+    AdjustOpacity,
+    CenterPointer,
+    CancelInteraction,
+    CropMode,
+    SelectAll,
+    DeleteSelection,
+    FlipHorizontal,
+    FlipVertical,
+    Filtering(tack_core::ImageFiltering),
+    CycleFiltering,
+    Save,
 }
 impl Action {
     /// Enumerable action catalog, including currently unassigned actions.
-    pub const ALL: [Self; 10] = [
+    pub const ALL: [Self; 27] = [
         Self::SelectTool(Tool::Pointer),
         Self::SelectTool(Tool::Pan),
         Self::SelectTool(Tool::RotateView),
@@ -33,7 +48,36 @@ impl Action {
         Self::Redo,
         Self::PanView,
         Self::ZoomView,
+        Self::ImagePointer,
+        Self::ToggleSelection,
+        Self::RotateImage,
+        Self::ScaleImage,
+        Self::AdjustOpacity,
+        Self::CenterPointer,
+        Self::CancelInteraction,
+        Self::CropMode,
+        Self::SelectAll,
+        Self::DeleteSelection,
+        Self::FlipHorizontal,
+        Self::FlipVertical,
+        Self::Filtering(tack_core::ImageFiltering::Default),
+        Self::Filtering(tack_core::ImageFiltering::Smooth),
+        Self::Filtering(tack_core::ImageFiltering::Nearest),
+        Self::CycleFiltering,
+        Self::Save,
     ];
+    pub fn captured_hold(self) -> bool {
+        matches!(
+            self,
+            Self::TemporaryTool(_)
+                | Self::ImagePointer
+                | Self::ToggleSelection
+                | Self::RotateImage
+                | Self::ScaleImage
+                | Self::AdjustOpacity
+                | Self::CenterPointer
+        )
+    }
     pub fn label(self) -> &'static str {
         match self {
             Self::SelectTool(Tool::Pointer) => "Pointer tool",
@@ -46,6 +90,23 @@ impl Action {
             Self::Redo => "Redo",
             Self::PanView => "Pan view",
             Self::ZoomView => "Zoom view",
+            Self::ImagePointer => "Select and manipulate image",
+            Self::ToggleSelection => "Toggle image selection",
+            Self::RotateImage => "Rotate image",
+            Self::ScaleImage => "Scale image",
+            Self::AdjustOpacity => "Adjust image opacity",
+            Self::CenterPointer => "Pan or resize handle about center",
+            Self::CancelInteraction => "Cancel interaction",
+            Self::CropMode => "Crop gizmo",
+            Self::SelectAll => "Select all images",
+            Self::DeleteSelection => "Delete selected images",
+            Self::FlipHorizontal => "Flip horizontal",
+            Self::FlipVertical => "Flip vertical",
+            Self::Filtering(tack_core::ImageFiltering::Default) => "Default sampling",
+            Self::Filtering(tack_core::ImageFiltering::Smooth) => "Smooth sampling",
+            Self::Filtering(tack_core::ImageFiltering::Nearest) => "Nearest sampling",
+            Self::CycleFiltering => "Cycle image sampling",
+            Self::Save => "Save",
         }
     }
 }
@@ -59,6 +120,7 @@ pub enum ActionPhase {
     Invoke,
     Begin(HoldToken),
     End(HoldToken),
+    Cancel(HoldToken),
     Delta(f64),
 }
 #[derive(Clone, Copy, Debug, PartialEq)]

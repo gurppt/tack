@@ -10,6 +10,7 @@ pub struct DocumentEditor {
     undo: VecDeque<Command>,
     redo: Vec<Command>,
     dirty: bool,
+    generation: u64,
     source_revision_high_water: u64,
 }
 impl DocumentEditor {
@@ -23,6 +24,7 @@ impl DocumentEditor {
             undo: VecDeque::new(),
             redo: Vec::new(),
             dirty: false,
+            generation: 0,
             source_revision_high_water,
         }
     }
@@ -47,10 +49,46 @@ impl DocumentEditor {
     pub fn mark_saved(&mut self) {
         self.dirty = false;
     }
+    pub fn generation(&self) -> u64 {
+        self.generation
+    }
+    /// A save snapshot acknowledges only its own exact edit generation.
+    pub fn mark_saved_generation(&mut self, generation: u64) -> bool {
+        if self.generation == generation {
+            self.mark_saved();
+            true
+        } else {
+            false
+        }
+    }
+    pub fn history_bytes(&self) -> usize {
+        self.undo
+            .iter()
+            .chain(&self.redo)
+            .map(Command::retained_bytes)
+            .sum()
+    }
+    fn trim_history(&mut self) {
+        while self.undo.len() + self.redo.len() > self.capacity
+            || self.history_bytes() > 32 * 1024 * 1024
+        {
+            if self.undo.pop_front().is_none() {
+                self.redo.clear();
+                break;
+            }
+        }
+    }
     pub fn capacity(&self) -> usize {
         self.capacity
     }
     pub fn execute(&mut self, command: Command) -> Result<bool, CommandError> {
+        let generation = self
+            .generation
+            .checked_add(1)
+            .ok_or(CommandError::LimitReached("edit generation"))?;
+        if command.retained_bytes() > 32 * 1024 * 1024 {
+            return Err(CommandError::LimitReached("history bytes"));
+        }
         self.document
             .validate_source_revision(&command, self.source_revision_high_water)?;
         let next_high_water = match &command {
@@ -62,6 +100,7 @@ impl DocumentEditor {
         let Some(inverse) = self.document.apply_reversible(command)? else {
             return Ok(false);
         };
+        self.generation = generation;
         self.source_revision_high_water = next_high_water;
         self.dirty = true;
         self.redo.clear();
@@ -70,6 +109,7 @@ impl DocumentEditor {
                 self.undo.pop_front();
             }
             self.undo.push_back(inverse);
+            self.trim_history();
         }
         Ok(true)
     }
@@ -77,7 +117,12 @@ impl DocumentEditor {
         let Some(command) = self.undo.back().cloned() else {
             return Ok(false);
         };
+        let generation = self
+            .generation
+            .checked_add(1)
+            .ok_or(CommandError::LimitReached("edit generation"))?;
         let inverse = self.document.apply_reversible(command)?;
+        self.generation = generation;
         self.dirty = true;
         self.undo.pop_back();
         if let Some(inverse) = inverse {
@@ -89,7 +134,12 @@ impl DocumentEditor {
         let Some(command) = self.redo.last().cloned() else {
             return Ok(false);
         };
+        let generation = self
+            .generation
+            .checked_add(1)
+            .ok_or(CommandError::LimitReached("edit generation"))?;
         let inverse = self.document.apply_reversible(command)?;
+        self.generation = generation;
         self.dirty = true;
         self.redo.pop();
         if let Some(inverse) = inverse {
