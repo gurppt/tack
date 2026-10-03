@@ -3,7 +3,7 @@ use crate::{
     benchmark::{Frame, Measurements},
 };
 use std::time::Instant;
-use tack_assets::{AssetError, AssetKey, Board, DecodeRequest, Loader};
+use tack_assets::{AssetError, AssetKey, Board, DecodeRequest, Loader, OverviewPreparation};
 use tack_core::{Camera, Lod};
 use tack_render::{DrawImage, Gpu};
 
@@ -21,6 +21,8 @@ pub struct Session {
     priorities: Vec<(u8, DecodeRequest)>,
     previous_center: [f64; 2],
     pub coverage: crate::coverage::Coverage,
+    pub preparation: Option<OverviewPreparation>,
+    background: Vec<DecodeRequest>,
 }
 
 impl Session {
@@ -39,6 +41,9 @@ impl Session {
         )?;
         let mut camera = Camera::new([1280, 720]);
         camera.set_view([6600.0, 5100.0], 0.1)?;
+        let preparation = options
+            .prepare
+            .then(|| OverviewPreparation::new(&board, started));
         Ok(Self {
             board,
             camera,
@@ -53,6 +58,8 @@ impl Session {
             previous_center: [6600.0, 5100.0],
             coverage: Default::default(),
             measurements: Measurements::new(started.elapsed().as_secs_f64() * 1000.0),
+            preparation,
+            background: Vec::new(),
         })
     }
 
@@ -82,6 +89,9 @@ impl Session {
         let frame_start = Instant::now();
         self.animate()?;
         self.loader.poll();
+        if let Some(preparation) = &mut self.preparation {
+            preparation.observe(&self.loader);
+        }
         let available = self.gpu.begin_frame()?;
         self.requests.clear();
         self.priorities.clear();
@@ -175,7 +185,13 @@ impl Session {
             requested_covered += usize::from(image.key.is_some_and(|key| key.lod >= wanted));
             visible_lods.push((object.id, wanted, image.key.map(|key| key.lod)));
         }
-        self.loader.request(&self.requests);
+        if let Some(preparation) = &self.preparation {
+            preparation.remaining(&mut self.background);
+            self.loader
+                .request_with_background(&self.requests, &self.background);
+        } else {
+            self.loader.request(&self.requests);
+        }
         if available {
             self.gpu.render(target, &self.camera, &self.images)?;
             self.coverage
@@ -212,6 +228,7 @@ impl Session {
             submitted: available,
             completed_submissions: gpu.completed_submissions,
             in_flight: gpu.in_flight,
+            preparation_ready: self.preparation.as_ref().map(OverviewPreparation::ready),
         });
         Ok(available)
     }

@@ -17,6 +17,7 @@ struct Options {
     headless: bool,
     workers: usize,
     prefetch: String,
+    prepare: bool,
 }
 
 impl Options {
@@ -30,16 +31,21 @@ impl Options {
             headless: false,
             workers: 2,
             prefetch: "none".into(),
+            prepare: false,
         };
         let mut args = std::env::args().skip(1);
         while let Some(arg) = args.next() {
+            if arg == "--prepare-overview" {
+                options.prepare = true;
+                continue;
+            }
             if arg == "--headless" {
                 options.headless = true;
                 continue;
             }
             if arg == "--help" {
                 println!(
-                    "tack-app [--manifest PATH] [--cache PATH] [--scenario NAME] [--seconds 12] [--output PATH] [--headless] [--workers 1|2|4] [--prefetch none|symmetric|directional]\nScenarios: {}\nNavigation: middle drag or Alt + left drag; wheel zoom. Close window to exit.",
+                    "tack-app [--manifest PATH] [--cache PATH] [--scenario NAME] [--seconds 12] [--output PATH] [--headless] [--workers 1|2|4] [--prefetch none|symmetric|directional] [--prepare-overview (benchmark only)]\nScenarios: {}\nNavigation: middle drag or Alt + left drag; wheel zoom. Close window to exit.",
                     navigation::SCENARIOS.join(", ")
                 );
                 std::process::exit(0);
@@ -73,6 +79,9 @@ impl Options {
         }
         if options.headless && options.scenario.is_none() {
             return Err("headless mode requires --scenario".into());
+        }
+        if options.prepare && options.scenario.is_none() {
+            return Err("--prepare-overview requires a scripted benchmark scenario".into());
         }
         Ok(options)
     }

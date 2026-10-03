@@ -82,7 +82,7 @@ impl DiskCache {
         pixels: &image::RgbaImage,
         profile: &mut JobProfile,
         job: &Job,
-    ) -> Result<(), AssetError> {
+    ) -> Result<bool, AssetError> {
         // Encode directly to a bounded output buffer; at most one LOD per worker.
         let mut bytes = Vec::new();
         profile.measure(Stage::Encode, || {
@@ -96,10 +96,10 @@ impl DiskCache {
         profile.bytes(Stage::Encode, bytes.len());
         if job.cancelled.load(Ordering::Relaxed) {
             profile.cancelled_after = Some("encode");
-            return Ok(());
+            return Ok(false);
         }
         if bytes.len() > self.budget {
-            return Ok(());
+            return Ok(false);
         }
         profile.measure(Stage::CacheMaintenance, || self.trim_for(bytes.len()))?;
         let temporary = path.with_extension("tmp");
@@ -109,7 +109,7 @@ impl DiskCache {
             fs::remove_file(path)?;
         }
         fs::rename(temporary, path)?;
-        Ok(())
+        Ok(true)
     }
 }
 
@@ -129,13 +129,14 @@ fn read(
     } else {
         Stage::SourceRead
     };
-    profile.measure(stage, || {
+    let read_result = profile.measure(stage, || {
         fs::File::open(path)?
             .take(MAX_ENCODED_BYTES + 1)
             .read_to_end(&mut bytes)
-    })?;
+    });
     profile.bytes(stage, bytes.len());
     profile.encoded_peak_bytes = bytes.len() * 2;
+    read_result?;
     if bytes.len() as u64 > MAX_ENCODED_BYTES {
         return Err("encoded image exceeds 64 MiB".into());
     }
@@ -156,16 +157,17 @@ fn read_source(
     profile: &mut JobProfile,
 ) -> Result<Option<image::DynamicImage>, AssetError> {
     let mut bytes = Vec::new();
-    profile.measure(Stage::SourceRead, || {
+    let read_result = profile.measure(Stage::SourceRead, || {
         fs::File::open(&job.request.path)?
             .take(64 * 1024 * 1024 + 1)
             .read_to_end(&mut bytes)
-    })?;
+    });
+    profile.bytes(Stage::SourceRead, bytes.len());
+    profile.encoded_peak_bytes = bytes.len();
+    read_result?;
     if bytes.len() > 64 * 1024 * 1024 {
         return Err("encoded image exceeds 64 MiB".into());
     }
-    profile.bytes(Stage::SourceRead, bytes.len());
-    profile.encoded_peak_bytes = bytes.len();
     if job.cancelled.load(Ordering::Relaxed) {
         profile.cancelled_after = Some("source_read");
         return Ok(None);
@@ -224,6 +226,7 @@ pub(crate) fn run(job: &Job, cache: &mut DiskCache) -> Outcome {
     let mut profile = JobProfile {
         asset_id: job.request.key.id,
         edge: job.request.key.lod.edge(),
+        epoch: Some(job.epoch),
         ..Default::default()
     };
     profile.stage_ms[Stage::QueueWait as usize] = job.queued.elapsed().as_secs_f64() * 1000.0;
@@ -253,6 +256,7 @@ pub(crate) fn run(job: &Job, cache: &mut DiskCache) -> Outcome {
         };
         let pixels = if let Some(image) = cached {
             disk_hit = true;
+            profile.cache_entry_ready = true;
             image.into_rgba8()
         } else {
             // Decode and storage are worker-only. The codec itself is not preemptible.
@@ -276,10 +280,11 @@ pub(crate) fn run(job: &Job, cache: &mut DiskCache) -> Outcome {
                 profile.cancelled_after = Some("resize");
                 return Ok(None);
             }
-            if cache.enabled
-                && let Err(error) = cache.store(&path, &pixels, &mut profile, job)
-            {
-                cache.disable(error.as_ref());
+            if cache.enabled {
+                match cache.store(&path, &pixels, &mut profile, job) {
+                    Ok(stored) => profile.cache_entry_ready = stored,
+                    Err(error) => cache.disable(error.as_ref()),
+                }
             }
             pixels
         };
@@ -294,6 +299,7 @@ pub(crate) fn run(job: &Job, cache: &mut DiskCache) -> Outcome {
         }))
     })();
     profile.disk_hit = disk_hit;
+    profile.failed = result.is_err();
     profile.active_ms = start.elapsed().as_secs_f64() * 1000.0;
     Outcome {
         key: job.request.key,

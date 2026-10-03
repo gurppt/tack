@@ -5,7 +5,9 @@ use std::{
     thread,
     time::{Duration, Instant},
 };
-use tack_assets::{AssetError, AssetKey, DecodeRequest, Loader};
+use tack_assets::{
+    AssetError, AssetKey, Board, DecodeRequest, ImageObject, Loader, OverviewPreparation,
+};
 use tack_core::Lod;
 
 struct Fixture(PathBuf);
@@ -52,6 +54,208 @@ fn wait(loader: &mut Loader) {
         assert!(Instant::now() < deadline, "worker must complete or cancel");
         thread::sleep(Duration::from_millis(1));
     }
+}
+
+fn board(requests: &[DecodeRequest]) -> Result<Board, AssetError> {
+    Ok(Board {
+        objects: requests
+            .iter()
+            .map(|r| {
+                Ok(ImageObject {
+                    id: r.key.id,
+                    path: r.path.clone(),
+                    source_sha256: r.source_sha256.clone(),
+                    rect: tack_core::WorldRect::new(r.key.id as f64 * 300.0, 0.0, 256.0, 192.0)?,
+                })
+            })
+            .collect::<Result<_, AssetError>>()?,
+    })
+}
+
+fn prepare(loader: &mut Loader, prep: &mut OverviewPreparation) {
+    let deadline = Instant::now() + Duration::from_secs(10);
+    let mut requests = Vec::new();
+    while !prep.settled() {
+        loader.poll();
+        prep.observe(loader);
+        prep.remaining(&mut requests);
+        loader.request(&requests);
+        assert!(
+            Instant::now() < deadline,
+            "preparation must settle despite bad assets/evictions"
+        );
+        thread::sleep(Duration::from_millis(1));
+    }
+}
+
+#[test]
+fn preparation_progress_survives_eviction_bad_asset_and_partial_restart() -> Result<(), AssetError>
+{
+    let fixture = Fixture::new()?;
+    let requests: Vec<_> = (0..20)
+        .map(|id| fixture.request(id))
+        .collect::<Result<_, _>>()?;
+    fs::write(&requests[19].path, b"invalid source")?;
+    let board = board(&requests)?;
+    let cache = fixture.0.join("cache");
+    let started = Instant::now();
+    let mut loader = Loader::new(cache.clone(), 128 * 128 * 4, 1024 * 1024, 2)?;
+    let mut prep = OverviewPreparation::new(&board, started);
+    loader.request(&requests[..8]);
+    wait(&mut loader);
+    prep.observe(&loader);
+    assert_eq!(prep.ready(), 8);
+    assert!(loader.stats().cpu_evictions > 0);
+    loader.request(&requests);
+    loader.request(&[]);
+    wait(&mut loader);
+    prep.observe(&loader);
+    let persisted = prep.ready();
+    assert!((8..=19).contains(&persisted));
+    let mut restart = Loader::new(cache.clone(), 128 * 128 * 4, 1024 * 1024, 2)?;
+    let mut prep = OverviewPreparation::new(&board, Instant::now());
+    prepare(&mut restart, &mut prep);
+    assert_eq!(prep.ready(), 19);
+    assert_eq!(prep.report(&restart, 2)["errors"], 1);
+    assert!(prep.report(&restart, 2)["threshold_ms"]["100"].is_null());
+    assert_eq!(restart.stats().disk_hits, persisted as u64);
+    assert_eq!(
+        restart.profiles().len(),
+        20,
+        "ready IDs never re-decode after RAM eviction"
+    );
+    // Exactly two prepared entries need repair; all other valid entries reuse SSD.
+    let path = |id| {
+        cache
+            .join(format!("worker-{}", id % 4))
+            .join(format!("{id}-{}-128.png", "a".repeat(64)))
+    };
+    fs::remove_file(path(0))?;
+    fs::write(path(1), b"corrupt")?;
+    let mut repaired = Loader::new(cache, 128 * 128 * 4, 1024 * 1024, 2)?;
+    let mut prep = OverviewPreparation::new(&board, Instant::now());
+    prepare(&mut repaired, &mut prep);
+    assert_eq!(prep.ready(), 19);
+    assert_eq!(repaired.stats().disk_hits, 17);
+    assert_eq!(prep.report(&repaired, 2)["source_read_attempts"], 3);
+    Ok(())
+}
+
+#[test]
+fn preparation_cannot_claim_persistence_when_disposable_cache_is_unavailable()
+-> Result<(), AssetError> {
+    let fixture = Fixture::new()?;
+    let request = fixture.request(0)?;
+    let board = board(std::slice::from_ref(&request))?;
+    let cache = fixture.0.join("file");
+    fs::write(&cache, b"keep")?;
+    let mut loader = Loader::new(cache, 128 * 128 * 4, 1024 * 1024, 1)?;
+    let mut prep = OverviewPreparation::new(&board, Instant::now());
+    prepare(&mut loader, &mut prep);
+    assert_eq!(prep.ready(), 0);
+    assert_eq!(prep.report(&loader, 1)["errors"], 1);
+    assert!(
+        loader.has_cached(request.key),
+        "ordinary RAM delivery still works"
+    );
+    Ok(())
+}
+
+#[test]
+fn persisted_stale_result_is_prepared_without_entering_cpu_cache() -> Result<(), AssetError> {
+    let fixture = Fixture::new()?;
+    let request = fixture.request(0)?;
+    let board = board(std::slice::from_ref(&request))?;
+    let cache = fixture.0.join("cache");
+    let mut loader = Loader::new(cache.clone(), 128 * 128 * 4, 1024 * 1024, 1)?;
+    let mut prep = OverviewPreparation::new(&board, Instant::now());
+    loader.request(std::slice::from_ref(&request));
+    let final_path = cache
+        .join("worker-0")
+        .join(format!("0-{}-128.png", "a".repeat(64)));
+    let deadline = Instant::now() + Duration::from_secs(5);
+    while !final_path.exists() {
+        assert!(Instant::now() < deadline);
+        thread::sleep(Duration::from_millis(1));
+    }
+    loader.request(&[]);
+    wait(&mut loader);
+    prep.observe(&loader);
+    assert_eq!(prep.ready(), 1);
+    assert_eq!(loader.stats().cpu_bytes, 0);
+    assert_eq!(loader.stats().stale, 1);
+    Ok(())
+}
+
+#[test]
+fn background_is_one_thumbnail_per_worker_and_shares_foreground_bounds() -> Result<(), AssetError> {
+    let fixture = Fixture::new()?;
+    let requests: Vec<_> = (0..30)
+        .map(|id| fixture.request(id))
+        .collect::<Result<_, _>>()?;
+    let mut loader = Loader::new(fixture.0.join("cache"), 1024 * 1024, 1024 * 1024, 2)?;
+    loader.request_with_background(&[], &requests);
+    assert_eq!(loader.stats().pending, 2);
+    // Promotion and overlapping lists must not enqueue a second copy.
+    loader.request_with_background(&requests[..20], &requests);
+    assert_eq!(loader.stats().pending, 16);
+    wait(&mut loader);
+    let unique: std::collections::HashSet<_> =
+        loader.profiles().iter().map(|p| p.asset_id).collect();
+    assert_eq!(unique.len(), 16);
+    assert_eq!(loader.profiles().len(), 16);
+    assert!(
+        unique.iter().all(|id| *id < 20),
+        "foreground admission precedes remaining board"
+    );
+    let mut detail = requests[29].clone();
+    detail.key.lod = Lod::Detail;
+    loader.request_with_background(&[], &[detail]);
+    assert_eq!(
+        loader.stats().pending,
+        0,
+        "background preparation only accepts the cheap tier"
+    );
+    Ok(())
+}
+
+#[test]
+fn historical_ready_and_terminal_errors_remain_disjoint_after_later_failure()
+-> Result<(), AssetError> {
+    let fixture = Fixture::new()?;
+    let requests: Vec<_> = (0..2)
+        .map(|id| fixture.request(id))
+        .collect::<Result<_, _>>()?;
+    let board = board(&requests)?;
+    let cache = fixture.0.join("cache");
+    let mut loader = Loader::new(cache.clone(), 128 * 128 * 4, 1024 * 1024, 1)?;
+    let mut prep = OverviewPreparation::new(&board, Instant::now());
+    for request in &requests {
+        loader.request(std::slice::from_ref(request));
+        wait(&mut loader);
+        prep.observe(&loader);
+    }
+    assert_eq!(prep.ready(), 2);
+    assert!(prep.settled());
+    assert!(!loader.has_cached(requests[0].key));
+    fs::remove_file(
+        cache
+            .join("worker-0")
+            .join(format!("0-{}-128.png", "a".repeat(64))),
+    )?;
+    fs::remove_file(&requests[0].path)?;
+    loader.request(&requests[..1]);
+    wait(&mut loader);
+    prep.observe(&loader);
+    assert_eq!(loader.stats().errors, 1);
+    assert_eq!(
+        prep.ready(),
+        2,
+        "historical progress is not a live inventory"
+    );
+    assert_eq!(prep.report(&loader, 1)["errors"], 0);
+    assert!(prep.settled(), "sets must never overlap");
+    Ok(())
 }
 
 #[test]
@@ -125,6 +329,7 @@ fn oversized_encoded_input_is_rejected_without_unbounded_read() -> Result<(), As
     wait(&mut loader);
     assert!(!loader.has_cached(request.key));
     assert_eq!(loader.stats().errors, 1);
+    assert_eq!(loader.profiles()[0].stage_bytes[0], 64 * 1024 * 1024 + 1);
     Ok(())
 }
 

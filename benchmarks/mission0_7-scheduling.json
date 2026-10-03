@@ -1,0 +1,2616 @@
+{
+  "schema": 1,
+  "raw_input_directory": "benchmark-results/mission0_7-comparison-inputs",
+  "provenance": {
+    "app_sha256": "59a1570d2c7a73c30966e5c36a8f76ebcbc67305b7ac45884989268efe7d0cd2",
+    "preparation_sha256": "9f7c39e01dfd2879f6089e85ab2f5dac1fc26dea0fb89958a5e6d0928f40d03d",
+    "source_snapshot_sha256": "f5b7c5bad409aeef54883132595709faea7ef6ef0ce71d36a99e65333f921605",
+    "executed_harness_sha256": "fc68359d62e4a1515e8a9f54d8a8c406929d90396503cc7396f670e16c2608cd",
+    "manifest_sha256": "8bd27d9631560213365df47b842e37720421703608b13e79ee54f8524ad44af6",
+    "native_build": {
+      "version": "3.2.0",
+      "source_url": "https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.2.0/libjpeg-turbo-3.2.0.tar.gz",
+      "source_sha256": "6f30092cef9fb839779646608f4ee14ae3cbac989c47fa05e841b0841f09878e",
+      "cmake_command": [
+        "cmake",
+        "-S",
+        "/home/gurp/softs/tack/target/native/source/libjpeg-turbo-3.2.0",
+        "-B",
+        "/home/gurp/softs/tack/target/native/turbojpeg-build",
+        "-DCMAKE_INSTALL_PREFIX=/home/gurp/softs/tack/target/native/libjpeg-turbo-3.2.0",
+        "-DCMAKE_INSTALL_LIBDIR=lib",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DENABLE_SHARED=OFF",
+        "-DENABLE_STATIC=ON",
+        "-DWITH_TURBOJPEG=ON",
+        "-DREQUIRE_SIMD=ON",
+        "-DWITH_JAVA=OFF"
+      ],
+      "nasm": "NASM version 2.16.01",
+      "library_sha256": {
+        "libturbojpeg.a": "e3fb98a1b4e3814c1e620b6e599b4a293badfde689a49430e0d1a43455269658"
+      }
+    },
+    "note": "Fresh processes; cold means derived cache empty, not kernel page cache flushed. Synthetic IDs share 32 contents; no PureRef asset access."
+  },
+  "global": [
+    {
+      "acquire": {
+        "max_ms": 0.060591000000000006,
+        "p50_ms": 0.020509999999999997,
+        "p99_ms": 0.048831,
+        "samples": 709
+      },
+      "adapter": "NVIDIA GeForce RTX 2060",
+      "asset_drain_ms": 113.639072,
+      "asset_pending_after_drain": 0,
+      "backend": "Vulkan",
+      "callback": {
+        "max_ms": 30.773247,
+        "p50_ms": 0.659937,
+        "p99_ms": 12.702951,
+        "samples": 709
+      },
+      "completed_submissions_at_report": 709,
+      "coverage_episodes_dropped": 0,
+      "cpu_cache_peak_bytes": 31358976,
+      "cpu_max_ms": 6.412746,
+      "cpu_p50_ms": 0.498346,
+      "cpu_p99_ms": 4.373916,
+      "device_type": "DiscreteGpu",
+      "driver": "NVIDIA",
+      "driver_info": "580.173.02",
+      "duration_seconds": 12.0,
+      "failed_acquire_max_ms": 0.0,
+      "final": {
+        "acquire_ms": 0.03909,
+        "callback_ms": 2.8147990000000003,
+        "completed_submissions": 708,
+        "cpu_cache_bytes": 29245440,
+        "cpu_evictions": 81,
+        "cpu_ms": 0.687297,
+        "cpu_thumbnail_bytes": 2506752,
+        "culled": 994,
+        "decode_errors": 0,
+        "decode_ms": 22740.498339999995,
+        "disk_hits": 0,
+        "elapsed_ms": 12632.328158,
+        "gpu_evictions": 75,
+        "gpu_resident_bytes": 69304320,
+        "gpu_thumbnail_bytes": 2457600,
+        "in_flight": 1,
+        "lods": [
+          2,
+          2,
+          2
+        ],
+        "pending": 2,
+        "placeholders": 0,
+        "preparation_ready": 51,
+        "present_ms": 2.079502,
+        "requested_covered": 2,
+        "stale": 0,
+        "submitted": true,
+        "upload_bytes": 49152,
+        "upload_cpu_ms": 0.096011,
+        "uploads": 1,
+        "visible": 6
+      },
+      "first_visible_content_ms": 842.45464,
+      "frame_attempts": 709,
+      "gpu_backpressure_frames": 0,
+      "gpu_pass": {
+        "max_ms": 0.721376,
+        "p50_ms": 0.053248,
+        "p99_ms": 0.626272,
+        "samples": 709
+      },
+      "gpu_resident_peak_bytes": 69304320,
+      "gpu_timing_dropped": 0,
+      "gpu_timing_note": "Optional asynchronous timestamps measure the canvas render pass only, excluding uploads, surface acquisition and presentation. CPU callback and attempt cadence do not measure monitor presentation latency.",
+      "headless": false,
+      "interval_p50_ms": 16.766653000000588,
+      "interval_p99_ms": 21.15587800000003,
+      "objects": 1000,
+      "pending_limit": 16,
+      "pending_peak": 6,
+      "platform_events": [
+        {
+          "event": "initialize",
+          "scale_factor": 1.0,
+          "size": [
+            1280,
+            720
+          ]
+        },
+        {
+          "event": "resize",
+          "size": [
+            1280,
+            720
+          ]
+        },
+        {
+          "event": "occluded",
+          "occluded": false
+        }
+      ],
+      "prefetch": "none",
+      "preparation": {
+        "cache_bytes_read": 0,
+        "cache_hits": 0,
+        "cancelled": 1,
+        "cpu_payload_peak_bytes": 31358976,
+        "derived_bytes_written": 2387560,
+        "elapsed_ms": 12767.377971,
+        "errors": 0,
+        "images_per_second": 3.994555508252525,
+        "note": "Validated historical progress; no frame-path filesystem inventory. 100% ready differs from all settled. Persistence and cancellation may overlap. Active time covers observed 128 jobs only; no allocator scratch measurement.",
+        "pending_peak": 6,
+        "ready": 51,
+        "settled": false,
+        "source_bytes_read": 369719465,
+        "source_read_attempts": 52,
+        "threshold_ms": {
+          "10": null,
+          "100": null,
+          "25": null,
+          "50": null,
+          "75": null,
+          "90": null,
+          "first": 841.802033
+        },
+        "total": 1000,
+        "worker_active_ms": 3899.9419360000015,
+        "worker_utilization_fraction": 0.15273073080699828
+      },
+      "prepare": "global",
+      "present": {
+        "max_ms": 29.972859,
+        "p50_ms": 0.078591,
+        "p99_ms": 12.204376,
+        "samples": 709
+      },
+      "rejected_cache_entries": 0,
+      "rss_high_water_kib": 569644,
+      "scenario": "pan-normal",
+      "schema": 1,
+      "startup_ms": 637.5689970000001,
+      "submitted_frames": 709,
+      "surface_other_errors": 0,
+      "surface_reconfigures": 0,
+      "surface_timeouts": 0,
+      "thumbnail_decoder": "turbojpeg 1.5.1 / libjpeg-turbo 3.2.0 DCT",
+      "upload_count_limit": 8,
+      "worker_profile_dropped": 0,
+      "worker_retention_peak_bytes": 69304320,
+      "worker_stage_names": [
+        "source_read",
+        "header",
+        "decode",
+        "resize",
+        "encode",
+        "cache_write",
+        "cache_read",
+        "cache_maintenance",
+        "queue_wait",
+        "cpu_insert",
+        "retire"
+      ],
+      "workers": 2,
+      "worker_stages": {
+        "source_read": {
+          "samples": 138,
+          "p50_ms": 1.5376859999999999,
+          "p95_ms": 2.8835699999999997,
+          "p99_ms": 8.310176,
+          "total_ms": 247.14388399999999,
+          "bytes": 981151100
+        },
+        "header": {
+          "samples": 138,
+          "p50_ms": 0.00869,
+          "p95_ms": 0.02111,
+          "p99_ms": 0.02848,
+          "total_ms": 1.407773,
+          "bytes": 0
+        },
+        "decode": {
+          "samples": 138,
+          "p50_ms": 133.667019,
+          "p95_ms": 154.588925,
+          "p99_ms": 158.05466,
+          "total_ms": 15897.407712,
+          "bytes": 915158250
+        },
+        "resize": {
+          "samples": 137,
+          "p50_ms": 7.963062999999999,
+          "p95_ms": 137.005823,
+          "p99_ms": 142.160406,
+          "total_ms": 5619.911247,
+          "bytes": 1444094124
+        },
+        "encode": {
+          "samples": 136,
+          "p50_ms": 1.718608,
+          "p95_ms": 30.869048,
+          "p99_ms": 32.598707,
+          "total_ms": 1193.415208,
+          "bytes": 298604181
+        },
+        "cache_write": {
+          "samples": 136,
+          "p50_ms": 0.27459300000000003,
+          "p95_ms": 2.384555,
+          "p99_ms": 3.065782,
+          "total_ms": 108.199283,
+          "bytes": 298604181
+        },
+        "cache_read": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "bytes": 0
+        },
+        "cache_maintenance": {
+          "samples": 138,
+          "p50_ms": 0.094551,
+          "p95_ms": 0.143061,
+          "p99_ms": 0.20041199999999998,
+          "total_ms": 12.972072,
+          "bytes": 0
+        },
+        "queue_wait": {
+          "samples": 138,
+          "p50_ms": 0.015739999999999997,
+          "p95_ms": 77.485879,
+          "p99_ms": 167.06491300000002,
+          "total_ms": 2298.708095,
+          "bytes": 0
+        },
+        "cpu_insert": {
+          "samples": 136,
+          "p50_ms": 0.00063,
+          "p95_ms": 0.0018700000000000001,
+          "p99_ms": 0.0046500000000000005,
+          "total_ms": 0.117393,
+          "bytes": 517619712
+        },
+        "retire": {
+          "samples": 138,
+          "p50_ms": 0.00041,
+          "p95_ms": 1.401125,
+          "p99_ms": 1.840049,
+          "total_ms": 16.106370000000002,
+          "bytes": 0
+        }
+      },
+      "worker_active": {
+        "samples": 138,
+        "p50_ms": 146.984696,
+        "p95_ms": 324.5574280000001,
+        "p99_ms": 332.65812099999994,
+        "total_ms": 23107.920433
+      },
+      "first_image_after_demand": {
+        "samples": 50,
+        "p50_ms": 100.51431699999989,
+        "p95_ms": 385.2121130000014,
+        "p99_ms": 403.05502700000034,
+        "total_ms": 6826.1652349999995,
+        "censored": 0
+      },
+      "requested_lod_after_demand": {
+        "samples": 38,
+        "p50_ms": 1107.0088279999995,
+        "p95_ms": 1347.2937659999998,
+        "p99_ms": 1359.6712540000008,
+        "total_ms": 41807.623492,
+        "censored": 12
+      },
+      "cancelled_by_stage": {
+        "decode": 1,
+        "resize": 1
+      },
+      "worker_memory_observed_peaks": {
+        "encoded_peak_bytes": 7123639,
+        "decoded_peak_bytes": 20250000,
+        "resize_peak_bytes": 12582912
+      },
+      "content_coverage_fraction": 0.8989071038251366,
+      "lod_coverage_fractions": [
+        0.3224043715846995,
+        0.37456532538499754,
+        0.20193740685543965
+      ],
+      "requested_coverage_fraction": 0.20193740685543965,
+      "worker_utilization_fraction": 0.9537976282623719,
+      "worker_utilization_note": "Observed worker active wall time / (navigation + explicit asset drain) worker capacity; excludes startup and any unreported jobs, not CPU utilization. Legacy reports without asset drain can omit still-active jobs.",
+      "cpu_thumbnail_peak_bytes": 2506752,
+      "gpu_thumbnail_peak_bytes": 2457600,
+      "gpu_completion_fps": 59.083333333333336,
+      "display_cache_bytes_after_run": 298604181,
+      "display_cache_files_after_run": 136,
+      "input_cache": {
+        "files": 0,
+        "overview_files": 0,
+        "bytes": 0,
+        "file_bytes": {
+          "samples": 0,
+          "p50_bytes": null,
+          "p95_bytes": null,
+          "p99_bytes": null,
+          "total_bytes": 0,
+          "min_bytes": null,
+          "max_bytes": null
+        },
+        "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "temporary_files": 0
+      },
+      "input_prepared_percent": 0.0,
+      "concurrent_decode_peak": 2,
+      "label": "prepared-0-pan-normal",
+      "preparation_cost_ms": 18.954804,
+      "label_note": "Prepared input creation time + this fresh process startup + navigation duration + explicit asset drain; cache cloning/inventory excluded harness work."
+    },
+    {
+      "acquire": {
+        "max_ms": 0.127502,
+        "p50_ms": 0.019191,
+        "p99_ms": 0.045721,
+        "samples": 710
+      },
+      "adapter": "NVIDIA GeForce RTX 2060",
+      "asset_drain_ms": 29.552004999999998,
+      "asset_pending_after_drain": 0,
+      "backend": "Vulkan",
+      "callback": {
+        "max_ms": 11.514078000000001,
+        "p50_ms": 1.233343,
+        "p99_ms": 7.71219,
+        "samples": 710
+      },
+      "completed_submissions_at_report": 710,
+      "coverage_episodes_dropped": 0,
+      "cpu_cache_peak_bytes": 16171008,
+      "cpu_max_ms": 4.0728919999999995,
+      "cpu_p50_ms": 1.096842,
+      "cpu_p99_ms": 2.072591,
+      "device_type": "DiscreteGpu",
+      "driver": "NVIDIA",
+      "driver_info": "580.173.02",
+      "duration_seconds": 12.0,
+      "failed_acquire_max_ms": 0.0,
+      "final": {
+        "acquire_ms": 0.015991,
+        "callback_ms": 0.719128,
+        "completed_submissions": 709,
+        "cpu_cache_bytes": 16171008,
+        "cpu_evictions": 0,
+        "cpu_ms": 0.628526,
+        "cpu_thumbnail_bytes": 16171008,
+        "culled": 608,
+        "decode_errors": 0,
+        "decode_ms": 23744.245847999988,
+        "disk_hits": 0,
+        "elapsed_ms": 12628.761333,
+        "gpu_evictions": 0,
+        "gpu_resident_bytes": 8945664,
+        "gpu_thumbnail_bytes": 8945664,
+        "in_flight": 1,
+        "lods": [
+          0,
+          0,
+          0
+        ],
+        "pending": 16,
+        "placeholders": 392,
+        "preparation_ready": 329,
+        "present_ms": 0.06406099999999999,
+        "requested_covered": 0,
+        "stale": 0,
+        "submitted": true,
+        "upload_bytes": 0,
+        "upload_cpu_ms": 0.0,
+        "uploads": 0,
+        "visible": 392
+      },
+      "first_visible_content_ms": 825.405444,
+      "frame_attempts": 710,
+      "gpu_backpressure_frames": 0,
+      "gpu_pass": {
+        "max_ms": 0.230016,
+        "p50_ms": 0.04352,
+        "p99_ms": 0.216864,
+        "samples": 710
+      },
+      "gpu_resident_peak_bytes": 8945664,
+      "gpu_timing_dropped": 0,
+      "gpu_timing_note": "Optional asynchronous timestamps measure the canvas render pass only, excluding uploads, surface acquisition and presentation. CPU callback and attempt cadence do not measure monitor presentation latency.",
+      "headless": false,
+      "interval_p50_ms": 16.794593000000532,
+      "interval_p99_ms": 17.685881999999765,
+      "objects": 1000,
+      "pending_limit": 16,
+      "pending_peak": 16,
+      "platform_events": [
+        {
+          "event": "initialize",
+          "scale_factor": 1.0,
+          "size": [
+            1280,
+            720
+          ]
+        },
+        {
+          "event": "resize",
+          "size": [
+            1280,
+            720
+          ]
+        },
+        {
+          "event": "occluded",
+          "occluded": false
+        }
+      ],
+      "prefetch": "none",
+      "preparation": {
+        "cache_bytes_read": 0,
+        "cache_hits": 0,
+        "cancelled": 16,
+        "cpu_payload_peak_bytes": 16171008,
+        "derived_bytes_written": 15400250,
+        "elapsed_ms": 12681.77944,
+        "errors": 0,
+        "images_per_second": 25.94273158246947,
+        "note": "Validated historical progress; no frame-path filesystem inventory. 100% ready differs from all settled. Persistence and cancellation may overlap. Active time covers observed 128 jobs only; no allocator scratch measurement.",
+        "pending_peak": 16,
+        "ready": 329,
+        "settled": false,
+        "source_bytes_read": 2353702938,
+        "source_read_attempts": 331,
+        "threshold_ms": {
+          "10": 4383.346913,
+          "100": null,
+          "25": 9759.880722,
+          "50": null,
+          "75": null,
+          "90": null,
+          "first": 824.517415
+        },
+        "total": 1000,
+        "worker_active_ms": 23886.283881000025,
+        "worker_utilization_fraction": 0.9417560049049404
+      },
+      "prepare": "global",
+      "present": {
+        "max_ms": 10.477988,
+        "p50_ms": 0.071821,
+        "p99_ms": 6.7267,
+        "samples": 710
+      },
+      "rejected_cache_entries": 0,
+      "rss_high_water_kib": 362440,
+      "scenario": "board-tour",
+      "schema": 1,
+      "startup_ms": 637.8432389999999,
+      "submitted_frames": 710,
+      "surface_other_errors": 0,
+      "surface_reconfigures": 0,
+      "surface_timeouts": 0,
+      "thumbnail_decoder": "turbojpeg 1.5.1 / libjpeg-turbo 3.2.0 DCT",
+      "upload_count_limit": 8,
+      "worker_profile_dropped": 0,
+      "worker_retention_peak_bytes": 16171008,
+      "worker_stage_names": [
+        "source_read",
+        "header",
+        "decode",
+        "resize",
+        "encode",
+        "cache_write",
+        "cache_read",
+        "cache_maintenance",
+        "queue_wait",
+        "cpu_insert",
+        "retire"
+      ],
+      "workers": 2,
+      "worker_stages": {
+        "source_read": {
+          "samples": 331,
+          "p50_ms": 1.171472,
+          "p95_ms": 1.448275,
+          "p99_ms": 4.046242,
+          "total_ms": 423.837426,
+          "bytes": 2353702938
+        },
+        "header": {
+          "samples": 331,
+          "p50_ms": 0.01071,
+          "p95_ms": 0.0174,
+          "p99_ms": 0.023541,
+          "total_ms": 3.86451,
+          "bytes": 0
+        },
+        "decode": {
+          "samples": 331,
+          "p50_ms": 68.131483,
+          "p95_ms": 71.252625,
+          "p99_ms": 73.794581,
+          "total_ms": 22746.516579,
+          "bytes": 419294250
+        },
+        "resize": {
+          "samples": 329,
+          "p50_ms": 1.697167,
+          "p95_ms": 1.89194,
+          "p99_ms": 2.089101,
+          "total_ms": 568.37002,
+          "bytes": 432931758
+        },
+        "encode": {
+          "samples": 329,
+          "p50_ms": 0.125331,
+          "p95_ms": 0.137252,
+          "p99_ms": 0.153772,
+          "total_ms": 41.930843,
+          "bytes": 15400250
+        },
+        "cache_write": {
+          "samples": 329,
+          "p50_ms": 0.085011,
+          "p95_ms": 0.09898100000000001,
+          "p99_ms": 0.113491,
+          "total_ms": 28.477143,
+          "bytes": 15400250
+        },
+        "cache_read": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "bytes": 0
+        },
+        "cache_maintenance": {
+          "samples": 331,
+          "p50_ms": 0.146492,
+          "p95_ms": 0.23894200000000002,
+          "p99_ms": 0.259403,
+          "total_ms": 48.664395,
+          "bytes": 0
+        },
+        "queue_wait": {
+          "samples": 345,
+          "p50_ms": 493.374259,
+          "p95_ms": 509.476866,
+          "p99_ms": 514.0485729999999,
+          "total_ms": 164257.35049,
+          "bytes": 0
+        },
+        "cpu_insert": {
+          "samples": 329,
+          "p50_ms": 0.00049,
+          "p95_ms": 0.00088,
+          "p99_ms": 0.00398,
+          "total_ms": 0.194302,
+          "bytes": 16171008
+        },
+        "retire": {
+          "samples": 345,
+          "p50_ms": 0.00032,
+          "p95_ms": 0.00074,
+          "p99_ms": 0.00089,
+          "total_ms": 0.119131,
+          "bytes": 0
+        }
+      },
+      "worker_active": {
+        "samples": 345,
+        "p50_ms": 71.43621700000001,
+        "p95_ms": 74.96727299999999,
+        "p99_ms": 77.235947,
+        "total_ms": 23886.283881
+      },
+      "first_image_after_demand": {
+        "samples": 182,
+        "p50_ms": 3373.972111,
+        "p95_ms": 6280.103698,
+        "p99_ms": 6565.874216,
+        "total_ms": 609317.974866,
+        "censored": 818
+      },
+      "requested_lod_after_demand": {
+        "samples": 182,
+        "p50_ms": 3373.972111,
+        "p95_ms": 6280.103698,
+        "p99_ms": 6565.874216,
+        "total_ms": 609317.974866,
+        "censored": 818
+      },
+      "cancelled_by_stage": {
+        "decode": 2,
+        "queue": 14
+      },
+      "worker_memory_observed_peaks": {
+        "encoded_peak_bytes": 7123639,
+        "decoded_peak_bytes": 1266750,
+        "resize_peak_bytes": 49152
+      },
+      "content_coverage_fraction": 0.0527175160191347,
+      "lod_coverage_fractions": [
+        0.0527175160191347,
+        0.0,
+        0.0
+      ],
+      "requested_coverage_fraction": 0.0527175160191347,
+      "worker_utilization_fraction": 0.9928168509962728,
+      "worker_utilization_note": "Observed worker active wall time / (navigation + explicit asset drain) worker capacity; excludes startup and any unreported jobs, not CPU utilization. Legacy reports without asset drain can omit still-active jobs.",
+      "cpu_thumbnail_peak_bytes": 16171008,
+      "gpu_thumbnail_peak_bytes": 8945664,
+      "gpu_completion_fps": 59.166666666666664,
+      "display_cache_bytes_after_run": 15400250,
+      "display_cache_files_after_run": 329,
+      "input_cache": {
+        "files": 0,
+        "overview_files": 0,
+        "bytes": 0,
+        "file_bytes": {
+          "samples": 0,
+          "p50_bytes": null,
+          "p95_bytes": null,
+          "p99_bytes": null,
+          "total_bytes": 0,
+          "min_bytes": null,
+          "max_bytes": null
+        },
+        "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "temporary_files": 0
+      },
+      "input_prepared_percent": 0.0,
+      "concurrent_decode_peak": 2,
+      "label": "prepared-0-board-tour",
+      "preparation_cost_ms": 18.954804,
+      "label_note": "Prepared input creation time + this fresh process startup + navigation duration + explicit asset drain; cache cloning/inventory excluded harness work."
+    },
+    {
+      "acquire": {
+        "max_ms": 0.33936099999999997,
+        "p50_ms": 0.01983,
+        "p99_ms": 0.05357,
+        "samples": 710
+      },
+      "adapter": "NVIDIA GeForce RTX 2060",
+      "asset_drain_ms": 99.69174799999999,
+      "asset_pending_after_drain": 0,
+      "backend": "Vulkan",
+      "callback": {
+        "max_ms": 26.573645,
+        "p50_ms": 0.700202,
+        "p99_ms": 14.794884,
+        "samples": 710
+      },
+      "completed_submissions_at_report": 710,
+      "coverage_episodes_dropped": 0,
+      "cpu_cache_peak_bytes": 32440320,
+      "cpu_max_ms": 9.957976,
+      "cpu_p50_ms": 0.515351,
+      "cpu_p99_ms": 6.593993,
+      "device_type": "DiscreteGpu",
+      "driver": "NVIDIA",
+      "driver_info": "580.173.02",
+      "duration_seconds": 12.0,
+      "failed_acquire_max_ms": 0.0,
+      "final": {
+        "acquire_ms": 0.011381,
+        "callback_ms": 0.412052,
+        "completed_submissions": 709,
+        "cpu_cache_bytes": 32440320,
+        "cpu_evictions": 89,
+        "cpu_ms": 0.346361,
+        "cpu_thumbnail_bytes": 4128768,
+        "culled": 994,
+        "decode_errors": 0,
+        "decode_ms": 21587.014921,
+        "disk_hits": 84,
+        "elapsed_ms": 12639.662455,
+        "gpu_evictions": 85,
+        "gpu_resident_bytes": 69304320,
+        "gpu_thumbnail_bytes": 2457600,
+        "in_flight": 1,
+        "lods": [
+          0,
+          3,
+          3
+        ],
+        "pending": 2,
+        "placeholders": 0,
+        "preparation_ready": 84,
+        "present_ms": 0.05076,
+        "requested_covered": 3,
+        "stale": 0,
+        "submitted": true,
+        "upload_bytes": 0,
+        "upload_cpu_ms": 0.0,
+        "uploads": 0,
+        "visible": 6
+      },
+      "first_visible_content_ms": 745.2392570000001,
+      "frame_attempts": 710,
+      "gpu_backpressure_frames": 0,
+      "gpu_pass": {
+        "max_ms": 1.101888,
+        "p50_ms": 0.068704,
+        "p99_ms": 0.9064,
+        "samples": 710
+      },
+      "gpu_resident_peak_bytes": 69304320,
+      "gpu_timing_dropped": 0,
+      "gpu_timing_note": "Optional asynchronous timestamps measure the canvas render pass only, excluding uploads, surface acquisition and presentation. CPU callback and attempt cadence do not measure monitor presentation latency.",
+      "headless": false,
+      "interval_p50_ms": 16.76601999999957,
+      "interval_p99_ms": 22.994272999999794,
+      "objects": 1000,
+      "pending_limit": 16,
+      "pending_peak": 6,
+      "platform_events": [
+        {
+          "event": "initialize",
+          "scale_factor": 1.0,
+          "size": [
+            1280,
+            720
+          ]
+        },
+        {
+          "event": "resize",
+          "size": [
+            1280,
+            720
+          ]
+        },
+        {
+          "event": "occluded",
+          "occluded": false
+        }
+      ],
+      "prefetch": "none",
+      "preparation": {
+        "cache_bytes_read": 3932791,
+        "cache_hits": 84,
+        "cancelled": 0,
+        "cpu_payload_peak_bytes": 32440320,
+        "derived_bytes_written": 0,
+        "elapsed_ms": 12759.895826,
+        "errors": 0,
+        "images_per_second": 6.583125845654534,
+        "note": "Validated historical progress; no frame-path filesystem inventory. 100% ready differs from all settled. Persistence and cancellation may overlap. Active time covers observed 128 jobs only; no allocator scratch measurement.",
+        "pending_peak": 6,
+        "ready": 84,
+        "settled": false,
+        "source_bytes_read": 0,
+        "source_read_attempts": 0,
+        "threshold_ms": {
+          "10": null,
+          "100": null,
+          "25": null,
+          "50": null,
+          "75": null,
+          "90": null,
+          "first": 744.293628
+        },
+        "total": 1000,
+        "worker_active_ms": 25.303603999999993,
+        "worker_utilization_fraction": 0.0009915286278607582
+      },
+      "prepare": "global",
+      "present": {
+        "max_ms": 25.759112000000002,
+        "p50_ms": 0.08066000000000001,
+        "p99_ms": 13.98791,
+        "samples": 710
+      },
+      "rejected_cache_entries": 0,
+      "rss_high_water_kib": 568188,
+      "scenario": "pan-normal",
+      "schema": 1,
+      "startup_ms": 645.381237,
+      "submitted_frames": 710,
+      "surface_other_errors": 0,
+      "surface_reconfigures": 0,
+      "surface_timeouts": 0,
+      "thumbnail_decoder": "turbojpeg 1.5.1 / libjpeg-turbo 3.2.0 DCT",
+      "upload_count_limit": 8,
+      "worker_profile_dropped": 0,
+      "worker_retention_peak_bytes": 57409536,
+      "worker_stage_names": [
+        "source_read",
+        "header",
+        "decode",
+        "resize",
+        "encode",
+        "cache_write",
+        "cache_read",
+        "cache_maintenance",
+        "queue_wait",
+        "cpu_insert",
+        "retire"
+      ],
+      "workers": 2,
+      "worker_stages": {
+        "source_read": {
+          "samples": 97,
+          "p50_ms": 1.3817949999999999,
+          "p95_ms": 4.235993000000001,
+          "p99_ms": 10.012692999999999,
+          "total_ms": 176.854147,
+          "bytes": 689652594
+        },
+        "header": {
+          "samples": 181,
+          "p50_ms": 0.00665,
+          "p95_ms": 0.01243,
+          "p99_ms": 0.051751,
+          "total_ms": 1.384174,
+          "bytes": 0
+        },
+        "decode": {
+          "samples": 181,
+          "p50_ms": 128.980802,
+          "p95_ms": 154.293332,
+          "p99_ms": 160.450556,
+          "total_ms": 13839.273673,
+          "bytes": 1015087500
+        },
+        "resize": {
+          "samples": 96,
+          "p50_ms": 9.893252,
+          "p95_ms": 135.431296,
+          "p99_ms": 147.057508,
+          "total_ms": 6455.907029,
+          "bytes": 1612973052
+        },
+        "encode": {
+          "samples": 95,
+          "p50_ms": 2.1482419999999998,
+          "p95_ms": 29.224775,
+          "p99_ms": 31.218202,
+          "total_ms": 1350.316454,
+          "bytes": 346773786
+        },
+        "cache_write": {
+          "samples": 95,
+          "p50_ms": 0.367621,
+          "p95_ms": 3.103142,
+          "p99_ms": 22.349982,
+          "total_ms": 147.859837,
+          "bytes": 346773786
+        },
+        "cache_read": {
+          "samples": 84,
+          "p50_ms": 0.037790000000000004,
+          "p95_ms": 0.07372000000000001,
+          "p99_ms": 0.144152,
+          "total_ms": 3.44431,
+          "bytes": 3932791
+        },
+        "cache_maintenance": {
+          "samples": 181,
+          "p50_ms": 0.206692,
+          "p95_ms": 0.266191,
+          "p99_ms": 0.305072,
+          "total_ms": 23.094318,
+          "bytes": 0
+        },
+        "queue_wait": {
+          "samples": 181,
+          "p50_ms": 0.0253,
+          "p95_ms": 1.706546,
+          "p99_ms": 7.160733,
+          "total_ms": 54.952273,
+          "bytes": 0
+        },
+        "cpu_insert": {
+          "samples": 179,
+          "p50_ms": 0.0005700000000000001,
+          "p95_ms": 0.00159,
+          "p99_ms": 0.00515,
+          "total_ms": 0.136061,
+          "bytes": 609681408
+        },
+        "retire": {
+          "samples": 181,
+          "p50_ms": 0.00054,
+          "p95_ms": 1.5817260000000002,
+          "p99_ms": 7.150543,
+          "total_ms": 39.323051,
+          "bytes": 0
+        }
+      },
+      "worker_active": {
+        "samples": 181,
+        "p50_ms": 142.30585100000002,
+        "p95_ms": 320.890542,
+        "p99_ms": 347.78359800000004,
+        "total_ms": 22059.055314
+      },
+      "first_image_after_demand": {
+        "samples": 50,
+        "p50_ms": 0.0,
+        "p95_ms": 251.34820199999967,
+        "p99_ms": 352.98267199999987,
+        "total_ms": 1809.1689290000004,
+        "censored": 0
+      },
+      "requested_lod_after_demand": {
+        "samples": 45,
+        "p50_ms": 925.883124,
+        "p95_ms": 1210.6613759999996,
+        "p99_ms": 1310.456998,
+        "total_ms": 39461.818723000004,
+        "censored": 5
+      },
+      "cancelled_by_stage": {
+        "decode": 1,
+        "resize": 1
+      },
+      "worker_memory_observed_peaks": {
+        "encoded_peak_bytes": 7123639,
+        "decoded_peak_bytes": 20250000,
+        "resize_peak_bytes": 12582912
+      },
+      "content_coverage_fraction": 0.9732009925558313,
+      "lod_coverage_fractions": [
+        0.20198511166253103,
+        0.39503722084367243,
+        0.3761786600496278
+      ],
+      "requested_coverage_fraction": 0.3761786600496278,
+      "worker_utilization_fraction": 0.9115544335105157,
+      "worker_utilization_note": "Observed worker active wall time / (navigation + explicit asset drain) worker capacity; excludes startup and any unreported jobs, not CPU utilization. Legacy reports without asset drain can omit still-active jobs.",
+      "cpu_thumbnail_peak_bytes": 4128768,
+      "gpu_thumbnail_peak_bytes": 2457600,
+      "gpu_completion_fps": 59.166666666666664,
+      "display_cache_bytes_after_run": 358479117,
+      "display_cache_files_after_run": 345,
+      "input_cache": {
+        "files": 250,
+        "overview_files": 250,
+        "bytes": 11705331,
+        "file_bytes": {
+          "samples": 250,
+          "p50_bytes": 46831,
+          "p95_bytes": 46903,
+          "p99_bytes": 46932,
+          "total_bytes": 11705331,
+          "min_bytes": 46683,
+          "max_bytes": 46932
+        },
+        "content_sha256": "d4ec829bf489ce07e7687299a723858bcd0e06ef5d2bc1f371f630b037cc4e86",
+        "temporary_files": 0
+      },
+      "input_prepared_percent": 25.0,
+      "concurrent_decode_peak": 2,
+      "label": "prepared-25-pan-normal",
+      "preparation_cost_ms": 9232.898732000001,
+      "label_note": "Prepared input creation time + this fresh process startup + navigation duration + explicit asset drain; cache cloning/inventory excluded harness work."
+    },
+    {
+      "acquire": {
+        "max_ms": 0.06218100000000001,
+        "p50_ms": 0.01947,
+        "p99_ms": 0.040471,
+        "samples": 708
+      },
+      "adapter": "NVIDIA GeForce RTX 2060",
+      "asset_drain_ms": 68.930808,
+      "asset_pending_after_drain": 0,
+      "backend": "Vulkan",
+      "callback": {
+        "max_ms": 17.489653,
+        "p50_ms": 1.3156940000000001,
+        "p99_ms": 7.611857,
+        "samples": 708
+      },
+      "completed_submissions_at_report": 708,
+      "coverage_episodes_dropped": 0,
+      "cpu_cache_peak_bytes": 28016640,
+      "cpu_max_ms": 3.232402,
+      "cpu_p50_ms": 1.182305,
+      "cpu_p99_ms": 2.072188,
+      "device_type": "DiscreteGpu",
+      "driver": "NVIDIA",
+      "driver_info": "580.173.02",
+      "duration_seconds": 12.0,
+      "failed_acquire_max_ms": 0.0,
+      "final": {
+        "acquire_ms": 0.01903,
+        "callback_ms": 0.802023,
+        "completed_submissions": 707,
+        "cpu_cache_bytes": 28016640,
+        "cpu_evictions": 0,
+        "cpu_ms": 0.695143,
+        "cpu_thumbnail_bytes": 28016640,
+        "culled": 608,
+        "decode_errors": 0,
+        "decode_ms": 23206.646703000024,
+        "disk_hits": 250,
+        "elapsed_ms": 12647.019599,
+        "gpu_evictions": 0,
+        "gpu_resident_bytes": 27328512,
+        "gpu_thumbnail_bytes": 27328512,
+        "in_flight": 1,
+        "lods": [
+          0,
+          0,
+          0
+        ],
+        "pending": 16,
+        "placeholders": 392,
+        "preparation_ready": 570,
+        "present_ms": 0.07025,
+        "requested_covered": 0,
+        "stale": 0,
+        "submitted": true,
+        "upload_bytes": 0,
+        "upload_cpu_ms": 0.0,
+        "uploads": 0,
+        "visible": 392
+      },
+      "first_visible_content_ms": 782.085647,
+      "frame_attempts": 708,
+      "gpu_backpressure_frames": 0,
+      "gpu_pass": {
+        "max_ms": 0.875136,
+        "p50_ms": 0.073728,
+        "p99_ms": 0.751616,
+        "samples": 708
+      },
+      "gpu_resident_peak_bytes": 27328512,
+      "gpu_timing_dropped": 0,
+      "gpu_timing_note": "Optional asynchronous timestamps measure the canvas render pass only, excluding uploads, surface acquisition and presentation. CPU callback and attempt cadence do not measure monitor presentation latency.",
+      "headless": false,
+      "interval_p50_ms": 16.768941000000268,
+      "interval_p99_ms": 18.037274999998772,
+      "objects": 1000,
+      "pending_limit": 16,
+      "pending_peak": 16,
+      "platform_events": [
+        {
+          "event": "initialize",
+          "scale_factor": 1.0,
+          "size": [
+            1280,
+            720
+          ]
+        },
+        {
+          "event": "resize",
+          "size": [
+            1280,
+            720
+          ]
+        },
+        {
+          "event": "occluded",
+          "occluded": false
+        }
+      ],
+      "prefetch": "none",
+      "preparation": {
+        "cache_bytes_read": 11705331,
+        "cache_hits": 250,
+        "cancelled": 16,
+        "cpu_payload_peak_bytes": 28016640,
+        "derived_bytes_written": 15076675,
+        "elapsed_ms": 12749.066925,
+        "errors": 0,
+        "images_per_second": 44.86602849957194,
+        "note": "Validated historical progress; no frame-path filesystem inventory. 100% ready differs from all settled. Persistence and cancellation may overlap. Active time covers observed 128 jobs only; no allocator scratch measurement.",
+        "pending_peak": 16,
+        "ready": 572,
+        "settled": false,
+        "source_bytes_read": 2303892089,
+        "source_read_attempts": 324,
+        "threshold_ms": {
+          "10": 881.581694,
+          "100": null,
+          "25": 1032.751608,
+          "50": 10072.263576,
+          "75": null,
+          "90": null,
+          "first": 780.7410729999999
+        },
+        "total": 1000,
+        "worker_active_ms": 23492.21766900001,
+        "worker_utilization_fraction": 0.9213308631604038
+      },
+      "prepare": "global",
+      "present": {
+        "max_ms": 15.226915,
+        "p50_ms": 0.07690999999999999,
+        "p99_ms": 6.548853,
+        "samples": 708
+      },
+      "rejected_cache_entries": 0,
+      "rss_high_water_kib": 380004,
+      "scenario": "board-tour",
+      "schema": 1,
+      "startup_ms": 661.295924,
+      "submitted_frames": 708,
+      "surface_other_errors": 0,
+      "surface_reconfigures": 0,
+      "surface_timeouts": 0,
+      "thumbnail_decoder": "turbojpeg 1.5.1 / libjpeg-turbo 3.2.0 DCT",
+      "upload_count_limit": 8,
+      "worker_profile_dropped": 0,
+      "worker_retention_peak_bytes": 28114944,
+      "worker_stage_names": [
+        "source_read",
+        "header",
+        "decode",
+        "resize",
+        "encode",
+        "cache_write",
+        "cache_read",
+        "cache_maintenance",
+        "queue_wait",
+        "cpu_insert",
+        "retire"
+      ],
+      "workers": 2,
+      "worker_stages": {
+        "source_read": {
+          "samples": 324,
+          "p50_ms": 1.083454,
+          "p95_ms": 1.3823640000000001,
+          "p99_ms": 3.105251,
+          "total_ms": 383.618469,
+          "bytes": 2303892089
+        },
+        "header": {
+          "samples": 574,
+          "p50_ms": 0.009099999999999999,
+          "p95_ms": 0.013600000000000001,
+          "p99_ms": 0.02366,
+          "total_ms": 4.499093,
+          "bytes": 0
+        },
+        "decode": {
+          "samples": 574,
+          "p50_ms": 67.973884,
+          "p95_ms": 70.543443,
+          "p99_ms": 72.56494099999999,
+          "total_ms": 22350.501202,
+          "bytes": 410427000
+        },
+        "resize": {
+          "samples": 322,
+          "p50_ms": 1.703746,
+          "p95_ms": 1.863076,
+          "p99_ms": 2.095347,
+          "total_ms": 556.715288,
+          "bytes": 423720444
+        },
+        "encode": {
+          "samples": 322,
+          "p50_ms": 0.13097999999999999,
+          "p95_ms": 0.14428,
+          "p99_ms": 0.17005,
+          "total_ms": 42.802414,
+          "bytes": 15076675
+        },
+        "cache_write": {
+          "samples": 322,
+          "p50_ms": 0.087951,
+          "p95_ms": 0.10177,
+          "p99_ms": 0.112481,
+          "total_ms": 28.769224,
+          "bytes": 15076675
+        },
+        "cache_read": {
+          "samples": 250,
+          "p50_ms": 0.031439999999999996,
+          "p95_ms": 0.05401,
+          "p99_ms": 0.09339,
+          "total_ms": 8.496718,
+          "bytes": 11705331
+        },
+        "cache_maintenance": {
+          "samples": 574,
+          "p50_ms": 0.21736999999999998,
+          "p95_ms": 0.364601,
+          "p99_ms": 0.387121,
+          "total_ms": 93.422143,
+          "bytes": 0
+        },
+        "queue_wait": {
+          "samples": 586,
+          "p50_ms": 486.248326,
+          "p95_ms": 504.95323299999995,
+          "p99_ms": 514.860778,
+          "total_ms": 161053.813724,
+          "bytes": 0
+        },
+        "cpu_insert": {
+          "samples": 570,
+          "p50_ms": 0.00047999999999999996,
+          "p95_ms": 0.00094,
+          "p99_ms": 0.0020700000000000002,
+          "total_ms": 0.293642,
+          "bytes": 28016640
+        },
+        "retire": {
+          "samples": 586,
+          "p50_ms": 0.00033,
+          "p95_ms": 0.00082,
+          "p99_ms": 0.00103,
+          "total_ms": 0.217231,
+          "bytes": 0
+        }
+      },
+      "worker_active": {
+        "samples": 586,
+        "p50_ms": 71.29977600000001,
+        "p95_ms": 73.99170500000001,
+        "p99_ms": 76.234353,
+        "total_ms": 23492.217669
+      },
+      "first_image_after_demand": {
+        "samples": 556,
+        "p50_ms": 1360.010852,
+        "p95_ms": 9123.788171,
+        "p99_ms": 9581.039562999998,
+        "total_ms": 1751732.6072510001,
+        "censored": 444
+      },
+      "requested_lod_after_demand": {
+        "samples": 556,
+        "p50_ms": 1360.010852,
+        "p95_ms": 9123.788171,
+        "p99_ms": 9581.039562999998,
+        "total_ms": 1751732.6072510001,
+        "censored": 444
+      },
+      "cancelled_by_stage": {
+        "decode": 2,
+        "queue": 12,
+        "result": 2
+      },
+      "worker_memory_observed_peaks": {
+        "encoded_peak_bytes": 7123639,
+        "decoded_peak_bytes": 1266750,
+        "resize_peak_bytes": 49152
+      },
+      "content_coverage_fraction": 0.3309155141310884,
+      "lod_coverage_fractions": [
+        0.3309155141310884,
+        0.0,
+        0.0
+      ],
+      "requested_coverage_fraction": 0.3309155141310884,
+      "worker_utilization_fraction": 0.9732518166989562,
+      "worker_utilization_note": "Observed worker active wall time / (navigation + explicit asset drain) worker capacity; excludes startup and any unreported jobs, not CPU utilization. Legacy reports without asset drain can omit still-active jobs.",
+      "cpu_thumbnail_peak_bytes": 28016640,
+      "gpu_thumbnail_peak_bytes": 27328512,
+      "gpu_completion_fps": 59.0,
+      "display_cache_bytes_after_run": 26782006,
+      "display_cache_files_after_run": 572,
+      "input_cache": {
+        "files": 250,
+        "overview_files": 250,
+        "bytes": 11705331,
+        "file_bytes": {
+          "samples": 250,
+          "p50_bytes": 46831,
+          "p95_bytes": 46903,
+          "p99_bytes": 46932,
+          "total_bytes": 11705331,
+          "min_bytes": 46683,
+          "max_bytes": 46932
+        },
+        "content_sha256": "d4ec829bf489ce07e7687299a723858bcd0e06ef5d2bc1f371f630b037cc4e86",
+        "temporary_files": 0
+      },
+      "input_prepared_percent": 25.0,
+      "concurrent_decode_peak": 2,
+      "label": "prepared-25-board-tour",
+      "preparation_cost_ms": 9232.898732000001,
+      "label_note": "Prepared input creation time + this fresh process startup + navigation duration + explicit asset drain; cache cloning/inventory excluded harness work."
+    }
+  ],
+  "viewport": [
+    {
+      "acquire": {
+        "max_ms": 0.344001,
+        "p50_ms": 0.02203,
+        "p99_ms": 0.06522,
+        "samples": 709
+      },
+      "adapter": "NVIDIA GeForce RTX 2060",
+      "asset_drain_ms": 22.25749,
+      "asset_pending_after_drain": 0,
+      "backend": "Vulkan",
+      "callback": {
+        "max_ms": 26.757616000000002,
+        "p50_ms": 0.9173439999999999,
+        "p99_ms": 12.460785,
+        "samples": 709
+      },
+      "completed_submissions_at_report": 709,
+      "coverage_episodes_dropped": 0,
+      "cpu_cache_peak_bytes": 31162368,
+      "cpu_max_ms": 7.078315,
+      "cpu_p50_ms": 0.726973,
+      "cpu_p99_ms": 5.28884,
+      "device_type": "DiscreteGpu",
+      "driver": "NVIDIA",
+      "driver_info": "580.173.02",
+      "duration_seconds": 12.0,
+      "failed_acquire_max_ms": 0.0,
+      "final": {
+        "acquire_ms": 0.01699,
+        "callback_ms": 0.7121430000000001,
+        "completed_submissions": 708,
+        "cpu_cache_bytes": 30867456,
+        "cpu_evictions": 79,
+        "cpu_ms": 0.620222,
+        "cpu_thumbnail_bytes": 2555904,
+        "culled": 994,
+        "decode_errors": 0,
+        "decode_ms": 22456.048811,
+        "disk_hits": 0,
+        "elapsed_ms": 12633.54608,
+        "gpu_evictions": 75,
+        "gpu_resident_bytes": 57507840,
+        "gpu_thumbnail_bytes": 2457600,
+        "in_flight": 1,
+        "lods": [
+          2,
+          3,
+          1
+        ],
+        "pending": 2,
+        "placeholders": 0,
+        "preparation_ready": 52,
+        "present_ms": 0.069991,
+        "requested_covered": 1,
+        "stale": 0,
+        "submitted": true,
+        "upload_bytes": 0,
+        "upload_cpu_ms": 0.0,
+        "uploads": 0,
+        "visible": 6
+      },
+      "first_visible_content_ms": 833.984414,
+      "frame_attempts": 709,
+      "gpu_backpressure_frames": 0,
+      "gpu_pass": {
+        "max_ms": 0.677568,
+        "p50_ms": 0.05552,
+        "p99_ms": 0.575488,
+        "samples": 709
+      },
+      "gpu_resident_peak_bytes": 69304320,
+      "gpu_timing_dropped": 0,
+      "gpu_timing_note": "Optional asynchronous timestamps measure the canvas render pass only, excluding uploads, surface acquisition and presentation. CPU callback and attempt cadence do not measure monitor presentation latency.",
+      "headless": false,
+      "interval_p50_ms": 16.78719000000092,
+      "interval_p99_ms": 22.318269999999757,
+      "objects": 1000,
+      "pending_limit": 16,
+      "pending_peak": 6,
+      "platform_events": [
+        {
+          "event": "initialize",
+          "scale_factor": 1.0,
+          "size": [
+            1280,
+            720
+          ]
+        },
+        {
+          "event": "resize",
+          "size": [
+            1280,
+            720
+          ]
+        },
+        {
+          "event": "occluded",
+          "occluded": false
+        }
+      ],
+      "prefetch": "none",
+      "preparation": {
+        "cache_bytes_read": 0,
+        "cache_hits": 0,
+        "cancelled": 0,
+        "cpu_payload_peak_bytes": 31162368,
+        "derived_bytes_written": 2434383,
+        "elapsed_ms": 12678.399251,
+        "errors": 0,
+        "images_per_second": 4.101464149419221,
+        "note": "Validated historical progress; no frame-path filesystem inventory. 100% ready differs from all settled. Persistence and cancellation may overlap. Active time covers observed 128 jobs only; no allocator scratch measurement.",
+        "pending_peak": 6,
+        "ready": 52,
+        "settled": false,
+        "source_bytes_read": 369719465,
+        "source_read_attempts": 52,
+        "threshold_ms": {
+          "10": null,
+          "100": null,
+          "25": null,
+          "50": null,
+          "75": null,
+          "90": null,
+          "first": 833.2270510000001
+        },
+        "total": 1000,
+        "worker_active_ms": 3855.5677459999997,
+        "worker_utilization_fraction": 0.15205262390265453
+      },
+      "prepare": "viewport",
+      "present": {
+        "max_ms": 25.814722,
+        "p50_ms": 0.08326,
+        "p99_ms": 11.545342,
+        "samples": 709
+      },
+      "rejected_cache_entries": 0,
+      "rss_high_water_kib": 570652,
+      "scenario": "pan-normal",
+      "schema": 1,
+      "startup_ms": 647.758415,
+      "submitted_frames": 709,
+      "surface_other_errors": 0,
+      "surface_reconfigures": 0,
+      "surface_timeouts": 0,
+      "thumbnail_decoder": "turbojpeg 1.5.1 / libjpeg-turbo 3.2.0 DCT",
+      "upload_count_limit": 8,
+      "worker_profile_dropped": 0,
+      "worker_retention_peak_bytes": 56918016,
+      "worker_stage_names": [
+        "source_read",
+        "header",
+        "decode",
+        "resize",
+        "encode",
+        "cache_write",
+        "cache_read",
+        "cache_maintenance",
+        "queue_wait",
+        "cpu_insert",
+        "retire"
+      ],
+      "workers": 2,
+      "worker_stages": {
+        "source_read": {
+          "samples": 139,
+          "p50_ms": 1.5844660000000002,
+          "p95_ms": 3.409282,
+          "p99_ms": 6.262123,
+          "total_ms": 265.761318,
+          "bytes": 988276126
+        },
+        "header": {
+          "samples": 139,
+          "p50_ms": 0.00883,
+          "p95_ms": 0.02546,
+          "p99_ms": 0.05418,
+          "total_ms": 1.574663,
+          "bytes": 0
+        },
+        "decode": {
+          "samples": 139,
+          "p50_ms": 132.066334,
+          "p95_ms": 153.169779,
+          "p99_ms": 157.296335,
+          "total_ms": 15765.412663,
+          "bytes": 916425000
+        },
+        "resize": {
+          "samples": 137,
+          "p50_ms": 8.072289,
+          "p95_ms": 133.203978,
+          "p99_ms": 139.908323,
+          "total_ms": 5415.927828,
+          "bytes": 1412577114
+        },
+        "encode": {
+          "samples": 137,
+          "p50_ms": 1.793736,
+          "p95_ms": 28.150791,
+          "p99_ms": 29.490726,
+          "total_ms": 1146.641268,
+          "bytes": 298651022
+        },
+        "cache_write": {
+          "samples": 137,
+          "p50_ms": 0.284481,
+          "p95_ms": 2.65577,
+          "p99_ms": 4.290685,
+          "total_ms": 117.132263,
+          "bytes": 298651022
+        },
+        "cache_read": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "bytes": 0
+        },
+        "cache_maintenance": {
+          "samples": 139,
+          "p50_ms": 0.0929,
+          "p95_ms": 0.15307099999999998,
+          "p99_ms": 0.22547099999999998,
+          "total_ms": 13.364905,
+          "bytes": 0
+        },
+        "queue_wait": {
+          "samples": 139,
+          "p50_ms": 0.018199999999999997,
+          "p95_ms": 76.49223500000001,
+          "p99_ms": 159.68365300000002,
+          "total_ms": 2222.654016,
+          "bytes": 0
+        },
+        "cpu_insert": {
+          "samples": 137,
+          "p50_ms": 0.00063,
+          "p95_ms": 0.0017000000000000001,
+          "p99_ms": 0.0028,
+          "total_ms": 0.111492,
+          "bytes": 517668864
+        },
+        "retire": {
+          "samples": 139,
+          "p50_ms": 0.00044,
+          "p95_ms": 1.481315,
+          "p99_ms": 1.670236,
+          "total_ms": 14.151261,
+          "bytes": 0
+        }
+      },
+      "worker_active": {
+        "samples": 139,
+        "p50_ms": 143.946017,
+        "p95_ms": 316.208115,
+        "p99_ms": 330.439566,
+        "total_ms": 22756.824571
+      },
+      "first_image_after_demand": {
+        "samples": 50,
+        "p50_ms": 100.36756000000003,
+        "p95_ms": 352.7588759999999,
+        "p99_ms": 403.27373700000044,
+        "total_ms": 6126.079997000001,
+        "censored": 0
+      },
+      "requested_lod_after_demand": {
+        "samples": 38,
+        "p50_ms": 1061.7426409999998,
+        "p95_ms": 1349.987925999998,
+        "p99_ms": 1378.2090669999998,
+        "total_ms": 40809.446917999994,
+        "censored": 12
+      },
+      "cancelled_by_stage": {
+        "decode": 2
+      },
+      "worker_memory_observed_peaks": {
+        "encoded_peak_bytes": 7123639,
+        "decoded_peak_bytes": 20250000,
+        "resize_peak_bytes": 12582912
+      },
+      "content_coverage_fraction": 0.909249129786176,
+      "lod_coverage_fractions": [
+        0.3167578319244157,
+        0.37493784186971657,
+        0.21755345599204376
+      ],
+      "requested_coverage_fraction": 0.21755345599204376,
+      "worker_utilization_fraction": 0.9464455652330235,
+      "worker_utilization_note": "Observed worker active wall time / (navigation + explicit asset drain) worker capacity; excludes startup and any unreported jobs, not CPU utilization. Legacy reports without asset drain can omit still-active jobs.",
+      "cpu_thumbnail_peak_bytes": 2555904,
+      "gpu_thumbnail_peak_bytes": 2457600,
+      "gpu_completion_fps": 59.083333333333336,
+      "display_cache_bytes_after_run": 298651022,
+      "display_cache_files_after_run": 137,
+      "input_cache": {
+        "files": 0,
+        "overview_files": 0,
+        "bytes": 0,
+        "file_bytes": {
+          "samples": 0,
+          "p50_bytes": null,
+          "p95_bytes": null,
+          "p99_bytes": null,
+          "total_bytes": 0,
+          "min_bytes": null,
+          "max_bytes": null
+        },
+        "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "temporary_files": 0
+      },
+      "input_prepared_percent": 0.0,
+      "concurrent_decode_peak": 2,
+      "label": "prepared-0-pan-normal",
+      "preparation_cost_ms": 18.954804,
+      "label_note": "Prepared input creation time + this fresh process startup + navigation duration + explicit asset drain; cache cloning/inventory excluded harness work."
+    },
+    {
+      "acquire": {
+        "max_ms": 0.068071,
+        "p50_ms": 0.0189,
+        "p99_ms": 0.04113,
+        "samples": 710
+      },
+      "adapter": "NVIDIA GeForce RTX 2060",
+      "asset_drain_ms": 15.829967,
+      "asset_pending_after_drain": 0,
+      "backend": "Vulkan",
+      "callback": {
+        "max_ms": 23.229283,
+        "p50_ms": 2.610789,
+        "p99_ms": 9.776066,
+        "samples": 710
+      },
+      "completed_submissions_at_report": 710,
+      "coverage_episodes_dropped": 0,
+      "cpu_cache_peak_bytes": 16023552,
+      "cpu_max_ms": 5.57618,
+      "cpu_p50_ms": 2.473409,
+      "cpu_p99_ms": 3.299102,
+      "device_type": "DiscreteGpu",
+      "driver": "NVIDIA",
+      "driver_info": "580.173.02",
+      "duration_seconds": 12.0,
+      "failed_acquire_max_ms": 0.0,
+      "final": {
+        "acquire_ms": 0.00884,
+        "callback_ms": 1.299785,
+        "completed_submissions": 709,
+        "cpu_cache_bytes": 16023552,
+        "cpu_evictions": 0,
+        "cpu_ms": 1.233695,
+        "cpu_thumbnail_bytes": 16023552,
+        "culled": 608,
+        "decode_errors": 0,
+        "decode_ms": 23735.385261999985,
+        "disk_hits": 0,
+        "elapsed_ms": 12653.568693000001,
+        "gpu_evictions": 0,
+        "gpu_resident_bytes": 8847360,
+        "gpu_thumbnail_bytes": 8847360,
+        "in_flight": 1,
+        "lods": [
+          0,
+          0,
+          0
+        ],
+        "pending": 16,
+        "placeholders": 392,
+        "preparation_ready": 326,
+        "present_ms": 0.0541,
+        "requested_covered": 0,
+        "stale": 0,
+        "submitted": true,
+        "upload_bytes": 0,
+        "upload_cpu_ms": 0.0,
+        "uploads": 0,
+        "visible": 392
+      },
+      "first_visible_content_ms": 846.127028,
+      "frame_attempts": 710,
+      "gpu_backpressure_frames": 0,
+      "gpu_pass": {
+        "max_ms": 0.265152,
+        "p50_ms": 0.030912,
+        "p99_ms": 0.24576,
+        "samples": 710
+      },
+      "gpu_resident_peak_bytes": 8847360,
+      "gpu_timing_dropped": 0,
+      "gpu_timing_note": "Optional asynchronous timestamps measure the canvas render pass only, excluding uploads, surface acquisition and presentation. CPU callback and attempt cadence do not measure monitor presentation latency.",
+      "headless": false,
+      "interval_p50_ms": 16.787640000000465,
+      "interval_p99_ms": 17.601293000000624,
+      "objects": 1000,
+      "pending_limit": 16,
+      "pending_peak": 16,
+      "platform_events": [
+        {
+          "event": "initialize",
+          "scale_factor": 1.0,
+          "size": [
+            1280,
+            720
+          ]
+        },
+        {
+          "event": "resize",
+          "size": [
+            1280,
+            720
+          ]
+        },
+        {
+          "event": "occluded",
+          "occluded": false
+        }
+      ],
+      "prefetch": "none",
+      "preparation": {
+        "cache_bytes_read": 0,
+        "cache_hits": 0,
+        "cancelled": 16,
+        "cpu_payload_peak_bytes": 16023552,
+        "derived_bytes_written": 15259909,
+        "elapsed_ms": 12692.351262,
+        "errors": 0,
+        "images_per_second": 25.684760315137265,
+        "note": "Validated historical progress; no frame-path filesystem inventory. 100% ready differs from all settled. Persistence and cancellation may overlap. Active time covers observed 128 jobs only; no allocator scratch measurement.",
+        "pending_peak": 16,
+        "ready": 326,
+        "settled": false,
+        "source_bytes_read": 2332394969,
+        "source_read_attempts": 328,
+        "threshold_ms": {
+          "10": 4410.866274,
+          "100": null,
+          "25": 9853.222150000001,
+          "50": null,
+          "75": null,
+          "90": null,
+          "first": 843.87831
+        },
+        "total": 1000,
+        "worker_active_ms": 23875.829316999996,
+        "worker_utilization_fraction": 0.940559744374651
+      },
+      "prepare": "viewport",
+      "present": {
+        "max_ms": 20.629853999999998,
+        "p50_ms": 0.07301099999999999,
+        "p99_ms": 7.135716,
+        "samples": 710
+      },
+      "rejected_cache_entries": 0,
+      "rss_high_water_kib": 362256,
+      "scenario": "board-tour",
+      "schema": 1,
+      "startup_ms": 655.991455,
+      "submitted_frames": 710,
+      "surface_other_errors": 0,
+      "surface_reconfigures": 0,
+      "surface_timeouts": 0,
+      "thumbnail_decoder": "turbojpeg 1.5.1 / libjpeg-turbo 3.2.0 DCT",
+      "upload_count_limit": 8,
+      "worker_profile_dropped": 0,
+      "worker_retention_peak_bytes": 16023552,
+      "worker_stage_names": [
+        "source_read",
+        "header",
+        "decode",
+        "resize",
+        "encode",
+        "cache_write",
+        "cache_read",
+        "cache_maintenance",
+        "queue_wait",
+        "cpu_insert",
+        "retire"
+      ],
+      "workers": 2,
+      "worker_stages": {
+        "source_read": {
+          "samples": 328,
+          "p50_ms": 1.169195,
+          "p95_ms": 1.506346,
+          "p99_ms": 4.117405,
+          "total_ms": 419.50881,
+          "bytes": 2332394969
+        },
+        "header": {
+          "samples": 328,
+          "p50_ms": 0.01061,
+          "p95_ms": 0.017329999999999998,
+          "p99_ms": 0.021929999999999998,
+          "total_ms": 3.775316,
+          "bytes": 0
+        },
+        "decode": {
+          "samples": 328,
+          "p50_ms": 68.64732699999999,
+          "p95_ms": 72.058769,
+          "p99_ms": 74.195426,
+          "total_ms": 22742.253257,
+          "bytes": 415494000
+        },
+        "resize": {
+          "samples": 326,
+          "p50_ms": 1.6968860000000001,
+          "p95_ms": 2.0397570000000003,
+          "p99_ms": 2.358799,
+          "total_ms": 567.344483,
+          "bytes": 428984052
+        },
+        "encode": {
+          "samples": 326,
+          "p50_ms": 0.12596100000000002,
+          "p95_ms": 0.14078,
+          "p99_ms": 0.196861,
+          "total_ms": 42.035257,
+          "bytes": 15259909
+        },
+        "cache_write": {
+          "samples": 326,
+          "p50_ms": 0.085621,
+          "p95_ms": 0.09882,
+          "p99_ms": 0.11937,
+          "total_ms": 28.388714,
+          "bytes": 15259909
+        },
+        "cache_read": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "bytes": 0
+        },
+        "cache_maintenance": {
+          "samples": 328,
+          "p50_ms": 0.14345999999999998,
+          "p95_ms": 0.23424099999999998,
+          "p99_ms": 0.257881,
+          "total_ms": 47.278749,
+          "bytes": 0
+        },
+        "queue_wait": {
+          "samples": 342,
+          "p50_ms": 497.124504,
+          "p95_ms": 512.8457109999999,
+          "p99_ms": 517.128116,
+          "total_ms": 163812.881222,
+          "bytes": 0
+        },
+        "cpu_insert": {
+          "samples": 326,
+          "p50_ms": 0.00052,
+          "p95_ms": 0.0011200000000000001,
+          "p99_ms": 0.0057799999999999995,
+          "total_ms": 0.211912,
+          "bytes": 16023552
+        },
+        "retire": {
+          "samples": 342,
+          "p50_ms": 0.00035999999999999997,
+          "p95_ms": 0.0007,
+          "p99_ms": 0.0009599999999999999,
+          "total_ms": 0.119332,
+          "bytes": 0
+        }
+      },
+      "worker_active": {
+        "samples": 342,
+        "p50_ms": 71.90244799999999,
+        "p95_ms": 75.714482,
+        "p99_ms": 77.699959,
+        "total_ms": 23875.829317
+      },
+      "first_image_after_demand": {
+        "samples": 180,
+        "p50_ms": 3331.8026999999997,
+        "p95_ms": 6287.974152,
+        "p99_ms": 6540.083696,
+        "total_ms": 598885.966786,
+        "censored": 820
+      },
+      "requested_lod_after_demand": {
+        "samples": 180,
+        "p50_ms": 3331.8026999999997,
+        "p95_ms": 6287.974152,
+        "p99_ms": 6540.083696,
+        "total_ms": 598885.966786,
+        "censored": 820
+      },
+      "cancelled_by_stage": {
+        "decode": 2,
+        "queue": 14
+      },
+      "worker_memory_observed_peaks": {
+        "encoded_peak_bytes": 7123639,
+        "decoded_peak_bytes": 1266750,
+        "resize_peak_bytes": 49152
+      },
+      "content_coverage_fraction": 0.052231922180636964,
+      "lod_coverage_fractions": [
+        0.052231922180636964,
+        0.0,
+        0.0
+      ],
+      "requested_coverage_fraction": 0.052231922180636964,
+      "worker_utilization_fraction": 0.9935156115962039,
+      "worker_utilization_note": "Observed worker active wall time / (navigation + explicit asset drain) worker capacity; excludes startup and any unreported jobs, not CPU utilization. Legacy reports without asset drain can omit still-active jobs.",
+      "cpu_thumbnail_peak_bytes": 16023552,
+      "gpu_thumbnail_peak_bytes": 8847360,
+      "gpu_completion_fps": 59.166666666666664,
+      "display_cache_bytes_after_run": 15259909,
+      "display_cache_files_after_run": 326,
+      "input_cache": {
+        "files": 0,
+        "overview_files": 0,
+        "bytes": 0,
+        "file_bytes": {
+          "samples": 0,
+          "p50_bytes": null,
+          "p95_bytes": null,
+          "p99_bytes": null,
+          "total_bytes": 0,
+          "min_bytes": null,
+          "max_bytes": null
+        },
+        "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "temporary_files": 0
+      },
+      "input_prepared_percent": 0.0,
+      "concurrent_decode_peak": 2,
+      "label": "prepared-0-board-tour",
+      "preparation_cost_ms": 18.954804,
+      "label_note": "Prepared input creation time + this fresh process startup + navigation duration + explicit asset drain; cache cloning/inventory excluded harness work."
+    },
+    {
+      "acquire": {
+        "max_ms": 3.745673,
+        "p50_ms": 0.01929,
+        "p99_ms": 0.04441,
+        "samples": 709
+      },
+      "adapter": "NVIDIA GeForce RTX 2060",
+      "asset_drain_ms": 103.978583,
+      "asset_pending_after_drain": 0,
+      "backend": "Vulkan",
+      "callback": {
+        "max_ms": 23.365004000000003,
+        "p50_ms": 0.851534,
+        "p99_ms": 16.097998,
+        "samples": 709
+      },
+      "completed_submissions_at_report": 709,
+      "coverage_episodes_dropped": 0,
+      "cpu_cache_peak_bytes": 31653888,
+      "cpu_max_ms": 7.2160660000000005,
+      "cpu_p50_ms": 0.668093,
+      "cpu_p99_ms": 6.085902,
+      "device_type": "DiscreteGpu",
+      "driver": "NVIDIA",
+      "driver_info": "580.173.02",
+      "duration_seconds": 12.0,
+      "failed_acquire_max_ms": 0.0,
+      "final": {
+        "acquire_ms": 0.02446,
+        "callback_ms": 0.861273,
+        "completed_submissions": 708,
+        "cpu_cache_bytes": 31653888,
+        "cpu_evictions": 89,
+        "cpu_ms": 0.749113,
+        "cpu_thumbnail_bytes": 3342336,
+        "culled": 994,
+        "decode_errors": 0,
+        "decode_ms": 21928.54870699999,
+        "disk_hits": 68,
+        "elapsed_ms": 12629.611286,
+        "gpu_evictions": 85,
+        "gpu_resident_bytes": 69304320,
+        "gpu_thumbnail_bytes": 2457600,
+        "in_flight": 1,
+        "lods": [
+          0,
+          3,
+          3
+        ],
+        "pending": 2,
+        "placeholders": 0,
+        "preparation_ready": 68,
+        "present_ms": 0.08069,
+        "requested_covered": 3,
+        "stale": 0,
+        "submitted": true,
+        "upload_bytes": 0,
+        "upload_cpu_ms": 0.0,
+        "uploads": 0,
+        "visible": 6
+      },
+      "first_visible_content_ms": 757.126408,
+      "frame_attempts": 709,
+      "gpu_backpressure_frames": 0,
+      "gpu_pass": {
+        "max_ms": 0.879648,
+        "p50_ms": 0.069632,
+        "p99_ms": 0.839232,
+        "samples": 709
+      },
+      "gpu_resident_peak_bytes": 69304320,
+      "gpu_timing_dropped": 0,
+      "gpu_timing_note": "Optional asynchronous timestamps measure the canvas render pass only, excluding uploads, surface acquisition and presentation. CPU callback and attempt cadence do not measure monitor presentation latency.",
+      "headless": false,
+      "interval_p50_ms": 16.76688000000013,
+      "interval_p99_ms": 22.28939999999966,
+      "objects": 1000,
+      "pending_limit": 16,
+      "pending_peak": 6,
+      "platform_events": [
+        {
+          "event": "initialize",
+          "scale_factor": 1.0,
+          "size": [
+            1280,
+            720
+          ]
+        },
+        {
+          "event": "resize",
+          "size": [
+            1280,
+            720
+          ]
+        },
+        {
+          "event": "occluded",
+          "occluded": false
+        }
+      ],
+      "prefetch": "none",
+      "preparation": {
+        "cache_bytes_read": 3183395,
+        "cache_hits": 68,
+        "cancelled": 0,
+        "cpu_payload_peak_bytes": 31653888,
+        "derived_bytes_written": 0,
+        "elapsed_ms": 12757.542685,
+        "errors": 0,
+        "images_per_second": 5.330180088674341,
+        "note": "Validated historical progress; no frame-path filesystem inventory. 100% ready differs from all settled. Persistence and cancellation may overlap. Active time covers observed 128 jobs only; no allocator scratch measurement.",
+        "pending_peak": 6,
+        "ready": 68,
+        "settled": false,
+        "source_bytes_read": 0,
+        "source_read_attempts": 0,
+        "threshold_ms": {
+          "10": null,
+          "100": null,
+          "25": null,
+          "50": null,
+          "75": null,
+          "90": null,
+          "first": 755.978214
+        },
+        "total": 1000,
+        "worker_active_ms": 26.340244000000002,
+        "worker_utilization_fraction": 0.0010323400301442927
+      },
+      "prepare": "viewport",
+      "present": {
+        "max_ms": 20.966414999999998,
+        "p50_ms": 0.0771,
+        "p99_ms": 14.954324,
+        "samples": 709
+      },
+      "rejected_cache_entries": 0,
+      "rss_high_water_kib": 542408,
+      "scenario": "pan-normal",
+      "schema": 1,
+      "startup_ms": 635.490151,
+      "submitted_frames": 709,
+      "surface_other_errors": 0,
+      "surface_reconfigures": 0,
+      "surface_timeouts": 0,
+      "thumbnail_decoder": "turbojpeg 1.5.1 / libjpeg-turbo 3.2.0 DCT",
+      "upload_count_limit": 8,
+      "worker_profile_dropped": 0,
+      "worker_retention_peak_bytes": 56819712,
+      "worker_stage_names": [
+        "source_read",
+        "header",
+        "decode",
+        "resize",
+        "encode",
+        "cache_write",
+        "cache_read",
+        "cache_maintenance",
+        "queue_wait",
+        "cpu_insert",
+        "retire"
+      ],
+      "workers": 2,
+      "worker_stages": {
+        "source_read": {
+          "samples": 97,
+          "p50_ms": 1.3642649999999998,
+          "p95_ms": 4.106685,
+          "p99_ms": 10.925269,
+          "total_ms": 167.451945,
+          "bytes": 689652594
+        },
+        "header": {
+          "samples": 165,
+          "p50_ms": 0.006690000000000001,
+          "p95_ms": 0.01399,
+          "p99_ms": 0.04013,
+          "total_ms": 1.256063,
+          "bytes": 0
+        },
+        "decode": {
+          "samples": 165,
+          "p50_ms": 135.298426,
+          "p95_ms": 157.142644,
+          "p99_ms": 162.936735,
+          "total_ms": 14120.178779,
+          "bytes": 1015087500
+        },
+        "resize": {
+          "samples": 95,
+          "p50_ms": 10.88988,
+          "p95_ms": 144.212718,
+          "p99_ms": 145.734594,
+          "total_ms": 6414.133011,
+          "bytes": 1580140140
+        },
+        "encode": {
+          "samples": 95,
+          "p50_ms": 2.2429479999999997,
+          "p95_ms": 30.277558,
+          "p99_ms": 34.940644999999996,
+          "total_ms": 1377.382334,
+          "bytes": 346773786
+        },
+        "cache_write": {
+          "samples": 95,
+          "p50_ms": 0.393071,
+          "p95_ms": 2.8285799999999997,
+          "p99_ms": 3.861303,
+          "total_ms": 119.805612,
+          "bytes": 346773786
+        },
+        "cache_read": {
+          "samples": 68,
+          "p50_ms": 0.035800000000000005,
+          "p95_ms": 0.05541,
+          "p99_ms": 0.10791,
+          "total_ms": 2.386013,
+          "bytes": 3183395
+        },
+        "cache_maintenance": {
+          "samples": 165,
+          "p50_ms": 0.211371,
+          "p95_ms": 0.28703,
+          "p99_ms": 0.459722,
+          "total_ms": 23.703167,
+          "bytes": 0
+        },
+        "queue_wait": {
+          "samples": 165,
+          "p50_ms": 0.02121,
+          "p95_ms": 1.665526,
+          "p99_ms": 2.3044279999999997,
+          "total_ms": 55.057159,
+          "bytes": 0
+        },
+        "cpu_insert": {
+          "samples": 163,
+          "p50_ms": 0.00054,
+          "p95_ms": 0.00173,
+          "p99_ms": 0.0028799999999999997,
+          "total_ms": 0.113141,
+          "bytes": 608894976
+        },
+        "retire": {
+          "samples": 165,
+          "p50_ms": 0.00045,
+          "p95_ms": 1.371705,
+          "p99_ms": 2.250958,
+          "total_ms": 34.905116,
+          "bytes": 0
+        }
+      },
+      "worker_active": {
+        "samples": 165,
+        "p50_ms": 149.163455,
+        "p95_ms": 329.52196299999997,
+        "p99_ms": 340.775024,
+        "total_ms": 22276.828409
+      },
+      "first_image_after_demand": {
+        "samples": 50,
+        "p50_ms": 0.0,
+        "p95_ms": 302.5804049999997,
+        "p99_ms": 352.2476750000003,
+        "total_ms": 2970.185983999998,
+        "censored": 0
+      },
+      "requested_lod_after_demand": {
+        "samples": 45,
+        "p50_ms": 958.7679419999995,
+        "p95_ms": 1314.0226759999996,
+        "p99_ms": 1332.524923,
+        "total_ms": 42646.000576000006,
+        "censored": 5
+      },
+      "cancelled_by_stage": {
+        "decode": 2
+      },
+      "worker_memory_observed_peaks": {
+        "encoded_peak_bytes": 7123639,
+        "decoded_peak_bytes": 20250000,
+        "resize_peak_bytes": 12582912
+      },
+      "content_coverage_fraction": 0.9560357675111774,
+      "lod_coverage_fractions": [
+        0.22727272727272727,
+        0.40014903129657226,
+        0.3286140089418778
+      ],
+      "requested_coverage_fraction": 0.3286140089418778,
+      "worker_utilization_fraction": 0.9202275209032399,
+      "worker_utilization_note": "Observed worker active wall time / (navigation + explicit asset drain) worker capacity; excludes startup and any unreported jobs, not CPU utilization. Legacy reports without asset drain can omit still-active jobs.",
+      "cpu_thumbnail_peak_bytes": 3342336,
+      "gpu_thumbnail_peak_bytes": 2457600,
+      "gpu_completion_fps": 59.083333333333336,
+      "display_cache_bytes_after_run": 358479117,
+      "display_cache_files_after_run": 345,
+      "input_cache": {
+        "files": 250,
+        "overview_files": 250,
+        "bytes": 11705331,
+        "file_bytes": {
+          "samples": 250,
+          "p50_bytes": 46831,
+          "p95_bytes": 46903,
+          "p99_bytes": 46932,
+          "total_bytes": 11705331,
+          "min_bytes": 46683,
+          "max_bytes": 46932
+        },
+        "content_sha256": "d4ec829bf489ce07e7687299a723858bcd0e06ef5d2bc1f371f630b037cc4e86",
+        "temporary_files": 0
+      },
+      "input_prepared_percent": 25.0,
+      "concurrent_decode_peak": 2,
+      "label": "prepared-25-pan-normal",
+      "preparation_cost_ms": 9232.898732000001,
+      "label_note": "Prepared input creation time + this fresh process startup + navigation duration + explicit asset drain; cache cloning/inventory excluded harness work."
+    },
+    {
+      "acquire": {
+        "max_ms": 0.052809999999999996,
+        "p50_ms": 0.019389999999999998,
+        "p99_ms": 0.03888,
+        "samples": 709
+      },
+      "adapter": "NVIDIA GeForce RTX 2060",
+      "asset_drain_ms": 22.253829999999997,
+      "asset_pending_after_drain": 0,
+      "backend": "Vulkan",
+      "callback": {
+        "max_ms": 16.467699999999997,
+        "p50_ms": 2.213708,
+        "p99_ms": 8.991871999999999,
+        "samples": 709
+      },
+      "completed_submissions_at_report": 709,
+      "coverage_episodes_dropped": 0,
+      "cpu_cache_peak_bytes": 27869184,
+      "cpu_max_ms": 4.930778,
+      "cpu_p50_ms": 1.9947670000000002,
+      "cpu_p99_ms": 3.265751,
+      "device_type": "DiscreteGpu",
+      "driver": "NVIDIA",
+      "driver_info": "580.173.02",
+      "duration_seconds": 12.0,
+      "failed_acquire_max_ms": 0.0,
+      "final": {
+        "acquire_ms": 0.02039,
+        "callback_ms": 1.647996,
+        "completed_submissions": 708,
+        "cpu_cache_bytes": 27869184,
+        "cpu_evictions": 0,
+        "cpu_ms": 1.525135,
+        "cpu_thumbnail_bytes": 27869184,
+        "culled": 608,
+        "decode_errors": 0,
+        "decode_ms": 23276.685357000002,
+        "disk_hits": 250,
+        "elapsed_ms": 12659.658243,
+        "gpu_evictions": 0,
+        "gpu_resident_bytes": 27033600,
+        "gpu_thumbnail_bytes": 27033600,
+        "in_flight": 1,
+        "lods": [
+          0,
+          0,
+          0
+        ],
+        "pending": 16,
+        "placeholders": 392,
+        "preparation_ready": 567,
+        "present_ms": 0.083171,
+        "requested_covered": 0,
+        "stale": 0,
+        "submitted": true,
+        "upload_bytes": 0,
+        "upload_cpu_ms": 0.0,
+        "uploads": 0,
+        "visible": 392
+      },
+      "first_visible_content_ms": 786.515524,
+      "frame_attempts": 709,
+      "gpu_backpressure_frames": 0,
+      "gpu_pass": {
+        "max_ms": 0.84992,
+        "p50_ms": 0.067584,
+        "p99_ms": 0.760992,
+        "samples": 709
+      },
+      "gpu_resident_peak_bytes": 27033600,
+      "gpu_timing_dropped": 0,
+      "gpu_timing_note": "Optional asynchronous timestamps measure the canvas render pass only, excluding uploads, surface acquisition and presentation. CPU callback and attempt cadence do not measure monitor presentation latency.",
+      "headless": false,
+      "interval_p50_ms": 16.772060999997848,
+      "interval_p99_ms": 18.115294999999605,
+      "objects": 1000,
+      "pending_limit": 16,
+      "pending_peak": 16,
+      "platform_events": [
+        {
+          "event": "initialize",
+          "scale_factor": 1.0,
+          "size": [
+            1280,
+            720
+          ]
+        },
+        {
+          "event": "resize",
+          "size": [
+            1280,
+            720
+          ]
+        },
+        {
+          "event": "occluded",
+          "occluded": false
+        }
+      ],
+      "prefetch": "none",
+      "preparation": {
+        "cache_bytes_read": 11705331,
+        "cache_hits": 250,
+        "cancelled": 16,
+        "cpu_payload_peak_bytes": 27869184,
+        "derived_bytes_written": 14842507,
+        "elapsed_ms": 12711.63393,
+        "errors": 0,
+        "images_per_second": 44.60480872265018,
+        "note": "Validated historical progress; no frame-path filesystem inventory. 100% ready differs from all settled. Persistence and cancellation may overlap. Active time covers observed 128 jobs only; no allocator scratch measurement.",
+        "pending_peak": 16,
+        "ready": 567,
+        "settled": false,
+        "source_bytes_read": 2268350511,
+        "source_read_attempts": 319,
+        "threshold_ms": {
+          "10": 885.1599060000001,
+          "100": null,
+          "25": 1036.211319,
+          "50": 10222.015413,
+          "75": null,
+          "90": null,
+          "first": 784.465846
+        },
+        "total": 1000,
+        "worker_active_ms": 23415.712684999973,
+        "worker_utilization_fraction": 0.9210347314100152
+      },
+      "prepare": "viewport",
+      "present": {
+        "max_ms": 13.96307,
+        "p50_ms": 0.07512100000000001,
+        "p99_ms": 7.1917860000000005,
+        "samples": 709
+      },
+      "rejected_cache_entries": 0,
+      "rss_high_water_kib": 379636,
+      "scenario": "board-tour",
+      "schema": 1,
+      "startup_ms": 669.901935,
+      "submitted_frames": 709,
+      "surface_other_errors": 0,
+      "surface_reconfigures": 0,
+      "surface_timeouts": 0,
+      "thumbnail_decoder": "turbojpeg 1.5.1 / libjpeg-turbo 3.2.0 DCT",
+      "upload_count_limit": 8,
+      "worker_profile_dropped": 0,
+      "worker_retention_peak_bytes": 27869184,
+      "worker_stage_names": [
+        "source_read",
+        "header",
+        "decode",
+        "resize",
+        "encode",
+        "cache_write",
+        "cache_read",
+        "cache_maintenance",
+        "queue_wait",
+        "cpu_insert",
+        "retire"
+      ],
+      "workers": 2,
+      "worker_stages": {
+        "source_read": {
+          "samples": 319,
+          "p50_ms": 1.104244,
+          "p95_ms": 1.414735,
+          "p99_ms": 3.345092,
+          "total_ms": 383.8008,
+          "bytes": 2268350511
+        },
+        "header": {
+          "samples": 569,
+          "p50_ms": 0.009340000000000001,
+          "p95_ms": 0.0146,
+          "p99_ms": 0.031860000000000006,
+          "total_ms": 4.610908,
+          "bytes": 0
+        },
+        "decode": {
+          "samples": 569,
+          "p50_ms": 68.216705,
+          "p95_ms": 72.35616,
+          "p99_ms": 74.243027,
+          "total_ms": 22279.134984,
+          "bytes": 404093250
+        },
+        "resize": {
+          "samples": 317,
+          "p50_ms": 1.712406,
+          "p95_ms": 1.987057,
+          "p99_ms": 2.3563680000000002,
+          "total_ms": 554.667786,
+          "bytes": 417140934
+        },
+        "encode": {
+          "samples": 317,
+          "p50_ms": 0.13048,
+          "p95_ms": 0.15188,
+          "p99_ms": 0.18767,
+          "total_ms": 42.48747,
+          "bytes": 14842507
+        },
+        "cache_write": {
+          "samples": 317,
+          "p50_ms": 0.08954999999999999,
+          "p95_ms": 0.10941,
+          "p99_ms": 0.11922100000000001,
+          "total_ms": 28.942512,
+          "bytes": 14842507
+        },
+        "cache_read": {
+          "samples": 250,
+          "p50_ms": 0.030929999999999996,
+          "p95_ms": 0.0527,
+          "p99_ms": 0.059070000000000004,
+          "total_ms": 8.52557,
+          "bytes": 11705331
+        },
+        "cache_maintenance": {
+          "samples": 569,
+          "p50_ms": 0.22078,
+          "p95_ms": 0.37573100000000004,
+          "p99_ms": 0.404322,
+          "total_ms": 94.427615,
+          "bytes": 0
+        },
+        "queue_wait": {
+          "samples": 583,
+          "p50_ms": 488.060771,
+          "p95_ms": 514.494826,
+          "p99_ms": 525.229275,
+          "total_ms": 160328.461295,
+          "bytes": 0
+        },
+        "cpu_insert": {
+          "samples": 567,
+          "p50_ms": 0.00046,
+          "p95_ms": 0.00102,
+          "p99_ms": 0.00233,
+          "total_ms": 0.2807,
+          "bytes": 27869184
+        },
+        "retire": {
+          "samples": 583,
+          "p50_ms": 0.00038,
+          "p95_ms": 0.00098,
+          "p99_ms": 0.00119,
+          "total_ms": 0.25219,
+          "bytes": 0
+        }
+      },
+      "worker_active": {
+        "samples": 583,
+        "p50_ms": 71.550307,
+        "p95_ms": 75.644541,
+        "p99_ms": 78.504792,
+        "total_ms": 23415.712685
+      },
+      "first_image_after_demand": {
+        "samples": 550,
+        "p50_ms": 1240.731913,
+        "p95_ms": 9086.749887999998,
+        "p99_ms": 9641.652461,
+        "total_ms": 1715668.106294,
+        "censored": 450
+      },
+      "requested_lod_after_demand": {
+        "samples": 550,
+        "p50_ms": 1240.731913,
+        "p95_ms": 9086.749887999998,
+        "p99_ms": 9641.652461,
+        "total_ms": 1715668.106294,
+        "censored": 450
+      },
+      "cancelled_by_stage": {
+        "decode": 2,
+        "queue": 14
+      },
+      "worker_memory_observed_peaks": {
+        "encoded_peak_bytes": 7123639,
+        "decoded_peak_bytes": 1266750,
+        "resize_peak_bytes": 49152
+      },
+      "content_coverage_fraction": 0.3280535092833042,
+      "lod_coverage_fractions": [
+        0.3280535092833042,
+        0.0,
+        0.0
+      ],
+      "requested_coverage_fraction": 0.3280535092833042,
+      "worker_utilization_fraction": 0.9738487065781741,
+      "worker_utilization_note": "Observed worker active wall time / (navigation + explicit asset drain) worker capacity; excludes startup and any unreported jobs, not CPU utilization. Legacy reports without asset drain can omit still-active jobs.",
+      "cpu_thumbnail_peak_bytes": 27869184,
+      "gpu_thumbnail_peak_bytes": 27033600,
+      "gpu_completion_fps": 59.083333333333336,
+      "display_cache_bytes_after_run": 26547838,
+      "display_cache_files_after_run": 567,
+      "input_cache": {
+        "files": 250,
+        "overview_files": 250,
+        "bytes": 11705331,
+        "file_bytes": {
+          "samples": 250,
+          "p50_bytes": 46831,
+          "p95_bytes": 46903,
+          "p99_bytes": 46932,
+          "total_bytes": 11705331,
+          "min_bytes": 46683,
+          "max_bytes": 46932
+        },
+        "content_sha256": "d4ec829bf489ce07e7687299a723858bcd0e06ef5d2bc1f371f630b037cc4e86",
+        "temporary_files": 0
+      },
+      "input_prepared_percent": 25.0,
+      "concurrent_decode_peak": 2,
+      "label": "prepared-25-board-tour",
+      "preparation_cost_ms": 9232.898732000001,
+      "label_note": "Prepared input creation time + this fresh process startup + navigation duration + explicit asset drain; cache cloning/inventory excluded harness work."
+    }
+  ],
+  "decision": "Retain stable remaining IDs and foreground priority. Neighbor sort has inconsistent coverage benefit and higher overview CPU cost; runtime and selector removed. Original preliminary healthy cache inputs/time were reused exactly for this controlled comparison."
+}

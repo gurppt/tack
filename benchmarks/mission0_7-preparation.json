@@ -1,0 +1,2038 @@
+{
+  "schema": 1,
+  "raw_directory": "benchmark-results/mission0_7-final-preparation",
+  "provenance": {
+    "app_sha256": "fd92de406510b5c32a5e39b8f2ce1f70709cee0dfcd4b4d434c2da4d5f7723c8",
+    "preparation_sha256": "a3013c97648cfd8fb9ba59d1afd765b4336fd3d621fb26edb375f926a89a3c72",
+    "source_snapshot_sha256": "2118a211fba155372c653a727cb7e79dcf5ee56b56994dafa021bf924f96191c",
+    "executed_harness_sha256": "f815feefeb083aeb5d2d7e542688b10aa1d0d596b62a1b952bb405fb8f82fde9",
+    "manifest_sha256": "8bd27d9631560213365df47b842e37720421703608b13e79ee54f8524ad44af6",
+    "native_build": {
+      "version": "3.2.0",
+      "source_url": "https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.2.0/libjpeg-turbo-3.2.0.tar.gz",
+      "source_sha256": "6f30092cef9fb839779646608f4ee14ae3cbac989c47fa05e841b0841f09878e",
+      "cmake_command": [
+        "cmake",
+        "-S",
+        "/home/gurp/softs/tack/target/native/source/libjpeg-turbo-3.2.0",
+        "-B",
+        "/home/gurp/softs/tack/target/native/turbojpeg-build",
+        "-DCMAKE_INSTALL_PREFIX=/home/gurp/softs/tack/target/native/libjpeg-turbo-3.2.0",
+        "-DCMAKE_INSTALL_LIBDIR=lib",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DENABLE_SHARED=OFF",
+        "-DENABLE_STATIC=ON",
+        "-DWITH_TURBOJPEG=ON",
+        "-DREQUIRE_SIMD=ON",
+        "-DWITH_JAVA=OFF"
+      ],
+      "nasm": "NASM version 2.16.01",
+      "library_sha256": {
+        "libturbojpeg.a": "e3fb98a1b4e3814c1e620b6e599b4a293badfde689a49430e0d1a43455269658"
+      }
+    },
+    "note": "Fresh processes; cold means derived cache empty, not kernel page cache flushed. Synthetic IDs share 32 contents; no PureRef asset access."
+  },
+  "runs": {
+    "0": {
+      "pending_after_drain": 0,
+      "preparation": {
+        "cache_bytes_read": 0,
+        "cache_hits": 0,
+        "cancelled": 0,
+        "cpu_payload_peak_bytes": 0,
+        "derived_bytes_written": 0,
+        "derived_write_attempt_bytes": 0,
+        "elapsed_ms": 10.628729,
+        "errors": 0,
+        "images_per_second": 0.0,
+        "note": "Validated historical progress; no frame-path filesystem inventory. 100% ready differs from all settled. Persistence and cancellation may overlap. Derived bytes written means successfully committed PNG volume; attempt bytes are scheduled write sizes, not measured physical I/O. Active time covers observed 128 jobs only; no allocator scratch measurement.",
+        "pending_peak": 0,
+        "ready": 0,
+        "settled": false,
+        "source_bytes_read": 0,
+        "source_read_attempts": 0,
+        "threshold_ms": {
+          "10": null,
+          "100": null,
+          "25": null,
+          "50": null,
+          "75": null,
+          "90": null,
+          "first": null
+        },
+        "total": 1000,
+        "worker_active_ms": -0.0,
+        "worker_utilization_fraction": -0.0
+      },
+      "ready_at_trigger": 0,
+      "requested_fraction": 0.0,
+      "rss_high_water_kib": 3416,
+      "schema": 1,
+      "stop_reason": "target",
+      "trigger_ms": 10.583409,
+      "worker_profile_dropped": 0,
+      "worker_retention_peak_bytes": 0,
+      "worker_stage_names": [
+        "source_read",
+        "header",
+        "decode",
+        "resize",
+        "encode",
+        "cache_write",
+        "cache_read",
+        "cache_maintenance",
+        "queue_wait",
+        "cpu_insert",
+        "retire"
+      ],
+      "workers": 2,
+      "concurrent_decode_peak": 0,
+      "worker_memory_observed_peaks": {
+        "encoded_peak_bytes": 0,
+        "decoded_peak_bytes": 0,
+        "resize_peak_bytes": 0
+      },
+      "worker_stages": {
+        "source_read": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "bytes": 0
+        },
+        "header": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "bytes": 0
+        },
+        "decode": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "bytes": 0
+        },
+        "resize": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "bytes": 0
+        },
+        "encode": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "bytes": 0
+        },
+        "cache_write": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "bytes": 0
+        },
+        "cache_read": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "bytes": 0
+        },
+        "cache_maintenance": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "bytes": 0
+        },
+        "queue_wait": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "bytes": 0
+        },
+        "cpu_insert": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "bytes": 0
+        },
+        "retire": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "bytes": 0
+        }
+      },
+      "process_wall_seconds": 0.012778397998772562,
+      "process_user_seconds": 0.001977,
+      "process_system_seconds": 0.010876,
+      "cache_after": {
+        "files": 0,
+        "overview_files": 0,
+        "bytes": 0,
+        "file_bytes": {
+          "samples": 0,
+          "p50_bytes": null,
+          "p95_bytes": null,
+          "p99_bytes": null,
+          "total_bytes": 0,
+          "min_bytes": null,
+          "max_bytes": null
+        },
+        "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "temporary_files": 0
+      },
+      "input_cache": {
+        "files": 0,
+        "overview_files": 0,
+        "bytes": 0,
+        "file_bytes": {
+          "samples": 0,
+          "p50_bytes": null,
+          "p95_bytes": null,
+          "p99_bytes": null,
+          "total_bytes": 0,
+          "min_bytes": null,
+          "max_bytes": null
+        },
+        "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "temporary_files": 0
+      },
+      "manifest_sha256": "8bd27d9631560213365df47b842e37720421703608b13e79ee54f8524ad44af6",
+      "binary_sha256": "a3013c97648cfd8fb9ba59d1afd765b4336fd3d621fb26edb375f926a89a3c72",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/overview_prepare",
+        "--manifest",
+        "/home/gurp/softs/tack/benchmark-data/mission0/manifest.json",
+        "--cache",
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/prepared-0-cache",
+        "--fraction",
+        "0.0",
+        "--workers",
+        "2",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/prepared-0.json"
+      ]
+    },
+    "25": {
+      "pending_after_drain": 0,
+      "preparation": {
+        "cache_bytes_read": 0,
+        "cache_hits": 0,
+        "cancelled": 15,
+        "cpu_payload_peak_bytes": 12288000,
+        "derived_bytes_written": 11705308,
+        "derived_write_attempt_bytes": 11705308,
+        "elapsed_ms": 8865.439838,
+        "errors": 0,
+        "images_per_second": 28.199390506088953,
+        "note": "Validated historical progress; no frame-path filesystem inventory. 100% ready differs from all settled. Persistence and cancellation may overlap. Derived bytes written means successfully committed PNG volume; attempt bytes are scheduled write sizes, not measured physical I/O. Active time covers observed 128 jobs only; no allocator scratch measurement.",
+        "pending_peak": 16,
+        "ready": 250,
+        "settled": false,
+        "source_bytes_read": 1791897651,
+        "source_read_attempts": 252,
+        "threshold_ms": {
+          "10": 3573.3106279999997,
+          "100": null,
+          "25": 8860.976618,
+          "50": null,
+          "75": null,
+          "90": null,
+          "first": 86.770207
+        },
+        "total": 1000,
+        "worker_active_ms": 17703.089519999994,
+        "worker_utilization_fraction": 0.9984326690774614
+      },
+      "ready_at_trigger": 250,
+      "requested_fraction": 0.25,
+      "rss_high_water_kib": 36156,
+      "schema": 1,
+      "stop_reason": "target",
+      "trigger_ms": 8860.976738,
+      "worker_profile_dropped": 0,
+      "worker_retention_peak_bytes": 12288000,
+      "worker_stage_names": [
+        "source_read",
+        "header",
+        "decode",
+        "resize",
+        "encode",
+        "cache_write",
+        "cache_read",
+        "cache_maintenance",
+        "queue_wait",
+        "cpu_insert",
+        "retire"
+      ],
+      "workers": 2,
+      "concurrent_decode_peak": 2,
+      "worker_memory_observed_peaks": {
+        "encoded_peak_bytes": 7123639,
+        "decoded_peak_bytes": 1266750,
+        "resize_peak_bytes": 49152
+      },
+      "worker_stages": {
+        "source_read": {
+          "samples": 252,
+          "p50_ms": 1.1091849999999999,
+          "p95_ms": 1.368316,
+          "p99_ms": 4.170219,
+          "total_ms": 301.556591,
+          "bytes": 1791897651
+        },
+        "header": {
+          "samples": 251,
+          "p50_ms": 0.01065,
+          "p95_ms": 0.015909999999999997,
+          "p99_ms": 0.0255,
+          "total_ms": 2.835611,
+          "bytes": 0
+        },
+        "decode": {
+          "samples": 251,
+          "p50_ms": 66.604224,
+          "p95_ms": 72.16020099999999,
+          "p99_ms": 73.413786,
+          "total_ms": 16865.103023,
+          "bytes": 317954250
+        },
+        "resize": {
+          "samples": 250,
+          "p50_ms": 1.698298,
+          "p95_ms": 2.005929,
+          "p99_ms": 2.411011,
+          "total_ms": 437.422896,
+          "bytes": 328975500
+        },
+        "encode": {
+          "samples": 250,
+          "p50_ms": 0.128281,
+          "p95_ms": 0.139571,
+          "p99_ms": 0.18321,
+          "total_ms": 32.64475,
+          "bytes": 11705308
+        },
+        "cache_write": {
+          "samples": 250,
+          "p50_ms": 0.08535,
+          "p95_ms": 0.10102,
+          "p99_ms": 0.110921,
+          "total_ms": 21.692858,
+          "bytes": 11705308
+        },
+        "cache_read": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "bytes": 0
+        },
+        "cache_maintenance": {
+          "samples": 252,
+          "p50_ms": 0.123581,
+          "p95_ms": 0.190461,
+          "p99_ms": 0.19992100000000002,
+          "total_ms": 30.546378,
+          "bytes": 0
+        },
+        "queue_wait": {
+          "samples": 265,
+          "p50_ms": 489.157098,
+          "p95_ms": 514.902466,
+          "p99_ms": 522.915222,
+          "total_ms": 123718.598877,
+          "bytes": 0
+        },
+        "cpu_insert": {
+          "samples": 250,
+          "p50_ms": 0.00105,
+          "p95_ms": 0.00238,
+          "p99_ms": 0.01603,
+          "total_ms": 0.385224,
+          "bytes": 12288000
+        },
+        "retire": {
+          "samples": 265,
+          "p50_ms": 0.00023999999999999998,
+          "p95_ms": 0.00052,
+          "p99_ms": 0.00082,
+          "total_ms": 0.07226,
+          "bytes": 0
+        }
+      },
+      "process_wall_seconds": 8.87967051299347,
+      "process_user_seconds": 19.037035,
+      "process_system_seconds": 0.424207,
+      "cache_after": {
+        "files": 250,
+        "overview_files": 250,
+        "bytes": 11705308,
+        "file_bytes": {
+          "samples": 250,
+          "p50_bytes": 46829,
+          "p95_bytes": 46903,
+          "p99_bytes": 46932,
+          "total_bytes": 11705308,
+          "min_bytes": 46683,
+          "max_bytes": 46932
+        },
+        "content_sha256": "7d3a22b021ff6711b8f8ec3d3abc00c4252234a087e3eefa24120e06951e2188",
+        "temporary_files": 0
+      },
+      "input_cache": {
+        "files": 0,
+        "overview_files": 0,
+        "bytes": 0,
+        "file_bytes": {
+          "samples": 0,
+          "p50_bytes": null,
+          "p95_bytes": null,
+          "p99_bytes": null,
+          "total_bytes": 0,
+          "min_bytes": null,
+          "max_bytes": null
+        },
+        "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "temporary_files": 0
+      },
+      "manifest_sha256": "8bd27d9631560213365df47b842e37720421703608b13e79ee54f8524ad44af6",
+      "binary_sha256": "a3013c97648cfd8fb9ba59d1afd765b4336fd3d621fb26edb375f926a89a3c72",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/overview_prepare",
+        "--manifest",
+        "/home/gurp/softs/tack/benchmark-data/mission0/manifest.json",
+        "--cache",
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/prepared-25-cache",
+        "--fraction",
+        "0.25",
+        "--workers",
+        "2",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/prepared-25.json"
+      ]
+    },
+    "50": {
+      "pending_after_drain": 0,
+      "preparation": {
+        "cache_bytes_read": 0,
+        "cache_hits": 0,
+        "cancelled": 15,
+        "cpu_payload_peak_bytes": 24576000,
+        "derived_bytes_written": 23410669,
+        "derived_write_attempt_bytes": 23410669,
+        "elapsed_ms": 17769.124451,
+        "errors": 0,
+        "images_per_second": 28.1386965001453,
+        "note": "Validated historical progress; no frame-path filesystem inventory. 100% ready differs from all settled. Persistence and cancellation may overlap. Derived bytes written means successfully committed PNG volume; attempt bytes are scheduled write sizes, not measured physical I/O. Active time covers observed 128 jobs only; no allocator scratch measurement.",
+        "pending_peak": 16,
+        "ready": 500,
+        "settled": false,
+        "source_bytes_read": 3569613605,
+        "source_read_attempts": 502,
+        "threshold_ms": {
+          "10": 3575.185176,
+          "100": null,
+          "25": 8914.209711,
+          "50": 17731.73599,
+          "75": null,
+          "90": null,
+          "first": 102.36550799999999
+        },
+        "total": 1000,
+        "worker_active_ms": 35462.41741499999,
+        "worker_utilization_fraction": 0.997866200802152
+      },
+      "ready_at_trigger": 500,
+      "requested_fraction": 0.5,
+      "rss_high_water_kib": 48148,
+      "schema": 1,
+      "stop_reason": "target",
+      "trigger_ms": 17731.73611,
+      "worker_profile_dropped": 0,
+      "worker_retention_peak_bytes": 24576000,
+      "worker_stage_names": [
+        "source_read",
+        "header",
+        "decode",
+        "resize",
+        "encode",
+        "cache_write",
+        "cache_read",
+        "cache_maintenance",
+        "queue_wait",
+        "cpu_insert",
+        "retire"
+      ],
+      "workers": 2,
+      "concurrent_decode_peak": 2,
+      "worker_memory_observed_peaks": {
+        "encoded_peak_bytes": 7123639,
+        "decoded_peak_bytes": 1266750,
+        "resize_peak_bytes": 49152
+      },
+      "worker_stages": {
+        "source_read": {
+          "samples": 502,
+          "p50_ms": 1.110586,
+          "p95_ms": 1.519727,
+          "p99_ms": 1.992959,
+          "total_ms": 601.942608,
+          "bytes": 3569613605
+        },
+        "header": {
+          "samples": 501,
+          "p50_ms": 0.010201,
+          "p95_ms": 0.01633,
+          "p99_ms": 0.02344,
+          "total_ms": 5.582123,
+          "bytes": 0
+        },
+        "decode": {
+          "samples": 501,
+          "p50_ms": 66.47095399999999,
+          "p95_ms": 71.701948,
+          "p99_ms": 74.626862,
+          "total_ms": 33711.895819,
+          "bytes": 634641750
+        },
+        "resize": {
+          "samples": 500,
+          "p50_ms": 1.7100279999999999,
+          "p95_ms": 2.046769,
+          "p99_ms": 2.900673,
+          "total_ms": 890.778044,
+          "bytes": 657951000
+        },
+        "encode": {
+          "samples": 500,
+          "p50_ms": 0.128631,
+          "p95_ms": 0.156751,
+          "p99_ms": 0.202411,
+          "total_ms": 66.73164,
+          "bytes": 23410669
+        },
+        "cache_write": {
+          "samples": 500,
+          "p50_ms": 0.087171,
+          "p95_ms": 0.107581,
+          "p99_ms": 0.134051,
+          "total_ms": 51.632504,
+          "bytes": 23410669
+        },
+        "cache_read": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "bytes": 0
+        },
+        "cache_maintenance": {
+          "samples": 502,
+          "p50_ms": 0.19751100000000002,
+          "p95_ms": 0.349451,
+          "p99_ms": 0.424262,
+          "total_ms": 100.385175,
+          "bytes": 0
+        },
+        "queue_wait": {
+          "samples": 515,
+          "p50_ms": 489.965961,
+          "p95_ms": 518.356523,
+          "p99_ms": 525.069572,
+          "total_ms": 247834.926995,
+          "bytes": 0
+        },
+        "cpu_insert": {
+          "samples": 500,
+          "p50_ms": 0.001,
+          "p95_ms": 0.00195,
+          "p99_ms": 0.01149,
+          "total_ms": 0.682871,
+          "bytes": 24576000
+        },
+        "retire": {
+          "samples": 515,
+          "p50_ms": 0.0005,
+          "p95_ms": 0.00116,
+          "p99_ms": 0.00168,
+          "total_ms": 0.279551,
+          "bytes": 0
+        }
+      },
+      "process_wall_seconds": 17.7821599200106,
+      "process_user_seconds": 37.71373,
+      "process_system_seconds": 0.846788,
+      "cache_after": {
+        "files": 500,
+        "overview_files": 500,
+        "bytes": 23410669,
+        "file_bytes": {
+          "samples": 500,
+          "p50_bytes": 46829,
+          "p95_bytes": 46903,
+          "p99_bytes": 46932,
+          "total_bytes": 23410669,
+          "min_bytes": 46683,
+          "max_bytes": 46932
+        },
+        "content_sha256": "65f69a5ef4aa7fa847f9441073fcbcc113fe7394e1db1d53e8ae901407e9eb3f",
+        "temporary_files": 0
+      },
+      "input_cache": {
+        "files": 0,
+        "overview_files": 0,
+        "bytes": 0,
+        "file_bytes": {
+          "samples": 0,
+          "p50_bytes": null,
+          "p95_bytes": null,
+          "p99_bytes": null,
+          "total_bytes": 0,
+          "min_bytes": null,
+          "max_bytes": null
+        },
+        "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "temporary_files": 0
+      },
+      "manifest_sha256": "8bd27d9631560213365df47b842e37720421703608b13e79ee54f8524ad44af6",
+      "binary_sha256": "a3013c97648cfd8fb9ba59d1afd765b4336fd3d621fb26edb375f926a89a3c72",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/overview_prepare",
+        "--manifest",
+        "/home/gurp/softs/tack/benchmark-data/mission0/manifest.json",
+        "--cache",
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/prepared-50-cache",
+        "--fraction",
+        "0.5",
+        "--workers",
+        "2",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/prepared-50.json"
+      ]
+    },
+    "75": {
+      "pending_after_drain": 0,
+      "preparation": {
+        "cache_bytes_read": 0,
+        "cache_hits": 0,
+        "cancelled": 15,
+        "cpu_payload_peak_bytes": 33521664,
+        "derived_bytes_written": 35116281,
+        "derived_write_attempt_bytes": 35116281,
+        "elapsed_ms": 27193.736477000002,
+        "errors": 0,
+        "images_per_second": 27.5798804123272,
+        "note": "Validated historical progress; no frame-path filesystem inventory. 100% ready differs from all settled. Persistence and cancellation may overlap. Derived bytes written means successfully committed PNG volume; attempt bytes are scheduled write sizes, not measured physical I/O. Active time covers observed 128 jobs only; no allocator scratch measurement.",
+        "pending_peak": 16,
+        "ready": 750,
+        "settled": false,
+        "source_bytes_read": 5347309799,
+        "source_read_attempts": 752,
+        "threshold_ms": {
+          "10": 3644.5791440000003,
+          "100": null,
+          "25": 9007.9279,
+          "50": 18026.7743,
+          "75": 27164.909466,
+          "90": null,
+          "first": 101.32224400000001
+        },
+        "total": 1000,
+        "worker_active_ms": 54318.50810300004,
+        "worker_utilization_fraction": 0.9987319717711779
+      },
+      "ready_at_trigger": 750,
+      "requested_fraction": 0.75,
+      "rss_high_water_kib": 57356,
+      "schema": 1,
+      "stop_reason": "target",
+      "trigger_ms": 27164.909576,
+      "worker_profile_dropped": 0,
+      "worker_retention_peak_bytes": 33718272,
+      "worker_stage_names": [
+        "source_read",
+        "header",
+        "decode",
+        "resize",
+        "encode",
+        "cache_write",
+        "cache_read",
+        "cache_maintenance",
+        "queue_wait",
+        "cpu_insert",
+        "retire"
+      ],
+      "workers": 2,
+      "concurrent_decode_peak": 2,
+      "worker_memory_observed_peaks": {
+        "encoded_peak_bytes": 7123639,
+        "decoded_peak_bytes": 1266750,
+        "resize_peak_bytes": 49152
+      },
+      "worker_stages": {
+        "source_read": {
+          "samples": 752,
+          "p50_ms": 1.223266,
+          "p95_ms": 1.7717779999999999,
+          "p99_ms": 2.215521,
+          "total_ms": 982.77436,
+          "bytes": 5347309799
+        },
+        "header": {
+          "samples": 751,
+          "p50_ms": 0.012289999999999999,
+          "p95_ms": 0.020860999999999998,
+          "p99_ms": 0.02913,
+          "total_ms": 10.028306,
+          "bytes": 0
+        },
+        "decode": {
+          "samples": 751,
+          "p50_ms": 67.584209,
+          "p95_ms": 73.671488,
+          "p99_ms": 86.110274,
+          "total_ms": 51529.693967,
+          "bytes": 951329250
+        },
+        "resize": {
+          "samples": 750,
+          "p50_ms": 1.7213479999999999,
+          "p95_ms": 2.209,
+          "p99_ms": 3.3221760000000002,
+          "total_ms": 1368.589352,
+          "bytes": 986926500
+        },
+        "encode": {
+          "samples": 750,
+          "p50_ms": 0.13114,
+          "p95_ms": 0.18144100000000002,
+          "p99_ms": 0.220531,
+          "total_ms": 103.111913,
+          "bytes": 35116281
+        },
+        "cache_write": {
+          "samples": 750,
+          "p50_ms": 0.09258,
+          "p95_ms": 0.121581,
+          "p99_ms": 0.17274099999999998,
+          "total_ms": 72.318542,
+          "bytes": 35116281
+        },
+        "cache_read": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "bytes": 0
+        },
+        "cache_maintenance": {
+          "samples": 752,
+          "p50_ms": 0.28669100000000003,
+          "p95_ms": 0.49502199999999996,
+          "p99_ms": 0.6127730000000001,
+          "total_ms": 216.710655,
+          "bytes": 0
+        },
+        "queue_wait": {
+          "samples": 765,
+          "p50_ms": 500.20190799999995,
+          "p95_ms": 539.116086,
+          "p99_ms": 579.6589319999999,
+          "total_ms": 379633.224234,
+          "bytes": 0
+        },
+        "cpu_insert": {
+          "samples": 750,
+          "p50_ms": 0.00125,
+          "p95_ms": 0.00765,
+          "p99_ms": 0.01366,
+          "total_ms": 1.834005,
+          "bytes": 36864000
+        },
+        "retire": {
+          "samples": 765,
+          "p50_ms": 0.0007199999999999999,
+          "p95_ms": 0.00183,
+          "p99_ms": 0.0027199999999999998,
+          "total_ms": 0.624765,
+          "bytes": 0
+        }
+      },
+      "process_wall_seconds": 27.21407141999225,
+      "process_user_seconds": 57.131130999999996,
+      "process_system_seconds": 1.4217320000000002,
+      "cache_after": {
+        "files": 750,
+        "overview_files": 750,
+        "bytes": 35116281,
+        "file_bytes": {
+          "samples": 750,
+          "p50_bytes": 46829,
+          "p95_bytes": 46903,
+          "p99_bytes": 46932,
+          "total_bytes": 35116281,
+          "min_bytes": 46683,
+          "max_bytes": 46932
+        },
+        "content_sha256": "f26b84908eff1e49eb6daff133792cd40e980afb167321542c39a2ac4717ad71",
+        "temporary_files": 0
+      },
+      "input_cache": {
+        "files": 0,
+        "overview_files": 0,
+        "bytes": 0,
+        "file_bytes": {
+          "samples": 0,
+          "p50_bytes": null,
+          "p95_bytes": null,
+          "p99_bytes": null,
+          "total_bytes": 0,
+          "min_bytes": null,
+          "max_bytes": null
+        },
+        "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "temporary_files": 0
+      },
+      "manifest_sha256": "8bd27d9631560213365df47b842e37720421703608b13e79ee54f8524ad44af6",
+      "binary_sha256": "a3013c97648cfd8fb9ba59d1afd765b4336fd3d621fb26edb375f926a89a3c72",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/overview_prepare",
+        "--manifest",
+        "/home/gurp/softs/tack/benchmark-data/mission0/manifest.json",
+        "--cache",
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/prepared-75-cache",
+        "--fraction",
+        "0.75",
+        "--workers",
+        "2",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/prepared-75.json"
+      ]
+    },
+    "100": {
+      "pending_after_drain": 0,
+      "preparation": {
+        "cache_bytes_read": 0,
+        "cache_hits": 0,
+        "cancelled": 0,
+        "cpu_payload_peak_bytes": 33521664,
+        "derived_bytes_written": 46821740,
+        "derived_write_attempt_bytes": 46821740,
+        "elapsed_ms": 35694.295861,
+        "errors": 0,
+        "images_per_second": 28.01568082178115,
+        "note": "Validated historical progress; no frame-path filesystem inventory. 100% ready differs from all settled. Persistence and cancellation may overlap. Derived bytes written means successfully committed PNG volume; attempt bytes are scheduled write sizes, not measured physical I/O. Active time covers observed 128 jobs only; no allocator scratch measurement.",
+        "pending_peak": 16,
+        "ready": 1000,
+        "settled": true,
+        "source_bytes_read": 7110791177,
+        "source_read_attempts": 1000,
+        "threshold_ms": {
+          "10": 3766.915323,
+          "100": 35694.17861,
+          "25": 9100.210502,
+          "50": 17947.593628,
+          "75": 26824.952073,
+          "90": 32092.349355000002,
+          "first": 102.407029
+        },
+        "total": 1000,
+        "worker_active_ms": 71156.48961399986,
+        "worker_utilization_fraction": 0.9967487507121028
+      },
+      "ready_at_trigger": 1000,
+      "requested_fraction": 1.0,
+      "rss_high_water_kib": 57312,
+      "schema": 1,
+      "stop_reason": "target",
+      "trigger_ms": 35694.178719999996,
+      "worker_profile_dropped": 0,
+      "worker_retention_peak_bytes": 33767424,
+      "worker_stage_names": [
+        "source_read",
+        "header",
+        "decode",
+        "resize",
+        "encode",
+        "cache_write",
+        "cache_read",
+        "cache_maintenance",
+        "queue_wait",
+        "cpu_insert",
+        "retire"
+      ],
+      "workers": 2,
+      "concurrent_decode_peak": 2,
+      "worker_memory_observed_peaks": {
+        "encoded_peak_bytes": 7123639,
+        "decoded_peak_bytes": 1266750,
+        "resize_peak_bytes": 49152
+      },
+      "worker_stages": {
+        "source_read": {
+          "samples": 1000,
+          "p50_ms": 1.1369049999999998,
+          "p95_ms": 1.573377,
+          "p99_ms": 2.094068,
+          "total_ms": 1200.767876,
+          "bytes": 7110791177
+        },
+        "header": {
+          "samples": 1000,
+          "p50_ms": 0.01089,
+          "p95_ms": 0.01748,
+          "p99_ms": 0.0266,
+          "total_ms": 11.822081,
+          "bytes": 0
+        },
+        "decode": {
+          "samples": 1000,
+          "p50_ms": 66.492405,
+          "p95_ms": 72.235771,
+          "p99_ms": 80.792269,
+          "total_ms": 67504.575272,
+          "bytes": 1266750000
+        },
+        "resize": {
+          "samples": 1000,
+          "p50_ms": 1.713578,
+          "p95_ms": 2.087329,
+          "p99_ms": 3.052864,
+          "total_ms": 1792.442275,
+          "bytes": 1315902000
+        },
+        "encode": {
+          "samples": 1000,
+          "p50_ms": 0.130731,
+          "p95_ms": 0.165531,
+          "p99_ms": 0.22013100000000002,
+          "total_ms": 135.870883,
+          "bytes": 46821740
+        },
+        "cache_write": {
+          "samples": 1000,
+          "p50_ms": 0.08789,
+          "p95_ms": 0.11219,
+          "p99_ms": 0.175151,
+          "total_ms": 104.210171,
+          "bytes": 46821740
+        },
+        "cache_read": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "bytes": 0
+        },
+        "cache_maintenance": {
+          "samples": 1000,
+          "p50_ms": 0.363051,
+          "p95_ms": 0.622632,
+          "p99_ms": 0.683873,
+          "total_ms": 355.762118,
+          "bytes": 0
+        },
+        "queue_wait": {
+          "samples": 1000,
+          "p50_ms": 493.190886,
+          "p95_ms": 524.0287470000001,
+          "p99_ms": 553.8385940000001,
+          "total_ms": 493432.301915,
+          "bytes": 0
+        },
+        "cpu_insert": {
+          "samples": 1000,
+          "p50_ms": 0.00137,
+          "p95_ms": 0.00891,
+          "p99_ms": 0.01153,
+          "total_ms": 3.179751,
+          "bytes": 49152000
+        },
+        "retire": {
+          "samples": 1000,
+          "p50_ms": 0.00091,
+          "p95_ms": 0.00214,
+          "p99_ms": 0.00319,
+          "total_ms": 1.038249,
+          "bytes": 0
+        }
+      },
+      "process_wall_seconds": 35.716412234993186,
+      "process_user_seconds": 74.04434700000002,
+      "process_system_seconds": 1.7812979999999996,
+      "cache_after": {
+        "files": 1000,
+        "overview_files": 1000,
+        "bytes": 46821740,
+        "file_bytes": {
+          "samples": 1000,
+          "p50_bytes": 46829,
+          "p95_bytes": 46903,
+          "p99_bytes": 46932,
+          "total_bytes": 46821740,
+          "min_bytes": 46683,
+          "max_bytes": 46932
+        },
+        "content_sha256": "4cbfcfa8bb632d094417d6d90367ef8e8f9e466cedc39e422cef6bf568c77f0a",
+        "temporary_files": 0
+      },
+      "input_cache": {
+        "files": 0,
+        "overview_files": 0,
+        "bytes": 0,
+        "file_bytes": {
+          "samples": 0,
+          "p50_bytes": null,
+          "p95_bytes": null,
+          "p99_bytes": null,
+          "total_bytes": 0,
+          "min_bytes": null,
+          "max_bytes": null
+        },
+        "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "temporary_files": 0
+      },
+      "manifest_sha256": "8bd27d9631560213365df47b842e37720421703608b13e79ee54f8524ad44af6",
+      "binary_sha256": "a3013c97648cfd8fb9ba59d1afd765b4336fd3d621fb26edb375f926a89a3c72",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/overview_prepare",
+        "--manifest",
+        "/home/gurp/softs/tack/benchmark-data/mission0/manifest.json",
+        "--cache",
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/prepared-100-cache",
+        "--fraction",
+        "1.0",
+        "--workers",
+        "2",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/prepared-100.json"
+      ]
+    },
+    "four_workers": {
+      "pending_after_drain": 0,
+      "preparation": {
+        "cache_bytes_read": 0,
+        "cache_hits": 0,
+        "cancelled": 0,
+        "cpu_payload_peak_bytes": 33521664,
+        "derived_bytes_written": 46821740,
+        "derived_write_attempt_bytes": 46821740,
+        "elapsed_ms": 18146.291775,
+        "errors": 0,
+        "images_per_second": 55.107677777874805,
+        "note": "Validated historical progress; no frame-path filesystem inventory. 100% ready differs from all settled. Persistence and cancellation may overlap. Derived bytes written means successfully committed PNG volume; attempt bytes are scheduled write sizes, not measured physical I/O. Active time covers observed 128 jobs only; no allocator scratch measurement.",
+        "pending_peak": 32,
+        "ready": 1000,
+        "settled": true,
+        "source_bytes_read": 7110791177,
+        "source_read_attempts": 1000,
+        "threshold_ms": {
+          "10": 1859.9840510000001,
+          "100": 18146.162064999997,
+          "25": 4541.531298,
+          "50": 9062.992269,
+          "75": 13593.395665,
+          "90": 16278.858646,
+          "first": 95.67693100000001
+        },
+        "total": 1000,
+        "worker_active_ms": 72125.55185999995,
+        "worker_utilization_fraction": 0.9936679178630691
+      },
+      "ready_at_trigger": 1000,
+      "requested_fraction": 1.0,
+      "rss_high_water_kib": 76736,
+      "schema": 1,
+      "stop_reason": "target",
+      "trigger_ms": 18146.162624999997,
+      "worker_profile_dropped": 0,
+      "worker_retention_peak_bytes": 33964032,
+      "worker_stage_names": [
+        "source_read",
+        "header",
+        "decode",
+        "resize",
+        "encode",
+        "cache_write",
+        "cache_read",
+        "cache_maintenance",
+        "queue_wait",
+        "cpu_insert",
+        "retire"
+      ],
+      "workers": 4,
+      "concurrent_decode_peak": 4,
+      "worker_memory_observed_peaks": {
+        "encoded_peak_bytes": 7123639,
+        "decoded_peak_bytes": 1266750,
+        "resize_peak_bytes": 49152
+      },
+      "worker_stages": {
+        "source_read": {
+          "samples": 1000,
+          "p50_ms": 1.220165,
+          "p95_ms": 2.032157,
+          "p99_ms": 2.894201,
+          "total_ms": 1352.771701,
+          "bytes": 7110791177
+        },
+        "header": {
+          "samples": 1000,
+          "p50_ms": 0.01095,
+          "p95_ms": 0.02135,
+          "p99_ms": 0.03454,
+          "total_ms": 12.572095,
+          "bytes": 0
+        },
+        "decode": {
+          "samples": 1000,
+          "p50_ms": 67.601835,
+          "p95_ms": 72.362203,
+          "p99_ms": 82.10468999999999,
+          "total_ms": 68272.48324,
+          "bytes": 1266750000
+        },
+        "resize": {
+          "samples": 1000,
+          "p50_ms": 1.7318069999999999,
+          "p95_ms": 2.1522680000000003,
+          "p99_ms": 3.252282,
+          "total_ms": 1830.134024,
+          "bytes": 1315902000
+        },
+        "encode": {
+          "samples": 1000,
+          "p50_ms": 0.13055,
+          "p95_ms": 0.16599,
+          "p99_ms": 0.22521100000000002,
+          "total_ms": 136.702738,
+          "bytes": 46821740
+        },
+        "cache_write": {
+          "samples": 1000,
+          "p50_ms": 0.09137999999999999,
+          "p95_ms": 0.122121,
+          "p99_ms": 0.152301,
+          "total_ms": 95.082743,
+          "bytes": 46821740
+        },
+        "cache_read": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "bytes": 0
+        },
+        "cache_maintenance": {
+          "samples": 1000,
+          "p50_ms": 0.37249099999999996,
+          "p95_ms": 0.6588120000000001,
+          "p99_ms": 0.795643,
+          "total_ms": 367.395145,
+          "bytes": 0
+        },
+        "queue_wait": {
+          "samples": 1000,
+          "p50_ms": 500.860763,
+          "p95_ms": 529.08556,
+          "p99_ms": 545.944274,
+          "total_ms": 496148.735684,
+          "bytes": 0
+        },
+        "cpu_insert": {
+          "samples": 1000,
+          "p50_ms": 0.00124,
+          "p95_ms": 0.00923,
+          "p99_ms": 0.0144,
+          "total_ms": 3.126545,
+          "bytes": 49152000
+        },
+        "retire": {
+          "samples": 1000,
+          "p50_ms": 0.00055,
+          "p95_ms": 0.0015600000000000002,
+          "p99_ms": 0.0022299999999999998,
+          "total_ms": 0.707011,
+          "bytes": 0
+        }
+      },
+      "process_wall_seconds": 18.168297889002133,
+      "process_user_seconds": 72.663454,
+      "process_system_seconds": 1.9024670000000006,
+      "cache_after": {
+        "files": 1000,
+        "overview_files": 1000,
+        "bytes": 46821740,
+        "file_bytes": {
+          "samples": 1000,
+          "p50_bytes": 46829,
+          "p95_bytes": 46903,
+          "p99_bytes": 46932,
+          "total_bytes": 46821740,
+          "min_bytes": 46683,
+          "max_bytes": 46932
+        },
+        "content_sha256": "4cbfcfa8bb632d094417d6d90367ef8e8f9e466cedc39e422cef6bf568c77f0a",
+        "temporary_files": 0
+      },
+      "input_cache": {
+        "files": 0,
+        "overview_files": 0,
+        "bytes": 0,
+        "file_bytes": {
+          "samples": 0,
+          "p50_bytes": null,
+          "p95_bytes": null,
+          "p99_bytes": null,
+          "total_bytes": 0,
+          "min_bytes": null,
+          "max_bytes": null
+        },
+        "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "temporary_files": 0
+      },
+      "manifest_sha256": "8bd27d9631560213365df47b842e37720421703608b13e79ee54f8524ad44af6",
+      "binary_sha256": "a3013c97648cfd8fb9ba59d1afd765b4336fd3d621fb26edb375f926a89a3c72",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/overview_prepare",
+        "--manifest",
+        "/home/gurp/softs/tack/benchmark-data/mission0/manifest.json",
+        "--cache",
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/prepared-100-four-cache",
+        "--fraction",
+        "1",
+        "--workers",
+        "4",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/prepared-100-four.json"
+      ]
+    },
+    "progressive_2": {
+      "pending_after_drain": 0,
+      "preparation": {
+        "cache_bytes_read": 0,
+        "cache_hits": 0,
+        "cancelled": 0,
+        "cpu_payload_peak_bytes": 786432,
+        "derived_bytes_written": 747712,
+        "derived_write_attempt_bytes": 747712,
+        "elapsed_ms": 3255.720057,
+        "errors": 0,
+        "images_per_second": 4.9144274445829605,
+        "note": "Validated historical progress; no frame-path filesystem inventory. 100% ready differs from all settled. Persistence and cancellation may overlap. Derived bytes written means successfully committed PNG volume; attempt bytes are scheduled write sizes, not measured physical I/O. Active time covers observed 128 jobs only; no allocator scratch measurement.",
+        "pending_peak": 16,
+        "ready": 16,
+        "settled": true,
+        "source_bytes_read": 86491576,
+        "source_read_attempts": 16,
+        "threshold_ms": {
+          "10": 444.583851,
+          "100": 3255.621907,
+          "25": 731.6715660000001,
+          "50": 1279.7850079999998,
+          "75": 1957.53791,
+          "90": 2878.29441,
+          "first": 265.933475
+        },
+        "total": 16,
+        "worker_active_ms": 5210.077243999999,
+        "worker_utilization_fraction": 0.8001420811347109
+      },
+      "ready_at_trigger": 16,
+      "requested_fraction": 1.0,
+      "rss_high_water_kib": 255716,
+      "schema": 1,
+      "stop_reason": "target",
+      "trigger_ms": 3255.622007,
+      "worker_profile_dropped": 0,
+      "worker_retention_peak_bytes": 786432,
+      "worker_stage_names": [
+        "source_read",
+        "header",
+        "decode",
+        "resize",
+        "encode",
+        "cache_write",
+        "cache_read",
+        "cache_maintenance",
+        "queue_wait",
+        "cpu_insert",
+        "retire"
+      ],
+      "workers": 2,
+      "concurrent_decode_peak": 2,
+      "worker_memory_observed_peaks": {
+        "encoded_peak_bytes": 6606024,
+        "decoded_peak_bytes": 1266750,
+        "resize_peak_bytes": 49152
+      },
+      "worker_stages": {
+        "source_read": {
+          "samples": 16,
+          "p50_ms": 1.137484,
+          "p95_ms": 9.011593999999999,
+          "p99_ms": 9.011593999999999,
+          "total_ms": 33.160016999999996,
+          "bytes": 86491576
+        },
+        "header": {
+          "samples": 16,
+          "p50_ms": 0.013600000000000001,
+          "p95_ms": 0.034341,
+          "p99_ms": 0.034341,
+          "total_ms": 0.23289300000000002,
+          "bytes": 0
+        },
+        "decode": {
+          "samples": 16,
+          "p50_ms": 374.022493,
+          "p95_ms": 430.822359,
+          "p99_ms": 430.822359,
+          "total_ms": 5140.222017,
+          "bytes": 20268000
+        },
+        "resize": {
+          "samples": 16,
+          "p50_ms": 1.838297,
+          "p95_ms": 2.0598180000000004,
+          "p99_ms": 2.0598180000000004,
+          "total_ms": 29.333582,
+          "bytes": 21054432
+        },
+        "encode": {
+          "samples": 16,
+          "p50_ms": 0.13715,
+          "p95_ms": 0.195351,
+          "p99_ms": 0.195351,
+          "total_ms": 2.326058,
+          "bytes": 747712
+        },
+        "cache_write": {
+          "samples": 16,
+          "p50_ms": 0.109081,
+          "p95_ms": 0.153731,
+          "p99_ms": 0.153731,
+          "total_ms": 1.744885,
+          "bytes": 747712
+        },
+        "cache_read": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "bytes": 0
+        },
+        "cache_maintenance": {
+          "samples": 16,
+          "p50_ms": 0.05614,
+          "p95_ms": 0.08419,
+          "p99_ms": 0.08419,
+          "total_ms": 0.922984,
+          "bytes": 0
+        },
+        "queue_wait": {
+          "samples": 16,
+          "p50_ms": 1199.337944,
+          "p95_ms": 2876.870105,
+          "p99_ms": 2876.870105,
+          "total_ms": 18559.656602,
+          "bytes": 0
+        },
+        "cpu_insert": {
+          "samples": 16,
+          "p50_ms": 0.00126,
+          "p95_ms": 0.00706,
+          "p99_ms": 0.00706,
+          "total_ms": 0.02819,
+          "bytes": 786432
+        },
+        "retire": {
+          "samples": 16,
+          "p50_ms": 0.00014000000000000001,
+          "p95_ms": 0.00046,
+          "p99_ms": 0.00046,
+          "total_ms": 0.00247,
+          "bytes": 0
+        }
+      },
+      "process_wall_seconds": 3.261015096999472,
+      "process_user_seconds": 4.021029999999996,
+      "process_system_seconds": 1.2170099999999993,
+      "cache_after": {
+        "files": 16,
+        "overview_files": 16,
+        "bytes": 747712,
+        "file_bytes": {
+          "samples": 16,
+          "p50_bytes": 46732,
+          "p95_bytes": 46732,
+          "p99_bytes": 46732,
+          "total_bytes": 747712,
+          "min_bytes": 46732,
+          "max_bytes": 46732
+        },
+        "content_sha256": "7fcfe4ea3aa3f93f91f4323b43fbdaef74f9d5dc9020c9a86c25b2053abd8a1b",
+        "temporary_files": 0
+      },
+      "input_cache": {
+        "files": 0,
+        "overview_files": 0,
+        "bytes": 0,
+        "file_bytes": {
+          "samples": 0,
+          "p50_bytes": null,
+          "p95_bytes": null,
+          "p99_bytes": null,
+          "total_bytes": 0,
+          "min_bytes": null,
+          "max_bytes": null
+        },
+        "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "temporary_files": 0
+      },
+      "manifest_sha256": "dd4a2a3ce07e52f6de45ed063ec10ac30c17fa749b383b6f4005d14d0bdac72f",
+      "binary_sha256": "a3013c97648cfd8fb9ba59d1afd765b4336fd3d621fb26edb375f926a89a3c72",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/overview_prepare",
+        "--manifest",
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/progressive-input/manifest.json",
+        "--cache",
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/progressive-2-cache",
+        "--fraction",
+        "1",
+        "--workers",
+        "2",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/progressive-2.json"
+      ]
+    },
+    "progressive_4": {
+      "pending_after_drain": 0,
+      "preparation": {
+        "cache_bytes_read": 0,
+        "cache_hits": 0,
+        "cancelled": 0,
+        "cpu_payload_peak_bytes": 786432,
+        "derived_bytes_written": 747712,
+        "derived_write_attempt_bytes": 747712,
+        "elapsed_ms": 1750.831849,
+        "errors": 0,
+        "images_per_second": 9.138513221094598,
+        "note": "Validated historical progress; no frame-path filesystem inventory. 100% ready differs from all settled. Persistence and cancellation may overlap. Derived bytes written means successfully committed PNG volume; attempt bytes are scheduled write sizes, not measured physical I/O. Active time covers observed 128 jobs only; no allocator scratch measurement.",
+        "pending_peak": 16,
+        "ready": 16,
+        "settled": true,
+        "source_bytes_read": 86491576,
+        "source_read_attempts": 16,
+        "threshold_ms": {
+          "10": 295.952909,
+          "100": 1750.726888,
+          "25": 477.13496399999997,
+          "50": 828.611392,
+          "75": 1076.407469,
+          "90": 1728.350014,
+          "first": 270.088801
+        },
+        "total": 16,
+        "worker_active_ms": 5606.501325000001,
+        "worker_utilization_fraction": 0.8005482262905764
+      },
+      "ready_at_trigger": 16,
+      "requested_fraction": 1.0,
+      "rss_high_water_kib": 506028,
+      "schema": 1,
+      "stop_reason": "target",
+      "trigger_ms": 1750.727008,
+      "worker_profile_dropped": 0,
+      "worker_retention_peak_bytes": 786432,
+      "worker_stage_names": [
+        "source_read",
+        "header",
+        "decode",
+        "resize",
+        "encode",
+        "cache_write",
+        "cache_read",
+        "cache_maintenance",
+        "queue_wait",
+        "cpu_insert",
+        "retire"
+      ],
+      "workers": 4,
+      "concurrent_decode_peak": 4,
+      "worker_memory_observed_peaks": {
+        "encoded_peak_bytes": 6606024,
+        "decoded_peak_bytes": 1266750,
+        "resize_peak_bytes": 49152
+      },
+      "worker_stages": {
+        "source_read": {
+          "samples": 16,
+          "p50_ms": 2.6273389999999996,
+          "p95_ms": 6.662526000000001,
+          "p99_ms": 6.662526000000001,
+          "total_ms": 49.313162,
+          "bytes": 86491576
+        },
+        "header": {
+          "samples": 16,
+          "p50_ms": 0.01434,
+          "p95_ms": 0.029560000000000003,
+          "p99_ms": 0.029560000000000003,
+          "total_ms": 0.242821,
+          "bytes": 0
+        },
+        "decode": {
+          "samples": 16,
+          "p50_ms": 389.587483,
+          "p95_ms": 465.45216,
+          "p99_ms": 465.45216,
+          "total_ms": 5487.008032,
+          "bytes": 20268000
+        },
+        "resize": {
+          "samples": 16,
+          "p50_ms": 1.783057,
+          "p95_ms": 2.202178,
+          "p99_ms": 2.202178,
+          "total_ms": 29.09674,
+          "bytes": 21054432
+        },
+        "encode": {
+          "samples": 16,
+          "p50_ms": 0.15069000000000002,
+          "p95_ms": 0.989604,
+          "p99_ms": 0.989604,
+          "total_ms": 3.409332,
+          "bytes": 747712
+        },
+        "cache_write": {
+          "samples": 16,
+          "p50_ms": 0.115281,
+          "p95_ms": 0.188071,
+          "p99_ms": 0.188071,
+          "total_ms": 1.907826,
+          "bytes": 747712
+        },
+        "cache_read": {
+          "samples": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "total_ms": 0,
+          "bytes": 0
+        },
+        "cache_maintenance": {
+          "samples": 16,
+          "p50_ms": 0.06057,
+          "p95_ms": 0.10232,
+          "p99_ms": 0.10232,
+          "total_ms": 1.057683,
+          "bytes": 0
+        },
+        "queue_wait": {
+          "samples": 16,
+          "p50_ms": 530.527526,
+          "p95_ms": 1350.168804,
+          "p99_ms": 1350.168804,
+          "total_ms": 8725.536657999999,
+          "bytes": 0
+        },
+        "cpu_insert": {
+          "samples": 16,
+          "p50_ms": 0.00135,
+          "p95_ms": 0.00919,
+          "p99_ms": 0.00919,
+          "total_ms": 0.032401,
+          "bytes": 786432
+        },
+        "retire": {
+          "samples": 16,
+          "p50_ms": 4e-05,
+          "p95_ms": 0.00015,
+          "p99_ms": 0.00015,
+          "total_ms": 0.00081,
+          "bytes": 0
+        }
+      },
+      "process_wall_seconds": 1.7551998050039401,
+      "process_user_seconds": 4.233390999999983,
+      "process_system_seconds": 1.3189909999999996,
+      "cache_after": {
+        "files": 16,
+        "overview_files": 16,
+        "bytes": 747712,
+        "file_bytes": {
+          "samples": 16,
+          "p50_bytes": 46732,
+          "p95_bytes": 46732,
+          "p99_bytes": 46732,
+          "total_bytes": 747712,
+          "min_bytes": 46732,
+          "max_bytes": 46732
+        },
+        "content_sha256": "7fcfe4ea3aa3f93f91f4323b43fbdaef74f9d5dc9020c9a86c25b2053abd8a1b",
+        "temporary_files": 0
+      },
+      "input_cache": {
+        "files": 0,
+        "overview_files": 0,
+        "bytes": 0,
+        "file_bytes": {
+          "samples": 0,
+          "p50_bytes": null,
+          "p95_bytes": null,
+          "p99_bytes": null,
+          "total_bytes": 0,
+          "min_bytes": null,
+          "max_bytes": null
+        },
+        "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "temporary_files": 0
+      },
+      "manifest_sha256": "dd4a2a3ce07e52f6de45ed063ec10ac30c17fa749b383b6f4005d14d0bdac72f",
+      "binary_sha256": "a3013c97648cfd8fb9ba59d1afd765b4336fd3d621fb26edb375f926a89a3c72",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/overview_prepare",
+        "--manifest",
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/progressive-input/manifest.json",
+        "--cache",
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/progressive-4-cache",
+        "--fraction",
+        "1",
+        "--workers",
+        "4",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/progressive-4.json"
+      ]
+    },
+    "restart": {
+      "pending_after_drain": 0,
+      "preparation": {
+        "cache_bytes_read": 11705308,
+        "cache_hits": 250,
+        "cancelled": 0,
+        "cpu_payload_peak_bytes": 33521664,
+        "derived_bytes_written": 35116432,
+        "derived_write_attempt_bytes": 35116432,
+        "elapsed_ms": 26588.99352,
+        "errors": 0,
+        "images_per_second": 37.60954694459605,
+        "note": "Validated historical progress; no frame-path filesystem inventory. 100% ready differs from all settled. Persistence and cancellation may overlap. Derived bytes written means successfully committed PNG volume; attempt bytes are scheduled write sizes, not measured physical I/O. Active time covers observed 128 jobs only; no allocator scratch measurement.",
+        "pending_peak": 16,
+        "ready": 1000,
+        "settled": true,
+        "source_bytes_read": 5333111722,
+        "source_read_attempts": 750,
+        "threshold_ms": {
+          "10": 34.34229,
+          "100": 26588.89188,
+          "25": 50.067909,
+          "50": 8855.814005999999,
+          "75": 17735.383842,
+          "90": 23009.307998,
+          "first": 16.506182000000003
+        },
+        "total": 1000,
+        "worker_active_ms": 53099.13630800003,
+        "worker_utilization_fraction": 0.9985172298466157
+      },
+      "ready_at_trigger": 1000,
+      "requested_fraction": 1.0,
+      "rss_high_water_kib": 58040,
+      "schema": 1,
+      "stop_reason": "target",
+      "trigger_ms": 26588.89195,
+      "worker_profile_dropped": 0,
+      "worker_retention_peak_bytes": 34258944,
+      "worker_stage_names": [
+        "source_read",
+        "header",
+        "decode",
+        "resize",
+        "encode",
+        "cache_write",
+        "cache_read",
+        "cache_maintenance",
+        "queue_wait",
+        "cpu_insert",
+        "retire"
+      ],
+      "workers": 2,
+      "concurrent_decode_peak": 2,
+      "worker_memory_observed_peaks": {
+        "encoded_peak_bytes": 7123639,
+        "decoded_peak_bytes": 1266750,
+        "resize_peak_bytes": 49152
+      },
+      "worker_stages": {
+        "source_read": {
+          "samples": 750,
+          "p50_ms": 1.139115,
+          "p95_ms": 1.5491059999999999,
+          "p99_ms": 2.082408,
+          "total_ms": 906.127538,
+          "bytes": 5333111722
+        },
+        "header": {
+          "samples": 1000,
+          "p50_ms": 0.01009,
+          "p95_ms": 0.0168,
+          "p99_ms": 0.02489,
+          "total_ms": 9.463751,
+          "bytes": 0
+        },
+        "decode": {
+          "samples": 1000,
+          "p50_ms": 66.07283,
+          "p95_ms": 70.05987499999999,
+          "p99_ms": 73.175776,
+          "total_ms": 50313.657564,
+          "bytes": 950062500
+        },
+        "resize": {
+          "samples": 750,
+          "p50_ms": 1.714116,
+          "p95_ms": 2.009407,
+          "p99_ms": 2.474359,
+          "total_ms": 1330.355695,
+          "bytes": 986926500
+        },
+        "encode": {
+          "samples": 750,
+          "p50_ms": 0.130191,
+          "p95_ms": 0.15203999999999998,
+          "p99_ms": 0.199681,
+          "total_ms": 100.734785,
+          "bytes": 35116432
+        },
+        "cache_write": {
+          "samples": 750,
+          "p50_ms": 0.08893100000000001,
+          "p95_ms": 0.1104,
+          "p99_ms": 0.13866,
+          "total_ms": 69.732045,
+          "bytes": 35116432
+        },
+        "cache_read": {
+          "samples": 250,
+          "p50_ms": 0.021980999999999997,
+          "p95_ms": 0.04927,
+          "p99_ms": 0.056471,
+          "total_ms": 6.577783,
+          "bytes": 11705308
+        },
+        "cache_maintenance": {
+          "samples": 1000,
+          "p50_ms": 0.35397100000000004,
+          "p95_ms": 0.643822,
+          "p99_ms": 0.7534430000000001,
+          "total_ms": 325.409693,
+          "bytes": 0
+        },
+        "queue_wait": {
+          "samples": 1000,
+          "p50_ms": 488.189846,
+          "p95_ms": 510.153438,
+          "p99_ms": 516.940104,
+          "total_ms": 367047.835103,
+          "bytes": 0
+        },
+        "cpu_insert": {
+          "samples": 1000,
+          "p50_ms": 0.00107,
+          "p95_ms": 0.00899,
+          "p99_ms": 0.01223,
+          "total_ms": 2.88144,
+          "bytes": 49152000
+        },
+        "retire": {
+          "samples": 1000,
+          "p50_ms": 0.0007800000000000001,
+          "p95_ms": 0.00194,
+          "p99_ms": 0.00306,
+          "total_ms": 0.867572,
+          "bytes": 0
+        }
+      },
+      "process_wall_seconds": 26.614705996995326,
+      "process_user_seconds": 54.63510000000002,
+      "process_system_seconds": 1.4109680000000004,
+      "cache_after": {
+        "files": 1000,
+        "overview_files": 1000,
+        "bytes": 46821740,
+        "file_bytes": {
+          "samples": 1000,
+          "p50_bytes": 46829,
+          "p95_bytes": 46903,
+          "p99_bytes": 46932,
+          "total_bytes": 46821740,
+          "min_bytes": 46683,
+          "max_bytes": 46932
+        },
+        "content_sha256": "4cbfcfa8bb632d094417d6d90367ef8e8f9e466cedc39e422cef6bf568c77f0a",
+        "temporary_files": 0
+      },
+      "input_cache": {
+        "files": 250,
+        "overview_files": 250,
+        "bytes": 11705308,
+        "file_bytes": {
+          "samples": 250,
+          "p50_bytes": 46829,
+          "p95_bytes": 46903,
+          "p99_bytes": 46932,
+          "total_bytes": 11705308,
+          "min_bytes": 46683,
+          "max_bytes": 46932
+        },
+        "content_sha256": "7d3a22b021ff6711b8f8ec3d3abc00c4252234a087e3eefa24120e06951e2188",
+        "temporary_files": 0
+      },
+      "manifest_sha256": "8bd27d9631560213365df47b842e37720421703608b13e79ee54f8524ad44af6",
+      "binary_sha256": "a3013c97648cfd8fb9ba59d1afd765b4336fd3d621fb26edb375f926a89a3c72",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/overview_prepare",
+        "--manifest",
+        "/home/gurp/softs/tack/benchmark-data/mission0/manifest.json",
+        "--cache",
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/restart-cache",
+        "--fraction",
+        "1",
+        "--workers",
+        "2",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/restart.json"
+      ]
+    },
+    "repair": {
+      "pending_after_drain": 0,
+      "preparation": {
+        "cache_bytes_read": 46728115,
+        "cache_hits": 998,
+        "cancelled": 0,
+        "cpu_payload_peak_bytes": 33521664,
+        "derived_bytes_written": 93636,
+        "derived_write_attempt_bytes": 93636,
+        "elapsed_ms": 270.09887100000003,
+        "errors": 0,
+        "images_per_second": 3702.3479450234354,
+        "note": "Validated historical progress; no frame-path filesystem inventory. 100% ready differs from all settled. Persistence and cancellation may overlap. Derived bytes written means successfully committed PNG volume; attempt bytes are scheduled write sizes, not measured physical I/O. Active time covers observed 128 jobs only; no allocator scratch measurement.",
+        "pending_peak": 16,
+        "ready": 1000,
+        "settled": true,
+        "source_bytes_read": 14209974,
+        "source_read_attempts": 2,
+        "threshold_ms": {
+          "10": 40.723824,
+          "100": 269.980061,
+          "25": 68.039008,
+          "50": 109.822796,
+          "75": 222.94430300000002,
+          "90": 249.48619399999998,
+          "first": 21.273491
+        },
+        "total": 1000,
+        "worker_active_ms": 338.84342099999947,
+        "worker_utilization_fraction": 0.6272581217120293
+      },
+      "ready_at_trigger": 1000,
+      "requested_fraction": 1.0,
+      "rss_high_water_kib": 53968,
+      "schema": 1,
+      "stop_reason": "target",
+      "trigger_ms": 269.98013100000003,
+      "worker_profile_dropped": 0,
+      "worker_retention_peak_bytes": 49152000,
+      "worker_stage_names": [
+        "source_read",
+        "header",
+        "decode",
+        "resize",
+        "encode",
+        "cache_write",
+        "cache_read",
+        "cache_maintenance",
+        "queue_wait",
+        "cpu_insert",
+        "retire"
+      ],
+      "workers": 2,
+      "concurrent_decode_peak": 2,
+      "worker_memory_observed_peaks": {
+        "encoded_peak_bytes": 7110063,
+        "decoded_peak_bytes": 1266750,
+        "resize_peak_bytes": 49152
+      },
+      "worker_stages": {
+        "source_read": {
+          "samples": 2,
+          "p50_ms": 8.988843999999999,
+          "p95_ms": 8.988843999999999,
+          "p99_ms": 8.988843999999999,
+          "total_ms": 13.457690999999997,
+          "bytes": 14209974
+        },
+        "header": {
+          "samples": 1000,
+          "p50_ms": 0.0015400000000000001,
+          "p95_ms": 0.0027199999999999998,
+          "p99_ms": 0.00386,
+          "total_ms": 1.827825,
+          "bytes": 0
+        },
+        "decode": {
+          "samples": 1000,
+          "p50_ms": 0.14800999999999997,
+          "p95_ms": 0.199881,
+          "p99_ms": 0.268641,
+          "total_ms": 292.583341,
+          "bytes": 2533500
+        },
+        "resize": {
+          "samples": 2,
+          "p50_ms": 1.808767,
+          "p95_ms": 1.808767,
+          "p99_ms": 1.808767,
+          "total_ms": 3.5188639999999998,
+          "bytes": 2631804
+        },
+        "encode": {
+          "samples": 2,
+          "p50_ms": 0.140511,
+          "p95_ms": 0.140511,
+          "p99_ms": 0.140511,
+          "total_ms": 0.268622,
+          "bytes": 93636
+        },
+        "cache_write": {
+          "samples": 2,
+          "p50_ms": 0.10709099999999999,
+          "p95_ms": 0.10709099999999999,
+          "p99_ms": 0.10709099999999999,
+          "total_ms": 0.205571,
+          "bytes": 93636
+        },
+        "cache_read": {
+          "samples": 999,
+          "p50_ms": 0.01887,
+          "p95_ms": 0.0258,
+          "p99_ms": 0.033361,
+          "total_ms": 19.772006,
+          "bytes": 46728115
+        },
+        "cache_maintenance": {
+          "samples": 1000,
+          "p50_ms": 4.9999999999999996e-05,
+          "p95_ms": 8e-05,
+          "p99_ms": 0.00015,
+          "total_ms": 1.4094540000000002,
+          "bytes": 0
+        },
+        "queue_wait": {
+          "samples": 1000,
+          "p50_ms": 0.606182,
+          "p95_ms": 1.2242439999999999,
+          "p99_ms": 76.52623899999999,
+          "total_ms": 1719.547554,
+          "bytes": 0
+        },
+        "cpu_insert": {
+          "samples": 1000,
+          "p50_ms": 0.00016,
+          "p95_ms": 0.00298,
+          "p99_ms": 0.0046700000000000005,
+          "total_ms": 0.875453,
+          "bytes": 49152000
+        },
+        "retire": {
+          "samples": 1000,
+          "p50_ms": 0.00022,
+          "p95_ms": 0.00043,
+          "p99_ms": 0.00063,
+          "total_ms": 0.23023,
+          "bytes": 0
+        }
+      },
+      "process_wall_seconds": 0.29147576200193726,
+      "process_user_seconds": 0.31917699999996785,
+      "process_system_seconds": 0.08989500000000028,
+      "cache_after": {
+        "files": 1000,
+        "overview_files": 1000,
+        "bytes": 46821740,
+        "file_bytes": {
+          "samples": 1000,
+          "p50_bytes": 46829,
+          "p95_bytes": 46903,
+          "p99_bytes": 46932,
+          "total_bytes": 46821740,
+          "min_bytes": 46683,
+          "max_bytes": 46932
+        },
+        "content_sha256": "4cbfcfa8bb632d094417d6d90367ef8e8f9e466cedc39e422cef6bf568c77f0a",
+        "temporary_files": 0
+      },
+      "input_cache": {
+        "files": 999,
+        "overview_files": 999,
+        "bytes": 46728115,
+        "file_bytes": {
+          "samples": 999,
+          "p50_bytes": 46829,
+          "p95_bytes": 46903,
+          "p99_bytes": 46932,
+          "total_bytes": 46728115,
+          "min_bytes": 11,
+          "max_bytes": 46932
+        },
+        "content_sha256": "956838f72ff00307e4c5b7691f8a3174eba34ca2e8a4c0596966398858ce5a3d",
+        "temporary_files": 0
+      },
+      "manifest_sha256": "8bd27d9631560213365df47b842e37720421703608b13e79ee54f8524ad44af6",
+      "binary_sha256": "a3013c97648cfd8fb9ba59d1afd765b4336fd3d621fb26edb375f926a89a3c72",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/overview_prepare",
+        "--manifest",
+        "/home/gurp/softs/tack/benchmark-data/mission0/manifest.json",
+        "--cache",
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/repair-cache",
+        "--fraction",
+        "1",
+        "--workers",
+        "2",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/mission0_7-final-preparation/repair.json"
+      ]
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "mission": "0.7",
+  "verdict": "A — PASS for Phase 1 planning only",
+  "stop_gate": "Stop after Mission 0.7; await human review before Phase 1 implementation.",
+  "independent_verifier": "mission0_verifier",
+  "material_defects_remaining": 0,
+  "independently_audited": {
+    "raw_traces": 58,
+    "frames": 41161,
+    "preparation_reports": 10,
+    "recovery_reports": 3,
+    "outgoing_navigation_caches": 38,
+    "full_prepared_pngs": 1000,
+    "checks": [
+      "Source ZIP, binary, harness and manifest provenance hashes",
+      "Coverage, resolved and censored episodes, percentiles, concurrency and recorded bounds",
+      "Progress, ready/error counts, source/cache bytes, cache hits, publication and drain",
+      "Prepared caches, navigation inputs and outgoing cache inventories",
+      "Full prepared PNG CRC and dimensions",
+      "Published pre-SIGKILL subset reconstructed from restart hits with identical digest",
+      "Report tables, cumulative preparation costs and scale extrapolations"
+    ]
+  },
+  "independently_executed": {
+    "asset_rust_tests_passed": 18,
+    "python_tests_passed": 6,
+    "rustfmt": "PASS",
+    "separate_log_file": null,
+    "output_location": "Verifier tool outputs in this session"
+  },
+  "main_quality_gate": {
+    "log": "/tmp/tack-mission0_7-checks.log",
+    "log_sha256": "4668f6515755e7bdb85185d1be42f198a53b3db0ced85e5627b8ada4d871b085",
+    "rust_tests_passed": 24,
+    "explicit_gpu_readback_tests_passed": 1,
+    "python_tests_passed": 6,
+    "fmt_check_clippy_docs": "PASS",
+    "cargo_deny_advisories_bans_licenses_sources": "PASS"
+  },
+  "retained_limits": [
+    "Global background preparation can stop progressing under sustained foreground refinement.",
+    "Warm high-LOD reads can delay cheap visible supply; warm fast pan is not universally better.",
+    "Native progressive JPEG memory peaks, synthetic corpus and OS cache constrain generalization.",
+    "Current cache budgets and manifest limits do not establish feasibility at 50000 assets."
+  ]
+}

@@ -1,8 +1,9 @@
 # Tack
 
 Native, local-first reference board. This repository currently contains
-**Mission 0.6: native thumbnail decode gate**, before product development.
-See [the current report](docs/MISSION_0_6_REPORT.md),
+**Mission 0.7: first-open overview preparation gate**, before product development.
+See [the current report](docs/MISSION_0_7_REPORT.md),
+[Mission 0.6](docs/MISSION_0_6_REPORT.md),
 [Mission 0.5](docs/MISSION_0_5_REPORT.md),
 [the first prototype report](docs/MISSION_0_REPORT.md),
 [architecture](docs/architecture.md) and
@@ -85,6 +86,24 @@ and `--prefetch none|symmetric|directional` through `tools/run_benchmarks.py`.
 The harness retains the executed binary and a source ZIP alongside raw JSON;
 compact measurements live in [benchmarks](benchmarks/).
 
+Run the Mission 0.7 charged preparation/partial-start suite:
+
+```bash
+cargo build --release --locked -p tack-app
+cargo build --release --locked -p tack-assets --example overview_prepare
+python3 tools/run_preparation.py prepare --output benchmark-results/my-preparation
+python3 tools/run_preparation.py navigate --inputs benchmark-results/my-preparation --output benchmark-results/my-navigation
+```
+
+The first command suite measures independent 0/25/50/75/100% cache inputs,
+two versus four workers, progressive JPEG memory, interrupted restart and cache
+repair. Navigation clones each input separately for every 12-second trace;
+partial starts continue bounded preparation. Fully prepared and subsequent warm
+reopen have fresh RAM/VRAM. Preparation time is reported separately and must be
+charged to startup; kernel page cache is not flushed. `--prepare-overview` on
+`tack-app` is available only with a scripted `--scenario`; ordinary interactive
+launch is unchanged. See [experiment details](docs/research/overview_preparation_experiment.md).
+
 The code license/contribution model is pending; dependency license checks are
-separate. Mission 0.6's report records the selected path, measurements and next
-experiment. Human review of that report is the stop gate; Phase 1 has not begun.
+separate. Human review of Mission 0.7's report is the stop gate. Phase 1 has not
+begun; no production import, persistence or final UI is implemented.

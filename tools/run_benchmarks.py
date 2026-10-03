@@ -44,6 +44,7 @@ def main():
     parser.add_argument("--scenarios", nargs="+", default=["cold", "warm", "pan", "zoom", "pressure"])
     parser.add_argument("--workers", type=int, default=2)
     parser.add_argument("--prefetch", choices=["none", "symmetric", "directional"], default="none")
+    parser.add_argument("--prepare-overview", action="store_true", help="Benchmark-only ongoing 128-pixel preparation")
     parser.add_argument("--shared-cache", type=Path, help="Explicit retained SSD cache, with a fresh process for every scenario")
     parser.add_argument("--source-snapshot", type=Path, help="Reuse the code snapshot paired with --binary for a multi-process suite")
     args = parser.parse_args()
@@ -97,6 +98,8 @@ def main():
                    "--cache", str(cache.resolve()), "--scenario", scenario, "--seconds", str(args.seconds),
                    "--output", str((root / (scenario + ".json")).resolve())]
         command += ["--workers", str(args.workers), "--prefetch", args.prefetch]
+        if args.prepare_overview:
+            command += ["--prepare-overview"]
         if args.headless:
             command.append("--headless")
         result = subprocess.run(command, capture_output=True, text=True)
@@ -120,8 +123,8 @@ def main():
         report["content_coverage_fraction"] = (sum(f["visible"] - f["placeholders"] for f in frames) / visible) if visible else None
         report["lod_coverage_fractions"] = [sum(f["lods"][i] for f in frames)/visible if visible else None for i in range(3)]
         report["requested_coverage_fraction"] = sum(f["requested_covered"] for f in frames)/visible if visible and "requested_covered" in frames[0] else None
-        report["worker_utilization_fraction"] = report["worker_active"]["total_ms"]/(args.seconds*1000*args.workers)
-        report["worker_utilization_note"] = "Completed observed worker time / run worker capacity; excludes jobs still active at exit, therefore a lower bound."
+        report["worker_utilization_fraction"] = report["worker_active"]["total_ms"]/((args.seconds*1000+report.get("asset_drain_ms",0))*args.workers)
+        report["worker_utilization_note"] = "Observed worker active wall time / (navigation + explicit asset drain) worker capacity; excludes startup and any unreported jobs, not CPU utilization. Legacy reports without asset drain can omit still-active jobs."
         report["cpu_thumbnail_peak_bytes"] = max((f.get("cpu_thumbnail_bytes",0) for f in frames),default=0)
         report["gpu_thumbnail_peak_bytes"] = max((f.get("gpu_thumbnail_bytes",0) for f in frames),default=0)
         report["gpu_completion_fps"] = report["completed_submissions_at_report"] / args.seconds

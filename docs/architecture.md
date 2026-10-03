@@ -1,4 +1,4 @@
-# Mission 0.6 architecture
+# Mission 0.7 architecture
 
 Four crates retain the renderer/document separation established in
 [Mission 0](MISSION_0_REPORT.md): core geometry/LOD/byte-cache policy, assets
@@ -16,6 +16,10 @@ code never calls filesystem or codec operations.
 Visible demands are ordered tiny → medium → detail, followed by optional tiny
 prefetch. Already cached/pending keys are deduplicated. Two workers are default;
 only 1, 2 and 4 are accepted. ID modulo worker count gives stable ownership.
+Benchmark-only overview preparation shares this pool, admits visible demand
+first, and allows at most one background thumbnail per worker within the same
+total. Remaining board preparation follows stable ID order; the measured
+near-viewport sorting variant was rejected and removed.
 Each worker's active accounting includes execution, queued jobs and unpublished
 results: at most eight **total** tiny requests, or one medium/detail request.
 Large requests only enter an empty worker and prevent further publication until
@@ -106,6 +110,12 @@ No frame path performs source/cache I/O or waits for workers. Startup and final
 report writing are explicit I/O boundaries; shutdown GPU draining is bounded
 to five seconds. Worker shutdown signals cancellation and detaches rather than
 waiting for an uninterruptible codec on the event thread.
+Scripted report export first cancels/drains asset work outside the event loop
+(30-second deadline), so subsequent warm-cache cloning does not race an active
+write. The 12-second navigation metrics exclude this separately reported cost.
+Preparation progress consumes validated hit/committed write profiles and
+survives RAM eviction. It is historical, not a live persistent-cache inventory;
+see [the preparation experiment](research/overview_preparation_experiment.md).
 
 Interactive redraw coalesces input and sleeps when demand/loading finishes;
 zero-size/occluded windows skip acquisition until restoration. Scripted traces
@@ -121,5 +131,7 @@ with unresolved episodes explicitly censored. Source/binary snapshots and SHA256
 are retained in ignored raw results; compact summaries are tracked under
 benchmarks/. Synthetic hardlinked JPEGs, OS page-cache reuse, single trials and
 lack of artist-rated usefulness limit product conclusions. See
-[the measured report](MISSION_0_6_REPORT.md), including the increased CPU p99
+[the decoder report](MISSION_0_6_REPORT.md), including the increased CPU p99
 under faster cold supply and the remaining native presentation outliers.
+The current [preparation gate](MISSION_0_7_REPORT.md) charges first-open work
+before interpreting prepared-navigation coverage.

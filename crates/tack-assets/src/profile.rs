@@ -43,13 +43,29 @@ pub struct JobProfile {
     pub encoded_peak_bytes: usize,
     pub decoded_peak_bytes: usize,
     pub resize_peak_bytes: usize,
+    /// Validated old PNG or newly renamed PNG, even if the CPU result is stale.
+    pub cache_entry_ready: bool,
+    pub failed: bool,
+    /// Common clock across workers: milliseconds since Loader construction.
+    pub decode_started_ms: Option<f64>,
+    pub decode_finished_ms: Option<f64>,
+    #[serde(skip)]
+    pub(crate) epoch: Option<Instant>,
 }
 
 impl JobProfile {
     pub(crate) fn measure<T>(&mut self, stage: Stage, operation: impl FnOnce() -> T) -> T {
         let start = Instant::now();
         let result = operation();
-        self.stage_ms[stage as usize] += start.elapsed().as_secs_f64() * 1000.0;
+        let elapsed = start.elapsed().as_secs_f64() * 1000.0;
+        self.stage_ms[stage as usize] += elapsed;
+        if matches!(stage, Stage::Decode)
+            && let Some(epoch) = self.epoch
+        {
+            let started_ms = start.duration_since(epoch).as_secs_f64() * 1000.0;
+            self.decode_started_ms = Some(started_ms);
+            self.decode_finished_ms = Some(started_ms + elapsed);
+        }
         result
     }
 

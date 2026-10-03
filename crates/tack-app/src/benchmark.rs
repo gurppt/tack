@@ -36,6 +36,7 @@ pub struct Frame {
     pub submitted: bool,
     pub completed_submissions: usize,
     pub in_flight: usize,
+    pub preparation_ready: Option<usize>,
 }
 
 pub struct Measurements {
@@ -177,6 +178,13 @@ impl Measurements {
            "rss_high_water_kib": rss_high_water(),
            "final": self.frames.last(), "frames": self.frames,
         });
+        report["prepare"] = serde_json::json!(session.options.prepare);
+        report["preparation"] = serde_json::json!(
+            session
+                .preparation
+                .as_ref()
+                .map(|p| p.report(&session.loader, session.options.workers))
+        );
         if let (Some(report), Some(streaming)) = (report.as_object_mut(), streaming.as_object()) {
             report.extend(
                 streaming
@@ -201,6 +209,22 @@ fn rss_high_water() -> Option<u64> {
 }
 
 pub fn save_report(session: &mut Session) -> Result<(), AssetError> {
+    let drain_started = Instant::now();
+    if session.options.scenario.is_some() {
+        session.loader.request(&[]);
+        let deadline = Instant::now() + Duration::from_secs(30);
+        while session.loader.stats().pending > 0 && Instant::now() < deadline {
+            session.loader.poll();
+            if let Some(preparation) = &mut session.preparation {
+                preparation.observe(&session.loader);
+            }
+            thread::sleep(Duration::from_millis(1));
+        }
+        if session.loader.stats().pending > 0 {
+            return Err("asset drain timed out".into());
+        }
+    }
+    let asset_drain_ms = drain_started.elapsed().as_secs_f64() * 1000.0;
     // Readback/completion draining occurs only after the event loop or scripted run.
     let deadline = Instant::now() + Duration::from_secs(5);
     while (session.gpu.stats().in_flight > 0 || session.gpu.has_pending_timings())
@@ -209,7 +233,9 @@ pub fn save_report(session: &mut Session) -> Result<(), AssetError> {
         session.gpu.begin_frame()?;
         thread::sleep(Duration::from_millis(1));
     }
-    let value = session.measurements.report(session);
+    let mut value = session.measurements.report(session);
+    value["asset_drain_ms"] = asset_drain_ms.into();
+    value["asset_pending_after_drain"] = session.loader.stats().pending.into();
     if let Some(path) = &session.options.output {
         if let Some(parent) = path.parent()
             && !parent.as_os_str().is_empty()

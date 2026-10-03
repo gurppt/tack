@@ -37,6 +37,7 @@ pub(crate) struct Job {
     pub request: DecodeRequest,
     pub cancelled: Arc<AtomicBool>,
     pub queued: Instant,
+    pub epoch: Instant,
 }
 
 pub(crate) struct Outcome {
@@ -50,14 +51,21 @@ pub(crate) struct Outcome {
 struct Worker {
     sender: Option<SyncSender<Job>>,
     receiver: Receiver<Outcome>,
-    active: Vec<(AssetKey, Arc<AtomicBool>)>,
+    active: Vec<ActiveJob>,
     retention_peak: Arc<AtomicUsize>,
     thread: Option<thread::JoinHandle<()>>,
+}
+
+struct ActiveJob {
+    key: AssetKey,
+    cancelled: Arc<AtomicBool>,
+    background: bool,
 }
 
 #[derive(Clone, Copy, Debug, Default)]
 pub struct LoaderStats {
     pub pending: usize,
+    pub pending_peak: usize,
     pub stale: u64,
     pub errors: u64,
     pub completed: u64,
@@ -82,6 +90,7 @@ pub struct Loader {
     stats: LoaderStats,
     profiles: Vec<JobProfile>,
     profile_dropped: usize,
+    started: Instant,
 }
 
 impl Loader {
@@ -91,6 +100,7 @@ impl Loader {
         disk_budget_bytes: usize,
         worker_count: usize,
     ) -> Result<Self, AssetError> {
+        let started = Instant::now();
         if ![1, 2, 4].contains(&worker_count) {
             return Err("worker count must be 1, 2 or 4".into());
         }
@@ -163,58 +173,84 @@ impl Loader {
             stats: LoaderStats::default(),
             profiles: Vec::new(),
             profile_dropped: 0,
+            started,
         })
     }
 
     /// Requests are ordered by screen priority. Missing GPU data drives this list.
     /// The caller bounds it to the immutable board's at-most-10,000 visible objects.
     pub fn request(&mut self, requests: &[DecodeRequest]) {
+        self.request_with_background(requests, &[]);
+    }
+
+    /// Benchmark preparation shares the same pool. Foreground admission comes
+    /// first; at most one background job per worker prevents a background FIFO
+    /// backlog. It counts against the unchanged eight-job total, never adds a pool.
+    pub fn request_with_background(
+        &mut self,
+        foreground: &[DecodeRequest],
+        background: &[DecodeRequest],
+    ) {
         self.desired.clear();
-        self.desired.extend(requests.iter().map(|r| r.key));
+        self.desired
+            .extend(foreground.iter().chain(background).map(|r| r.key));
         self.failed.retain(|key| self.desired.contains(key));
         for worker in &mut self.workers {
-            for (key, cancelled) in &worker.active {
-                if !self.desired.contains(key) {
-                    cancelled.store(true, Ordering::Relaxed);
+            for active in &worker.active {
+                if !self.desired.contains(&active.key) {
+                    active.cancelled.store(true, Ordering::Relaxed);
                 }
             }
         }
-        for request in requests {
-            if self.has_cached(request.key)
-                || self.failed.contains(&request.key)
-                || self
-                    .workers
-                    .iter()
-                    .any(|w| w.active.iter().any(|(key, _)| *key == request.key))
-            {
-                continue;
-            }
-            // Stable sharding also stabilizes persistent cache identity across sessions.
-            let index = request.key.id as usize % self.workers.len();
-            let worker = &mut self.workers[index];
-            let thumbnail = request.key.lod == Lod::Thumbnail;
-            if worker.active.len() >= MAX_PENDING_PER_WORKER
-                || (!thumbnail && !worker.active.is_empty())
-                || worker
-                    .active
-                    .iter()
-                    .any(|(key, _)| key.lod != Lod::Thumbnail)
-            {
-                continue;
-            }
-            let Some(sender) = &worker.sender else {
-                continue;
-            };
-            let cancelled = Arc::new(AtomicBool::new(false));
-            let job = Job {
-                request: request.clone(),
-                cancelled: Arc::clone(&cancelled),
-                queued: Instant::now(),
-            };
-            if sender.try_send(job).is_ok() {
-                worker.active.push((request.key, cancelled));
+        for (is_background, requests) in [(false, foreground), (true, background)] {
+            for request in requests {
+                if self.has_cached(request.key)
+                    || self.failed.contains(&request.key)
+                    || self
+                        .workers
+                        .iter()
+                        .any(|w| w.active.iter().any(|active| active.key == request.key))
+                {
+                    continue;
+                }
+                // Stable sharding also stabilizes persistent cache identity across sessions.
+                let index = request.key.id as usize % self.workers.len();
+                let worker = &mut self.workers[index];
+                let thumbnail = request.key.lod == Lod::Thumbnail;
+                if worker.active.len() >= MAX_PENDING_PER_WORKER
+                    || (is_background && !thumbnail)
+                    || (is_background && worker.active.iter().any(|active| active.background))
+                    || (!thumbnail && !worker.active.is_empty())
+                    || worker
+                        .active
+                        .iter()
+                        .any(|active| active.key.lod != Lod::Thumbnail)
+                {
+                    continue;
+                }
+                let Some(sender) = &worker.sender else {
+                    continue;
+                };
+                let cancelled = Arc::new(AtomicBool::new(false));
+                let job = Job {
+                    request: request.clone(),
+                    cancelled: Arc::clone(&cancelled),
+                    queued: Instant::now(),
+                    epoch: self.started,
+                };
+                if sender.try_send(job).is_ok() {
+                    worker.active.push(ActiveJob {
+                        key: request.key,
+                        cancelled,
+                        background: is_background,
+                    });
+                }
             }
         }
+        self.stats.pending_peak = self
+            .stats
+            .pending_peak
+            .max(self.workers.iter().map(|w| w.active.len()).sum());
     }
 
     /// Non-blocking; at most eight outcomes per worker per call.
@@ -224,7 +260,7 @@ impl Loader {
             for _ in 0..MAX_PENDING_PER_WORKER {
                 match worker.receiver.try_recv() {
                     Ok(mut outcome) => {
-                        worker.active.retain(|(key, _)| *key != outcome.key);
+                        worker.active.retain(|active| active.key != outcome.key);
                         self.stats.decode_ms += outcome.decode_ms;
                         if !self.desired.contains(&outcome.key) {
                             self.stats.stale += 1;
@@ -272,8 +308,8 @@ impl Loader {
                         }
                     }
                     Err(TryRecvError::Disconnected) => {
-                        for (key, _) in worker.active.drain(..) {
-                            self.failed.insert(key);
+                        for active in worker.active.drain(..) {
+                            self.failed.insert(active.key);
                             self.stats.errors += 1;
                         }
                         worker.sender = None;
@@ -330,8 +366,8 @@ impl Drop for Loader {
         // Joining would wait for an uninterruptible codec. Signal shutdown and let
         // threads finish naturally; process teardown is outside frame timing.
         for worker in &mut self.workers {
-            for (_, cancelled) in &worker.active {
-                cancelled.store(true, Ordering::Relaxed);
+            for active in &worker.active {
+                active.cancelled.store(true, Ordering::Relaxed);
             }
             worker.sender.take();
             worker.thread.take();
