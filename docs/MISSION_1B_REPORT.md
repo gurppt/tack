@@ -341,10 +341,16 @@ Deferred original CRC, camera and Windows boundaries stay explicit rather than
 being presented as solved. Final commands and evidence are recorded in the linked
 verification JSON; neither independent context implemented code.
 
-Windows CI is configured for full checks/tests and pinned native build. Phase 1B
-Windows execution is pending the first push; no Windows atomic-save/path/power-loss
-validation is claimed at this point. CI evidence will be updated if the run completes.
-Linux explicit GPU readback is included in the configured workflow.
+[Phase 1B CI](https://github.com/gurppt/tack/actions/runs/37099484818) completed
+successfully for code commit `00d6affd53e7e0e2a35db889191f9a3faab33f3b`:
+Linux and Windows both passed pinned native decoder build, formatting, full
+workspace check/Clippy/tests and docs; the dependency job passed. Linux also
+passed Python corpus tests and explicit GPU readback on software Vulkan. These
+Windows results exercise portable codec/path/range/snapshot and native decoder
+fixtures on the CI runner. Unix permission bits, real SIGKILL and the 20 GiB sparse
+fixture are scoped to Unix. No Windows interactive-window/GPU timing, arbitrary
+filesystem atomicity, ACL preservation or power-loss validation is claimed.
+This final documentation/evidence update changes no measured runtime source.
 
 ## Remaining risks and stop gate
 
