@@ -67,3 +67,8 @@ of the tested application path, **not** the root cause or resolution of the full
 workstation freeze. Local artifacts: `phase1c-incident/post-reboot-short.json`,
 `phase1c-native-checks/` and `phase1c-interaction-final/` under ignored
 `benchmark-results/`.
+
+A final kernel-log check after all native tests again found zero NVIDIA Xid, OOM
+or lockup/hung-task signals. The retained `/dev/sdc` read errors in this boot are
+timestamped 11:20:18–11:20:29, during boot, rather than the later test interval.
+Raw check: `benchmark-results/phase1c-incident/post-tests-kernel.log`.

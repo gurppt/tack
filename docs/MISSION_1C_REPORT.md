@@ -280,8 +280,13 @@ Python/tool checks are repeated after the native harness changes.
 Native benchmark/persistence/regression commands and successful reports are linked
 above. No ignored GPU test is counted as executed unless explicitly run.
 
-Configured Linux/Windows quality and dependency CI will be checked on the pushed
-code commit. Results are pending here; no remote check is yet claimed passed.
+GitHub [Quality run 37115477838](https://github.com/gurppt/tack/actions/runs/37115477838)
+completed successfully on code commit
+`9f1eb54416a54c9f04da4518c2022a68cc3f6c1f`: Linux Rust/quality/tests/docs/Python and
+software-Vulkan GPU checks, Windows Rust/quality/tests/docs, and dependency
+checks all pass. [CI receipt](../benchmarks/phase1c-ci.json) records the observed
+run/jobs. This does not establish Windows native mouse/DPI behavior. Subsequent
+receipt/README/incident updates are documentation-only and skip redundant CI.
 
 ## Independent verification
 

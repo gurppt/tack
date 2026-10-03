@@ -183,6 +183,7 @@ autosave; use Ctrl + S. Window-manager shortcuts can intercept Alt combinations.
 ```bash
 python3 tools/run_image_interaction.py --board /path/to/generated.tack --output benchmark-results/my-interactions
 python3 tools/run_native_image_checks.py --output benchmark-results/my-native-checks
+python3 tools/run_native_zoom_checks.py --binary target/release/tack-app --board benchmark-results/my-native-checks/board.tack --output benchmark-results/my-zoom-checks
 ```
 
 Interaction benchmarks modify RAM and undo each cycle; they never save the input
