@@ -111,4 +111,5 @@ See [Mission 1E](../MISSION_1E_REPORT.md) and tracked Phase 1E receipts for nati
 X11/DPI2 authoring, schema mutation tests, exact history/save/reopen, shape/text/
 stroke scale, eccentric/full-screen ellipses, prior image/spatial/product suites,
 idle observations and fixed binary costs. Windows native feel/tablets remain
-unmeasured; Linux and Windows compile/tests are checked in configured CI.
+unmeasured; Linux and Windows compile/tests passed the configured Quality CI at code commit
+`f2ccccc793b825b7c07f4cf968330cf9ace00711` (see the report/CI receipt).

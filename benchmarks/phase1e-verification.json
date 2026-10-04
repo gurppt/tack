@@ -48,7 +48,26 @@
     "1e_fully_stripped": 17460688,
     "delta_fully_stripped": 633352
   },
-  "independent_final_review": "pending; recorded after reviewer response",
+  "independent_final_review": {
+    "agent": "phase1e_verifier",
+    "role": "Read-only independent reviewer; no implementation/build/GPU/tests",
+    "disposition": "PASS; CI condition satisfied by successful recorded Quality run at exact code commit",
+    "shipping_files_compared": 122,
+    "six_defects_fixed": [
+      "Oversized inverse history atomic rollback",
+      "Annotation opacity preview",
+      "Transient priority at primitive saturation",
+      "Relative linked source uses lexical board parent",
+      "True ellipse edge distance",
+      "Global shape/joined polyline opacity"
+    ],
+    "evidence_correction": "Annotation query harness changed from image-only query to actual annotation bounds and rerun",
+    "open_material_findings": 0,
+    "documentation_corrections": [
+      "Glyph primitive counts include bitmap fallback",
+      "Six code defects and query evidence correction enumerated"
+    ]
+  },
   "limits": [
     "No exact allocation/wakeup instrumentation",
     "No Windows native/stylus feel",
@@ -56,5 +75,15 @@
     "Ellipse marquee 64-segment approximation",
     "Nonadjacent scribble self-intersections use ordinary overdraw",
     "Distant-jump supply/high-LOD fairness and presentation tails retained"
-  ]
+  ],
+  "ci": {
+    "code_commit": "f2ccccc793b825b7c07f4cf968330cf9ace00711",
+    "run_id": 37194870799,
+    "conclusion": "success",
+    "jobs": [
+      "Linux",
+      "Windows",
+      "dependencies"
+    ]
+  }
 }

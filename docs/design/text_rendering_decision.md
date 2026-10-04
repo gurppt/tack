@@ -56,9 +56,9 @@ Matched release binaries with `strip --strip-debug`: 1D 19,919,264 bytes; 1E
 16,827,336 to 17,460,688 bytes (+633,352). Copies were stripped for comparison;
 the measured frozen binary was not modified.
 
-On RTX 2060/Vulkan/X11, 100 notes use 1390 primary glyph primitives: warm layout
+On RTX 2060/Vulkan/X11, 100 notes use 1390 note glyph primitives (including bitmap fallback): warm layout
 p99 .151 ms, whole CPU frame .462 ms, GPU canvas .063 ms. 1000 notes use 14,890
-primitives: layout p99 .719 ms, whole CPU frame 1.617 ms, GPU .109 ms. First CPU
+note glyph primitives (including bitmap fallback): layout p99 .719 ms, whole CPU frame 1.617 ms, GPU .109 ms. First CPU
 frames were 18.293 and 14.256 ms, including pipeline/atlas decode/upload/setup;
 these are not separately isolated decoder timings. 5000 notes were tested for
 metadata/save/reopen/query/layout, with 1086 visible boxes and 16,298 glyphs after

@@ -1,0 +1,38 @@
+{
+  "sha": "f2ccccc793b825b7c07f4cf968330cf9ace00711",
+  "runs": [
+    {
+      "id": 37194870799,
+      "name": "Quality",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/gurppt/tack/actions/runs/37194870799",
+      "jobs": [
+        {
+          "name": "rust (ubuntu-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "current_step": null,
+          "steps": []
+        },
+        {
+          "name": "rust (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "current_step": null,
+          "steps": []
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "current_step": null,
+          "steps": []
+        }
+      ]
+    }
+  ],
+  "scope": "Configured Quality workflow at exact code commit: Linux/Windows Rust gates, Linux Python/GPU software Vulkan, dependency advisory/license/bans/source checks; no Windows native feel claim",
+  "workflow_sha256": "768c379ec6cc3bb1e0947cc967de090a8ff52d561e1d56491935298ee36a9af8",
+  "documentation_followup": "Documentation/receipt-only followup with [skip ci]; runtime code unchanged"
+}

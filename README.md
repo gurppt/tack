@@ -260,7 +260,7 @@ UI labels remain pixel-native. See [font decision](docs/design/text_rendering_de
 and [annotation integration](docs/design/annotation_objects.md). Advanced shaping,
 bidi and rich text are deferred. Display is capped at 32768 annotation primitives;
 selected/edited/transient objects receive priority, whole omitted objects trigger
-a visible warning, and durable data is retained. Stroke capture is capped at4096
+a visible warning, and durable data is retained. Stroke capture is capped at 4096
 points with a visible warning and deterministic simplification on completion.
 
 Reproduction: `tools/run_annotations.py`, `tools/run_native_annotation_checks.py`
