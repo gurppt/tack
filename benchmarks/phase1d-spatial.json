@@ -1,0 +1,906 @@
+{
+  "binary_sha256": "eb0bd8f5a3d0c0053593e355ca0953a07922d236b4696a2ae5f1d5626101c37c",
+  "source_snapshot_sha256": "fca5d8a6faa676840224d051d98d85e705ccf9a4dbcf02e6f689f18b41829127",
+  "harness_sha256": "6d9c1a118332de47174d864b31fd2c786292417bac2941ef809531357997faf0",
+  "percentile": "sorted floor(p*(n-1)); max retained",
+  "timing": "input includes begin/commit/undo, query is inside input; GPU canvas pass; callback includes input/acquire/present",
+  "allocations": "not instrumented; no candidate vector/index or source I/O in snapping",
+  "native": [
+    {
+      "name": "snap-1000",
+      "input": {
+        "samples": 656,
+        "p50_ms": 0.05678999999999999,
+        "p99_ms": 0.10691,
+        "max_ms": 0.435682
+      },
+      "query": {
+        "samples": 635,
+        "p50_ms": 0.054181,
+        "p99_ms": 0.09371,
+        "max_ms": 0.431462
+      },
+      "cpu": {
+        "samples": 676,
+        "p50_ms": 0.23200099999999999,
+        "p99_ms": 0.490482,
+        "max_ms": 1.105483
+      },
+      "gpu": {
+        "samples": 676,
+        "p50_ms": 0.022752,
+        "p99_ms": 0.04096,
+        "max_ms": 0.05408
+      },
+      "callback": {
+        "samples": 676,
+        "p50_ms": 0.391601,
+        "p99_ms": 3.4903299999999997,
+        "max_ms": 16.397044
+      },
+      "present": {
+        "samples": 676,
+        "p50_ms": 0.06194000000000001,
+        "p99_ms": 3.053139,
+        "max_ms": 15.989362999999999
+      },
+      "acquire": {
+        "samples": 676,
+        "p50_ms": 0.0146,
+        "p99_ms": 0.03085,
+        "max_ms": 0.04437
+      },
+      "rss_peak_bytes": 335015936,
+      "redraws": 676,
+      "waits": 1354,
+      "commits": 10,
+      "source_bytes": 0,
+      "report_sha256": "f60aa31e388730dc8112cda88ebf0d4aac14e546208d0215507285e171131f36",
+      "board_sha256": "554c19b7003a9076f2fbce5d4fbf5267330b5741e697df68d3c51d8255e39664",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/metadata/snap-1000.tack",
+        "--seconds",
+        "12",
+        "--interaction",
+        "snap",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/snap-1000.json"
+      ]
+    },
+    {
+      "name": "snap-5000",
+      "input": {
+        "samples": 623,
+        "p50_ms": 0.30023099999999997,
+        "p99_ms": 0.49771099999999996,
+        "max_ms": 0.8249029999999999
+      },
+      "query": {
+        "samples": 602,
+        "p50_ms": 0.295781,
+        "p99_ms": 0.43363100000000004,
+        "max_ms": 0.461991
+      },
+      "cpu": {
+        "samples": 642,
+        "p50_ms": 0.780902,
+        "p99_ms": 1.235323,
+        "max_ms": 1.541855
+      },
+      "gpu": {
+        "samples": 642,
+        "p50_ms": 0.025248,
+        "p99_ms": 0.046912,
+        "max_ms": 0.051232
+      },
+      "callback": {
+        "samples": 642,
+        "p50_ms": 1.183813,
+        "p99_ms": 11.622221,
+        "max_ms": 15.948212999999999
+      },
+      "present": {
+        "samples": 642,
+        "p50_ms": 0.06928999999999999,
+        "p99_ms": 9.978097,
+        "max_ms": 14.89994
+      },
+      "acquire": {
+        "samples": 642,
+        "p50_ms": 0.01772,
+        "p99_ms": 0.03248,
+        "max_ms": 0.05184
+      },
+      "rss_peak_bytes": 337747968,
+      "redraws": 642,
+      "waits": 1283,
+      "commits": 10,
+      "source_bytes": 0,
+      "report_sha256": "2cbf2b176ea222338fce2bcae9b2e005aab14fce93757bad3c4168663a284408",
+      "board_sha256": "04ac91c4bf8d5980adfa4628e10ec3765c94d75e7d2977f07d30b810a9b12447",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/metadata/snap-5000.tack",
+        "--seconds",
+        "12",
+        "--interaction",
+        "snap",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/snap-5000.json"
+      ]
+    },
+    {
+      "name": "snap-10000",
+      "input": {
+        "samples": 589,
+        "p50_ms": 0.605222,
+        "p99_ms": 1.080233,
+        "max_ms": 6.942659
+      },
+      "query": {
+        "samples": 570,
+        "p50_ms": 0.6005020000000001,
+        "p99_ms": 0.9464229999999999,
+        "max_ms": 6.927129
+      },
+      "cpu": {
+        "samples": 610,
+        "p50_ms": 1.431724,
+        "p99_ms": 2.249526,
+        "max_ms": 2.770667
+      },
+      "gpu": {
+        "samples": 610,
+        "p50_ms": 0.027136,
+        "p99_ms": 0.043008,
+        "max_ms": 0.04848
+      },
+      "callback": {
+        "samples": 610,
+        "p50_ms": 2.144446,
+        "p99_ms": 14.805029000000001,
+        "max_ms": 18.476579
+      },
+      "present": {
+        "samples": 610,
+        "p50_ms": 0.07179,
+        "p99_ms": 12.440853,
+        "max_ms": 16.330693
+      },
+      "acquire": {
+        "samples": 610,
+        "p50_ms": 0.01825,
+        "p99_ms": 0.03797,
+        "max_ms": 0.216841
+      },
+      "rss_peak_bytes": 340246528,
+      "redraws": 610,
+      "waits": 1217,
+      "commits": 9,
+      "source_bytes": 0,
+      "report_sha256": "b35ade7a83cfb8191a72174de8a93112f74fbecbb452e13dfccac99ea2f9f693",
+      "board_sha256": "a9b892a4bad6101ad2ea7c5805d85221643ab26b3938f519cb3ed16ee4f054d6",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/metadata/snap-10000.tack",
+        "--seconds",
+        "12",
+        "--interaction",
+        "snap",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/snap-10000.json"
+      ]
+    },
+    {
+      "name": "grid-hidden",
+      "input": {
+        "samples": 660,
+        "p50_ms": 0.00017999999999999998,
+        "p99_ms": 0.00043,
+        "max_ms": 0.00064
+      },
+      "query": {
+        "samples": 0,
+        "p50_ms": null,
+        "p99_ms": null,
+        "max_ms": 0
+      },
+      "cpu": {
+        "samples": 679,
+        "p50_ms": 0.232821,
+        "p99_ms": 0.386021,
+        "max_ms": 0.537232
+      },
+      "gpu": {
+        "samples": 679,
+        "p50_ms": 0.023392,
+        "p99_ms": 0.04096,
+        "max_ms": 0.054624
+      },
+      "callback": {
+        "samples": 679,
+        "p50_ms": 0.32499100000000003,
+        "p99_ms": 2.952528,
+        "max_ms": 15.399941
+      },
+      "present": {
+        "samples": 679,
+        "p50_ms": 0.06117999999999999,
+        "p99_ms": 2.651327,
+        "max_ms": 14.876689
+      },
+      "acquire": {
+        "samples": 679,
+        "p50_ms": 0.015400000000000002,
+        "p99_ms": 0.03494,
+        "max_ms": 0.04719
+      },
+      "rss_peak_bytes": 334000128,
+      "redraws": 679,
+      "waits": 1357,
+      "commits": 0,
+      "source_bytes": 0,
+      "report_sha256": "65fcc041c5f03d737860e085af9d1df917037e411551f500509786fc16a86f84",
+      "board_sha256": "554c19b7003a9076f2fbce5d4fbf5267330b5741e697df68d3c51d8255e39664",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/metadata/snap-1000.tack",
+        "--seconds",
+        "12",
+        "--interaction",
+        "grid-hidden",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/grid-hidden.json"
+      ]
+    },
+    {
+      "name": "grid-visible",
+      "input": {
+        "samples": 660,
+        "p50_ms": 0.00014000000000000001,
+        "p99_ms": 0.00039999999999999996,
+        "max_ms": 0.0006799999999999999
+      },
+      "query": {
+        "samples": 0,
+        "p50_ms": null,
+        "p99_ms": null,
+        "max_ms": 0
+      },
+      "cpu": {
+        "samples": 678,
+        "p50_ms": 0.228691,
+        "p99_ms": 0.367601,
+        "max_ms": 1.406644
+      },
+      "gpu": {
+        "samples": 678,
+        "p50_ms": 0.0488,
+        "p99_ms": 0.069632,
+        "max_ms": 0.087712
+      },
+      "callback": {
+        "samples": 678,
+        "p50_ms": 0.31617100000000004,
+        "p99_ms": 3.1399079999999997,
+        "max_ms": 14.897288999999999
+      },
+      "present": {
+        "samples": 678,
+        "p50_ms": 0.06061,
+        "p99_ms": 2.885318,
+        "max_ms": 14.157048
+      },
+      "acquire": {
+        "samples": 678,
+        "p50_ms": 0.01473,
+        "p99_ms": 0.03354,
+        "max_ms": 0.03628
+      },
+      "rss_peak_bytes": 335159296,
+      "redraws": 678,
+      "waits": 1355,
+      "commits": 0,
+      "source_bytes": 0,
+      "report_sha256": "2b2a2566d125ef1c1f25466960125ab418d343299fd0810bb48b54b5c793accc",
+      "board_sha256": "554c19b7003a9076f2fbce5d4fbf5267330b5741e697df68d3c51d8255e39664",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/metadata/snap-1000.tack",
+        "--seconds",
+        "12",
+        "--interaction",
+        "grid-visible",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/grid-visible.json"
+      ]
+    },
+    {
+      "name": "frames-10",
+      "input": {
+        "samples": 660,
+        "p50_ms": 0.00015,
+        "p99_ms": 0.00043,
+        "max_ms": 0.009389999999999999
+      },
+      "query": {
+        "samples": 0,
+        "p50_ms": null,
+        "p99_ms": null,
+        "max_ms": 0
+      },
+      "cpu": {
+        "samples": 678,
+        "p50_ms": 0.117841,
+        "p99_ms": 0.210481,
+        "max_ms": 0.5686410000000001
+      },
+      "gpu": {
+        "samples": 678,
+        "p50_ms": 0.01344,
+        "p99_ms": 0.024608,
+        "max_ms": 0.0272
+      },
+      "callback": {
+        "samples": 678,
+        "p50_ms": 0.20382,
+        "p99_ms": 3.226868,
+        "max_ms": 17.243835999999998
+      },
+      "present": {
+        "samples": 678,
+        "p50_ms": 0.059179999999999996,
+        "p99_ms": 3.027387,
+        "max_ms": 17.080186
+      },
+      "acquire": {
+        "samples": 678,
+        "p50_ms": 0.01415,
+        "p99_ms": 0.032641,
+        "max_ms": 0.04573
+      },
+      "rss_peak_bytes": 334417920,
+      "redraws": 678,
+      "waits": 1354,
+      "commits": 0,
+      "source_bytes": 0,
+      "report_sha256": "997ea5ede948fa6e514b667b199d862c49ef203cd3676cfe058563124f8c0cff",
+      "board_sha256": "a5d997288ac01b4890f56b0dd1b37339ac21cdb253f6eabf63f4723093b4b044",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/metadata/frames-10.tack",
+        "--seconds",
+        "12",
+        "--interaction",
+        "grid-hidden",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/frames-10.json"
+      ]
+    },
+    {
+      "name": "frames-100",
+      "input": {
+        "samples": 660,
+        "p50_ms": 0.00023,
+        "p99_ms": 0.00055,
+        "max_ms": 0.00076
+      },
+      "query": {
+        "samples": 0,
+        "p50_ms": null,
+        "p99_ms": null,
+        "max_ms": 0
+      },
+      "cpu": {
+        "samples": 677,
+        "p50_ms": 0.16973,
+        "p99_ms": 0.455351,
+        "max_ms": 0.608692
+      },
+      "gpu": {
+        "samples": 677,
+        "p50_ms": 0.014368,
+        "p99_ms": 0.026144,
+        "max_ms": 0.03376
+      },
+      "callback": {
+        "samples": 677,
+        "p50_ms": 0.267411,
+        "p99_ms": 3.141648,
+        "max_ms": 14.642429
+      },
+      "present": {
+        "samples": 677,
+        "p50_ms": 0.06302100000000001,
+        "p99_ms": 2.938518,
+        "max_ms": 14.452669
+      },
+      "acquire": {
+        "samples": 677,
+        "p50_ms": 0.016931,
+        "p99_ms": 0.03795,
+        "max_ms": 0.058440000000000006
+      },
+      "rss_peak_bytes": 334819328,
+      "redraws": 677,
+      "waits": 1354,
+      "commits": 0,
+      "source_bytes": 0,
+      "report_sha256": "542b209717e833f11ebc5d76842cc971b1a8fa1e65e453a840412d2f3da68b52",
+      "board_sha256": "1857d54e41455d29dca82eafd7a945a6950caa9e17f76abfe221114596a6609e",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/metadata/frames-100.tack",
+        "--seconds",
+        "12",
+        "--interaction",
+        "grid-hidden",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/frames-100.json"
+      ]
+    },
+    {
+      "name": "frames-1000",
+      "input": {
+        "samples": 659,
+        "p50_ms": 0.00014000000000000001,
+        "p99_ms": 0.0005,
+        "max_ms": 0.0007199999999999999
+      },
+      "query": {
+        "samples": 0,
+        "p50_ms": null,
+        "p99_ms": null,
+        "max_ms": 0
+      },
+      "cpu": {
+        "samples": 678,
+        "p50_ms": 0.278771,
+        "p99_ms": 0.445591,
+        "max_ms": 0.821393
+      },
+      "gpu": {
+        "samples": 678,
+        "p50_ms": 0.0136,
+        "p99_ms": 0.024704,
+        "max_ms": 0.03824
+      },
+      "callback": {
+        "samples": 678,
+        "p50_ms": 0.37117100000000003,
+        "p99_ms": 3.090398,
+        "max_ms": 16.646595
+      },
+      "present": {
+        "samples": 678,
+        "p50_ms": 0.06048,
+        "p99_ms": 2.742437,
+        "max_ms": 16.409754
+      },
+      "acquire": {
+        "samples": 678,
+        "p50_ms": 0.013871,
+        "p99_ms": 0.0337,
+        "max_ms": 0.03808
+      },
+      "rss_peak_bytes": 335343616,
+      "redraws": 678,
+      "waits": 1354,
+      "commits": 0,
+      "source_bytes": 0,
+      "report_sha256": "b6438fed653a0217f38e0dc2ff6f68d08d90e8bd8ad185c8aeaab8e52ff7168b",
+      "board_sha256": "519067334676cda0c74041f74cc062d6ed9ab498eec70154c6ce3267968c3b5a",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/metadata/frames-1000.tack",
+        "--seconds",
+        "12",
+        "--interaction",
+        "grid-hidden",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-spatial-shipping/frames-1000.json"
+      ]
+    }
+  ],
+  "metadata": {
+    "allocations": "not instrumented",
+    "frames": [
+      {
+        "bytes": 940,
+        "count": 10,
+        "create_ms": 0.00466,
+        "invariant": true,
+        "open_ms": 0.0196,
+        "save_ms": 7.300409
+      },
+      {
+        "bytes": 8590,
+        "count": 100,
+        "create_ms": 0.04776,
+        "invariant": true,
+        "open_ms": 0.04428,
+        "save_ms": 3.84332
+      },
+      {
+        "bytes": 85990,
+        "count": 1000,
+        "create_ms": 0.31695999999999996,
+        "invariant": true,
+        "open_ms": 0.370451,
+        "save_ms": 6.572738
+      }
+    ],
+    "generated_only": true,
+    "groups": [
+      {
+        "invariant": true,
+        "members": 10,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.0029100000000000003,
+          "p99_ms": 0.0048400000000000006,
+          "max_ms": 0.00935
+        }
+      },
+      {
+        "invariant": true,
+        "members": 100,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.02638,
+          "p99_ms": 0.03981,
+          "max_ms": 0.04861
+        }
+      }
+    ],
+    "layout": [
+      {
+        "action": "Left",
+        "count": 10,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.00407,
+          "p99_ms": 0.00617,
+          "max_ms": 0.02033
+        }
+      },
+      {
+        "action": "HorizontalCenter",
+        "count": 10,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.004030000000000001,
+          "p99_ms": 0.0049,
+          "max_ms": 0.005090000000000001
+        }
+      },
+      {
+        "action": "Right",
+        "count": 10,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.00411,
+          "p99_ms": 0.00516,
+          "max_ms": 0.013309999999999999
+        }
+      },
+      {
+        "action": "Top",
+        "count": 10,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.0035099999999999997,
+          "p99_ms": 0.00409,
+          "max_ms": 0.004889999999999999
+        }
+      },
+      {
+        "action": "VerticalCenter",
+        "count": 10,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.00348,
+          "p99_ms": 0.004030000000000001,
+          "max_ms": 0.0042899999999999995
+        }
+      },
+      {
+        "action": "Bottom",
+        "count": 10,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.00346,
+          "p99_ms": 0.00432,
+          "max_ms": 0.00883
+        }
+      },
+      {
+        "action": "DistributeHorizontal",
+        "count": 10,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.0035099999999999997,
+          "p99_ms": 0.00395,
+          "max_ms": 0.004889999999999999
+        }
+      },
+      {
+        "action": "DistributeVertical",
+        "count": 10,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.004189999999999999,
+          "p99_ms": 0.0047,
+          "max_ms": 0.00527
+        }
+      },
+      {
+        "action": "PackHorizontal",
+        "count": 10,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.00405,
+          "p99_ms": 0.0046500000000000005,
+          "max_ms": 0.00553
+        }
+      },
+      {
+        "action": "PackVertical",
+        "count": 10,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.00401,
+          "p99_ms": 0.00468,
+          "max_ms": 0.00573
+        }
+      },
+      {
+        "action": "Left",
+        "count": 100,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.04944,
+          "p99_ms": 0.055779999999999996,
+          "max_ms": 0.06171
+        }
+      },
+      {
+        "action": "HorizontalCenter",
+        "count": 100,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.0505,
+          "p99_ms": 0.056891000000000004,
+          "max_ms": 0.05772
+        }
+      },
+      {
+        "action": "Right",
+        "count": 100,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.04843,
+          "p99_ms": 0.05447,
+          "max_ms": 0.060571
+        }
+      },
+      {
+        "action": "Top",
+        "count": 100,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.04722,
+          "p99_ms": 0.05959,
+          "max_ms": 0.06473999999999999
+        }
+      },
+      {
+        "action": "VerticalCenter",
+        "count": 100,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.048621,
+          "p99_ms": 0.059809999999999995,
+          "max_ms": 0.06168099999999999
+        }
+      },
+      {
+        "action": "Bottom",
+        "count": 100,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.033951,
+          "p99_ms": 0.048310000000000006,
+          "max_ms": 0.05457
+        }
+      },
+      {
+        "action": "DistributeHorizontal",
+        "count": 100,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.03739,
+          "p99_ms": 0.063541,
+          "max_ms": 0.06908
+        }
+      },
+      {
+        "action": "DistributeVertical",
+        "count": 100,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.03988,
+          "p99_ms": 0.049311,
+          "max_ms": 0.05566
+        }
+      },
+      {
+        "action": "PackHorizontal",
+        "count": 100,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.03219,
+          "p99_ms": 0.0351,
+          "max_ms": 0.036739999999999995
+        }
+      },
+      {
+        "action": "PackVertical",
+        "count": 100,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.027739999999999997,
+          "p99_ms": 0.032950999999999994,
+          "max_ms": 0.03578
+        }
+      },
+      {
+        "action": "Left",
+        "count": 1000,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.341081,
+          "p99_ms": 0.372091,
+          "max_ms": 0.381211
+        }
+      },
+      {
+        "action": "HorizontalCenter",
+        "count": 1000,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.34086099999999997,
+          "p99_ms": 0.366801,
+          "max_ms": 0.375441
+        }
+      },
+      {
+        "action": "Right",
+        "count": 1000,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.343391,
+          "p99_ms": 0.36117099999999996,
+          "max_ms": 0.36662100000000003
+        }
+      },
+      {
+        "action": "Top",
+        "count": 1000,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.341011,
+          "p99_ms": 0.362141,
+          "max_ms": 0.36744099999999996
+        }
+      },
+      {
+        "action": "VerticalCenter",
+        "count": 1000,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.341351,
+          "p99_ms": 0.352581,
+          "max_ms": 0.358611
+        }
+      },
+      {
+        "action": "Bottom",
+        "count": 1000,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.341051,
+          "p99_ms": 0.350911,
+          "max_ms": 0.35241100000000003
+        }
+      },
+      {
+        "action": "DistributeHorizontal",
+        "count": 1000,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.417541,
+          "p99_ms": 0.42950099999999997,
+          "max_ms": 0.429881
+        }
+      },
+      {
+        "action": "DistributeVertical",
+        "count": 1000,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.341171,
+          "p99_ms": 0.35067,
+          "max_ms": 0.353391
+        }
+      },
+      {
+        "action": "PackHorizontal",
+        "count": 1000,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.418091,
+          "p99_ms": 0.426871,
+          "max_ms": 0.42968100000000004
+        }
+      },
+      {
+        "action": "PackVertical",
+        "count": 1000,
+        "invariant": true,
+        "timing": {
+          "samples": 64,
+          "p50_ms": 0.343411,
+          "p99_ms": 0.49903100000000006,
+          "max_ms": 0.8948619999999999
+        }
+      }
+    ],
+    "operation": "spatial-scale",
+    "sizes_bytes": {
+      "command": 176,
+      "document": 192,
+      "document_object": 160,
+      "image_input": 752
+    },
+    "source_pixels": false
+  }
+}

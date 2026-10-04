@@ -34,10 +34,21 @@ pub enum Action {
     Filtering(tack_core::ImageFiltering),
     CycleFiltering,
     Save,
+    ToggleGrid,
+    ToggleSnapping,
+    SnapDisable,
+    Layout(crate::spatial_layout::Layout),
+    GroupSelection,
+    UngroupSelection,
+    CreateFrame,
+    RenameFrame,
+    FocusFrame,
+    NextFrame,
+    PreviousFrame,
 }
 impl Action {
     /// Enumerable action catalog, including currently unassigned actions.
-    pub const ALL: [Self; 27] = [
+    pub const ALL: [Self; 47] = [
         Self::SelectTool(Tool::Pointer),
         Self::SelectTool(Tool::Pan),
         Self::SelectTool(Tool::RotateView),
@@ -65,11 +76,32 @@ impl Action {
         Self::Filtering(tack_core::ImageFiltering::Nearest),
         Self::CycleFiltering,
         Self::Save,
+        Self::ToggleGrid,
+        Self::ToggleSnapping,
+        Self::SnapDisable,
+        Self::Layout(crate::spatial_layout::Layout::Left),
+        Self::Layout(crate::spatial_layout::Layout::HorizontalCenter),
+        Self::Layout(crate::spatial_layout::Layout::Right),
+        Self::Layout(crate::spatial_layout::Layout::Top),
+        Self::Layout(crate::spatial_layout::Layout::VerticalCenter),
+        Self::Layout(crate::spatial_layout::Layout::Bottom),
+        Self::Layout(crate::spatial_layout::Layout::DistributeHorizontal),
+        Self::Layout(crate::spatial_layout::Layout::DistributeVertical),
+        Self::Layout(crate::spatial_layout::Layout::PackHorizontal),
+        Self::Layout(crate::spatial_layout::Layout::PackVertical),
+        Self::GroupSelection,
+        Self::UngroupSelection,
+        Self::CreateFrame,
+        Self::RenameFrame,
+        Self::FocusFrame,
+        Self::NextFrame,
+        Self::PreviousFrame,
     ];
     pub fn captured_hold(self) -> bool {
         matches!(
             self,
-            Self::TemporaryTool(_)
+            Self::SnapDisable
+                | Self::TemporaryTool(_)
                 | Self::ImagePointer
                 | Self::ToggleSelection
                 | Self::RotateImage
@@ -107,6 +139,28 @@ impl Action {
             Self::Filtering(tack_core::ImageFiltering::Nearest) => "Nearest sampling",
             Self::CycleFiltering => "Cycle image sampling",
             Self::Save => "Save",
+            Self::ToggleGrid => "Toggle dotted grid",
+            Self::ToggleSnapping => "Toggle snapping",
+            Self::SnapDisable => "Temporarily disable snapping",
+            Self::Layout(layout) => match layout {
+                crate::spatial_layout::Layout::Left => "Align left",
+                crate::spatial_layout::Layout::HorizontalCenter => "Align horizontal center",
+                crate::spatial_layout::Layout::Right => "Align right",
+                crate::spatial_layout::Layout::Top => "Align top",
+                crate::spatial_layout::Layout::VerticalCenter => "Align vertical center",
+                crate::spatial_layout::Layout::Bottom => "Align bottom",
+                crate::spatial_layout::Layout::DistributeHorizontal => "Distribute horizontally",
+                crate::spatial_layout::Layout::DistributeVertical => "Distribute vertically",
+                crate::spatial_layout::Layout::PackHorizontal => "Pack horizontally",
+                crate::spatial_layout::Layout::PackVertical => "Pack vertically",
+            },
+            Self::GroupSelection => "Group selection",
+            Self::UngroupSelection => "Ungroup selection",
+            Self::CreateFrame => "Create frame",
+            Self::RenameFrame => "Rename frame",
+            Self::FocusFrame => "Focus selected frame",
+            Self::NextFrame => "Focus next frame",
+            Self::PreviousFrame => "Focus previous frame",
         }
     }
 }

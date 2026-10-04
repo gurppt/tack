@@ -144,6 +144,7 @@ pub struct Gpu {
     pub format: wgpu::TextureFormat,
     pipeline: wgpu::RenderPipeline,
     overlay: crate::overlay::Overlay,
+    grid: Option<crate::grid::Grid>,
     layout: wgpu::BindGroupLayout,
     sampler: wgpu::Sampler,
     nearest_sampler: wgpu::Sampler,
@@ -294,6 +295,7 @@ impl Gpu {
             adapter_info,
             format,
             overlay,
+            grid: None,
             pipeline,
             layout,
             sampler,
@@ -448,7 +450,7 @@ impl Gpu {
         camera: &Camera,
         images: &[DrawImage],
     ) -> Result<(), AssetError> {
-        self.render_images(target, camera, images, &[])
+        self.render_images(target, camera, images, &[], None)
     }
     pub fn render_product(
         &mut self,
@@ -456,7 +458,7 @@ impl Gpu {
         camera: &Camera,
         images: &[DrawProductImage],
     ) -> Result<(), AssetError> {
-        self.render_images(target, camera, images, &[])
+        self.render_images(target, camera, images, &[], None)
     }
     pub fn render_product_overlay(
         &mut self,
@@ -465,7 +467,17 @@ impl Gpu {
         images: &[DrawProductImage],
         overlay: &[crate::OverlayQuad],
     ) -> Result<(), AssetError> {
-        self.render_images(target, camera, images, overlay)
+        self.render_images(target, camera, images, overlay, None)
+    }
+    pub fn render_spatial(
+        &mut self,
+        target: &wgpu::TextureView,
+        camera: &Camera,
+        images: &[DrawProductImage],
+        overlay: &[crate::OverlayQuad],
+        grid: Option<crate::GridView>,
+    ) -> Result<(), AssetError> {
+        self.render_images(target, camera, images, overlay, grid)
     }
     fn render_images<T: CanvasImage>(
         &mut self,
@@ -473,7 +485,14 @@ impl Gpu {
         camera: &Camera,
         images: &[T],
         overlay: &[crate::OverlayQuad],
+        grid: Option<crate::GridView>,
     ) -> Result<(), AssetError> {
+        if let Some(view) = grid {
+            let dots = self
+                .grid
+                .get_or_insert_with(|| crate::grid::Grid::new(&self.device, self.format));
+            dots.prepare(&self.queue, camera, view);
+        }
         if images.len() > MAX_OBJECTS {
             return Err("too many visible objects".into());
         }
@@ -492,7 +511,8 @@ impl Gpu {
             self.queue
                 .write_buffer(&self.buffer, 0, bytemuck::cast_slice(&self.vertices));
         }
-        self.overlay.prepare(&self.queue, camera, overlay)?;
+        self.overlay
+            .prepare(&self.device, &self.queue, camera, overlay)?;
         let mut encoder = self.device.create_command_encoder(&Default::default());
         let timing_slot = self
             .timings
@@ -515,6 +535,11 @@ impl Gpu {
                     .and_then(|index| self.timings.as_ref().map(|t| t.writes(index))),
                 occlusion_query_set: None,
             });
+            if grid.is_some()
+                && let Some(dots) = &self.grid
+            {
+                dots.draw(&mut pass);
+            }
             pass.set_pipeline(&self.pipeline);
             pass.set_vertex_buffer(0, self.buffer.slice(..));
             for (index, image) in images.iter().enumerate() {

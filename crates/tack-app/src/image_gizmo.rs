@@ -40,7 +40,7 @@ impl Default for ImageGizmo {
         Self {
             style: GizmoStyle::default(),
             scale: 1.,
-            quads: Vec::with_capacity(MAX_OVERLAY_QUADS),
+            quads: Vec::with_capacity(128),
         }
     }
 }
@@ -95,7 +95,7 @@ impl ImageGizmo {
         }
         best
     }
-    fn line(&mut self, a: [f64; 2], b: [f64; 2], width: f64, color: [f32; 4]) {
+    pub(crate) fn line(&mut self, a: [f64; 2], b: [f64; 2], width: f64, color: [f32; 4]) {
         if self.quads.len() >= MAX_OVERLAY_QUADS {
             return;
         }
@@ -109,6 +109,7 @@ impl ImageGizmo {
             delta[0] * width / length / 2.,
         ];
         self.quads.push(OverlayQuad {
+            bitmap: None,
             points: [
                 [a[0] - n[0], a[1] - n[1]],
                 [a[0] + n[0], a[1] + n[1]],
@@ -146,19 +147,21 @@ impl ImageGizmo {
             return;
         };
         // A bounded decoration budget. Group outline always remains visible.
-        for data in images
-            .selection
-            .ids()
-            .take(20)
-            .filter_map(|id| tack_core::DocumentQuery::object_render_data(doc, id))
-        {
-            self.outline(images.preview(data).transform, camera, color);
+        for id in images.selection.ids().take(20) {
+            if let Some(t) = images.preview_transform(doc, id) {
+                self.outline(t, camera, color);
+            }
         }
         if images.selection.len() > 1 {
             self.outline(frame, camera, color);
         }
         let crop = images.crop_mode && images.selection.len() == 1;
-        if !crop {
+        let has_frame = doc.frame_count() > 0
+            && images.selection.ids().any(|id| {
+                doc.object(id)
+                    .is_some_and(|o| matches!(o.kind(), tack_core::ObjectKind::Frame(_)))
+            });
+        if !crop && !has_frame {
             self.line(
                 self.handle(frame, camera, 1),
                 self.handle(frame, camera, 8),
@@ -166,7 +169,7 @@ impl ImageGizmo {
                 color,
             );
         }
-        for i in 0..if crop { 8 } else { 9 } {
+        for i in 0..if crop || has_frame { 8 } else { 9 } {
             if images.selection.len() > 1 && i < 8 && i % 2 == 1 {
                 continue;
             }
@@ -181,6 +184,7 @@ impl ImageGizmo {
                     })
                     || images.active();
                 self.quads.push(OverlayQuad {
+                    bitmap: None,
                     points: [
                         [p[0] - r, p[1] - r],
                         [p[0] - r, p[1] + r],

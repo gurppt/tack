@@ -46,6 +46,7 @@ def main():
     sources = [project / p for p in ('Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml')]
     sources += [p for p in (project / 'crates').rglob('*') if p.suffix in ('.rs', '.wgsl', '.toml')]
     sources += list((project / 'tools').glob('*.py')) + list((project / '.cargo').glob('*.toml'))
+    sources += [p for p in (project / "assets/pixel-font").glob("*") if p.is_file()]
     with zipfile.ZipFile(root / 'source-snapshot.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
         for path in sorted(sources):
             archive.write(path, path.relative_to(project))

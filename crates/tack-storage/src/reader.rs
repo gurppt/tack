@@ -65,7 +65,9 @@ impl TackFile {
         if h.take(8)? != b"TACKSN01" {
             return Err(StorageError::Invalid("magic"));
         }
-        if h.u32()? != 1 || h.u32()? != 1 {
+        let container = h.u32()?;
+        let schema = h.u32()?;
+        if container != 1 || ![1, 2].contains(&schema) {
             return Err(StorageError::Unsupported("container/schema version"));
         }
         let auth_len = h.u64()?;
@@ -100,7 +102,7 @@ impl TackFile {
             return Err(StorageError::Corrupt("authoritative metadata checksum"));
         }
         let mut d = Decoder::new(&bytes);
-        let document = codec::decode_document(&mut d, [counts[0], counts[1], counts[2]])?;
+        let document = codec::decode_document(&mut d, [counts[0], counts[1], counts[2]], schema)?;
         let mut originals = BTreeMap::new();
         let mut intervals = Vec::with_capacity(counts[3] + counts[4]);
         for _ in 0..counts[3] {

@@ -66,6 +66,9 @@ pub fn intersects(t: Transform, r: WorldRect) -> bool {
     })
 }
 pub fn frame(records: impl Iterator<Item = ImageRenderData>) -> Option<Transform> {
+    frame_transforms(records.map(|r| r.transform))
+}
+pub fn frame_transforms(records: impl Iterator<Item = Transform>) -> Option<Transform> {
     let mut first = None;
     let mut bounds = [
         f64::INFINITY,
@@ -75,8 +78,8 @@ pub fn frame(records: impl Iterator<Item = ImageRenderData>) -> Option<Transform
     ];
     let mut count = 0;
     for r in records {
-        first = Some(r.transform);
-        let b = r.transform.bounds();
+        first = Some(r);
+        let b = r.bounds();
         bounds = [
             bounds[0].min(b.x),
             bounds[1].min(b.y),
@@ -146,9 +149,21 @@ pub fn crop(
     delta: [f64; 2],
     direction: [f64; 2],
 ) -> Result<ImageRenderData, GeometryError> {
-    let t = data.transform;
+    let (transform, crop) = crop_transform(data.transform, data.crop, delta, direction)?;
+    Ok(ImageRenderData {
+        transform,
+        crop,
+        ..data
+    })
+}
+pub fn crop_transform(
+    t: Transform,
+    crop: Crop,
+    delta: [f64; 2],
+    direction: [f64; 2],
+) -> Result<(Transform, Crop), GeometryError> {
     let delta = rotate(delta, -t.rotation());
-    let uv = data.crop.uv_rect();
+    let uv = crop.uv_rect();
     let mut lo = [0.; 2];
     let mut hi = [1.; 2];
     for i in 0..2 {
@@ -182,16 +197,15 @@ pub fn crop(
         ],
         t.rotation(),
     );
-    Ok(ImageRenderData {
-        transform: Transform::new(
+    Ok((
+        Transform::new(
             [t.center()[0] + shift[0], t.center()[1] + shift[1]],
             [t.size()[0] * (hi[0] - lo[0]), t.size()[1] * (hi[1] - lo[1])],
             t.rotation(),
             t.flips(),
         )?,
-        crop: Crop::new(next_uv[0], next_uv[1], next_uv[2], next_uv[3])?,
-        ..data
-    })
+        Crop::new(next_uv[0], next_uv[1], next_uv[2], next_uv[3])?,
+    ))
 }
 pub fn angle(a: f64) -> f64 {
     (a + std::f64::consts::PI).rem_euclid(std::f64::consts::TAU) - std::f64::consts::PI

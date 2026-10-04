@@ -305,7 +305,7 @@ pub fn save_with_hook(
     let mut header = Vec::with_capacity(80);
     header.extend(b"TACKSN01");
     header.extend(1u32.to_le_bytes());
-    header.extend(1u32.to_le_bytes());
+    header.extend(codec::spatial_schema(doc).to_le_bytes());
     header.extend((auth_len as u64).to_le_bytes());
     header.extend((derived_len as u64).to_le_bytes());
     header.extend(offset.to_le_bytes());

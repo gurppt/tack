@@ -17,3 +17,13 @@ replace review of the separately compiled native library.
 
 These notices cover these dependencies, not Tack's pending code/license model.
 Other Rust dependencies retain their respective package licenses.
+
+## Tack Label Bitmap
+
+Bundled bitmap data derives from GNU Unifont 18.0.01 BMP and upper-plane HEX
+files, distributed under SIL Open Font License 1.1. The converted font is named
+Tack Label Bitmap. Copyright, full license, original notices, pinned sources,
+SHA-256 provenance and reproduction instructions are in
+[assets/pixel-font](../assets/pixel-font/README.md).
+`tack-app --font-license` displays the embedded copyright and OFL notice.
+No system font engine or new Rust dependency was added.

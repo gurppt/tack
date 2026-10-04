@@ -31,6 +31,9 @@ pub struct Document {
     pub(crate) assets: BTreeMap<AssetId, ImageAsset>,
     pub(crate) sources: BTreeMap<SourceId, Source>,
     pub(crate) order: Vec<ObjectId>,
+    pub(crate) groups: BTreeMap<crate::GroupId, crate::Group>,
+    pub(crate) frame_count: usize,
+    pub(crate) memberships: BTreeMap<ObjectId, crate::GroupId>,
 }
 impl Document {
     pub fn new(id: DocumentId, limits: DocumentLimits) -> Self {
@@ -41,6 +44,9 @@ impl Document {
             assets: BTreeMap::new(),
             sources: BTreeMap::new(),
             order: Vec::new(),
+            groups: BTreeMap::new(),
+            memberships: BTreeMap::new(),
+            frame_count: 0,
         }
     }
     pub fn id(&self) -> DocumentId {
@@ -67,6 +73,21 @@ impl Document {
     }
     pub fn sources(&self) -> impl Iterator<Item = &Source> {
         self.sources.values()
+    }
+    pub fn objects(&self) -> impl Iterator<Item = &DocumentObject> {
+        self.objects.values()
+    }
+    pub fn frame_count(&self) -> usize {
+        self.frame_count
+    }
+    pub fn groups(&self) -> impl Iterator<Item = &crate::Group> {
+        self.groups.values()
+    }
+    pub fn group(&self, id: crate::GroupId) -> Option<&crate::Group> {
+        self.groups.get(&id)
+    }
+    pub fn group_for(&self, id: ObjectId) -> Option<&crate::Group> {
+        self.memberships.get(&id).and_then(|id| self.groups.get(id))
     }
     /// Apply a single atomic deterministic mutation without retaining history.
     /// Editors use their own execute API so undo cannot become inconsistent.

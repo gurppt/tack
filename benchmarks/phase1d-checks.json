@@ -1,0 +1,73 @@
+{
+  "logs": [
+    {
+      "check": "quality",
+      "log_sha256": "c28facd764049b40926dac7f65e93a945ed85b6a853ef1bfd5215a8c44b92f16",
+      "passed_tests": 99,
+      "failed_test_results": 0
+    },
+    {
+      "check": "gpu-smoke",
+      "log_sha256": "b2b06e603a493cf6e5a95426a289b963fa302571a95e0cff06fbe916003a85c6",
+      "passed_tests": 1,
+      "failed_test_results": 0
+    },
+    {
+      "check": "gpu-product",
+      "log_sha256": "b3c261eb81177a0be0f3dbc653b33a273eaa82d30bfa9c1d68e30171da576791",
+      "passed_tests": 5,
+      "failed_test_results": 0
+    },
+    {
+      "check": "build",
+      "log_sha256": "d1c13b525aa128777fc340d8080c2cf3044ccb53ad83ba5c9137db2c2ded350d",
+      "passed_tests": 0,
+      "failed_test_results": 0
+    }
+  ],
+  "python_tests": 7,
+  "dependency_checks": "advisories ok, bans ok, licenses ok, sources ok",
+  "rust": "1.95.0",
+  "native": "NVIDIA GeForce RTX 2060 Vulkan / driver 580.173.02, Linux X11",
+  "weight": [
+    {
+      "phase": "1C",
+      "release_with_debug_bytes": 103216928,
+      "stripped_debug_bytes": 15406040
+    },
+    {
+      "phase": "1D",
+      "release_with_debug_bytes": 109070424,
+      "stripped_debug_bytes": 19919264
+    }
+  ],
+  "font_copies": 1,
+  "layout": {
+    "baseline_commit": "dc66d88a61193572935a40d8eda2f172d6355d8c",
+    "baseline_core_sizes_bytes": {
+      "document": 144,
+      "document_object": 160,
+      "command": 176
+    },
+    "spatial_core_sizes_bytes": {
+      "command": 176,
+      "document": 192,
+      "document_object": 160,
+      "image_input": 752
+    },
+    "method": "rustc1.95 std-only HEAD tack-core isolatedtemp build; shipping sizes in spatial-scale",
+    "overlay_quad_bytes": {
+      "before": 80,
+      "after": 120,
+      "initial_capacity": 128,
+      "cpu_delta_bytes": 5120
+    }
+  },
+  "final_python_log_sha256": "241cc9082c83d984731b53f41545cad3c6b096bfe0c9fb86a478828ea495fcbc",
+  "kernel_check": {
+    "raw": "benchmark-results/phase1d-checks/post-tests-kernel.log",
+    "sha256": "658e2493253edd6f37c5fb043c0d309cb1a53d12b89fec98cf6fe82514cba8e6",
+    "new_Xid_OOM_hung_lockup": false,
+    "scope": "currentdate kernel entries; no cause claimed for historicalfreeze"
+  }
+}

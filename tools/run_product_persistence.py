@@ -46,6 +46,7 @@ def main():
     source_paths = [source_root / name for name in ['Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml']]
     source_paths += [p for p in (source_root / 'crates').rglob('*') if p.suffix in ['.rs', '.wgsl', '.toml']]
     source_paths += list((source_root / 'tools').glob('*.py')) + list((source_root / '.cargo').glob('*.toml'))
+    source_paths += [p for p in (source_root / "assets/pixel-font").glob("*") if p.is_file()]
     source_hash = hashlib.sha256()
     with zipfile.ZipFile(out / 'source-snapshot.zip', 'w', compression=zipfile.ZIP_DEFLATED) as archive:
         for path in sorted(source_paths):

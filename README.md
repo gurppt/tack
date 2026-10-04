@@ -1,9 +1,10 @@
 # Tack
 
 Native, local-first reference board. This repository currently contains
-**Phase 1C: native image selection, manipulation and save**. The executable
+**Phase 1D: grid, snapping, arrangement, groups and named frames**. The executable
 provides a minimal product CLI alongside the existing renderer benchmarks.
-See [the current report](docs/MISSION_1C_REPORT.md),
+See [the current report](docs/MISSION_1D_REPORT.md),
+[Phase 1C](docs/MISSION_1C_REPORT.md),
 [Phase 1B](docs/MISSION_1B_REPORT.md),
 [Phase 1A](docs/MISSION_1A_REPORT.md),
 [Mission 0.7](docs/MISSION_0_7_REPORT.md),
@@ -143,7 +144,7 @@ Save As/relink operation must preserve their bindings. See [format v1](docs/desi
 for compatibility, streaming, save/recovery guarantees and limitations.
 
 The code license/contribution model is pending; dependency license checks are
-separate. Human review of Phase 1C's report is the stop gate before Phase 1D.
+separate. Human review of Phase 1D's report is the stop gate before Phase 1E.
 
 Diagnostic `--output` / repair report destinations must be new files. Existing
 files and document aliases are refused to protect saved work and source images.
@@ -192,3 +193,38 @@ measurements separately from other GPU tests. See the
 [interaction contract](docs/design/image_interaction.md),
 [PureRef research](docs/research/pureref_image_interaction.md) and
 [desktop freeze incident](docs/INCIDENT_2026_10_03_DESKTOP_FREEZE.md).
+
+
+Spatial organization (Phase 1D) uses the same board, selection and undo stack:
+
+| Input | Spatial action |
+| --- | --- |
+| G / Shift+G | Toggle dots / toggle object and grid snapping independently |
+| Hold X during move/resize | Bypass snapping; release restores it |
+| Ctrl+Left/Right/Up/Down | Align world-axis edges |
+| Ctrl+Shift+Left/Up | Align horizontal/vertical centers |
+| Ctrl+Alt+Shift+Up/Down or Ctrl+Shift+D/V | Distribute horizontally/vertically with equal nonnegative gaps |
+| Ctrl+P / Ctrl+Shift+P | Pack row / column with 16 world-unit gaps |
+| Ctrl+G / Ctrl+Shift+G | Group / ungroup selected images |
+| Ctrl+Shift+F | Create frame around selection, or centered in view |
+| F2 / Enter / Escape | Rename selected frame / confirm / cancel |
+| Space / PageDown / PageUp | Focus selected / next / previous frame |
+| Frame border/title / edge handles | Select/move / resize frame |
+
+Groups are flat image membership and select/move as one unit; ungroup to edit a
+member separately. Frames own no contents: moving one leaves images in place.
+Marquee selects frames only when fully enclosed. Alignment uses rotated world
+AABBs and treats groups as units. Distribution expands right/down if existing
+space cannot fit the selected widths/heights without overlap.
+
+Frame names preserve UTF-8. Compact labels use bundled OFL bitmap glyphs;
+complex-script shaping is limited there, with full names also visible in the
+native title. `tack-app --font-license` prints embedded font notices/license.
+Images retain their selected sampling; pixel treatment applies only to overlays.
+Schema 1 boards remain readable; groups/frames use [schema 2](docs/design/tack_file_format_v2.md).
+
+```bash
+python3 tools/run_spatial.py --output benchmark-results/my-spatial-run
+python3 tools/run_native_spatial_checks.py --output benchmark-results/my-spatial-native
+python3 tools/run_idle.py --board benchmark-results/my-spatial-native/board.tack --output benchmark-results/my-idle
+```

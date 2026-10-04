@@ -15,7 +15,7 @@ pub use camera::{Camera, GeometryError, WorldRect};
 pub use commands::{Command, CommandError};
 pub use document::{Document, DocumentLimits};
 pub use history::DocumentEditor;
-pub use ids::{AssetId, DocumentId, InvalidId, ObjectId, SourceId};
+pub use ids::{AssetId, DocumentId, GroupId, InvalidId, ObjectId, SourceId};
 pub use model::{
     DocumentObject, ImageAsset, ImageFiltering, ImageObject, MAX_SOURCE_PATH_BYTES, ModelError,
     ObjectKind, Source, SourceFingerprint, SourceLocation,
@@ -26,3 +26,6 @@ pub use transform::{Crop, Opacity, Transform};
 
 mod source_path;
 pub use source_path::{LinkedPath, PathPlatform};
+mod groups;
+pub use groups::Group;
+pub use model::{MAX_FRAME_NAME_BYTES, validate_frame_name};

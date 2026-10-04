@@ -1,0 +1,264 @@
+{
+  "baseline": {
+    "baseline": true,
+    "binary_sha256": "b11d3e5096c2e33234484afe050d03b89d3cbf9b0efa4dbae1b5c8401c5de978",
+    "harness_sha256": "33aab4d892907bc393078c407fd82e999089d3b81102addcc8d413ad32c232a4",
+    "board_sha256": "e0ebb3969a73af9678eea6cec3f941e6e6848e25843b6d9fd57ee134c0dc67b0",
+    "application_timer": "none; ordinary open has no --seconds/--interaction/tour",
+    "network": "Tack has no network client; socket_count includes native X11/driver IPC, not a network-byte counter",
+    "wakeups": "per-thread voluntary/involuntary context switches; total event-loop waits include startup/shutdown, not exact idle wakeups",
+    "gpu": "redraw submissions observed; nvidia-smi global utilization is not per-process attribution",
+    "runs": [
+      {
+        "grid": "hidden",
+        "interval_seconds": 10.007087208003213,
+        "cpu_ticks": 4,
+        "cpu_percent_of_one_core": 0.39971671245164947,
+        "rss_initial_bytes": 328921088,
+        "rss_final_bytes": 328921088,
+        "idle_redraws": 0,
+        "idle_gpu_submissions": 0,
+        "total_redraws": 3,
+        "total_waits": null,
+        "threads": [
+          {
+            "name": "tack-app",
+            "cpu_ticks": 0,
+            "voluntary_switches": 0,
+            "involuntary_switches": 0
+          },
+          {
+            "name": "tack-app",
+            "cpu_ticks": 0,
+            "voluntary_switches": 5,
+            "involuntary_switches": 0
+          },
+          {
+            "name": "[vkcf] Analysis",
+            "cpu_ticks": 0,
+            "voluntary_switches": 0,
+            "involuntary_switches": 0
+          },
+          {
+            "name": "[vkrt] Analysis",
+            "cpu_ticks": 0,
+            "voluntary_switches": 100,
+            "involuntary_switches": 0
+          },
+          {
+            "name": "[vkps] Update",
+            "cpu_ticks": 2,
+            "voluntary_switches": 41,
+            "involuntary_switches": 0
+          },
+          {
+            "name": "tack-app",
+            "cpu_ticks": 2,
+            "voluntary_switches": 997,
+            "involuntary_switches": 0
+          },
+          {
+            "name": "tack-product-ov",
+            "cpu_ticks": 0,
+            "voluntary_switches": 0,
+            "involuntary_switches": 0
+          },
+          {
+            "name": "tack-product-ov",
+            "cpu_ticks": 0,
+            "voluntary_switches": 0,
+            "involuntary_switches": 0
+          }
+        ],
+        "new_threads": [],
+        "departed_threads": [],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "socket_count": 9,
+        "source_bytes": 0,
+        "report_sha256": "097751eb3b70a9b2f00902d2d7af492e7eb56f5eb70be17d6d3d895e628cf51d"
+      }
+    ]
+  },
+  "phase1d": {
+    "baseline": false,
+    "binary_sha256": "eb0bd8f5a3d0c0053593e355ca0953a07922d236b4696a2ae5f1d5626101c37c",
+    "harness_sha256": "33aab4d892907bc393078c407fd82e999089d3b81102addcc8d413ad32c232a4",
+    "board_sha256": "e0ebb3969a73af9678eea6cec3f941e6e6848e25843b6d9fd57ee134c0dc67b0",
+    "application_timer": "none; ordinary open has no --seconds/--interaction/tour",
+    "network": "Tack has no network client; socket_count includes native X11/driver IPC, not a network-byte counter",
+    "wakeups": "per-thread voluntary/involuntary context switches; total event-loop waits include startup/shutdown, not exact idle wakeups",
+    "gpu": "redraw submissions observed; nvidia-smi global utilization is not per-process attribution",
+    "runs": [
+      {
+        "grid": "hidden",
+        "interval_seconds": 10.007045045000268,
+        "cpu_ticks": 3,
+        "cpu_percent_of_one_core": 0.2997887974431437,
+        "rss_initial_bytes": 329342976,
+        "rss_final_bytes": 329342976,
+        "idle_redraws": 0,
+        "idle_gpu_submissions": 0,
+        "total_redraws": 3,
+        "total_waits": 9,
+        "threads": [
+          {
+            "name": "tack-app",
+            "cpu_ticks": 0,
+            "voluntary_switches": 0,
+            "involuntary_switches": 0
+          },
+          {
+            "name": "tack-app",
+            "cpu_ticks": 0,
+            "voluntary_switches": 5,
+            "involuntary_switches": 0
+          },
+          {
+            "name": "[vkcf] Analysis",
+            "cpu_ticks": 0,
+            "voluntary_switches": 0,
+            "involuntary_switches": 0
+          },
+          {
+            "name": "[vkrt] Analysis",
+            "cpu_ticks": 0,
+            "voluntary_switches": 100,
+            "involuntary_switches": 0
+          },
+          {
+            "name": "[vkps] Update",
+            "cpu_ticks": 2,
+            "voluntary_switches": 40,
+            "involuntary_switches": 0
+          },
+          {
+            "name": "tack-app",
+            "cpu_ticks": 1,
+            "voluntary_switches": 995,
+            "involuntary_switches": 0
+          },
+          {
+            "name": "tack-product-ov",
+            "cpu_ticks": 0,
+            "voluntary_switches": 0,
+            "involuntary_switches": 0
+          },
+          {
+            "name": "tack-product-ov",
+            "cpu_ticks": 0,
+            "voluntary_switches": 0,
+            "involuntary_switches": 0
+          }
+        ],
+        "new_threads": [],
+        "departed_threads": [],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "socket_count": 9,
+        "source_bytes": 0,
+        "report_sha256": "c4dd2a108b5591aeb9c1ad349027b2b186599aa7055ccd001e53f383debb8d0b"
+      },
+      {
+        "grid": "visible",
+        "interval_seconds": 10.007012936999672,
+        "cpu_ticks": 5,
+        "cpu_percent_of_one_core": 0.4996495988841115,
+        "rss_initial_bytes": 329244672,
+        "rss_final_bytes": 329244672,
+        "idle_redraws": 0,
+        "idle_gpu_submissions": 0,
+        "total_redraws": 3,
+        "total_waits": 10,
+        "threads": [
+          {
+            "name": "tack-app",
+            "cpu_ticks": 0,
+            "voluntary_switches": 0,
+            "involuntary_switches": 0
+          },
+          {
+            "name": "tack-app",
+            "cpu_ticks": 0,
+            "voluntary_switches": 5,
+            "involuntary_switches": 0
+          },
+          {
+            "name": "[vkcf] Analysis",
+            "cpu_ticks": 0,
+            "voluntary_switches": 0,
+            "involuntary_switches": 0
+          },
+          {
+            "name": "[vkrt] Analysis",
+            "cpu_ticks": 0,
+            "voluntary_switches": 100,
+            "involuntary_switches": 0
+          },
+          {
+            "name": "[vkps] Update",
+            "cpu_ticks": 3,
+            "voluntary_switches": 40,
+            "involuntary_switches": 0
+          },
+          {
+            "name": "tack-app",
+            "cpu_ticks": 2,
+            "voluntary_switches": 997,
+            "involuntary_switches": 0
+          },
+          {
+            "name": "tack-product-ov",
+            "cpu_ticks": 0,
+            "voluntary_switches": 0,
+            "involuntary_switches": 0
+          },
+          {
+            "name": "tack-product-ov",
+            "cpu_ticks": 0,
+            "voluntary_switches": 0,
+            "involuntary_switches": 0
+          }
+        ],
+        "new_threads": [],
+        "departed_threads": [],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "socket_count": 9,
+        "source_bytes": 0,
+        "report_sha256": "a94c0ba7ca75949f0f89296d538dddbea9f0ca07adf2d68ad5d93d4da9097860"
+      }
+    ]
+  },
+  "separate_idle_debug_observation": {
+    "raw_log": "benchmark-results/phase1d-checks/idle-gdb.log",
+    "sha256": "4cf13b0c72a2f78ba820d28fcb5b69468cd22c522aa99736c800e580399ee254",
+    "normal_exit": true,
+    "timing": "debuggerinterrupt is separate from uninstrumented10s idle measurements",
+    "main_thread": "blocked rustix/calloop epoll_wait; noapplicationpollingtimer",
+    "overview_workers": "blocked std::sync::mpmc::Receiver::recv / futex;0ticks/switches during measuredidle",
+    "unnamed_and_vk_threads": "stack frames in libnvidia-glcore.so.580.173.02; timed pthread_cond_wait; periodicswitches also exist in1Cbaseline",
+    "network": "noTacknetworkclient; socket_count includesX11/driverIPC; networkbytes notinstrumented"
+  }
+}

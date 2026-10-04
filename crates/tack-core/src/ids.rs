@@ -29,6 +29,7 @@ stable_id!(DocumentId);
 stable_id!(ObjectId);
 stable_id!(AssetId);
 stable_id!(SourceId);
+stable_id!(GroupId);
 
 /// Identity domains cannot be passed interchangeably.
 /// ```compile_fail

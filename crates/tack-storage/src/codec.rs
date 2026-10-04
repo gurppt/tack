@@ -102,7 +102,18 @@ pub(crate) fn encode_document(doc: &Document) -> Result<Vec<u8>> {
             })
             .sum::<usize>()
         + doc.assets().count() * 42
-        + doc.object_order().len() * 135;
+        + doc.object_order().len() * 135
+        + doc
+            .objects()
+            .map(|o| match o.kind() {
+                ObjectKind::Frame(n) => n.len() + 4,
+                _ => 0,
+            })
+            .sum::<usize>()
+        + doc
+            .groups()
+            .map(|g| 22 + g.members().len() * 16)
+            .sum::<usize>();
     if estimated > crate::MAX_METADATA_BYTES {
         return Err(StorageError::Invalid("metadata budget"));
     }
@@ -146,7 +157,21 @@ pub(crate) fn encode_document(doc: &Document) -> Result<Vec<u8>> {
         let o = doc
             .object(*id)
             .ok_or(StorageError::Invalid("object order"))?;
-        let ObjectKind::Image(i) = o.kind();
+        if let ObjectKind::Frame(name) = o.kind() {
+            out.extend(1u16.to_le_bytes());
+            out.extend(2u16.to_le_bytes());
+            out.extend(id.value().to_le_bytes());
+            let t = o.transform();
+            for v in t.center().into_iter().chain(t.size()) {
+                out.extend(v.to_le_bytes());
+            }
+            out.extend((name.len() as u16).to_le_bytes());
+            out.extend(name.as_bytes());
+            continue;
+        }
+        let ObjectKind::Image(i) = o.kind() else {
+            return Err(StorageError::Invalid("object kind"));
+        };
         out.extend(1u16.to_le_bytes());
         out.extend(1u16.to_le_bytes());
         out.extend(id.value().to_le_bytes());
@@ -171,9 +196,35 @@ pub(crate) fn encode_document(doc: &Document) -> Result<Vec<u8>> {
     for id in doc.object_order() {
         out.extend(id.value().to_le_bytes());
     }
+    if spatial_schema(doc) == 2 {
+        out.extend((doc.groups().count() as u32).to_le_bytes());
+        for g in doc.groups() {
+            out.extend(1u16.to_le_bytes());
+            out.extend(g.id().value().to_le_bytes());
+            out.extend((g.members().len() as u32).to_le_bytes());
+            for id in g.members() {
+                out.extend(id.value().to_le_bytes());
+            }
+        }
+    }
     Ok(out)
 }
-pub(crate) fn decode_document(d: &mut Decoder<'_>, counts: [usize; 3]) -> Result<Document> {
+pub(crate) fn spatial_schema(doc: &Document) -> u32 {
+    if doc.groups().next().is_some()
+        || doc
+            .objects()
+            .any(|o| matches!(o.kind(), ObjectKind::Frame(_)))
+    {
+        2
+    } else {
+        1
+    }
+}
+pub(crate) fn decode_document(
+    d: &mut Decoder<'_>,
+    counts: [usize; 3],
+    schema: u32,
+) -> Result<Document> {
     // Counts and enclosing byte length already checked before allocation by reader.
     let mut doc = Document::new(
         DocumentId::new(d.id()?).map_err(invalid)?,
@@ -239,10 +290,31 @@ pub(crate) fn decode_document(d: &mut Decoder<'_>, counts: [usize; 3]) -> Result
     }
     for index in 0..counts[2] {
         d.version()?;
-        if d.u16()? != 1 {
+        let kind = d.u16()?;
+        if kind != 1 && !(schema == 2 && kind == 2) {
             return Err(StorageError::Unsupported("object kind"));
         }
         let id = ObjectId::new(d.id()?).map_err(invalid)?;
+        if kind == 2 {
+            let center = [d.f64()?, d.f64()?];
+            let size = [d.f64()?, d.f64()?];
+            let len = d.u16()? as usize;
+            if len > MAX_FRAME_NAME_BYTES {
+                return Err(StorageError::Invalid("frame name length"));
+            }
+            let name = std::str::from_utf8(d.take(len)?)
+                .map_err(invalid)?
+                .to_owned();
+            let object = DocumentObject::frame(
+                id,
+                name,
+                Transform::new(center, size, 0., [false; 2]).map_err(invalid)?,
+            )
+            .map_err(invalid)?;
+            doc.apply(Command::AddObject { object, index })
+                .map_err(invalid)?;
+            continue;
+        }
         let asset = AssetId::new(d.id()?).map_err(invalid)?;
         let center = [d.f64()?, d.f64()?];
         let size = [d.f64()?, d.f64()?];
@@ -278,6 +350,32 @@ pub(crate) fn decode_document(d: &mut Decoder<'_>, counts: [usize; 3]) -> Result
     for id in doc.object_order() {
         if d.id()? != id.value() {
             return Err(StorageError::Invalid("ordering metadata"));
+        }
+    }
+    if schema == 2 {
+        let count = d.u32()? as usize;
+        if count > MAX_RECORDS || count > counts[2] / 2 {
+            return Err(StorageError::Invalid("group count"));
+        }
+        let mut total = 0usize;
+        for _ in 0..count {
+            d.version()?;
+            let id = GroupId::new(d.id()?).map_err(invalid)?;
+            let len = d.u32()? as usize;
+            total = total
+                .checked_add(len)
+                .ok_or(StorageError::Invalid("group members"))?;
+            if len < 2 || total > counts[2] {
+                return Err(StorageError::Invalid("group members"));
+            }
+            let bytes = d.take(len * 16)?;
+            let mut r = Decoder::new(bytes);
+            let mut members = Vec::with_capacity(len);
+            for _ in 0..len {
+                members.push(ObjectId::new(r.id()?).map_err(invalid)?);
+            }
+            doc.apply(Command::AddGroup(Group::new(id, members).map_err(invalid)?))
+                .map_err(invalid)?;
         }
     }
     Ok(doc)

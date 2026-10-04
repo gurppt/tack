@@ -1,88 +1,28 @@
 //! One production adapter: normalized input → semantic actions → gestures/view.
 use crate::{
     actions::{Action, ActionEvent, ActionPhase, HoldToken},
-    bindings::{Binding, BindingError, Keymap, ModifierMatch, Trigger},
+    bindings::{BindingError, Keymap},
     image_gizmo::{GizmoHit, ImageGizmo},
     image_interaction::{GestureKind, ImageInteraction},
-    input::{InputState, Modifiers, PhysicalControl, PhysicalEvent, PointerButton, WheelAxis},
+    input::{InputState, PhysicalEvent},
 };
 use std::time::{Duration, Instant};
 use tack_assets::AssetError;
-use tack_core::{Camera, DocumentEditor, Transform, WorldRect};
+use tack_core::{Camera, DocumentEditor, DocumentQuery, Transform, WorldRect};
 use winit::{
-    event::{MouseButton, WindowEvent},
+    event::WindowEvent,
     keyboard::{KeyCode, PhysicalKey},
 };
 
-pub fn product_keymap() -> Result<Keymap, BindingError> {
-    let mut map = Keymap::default();
-    let left = PhysicalControl::Pointer(PointerButton::Mouse(MouseButton::Left));
-    let ctrl = Modifiers::CONTROL;
-    let shift = Modifiers::SHIFT;
-    let alt = Modifiers::ALT;
-    for (mods, action) in [
-        (Modifiers::NONE, Action::ImagePointer),
-        (shift, Action::ToggleSelection),
-        (ctrl, Action::RotateImage),
-        (ctrl.union(shift), Action::RotateImage),
-        (ctrl.union(alt), Action::ScaleImage),
-        (ctrl.union(alt).union(shift), Action::AdjustOpacity),
-        (alt, Action::CenterPointer),
-        (alt.union(shift), Action::PanView),
-    ] {
-        map.bind(Binding {
-            control: left,
-            modifiers: ModifierMatch::Exact(mods),
-            trigger: Trigger::Hold,
-            action,
-        })?;
-    }
-    map.bind(Binding {
-        control: PhysicalControl::Pointer(PointerButton::Mouse(MouseButton::Middle)),
-        modifiers: ModifierMatch::Any,
-        trigger: Trigger::Hold,
-        action: Action::PanView,
-    })?;
-    map.bind(Binding {
-        control: PhysicalControl::Wheel(WheelAxis::Vertical),
-        modifiers: ModifierMatch::Any,
-        trigger: Trigger::Wheel,
-        action: Action::ZoomView,
-    })?;
-    for (code, mods, action) in [
-        (KeyCode::Escape, Modifiers::NONE, Action::CancelInteraction),
-        (KeyCode::Delete, Modifiers::NONE, Action::DeleteSelection),
-        (KeyCode::KeyA, ctrl, Action::SelectAll),
-        (KeyCode::KeyZ, ctrl, Action::Undo),
-        (KeyCode::KeyZ, ctrl.union(shift), Action::Redo),
-        (KeyCode::KeyY, ctrl, Action::Redo),
-        (KeyCode::KeyS, ctrl, Action::Save),
-        (
-            KeyCode::KeyC,
-            ctrl.union(alt).union(shift),
-            Action::CropMode,
-        ),
-        (KeyCode::KeyH, alt.union(shift), Action::FlipHorizontal),
-        (KeyCode::KeyV, alt.union(shift), Action::FlipVertical),
-        (KeyCode::KeyT, alt, Action::CycleFiltering),
-    ] {
-        map.bind(Binding {
-            control: PhysicalControl::Key(PhysicalKey::Code(code)),
-            modifiers: if action == Action::CancelInteraction {
-                ModifierMatch::Any
-            } else {
-                ModifierMatch::Exact(mods)
-            },
-            trigger: Trigger::Press,
-            action,
-        })?;
-    }
-    Ok(map)
-}
+pub use crate::product_bindings::product_keymap;
 pub struct ImageInput {
     pub images: ImageInteraction,
     pub gizmo: ImageGizmo,
     pub keymap: Keymap,
+    pub grid_visible: bool,
+    pub snap: crate::spatial_snap::SnapState,
+    pub name_edit: Option<crate::spatial_input::FrameNameEdit>,
+    pub(crate) name_replace: bool,
     state: InputState,
     cursor: [f64; 2],
     active_token: Option<HoldToken>,
@@ -97,6 +37,10 @@ impl ImageInput {
             images: ImageInteraction::default(),
             gizmo: ImageGizmo::default(),
             keymap: product_keymap()?,
+            grid_visible: false,
+            snap: crate::spatial_snap::SnapState::default(),
+            name_edit: None,
+            name_replace: true,
             state: InputState::default(),
             cursor: [0.; 2],
             active_token: None,
@@ -108,6 +52,7 @@ impl ImageInput {
     }
     pub fn cancel(&mut self) {
         self.images.cancel();
+        self.snap.clear();
         self.active_token = None;
         self.center_handle = false;
         self.marquee = None;
@@ -120,20 +65,30 @@ impl ImageInput {
         self.images.active() || self.marquee.is_some()
     }
     pub fn hover(&self, editor: &DocumentEditor, camera: &Camera) -> Option<GizmoHit> {
+        let frame_selected = editor.document().frame_count() > 0
+            && self.images.selection.ids().any(|id| {
+                editor
+                    .document()
+                    .object(id)
+                    .is_some_and(|o| matches!(o.kind(), tack_core::ObjectKind::Frame(_)))
+            });
         self.images.frame(editor.document()).and_then(|f| {
-            self.gizmo.hit(
-                f,
-                camera,
-                self.cursor,
-                self.images.crop_mode && self.images.selection.len() == 1,
-                self.images.selection.len() > 1,
-            )
+            self.gizmo
+                .hit(
+                    f,
+                    camera,
+                    self.cursor,
+                    self.images.crop_mode && self.images.selection.len() == 1,
+                    self.images.selection.len() > 1,
+                )
+                .filter(|h| !frame_selected || *h != GizmoHit::Rotate)
         })
     }
     pub fn build_overlay(&mut self, editor: &DocumentEditor, camera: &Camera) {
         let hover = self.hover(editor, camera);
         self.gizmo
             .build(&self.images, editor.document(), camera, hover);
+        self.spatial_overlay(editor, camera);
         if let Some((start, end, _)) = self.marquee {
             let size = [(end[0] - start[0]).abs(), (end[1] - start[1]).abs()];
             if let Ok(frame) = Transform::new(
@@ -156,6 +111,12 @@ impl ImageInput {
         camera: &mut Camera,
     ) -> Result<bool, AssetError> {
         let ActionEvent { action, phase } = event;
+        if action == Action::SnapDisable {
+            self.snap.disabled = matches!(phase, ActionPhase::Begin(_));
+            self.snap.clear();
+            self.cursor_moved(self.cursor, editor, camera)?;
+            return Ok(false);
+        }
         if let ActionPhase::Cancel(token) = phase {
             if self.active_token == Some(token) {
                 self.cancel();
@@ -166,6 +127,7 @@ impl ImageInput {
             if self.active_token == Some(token) {
                 self.active_token = None;
                 self.images.commit(editor)?;
+                self.snap.clear();
                 if let Some((start, end, additive)) = self.marquee.take()
                     && let Ok(rect) = WorldRect::new(
                         start[0].min(end[0]),
@@ -259,12 +221,19 @@ impl ImageInput {
                 self.images.begin(kind, pointer, editor)?;
                 return Ok(false);
             }
-            let hit = self.images.hit(editor.document(), pointer);
+            let hit = self
+                .images
+                .hit(editor.document(), pointer)
+                .or_else(|| self.frame_hit(editor, camera));
             if action == Action::ToggleSelection {
-                self.images.selection.select(hit, true);
+                self.images
+                    .selection
+                    .select_object(editor.document(), hit, true);
             } else if let Some(id) = hit {
                 if !self.images.selection.contains(id) {
-                    self.images.selection.select(Some(id), false);
+                    self.images
+                        .selection
+                        .select_object(editor.document(), Some(id), false);
                 }
             } else {
                 self.images.selection.clear();
@@ -321,10 +290,18 @@ impl ImageInput {
                 }
                 Action::CropMode => {
                     self.images.crop_mode =
-                        self.images.selection.len() == 1 && !self.images.crop_mode
+                        self.images.selection.len() == 1
+                            && self.images.selection.ids().next().is_some_and(|id| {
+                                editor.document().object_render_data(id).is_some()
+                            })
+                            && !self.images.crop_mode
                 }
                 Action::Save => return Ok(true),
-                _ => {}
+                _ => self.spatial_action(action, editor, camera)?,
+            }
+            if self.name_edit.is_some() {
+                self.state = InputState::default();
+                self.snap.disabled = false;
             }
             self.images.selection.prune(editor.document());
             if self.images.selection.len() != 1 {
@@ -355,6 +332,7 @@ impl ImageInput {
         if focus {
             self.cancel();
             self.last_click = None;
+            self.name_edit = None;
         }
         Ok(save)
     }
@@ -389,7 +367,7 @@ impl ImageInput {
                 *end = world;
             }
             // Bad geometry is ignored; preserve the last valid preview.
-            let _ = self.images.update(world);
+            let _ = self.update_snapped(world, editor, camera);
         }
         let _ = editor;
         Ok(())
@@ -400,6 +378,60 @@ impl ImageInput {
         editor: &mut DocumentEditor,
         camera: &mut Camera,
     ) -> Result<bool, AssetError> {
+        if self.name_edit.is_some() {
+            // Modal text consumes presses, but releases/modifiers must not linger.
+            for physical in crate::input::normalize(event).into_iter().flatten() {
+                if matches!(
+                    physical,
+                    PhysicalEvent::Modifiers(_)
+                        | PhysicalEvent::Button {
+                            state: winit::event::ElementState::Released,
+                            ..
+                        }
+                ) {
+                    self.state.handle(physical, &self.keymap, |_| {})?;
+                }
+            }
+            match event {
+                WindowEvent::Focused(false) => {
+                    self.name_edit = None;
+                    self.physical(PhysicalEvent::FocusLost, editor, camera)?;
+                }
+                WindowEvent::ScaleFactorChanged { scale_factor, .. } => {
+                    self.gizmo.set_scale(*scale_factor);
+                    self.snap.clear();
+                }
+                WindowEvent::KeyboardInput { event, .. }
+                    if event.state == winit::event::ElementState::Pressed =>
+                {
+                    match event.physical_key {
+                        PhysicalKey::Code(KeyCode::Escape) => self.name_edit = None,
+                        PhysicalKey::Code(KeyCode::Enter) => {
+                            self.finish_name_edit(editor, true)?;
+                        }
+                        PhysicalKey::Code(KeyCode::Backspace) => {
+                            if let Some(edit) = &mut self.name_edit {
+                                if self.name_replace {
+                                    edit.value.clear();
+                                } else {
+                                    edit.value.pop();
+                                }
+                            }
+                            self.name_replace = false;
+                        }
+                        _ => {
+                            if let Some(text) = &event.text {
+                                self.name_text(text);
+                            }
+                        }
+                    }
+                }
+                WindowEvent::Ime(winit::event::Ime::Commit(text)) => self.name_text(text),
+                _ => {}
+            }
+            return Ok(false);
+        }
+        self.name_replace = true;
         let mut save = false;
         for physical in crate::input::normalize(event).into_iter().flatten() {
             save |= self.physical(physical, editor, camera)?;

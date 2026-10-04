@@ -142,12 +142,13 @@ impl ImageObject {
 }
 
 /// Explicit extensibility point, containing only implemented object kinds.
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum ObjectKind {
     Image(ImageObject),
+    Frame(String),
 }
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct DocumentObject {
     pub(crate) id: ObjectId,
     pub(crate) transform: Transform,
@@ -161,20 +162,43 @@ impl DocumentObject {
             kind: ObjectKind::Image(ImageObject::new(asset)),
         }
     }
-    pub fn id(self) -> ObjectId {
+    pub fn frame(id: ObjectId, name: String, transform: Transform) -> Result<Self, ModelError> {
+        validate_frame_name(&name)?;
+        if transform.rotation() != 0. || transform.flips() != [false; 2] {
+            return Err(ModelError::InvalidFrame);
+        }
+        Ok(Self {
+            id,
+            transform,
+            kind: ObjectKind::Frame(name),
+        })
+    }
+    pub fn id(&self) -> ObjectId {
         self.id
     }
-    pub fn transform(self) -> Transform {
+    pub fn transform(&self) -> Transform {
         self.transform
     }
-    pub fn kind(self) -> ObjectKind {
-        self.kind
+    pub fn kind(&self) -> &ObjectKind {
+        &self.kind
     }
-    pub(crate) fn image_mut(&mut self) -> &mut ImageObject {
+    pub(crate) fn image_mut(&mut self) -> Option<&mut ImageObject> {
         match &mut self.kind {
-            ObjectKind::Image(image) => image,
+            ObjectKind::Image(image) => Some(image),
+            ObjectKind::Frame(_) => None,
         }
     }
+}
+
+pub const MAX_FRAME_NAME_BYTES: usize = 256;
+pub fn validate_frame_name(name: &str) -> Result<(), ModelError> {
+    if name.trim().is_empty()
+        || name.len() > MAX_FRAME_NAME_BYTES
+        || name.chars().any(char::is_control)
+    {
+        return Err(ModelError::InvalidFrame);
+    }
+    Ok(())
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -182,6 +206,7 @@ pub enum ModelError {
     InvalidSourcePath,
     InvalidPixelSize,
     InvalidSourceRevision,
+    InvalidFrame,
 }
 impl fmt::Display for ModelError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

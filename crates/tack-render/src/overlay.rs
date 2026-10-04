@@ -2,22 +2,29 @@
 use tack_assets::AssetError;
 use tack_core::Camera;
 use wgpu::util::DeviceExt;
-pub const MAX_OVERLAY_QUADS: usize = 128;
+pub const MAX_OVERLAY_QUADS: usize = 2048;
+const INITIAL_QUADS: usize = 128;
 #[derive(Clone, Copy, Debug)]
 pub struct OverlayQuad {
     pub points: [[f64; 2]; 4],
     pub color: [f32; 4],
+    pub bitmap: Option<[u32; 8]>,
 }
 #[repr(C)]
 #[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
 struct Vertex {
     position: [f32; 2],
     color: [f32; 4],
+    uv: [f32; 2],
+    bits0: [u32; 4],
+    bits1: [u32; 4],
+    bitmap: u32,
 }
 pub(crate) struct Overlay {
     pipeline: wgpu::RenderPipeline,
     buffer: wgpu::Buffer,
     vertices: Vec<Vertex>,
+    capacity: usize,
 }
 impl Overlay {
     pub fn new(device: &wgpu::Device, format: wgpu::TextureFormat) -> Self {
@@ -35,7 +42,7 @@ impl Overlay {
                 buffers: &[wgpu::VertexBufferLayout {
                     array_stride: std::mem::size_of::<Vertex>() as u64,
                     step_mode: wgpu::VertexStepMode::Vertex,
-                    attributes: &wgpu::vertex_attr_array![0=>Float32x2,1=>Float32x4],
+                    attributes: &wgpu::vertex_attr_array![0=>Float32x2,1=>Float32x4,2=>Float32x2,3=>Uint32x4,4=>Uint32x4,5=>Uint32],
                 }],
             },
             fragment: Some(wgpu::FragmentState {
@@ -56,17 +63,19 @@ impl Overlay {
         });
         let buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("bounded overlay vertices"),
-            contents: &vec![0; MAX_OVERLAY_QUADS * 6 * std::mem::size_of::<Vertex>()],
+            contents: &vec![0; INITIAL_QUADS * 6 * std::mem::size_of::<Vertex>()],
             usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
         });
         Self {
             pipeline,
             buffer,
-            vertices: Vec::with_capacity(MAX_OVERLAY_QUADS * 6),
+            vertices: Vec::with_capacity(INITIAL_QUADS * 6),
+            capacity: INITIAL_QUADS,
         }
     }
     pub fn prepare(
         &mut self,
+        device: &wgpu::Device,
         queue: &wgpu::Queue,
         camera: &Camera,
         quads: &[OverlayQuad],
@@ -74,12 +83,27 @@ impl Overlay {
         if quads.len() > MAX_OVERLAY_QUADS {
             return Err("overlay primitive limit".into());
         }
+        if quads.len() > self.capacity {
+            self.capacity = quads.len().next_power_of_two().min(MAX_OVERLAY_QUADS);
+            self.buffer = device.create_buffer(&wgpu::BufferDescriptor {
+                label: Some("active spatial overlays"),
+                size: (self.capacity * 6 * std::mem::size_of::<Vertex>()) as u64,
+                usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
+                mapped_at_creation: false,
+            });
+        }
         self.vertices.clear();
         for q in quads {
             for i in [0, 1, 2, 2, 1, 3] {
                 self.vertices.push(Vertex {
-                    position: camera.world_to_clip(q.points[i]),
+                    position: camera.world_to_clip(
+                        camera.screen_to_world(camera.world_to_screen(q.points[i]).map(f64::round)),
+                    ),
                     color: q.color,
+                    uv: [[0., 0.], [0., 1.], [1., 0.], [1., 1.]][i],
+                    bits0: q.bitmap.map_or([0; 4], |b| [b[0], b[1], b[2], b[3]]),
+                    bits1: q.bitmap.map_or([0; 4], |b| [b[4], b[5], b[6], b[7]]),
+                    bitmap: u32::from(q.bitmap.is_some()),
                 });
             }
         }

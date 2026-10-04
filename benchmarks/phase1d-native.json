@@ -1,0 +1,358 @@
+{
+  "native_runtime": "X11, desktopDPI and forced2x; generatedownedfixtures",
+  "provenance_note": "Finalspatialnativeharness fixed after shipping sourcearchive; individual harness_sha256 above is authoritative; Rust/WGSL/font runtime stayed identical",
+  "runs": [
+    {
+      "binary_sha256": "eb0bd8f5a3d0c0053593e355ca0953a07922d236b4696a2ae5f1d5626101c37c",
+      "harness_sha256": "3e5cc7a0e68b2dabb0533071bfa4f0f9c870dd65e326a3c3816cfdef905cbf52",
+      "missing_link": false,
+      "scale": "desktop",
+      "checks": [
+        {
+          "name": "grid toggle adds dots without changing history",
+          "observed": true
+        },
+        {
+          "name": "grid remains visible across zoom",
+          "observed": true
+        },
+        {
+          "name": "X changes active snapped preview",
+          "observed": true
+        },
+        {
+          "name": "release restores same stable snap",
+          "observed": true
+        },
+        {
+          "name": "Escape has no committed snap edit",
+          "observed": true
+        },
+        {
+          "name": "group saves membership",
+          "observed": true
+        },
+        {
+          "name": "member selects entire group",
+          "observed": true
+        },
+        {
+          "name": "group members move by equal delta",
+          "observed": true
+        },
+        {
+          "name": "group gesture undo exact",
+          "observed": true
+        },
+        {
+          "name": "ungroup preserves transforms",
+          "observed": true
+        },
+        {
+          "name": "alignment fixture selects one ungrouped member",
+          "observed": true
+        },
+        {
+          "name": "alignment fixture has distinct world top edges",
+          "observed": true
+        },
+        {
+          "name": "top alignment shares world edge",
+          "observed": true
+        },
+        {
+          "name": "alignment undo exact",
+          "observed": true
+        },
+        {
+          "name": "vertical distribution changes layout",
+          "observed": true
+        },
+        {
+          "name": "distribution undo exact",
+          "observed": true
+        },
+        {
+          "name": "create named frame uses schema 2",
+          "observed": true
+        },
+        {
+          "name": "F2 name saved exact",
+          "observed": true
+        },
+        {
+          "name": "frame focus shows label",
+          "observed": true
+        },
+        {
+          "name": "frame edge resize preserves images",
+          "observed": true
+        },
+        {
+          "name": "frame move leaves contained images fixed",
+          "observed": true
+        },
+        {
+          "name": "frame navigation preserves selection",
+          "observed": true
+        },
+        {
+          "name": "delete frame preserves images",
+          "observed": true
+        },
+        {
+          "name": "undo frame delete exact",
+          "observed": true
+        }
+      ],
+      "returncode": 0,
+      "raw_root": "benchmark-results/phase1d-native-verified",
+      "receipt_sha256": "470991678e28033af54faad94bda5ac4ca108f2cd4c425ca1b876efe3812ef4a"
+    },
+    {
+      "binary_sha256": "eb0bd8f5a3d0c0053593e355ca0953a07922d236b4696a2ae5f1d5626101c37c",
+      "harness_sha256": "3e5cc7a0e68b2dabb0533071bfa4f0f9c870dd65e326a3c3816cfdef905cbf52",
+      "missing_link": true,
+      "scale": "2",
+      "checks": [
+        {
+          "name": "missing source retains prepared image",
+          "observed": true
+        },
+        {
+          "name": "grid toggle adds dots without changing history",
+          "observed": true
+        },
+        {
+          "name": "grid remains visible across zoom",
+          "observed": true
+        },
+        {
+          "name": "X changes active snapped preview",
+          "observed": true
+        },
+        {
+          "name": "release restores same stable snap",
+          "observed": true
+        },
+        {
+          "name": "Escape has no committed snap edit",
+          "observed": true
+        },
+        {
+          "name": "group saves membership",
+          "observed": true
+        },
+        {
+          "name": "member selects entire group",
+          "observed": true
+        },
+        {
+          "name": "group members move by equal delta",
+          "observed": true
+        },
+        {
+          "name": "group gesture undo exact",
+          "observed": true
+        },
+        {
+          "name": "ungroup preserves transforms",
+          "observed": true
+        },
+        {
+          "name": "alignment fixture selects one ungrouped member",
+          "observed": true
+        },
+        {
+          "name": "alignment fixture has distinct world top edges",
+          "observed": true
+        },
+        {
+          "name": "top alignment shares world edge",
+          "observed": true
+        },
+        {
+          "name": "alignment undo exact",
+          "observed": true
+        },
+        {
+          "name": "vertical distribution changes layout",
+          "observed": true
+        },
+        {
+          "name": "distribution undo exact",
+          "observed": true
+        },
+        {
+          "name": "create named frame uses schema 2",
+          "observed": true
+        },
+        {
+          "name": "F2 name saved exact",
+          "observed": true
+        },
+        {
+          "name": "frame focus shows label",
+          "observed": true
+        },
+        {
+          "name": "frame edge resize preserves images",
+          "observed": true
+        },
+        {
+          "name": "frame move leaves contained images fixed",
+          "observed": true
+        },
+        {
+          "name": "frame navigation preserves selection",
+          "observed": true
+        },
+        {
+          "name": "delete frame preserves images",
+          "observed": true
+        },
+        {
+          "name": "undo frame delete exact",
+          "observed": true
+        }
+      ],
+      "returncode": 0,
+      "raw_root": "benchmark-results/phase1d-native-dpi2-missing",
+      "receipt_sha256": "f9d23878258d81a163402944f804b13841f052db489e9cb0f455d00208e98f01"
+    },
+    {
+      "binary_sha256": "eb0bd8f5a3d0c0053593e355ca0953a07922d236b4696a2ae5f1d5626101c37c",
+      "harness_sha256": "c774a50dcf1a20f88b4e4d19346ad5c2e5bef82cb72b084a9eff6138c56e83aa",
+      "requested_scale": 1.0,
+      "missing_link": false,
+      "raw_root": "benchmark-results/phase1d-native-image-final",
+      "receipt_sha256": "6e58e3a4333fdcdb91dea76f7220d0f5bfca5f90f268007e59d6049c069dfdfb",
+      "checks": [
+        {
+          "name": "marquee selects both",
+          "observed": true,
+          "title": "Tack \u2014 saved \u00b7 transform \u00b7 2 selected \u00b7 0 missing / 0 changed sources"
+        },
+        {
+          "name": "empty click clears",
+          "observed": true,
+          "title": "Tack \u2014 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources"
+        },
+        {
+          "name": "single selection",
+          "observed": true,
+          "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources"
+        },
+        {
+          "name": "move commits",
+          "observed": true,
+          "title": "Tack \u2014 modified \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources"
+        },
+        {
+          "name": "resize expands without ratio drift",
+          "observed": true,
+          "title": "Tack \u2014 modified \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources"
+        },
+        {
+          "name": "rotation handle changes geometry",
+          "observed": true,
+          "title": "Tack \u2014 modified \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources"
+        },
+        {
+          "name": "crop mode",
+          "observed": true,
+          "title": "Tack \u2014 modified \u00b7 crop \u00b7 1 selected \u00b7 0 missing / 0 changed sources"
+        },
+        {
+          "name": "crop removes right pixels",
+          "observed": true,
+          "title": "Tack \u2014 modified \u00b7 crop \u00b7 1 selected \u00b7 0 missing / 0 changed sources"
+        },
+        {
+          "name": "Escape restores visible geometry",
+          "observed": true,
+          "title": "Tack \u2014 modified \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources"
+        },
+        {
+          "name": "Shift adds second image",
+          "observed": true,
+          "title": "Tack \u2014 modified \u00b7 transform \u00b7 2 selected \u00b7 0 missing / 0 changed sources"
+        },
+        {
+          "name": "Shift toggles second image off",
+          "observed": true,
+          "title": "Tack \u2014 modified \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources"
+        },
+        {
+          "name": "middle pans over selection",
+          "observed": true,
+          "title": "Tack \u2014 modified \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources"
+        },
+        {
+          "name": "wheel zoom changes coverage",
+          "observed": true,
+          "title": "Tack \u2014 modified \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources"
+        },
+        {
+          "name": "select all",
+          "observed": true,
+          "title": "Tack \u2014 modified \u00b7 transform \u00b7 2 selected \u00b7 0 missing / 0 changed sources"
+        },
+        {
+          "name": "delete clears selection",
+          "observed": true,
+          "title": "Tack \u2014 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources"
+        },
+        {
+          "name": "save acknowledges committed generation",
+          "observed": true,
+          "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources"
+        }
+      ],
+      "checks_sha256": "5f950cf2cd86de747993836cf3810ec35409582112cd1c21e5e259339e07f55f"
+    },
+    {
+      "binary_sha256": "eb0bd8f5a3d0c0053593e355ca0953a07922d236b4696a2ae5f1d5626101c37c",
+      "board_sha256": "e0ebb3969a73af9678eea6cec3f941e6e6848e25843b6d9fd57ee134c0dc67b0",
+      "harness_sha256": "3ea7efe01a5bf33b2a3aca335fbc86bb7fe9a5354ee3be13efa480f93da9b455",
+      "shared_harness_sha256": "c774a50dcf1a20f88b4e4d19346ad5c2e5bef82cb72b084a9eff6138c56e83aa",
+      "returncode": 0,
+      "checks": [
+        {
+          "name": "low zoom image remains targetable",
+          "observed": true
+        },
+        {
+          "name": "low zoom corner handle resizes",
+          "observed": true
+        },
+        {
+          "name": "low zoom resize undo restores geometry",
+          "observed": true
+        },
+        {
+          "name": "low zoom drag Escape restores geometry",
+          "observed": true
+        },
+        {
+          "name": "high zoom image fills viewport",
+          "observed": true
+        },
+        {
+          "name": "high zoom drag visibly tracks pointer",
+          "observed": true
+        },
+        {
+          "name": "high zoom undo restores interior pixels",
+          "observed": true
+        },
+        {
+          "name": "high zoom Escape restores interior pixels",
+          "observed": true
+        }
+      ],
+      "raw_root": "benchmark-results/phase1d-native-zoom-final",
+      "receipt_sha256": "f4b511bb2d0cc36169ee31834122ab47fd73395fdb31490399bf95725f73df0c"
+    }
+  ]
+}

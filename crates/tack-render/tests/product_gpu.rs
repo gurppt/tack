@@ -47,6 +47,15 @@ fn pixels_overlay(
     key: ProductKey,
     overlay: &[OverlayQuad],
 ) -> Result<Vec<u8>, AssetError> {
+    pixels_spatial(gpu, d, key, overlay, None)
+}
+fn pixels_spatial(
+    gpu: &mut Gpu,
+    d: ImageRenderData,
+    key: ProductKey,
+    overlay: &[OverlayQuad],
+    grid: Option<tack_render::GridView>,
+) -> Result<Vec<u8>, AssetError> {
     let target = gpu.device.create_texture(&wgpu::TextureDescriptor {
         label: Some("product readback"),
         size: wgpu::Extent3d {
@@ -64,7 +73,7 @@ fn pixels_overlay(
     let mut camera = Camera::new([64, 64]);
     camera.set_view([32., 32.], 1.)?;
     gpu.begin_frame()?;
-    gpu.render_product_overlay(
+    gpu.render_spatial(
         &target.create_view(&Default::default()),
         &camera,
         &[DrawProductImage {
@@ -72,6 +81,7 @@ fn pixels_overlay(
             key: Some(key),
         }],
         overlay,
+        grid,
     )?;
     let buffer = gpu.device.create_buffer(&wgpu::BufferDescriptor {
         label: None,
@@ -109,6 +119,77 @@ fn pixels_overlay(
     rx.recv_timeout(std::time::Duration::from_secs(5))??;
     let bytes = buffer.slice(..).get_mapped_range().to_vec();
     Ok(bytes)
+}
+
+#[test]
+fn grid_parameters_preserve_world_origin_zoom_and_fractional_dpi() -> Result<(), AssetError> {
+    let mut c = Camera::new([100, 100]);
+    c.set_view([1e8, -1e8], 0.01)?;
+    let grid = tack_render::GridView {
+        spacing: 4096.,
+        dpi: 1.25,
+    };
+    let params = grid.parameters(&c);
+    assert!(params[0] >= 0. && params[0] < params[2]);
+    assert!(params[1] >= 0. && params[1] < params[2]);
+    assert_eq!(params[3], 2.);
+    c.pan([params[2] as f64, 0.])?;
+    let next = grid.parameters(&c);
+    assert!((next[0] - params[0]).abs() < 0.01);
+    Ok(())
+}
+
+#[test]
+#[ignore = "explicit native GPU grid and bitmap readback"]
+fn procedural_grid_hidden_path_and_bitmap_labels_are_crisp() -> Result<(), AssetError> {
+    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::from_env_or_default());
+    let mut gpu = pollster::block_on(Gpu::new(
+        &instance,
+        None,
+        wgpu::TextureFormat::Rgba8UnormSrgb,
+        1024 * 1024,
+    ))?;
+    let mut d = data();
+    d.opacity = Opacity::new(0.)?;
+    let key = ProductKey {
+        asset: d.asset_id,
+        revision: 1,
+    };
+    gpu.begin_frame()?;
+    gpu.upload_product(
+        key,
+        &Decoded {
+            width: 1,
+            height: 1,
+            rgba: vec![255, 0, 0, 255],
+        },
+    );
+    let hidden = pixels_spatial(&mut gpu, d, key, &[], None)?;
+    let visible = pixels_spatial(
+        &mut gpu,
+        d,
+        key,
+        &[],
+        Some(tack_render::GridView {
+            spacing: 32.,
+            dpi: 1.,
+        }),
+    )?;
+    assert_ne!(pixel(&hidden, 0, 0), pixel(&visible, 0, 0));
+    assert_eq!(pixel(&hidden, 1, 1), pixel(&visible, 1, 1));
+    assert_eq!(pixel(&visible, 0, 0), pixel(&visible, 32, 32));
+    let hidden_again = pixels_spatial(&mut gpu, d, key, &[], None)?;
+    assert_eq!(hidden, hidden_again);
+    let bitmap = OverlayQuad {
+        points: [[16., 16.], [16., 32.], [32., 16.], [32., 32.]],
+        color: [0., 1., 0., 1.],
+        bitmap: Some([0x8000; 8]),
+    };
+    let glyph = pixels_spatial(&mut gpu, d, key, &[bitmap], None)?;
+    assert_eq!(pixel(&glyph, 16, 16), [0, 255, 0, 255]);
+    assert_eq!(pixel(&glyph, 17, 16), pixel(&hidden, 17, 16));
+    assert_eq!(pixel(&glyph, 16, 17), pixel(&hidden, 16, 17));
+    Ok(())
 }
 fn pixel(bytes: &[u8], x: usize, y: usize) -> [u8; 4] {
     bytes[y * 256 + x * 4..y * 256 + x * 4 + 4]
@@ -227,6 +308,7 @@ fn canvas_overlay_is_on_top_without_asset_or_document_changes() -> Result<(), As
         d,
         key,
         &[OverlayQuad {
+            bitmap: None,
             points: [[20., 20.], [20., 40.], [40., 20.], [40., 40.]],
             color: [0., 1., 0., 1.],
         }],
@@ -241,6 +323,7 @@ fn canvas_overlay_is_on_top_without_asset_or_document_changes() -> Result<(), As
             key,
             &vec![
                 OverlayQuad {
+                    bitmap: None,
                     points: [[0.; 2]; 4],
                     color: [1.; 4]
                 };

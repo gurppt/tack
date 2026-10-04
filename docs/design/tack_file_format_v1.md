@@ -218,3 +218,7 @@ the validated input pathname; a distinct existing destination is refused before
 preparation and checked again before publication. A new destination is allowed.
 Low-level snapshot APIs assume the caller supplies this understood target policy.
 Concurrent creation/replacement remains outside the single-writer guarantee.
+# Phase 1D note
+
+This remains the emitted format for ungrouped image-only boards. Documents with
+groups or frames use [schema 2](tack_file_format_v2.md), retaining the same container.

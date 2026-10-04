@@ -5,6 +5,7 @@ mod product_cli;
 mod product_window;
 mod report_output;
 mod session;
+mod spatial_cli;
 mod window;
 
 use std::{path::PathBuf, time::Instant};
@@ -91,6 +92,17 @@ impl Options {
 }
 
 fn main() -> Result<(), AssetError> {
+    if std::env::args_os()
+        .nth(1)
+        .is_some_and(|a| a == "--font-license")
+    {
+        print!(
+            "{}\n{}",
+            include_str!("../../../assets/pixel-font/COPYRIGHT.txt"),
+            include_str!("../../../assets/pixel-font/OFL-1.1.txt")
+        );
+        return Ok(());
+    }
     tracing_subscriber::fmt()
         .with_env_filter(
             tracing_subscriber::EnvFilter::try_from_default_env()
@@ -102,7 +114,15 @@ fn main() -> Result<(), AssetError> {
     let mut product_args = std::env::args_os().skip(1);
     if let Some(command) = product_args.next()
         && let Some(command) = command.to_str()
-        && ["create", "repair", "inspect", "open", "query-scale"].contains(&command)
+        && [
+            "create",
+            "repair",
+            "inspect",
+            "open",
+            "query-scale",
+            "spatial-scale",
+        ]
+        .contains(&command)
     {
         return product_cli::run(command, product_args.collect(), started);
     }

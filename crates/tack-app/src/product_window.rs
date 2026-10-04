@@ -59,6 +59,8 @@ struct App {
     drain_ms: f64,
     title: String,
     interaction_error: Option<String>,
+    redraws: u64,
+    wakeups: u64,
 }
 impl App {
     fn initialize(&mut self, event_loop: &ActiveEventLoop) -> Result<(), AssetError> {
@@ -89,6 +91,7 @@ impl App {
         };
         surface.configure(&gpu.device, &config);
         self.input.gizmo.set_scale(window.scale_factor());
+        window.set_ime_allowed(true);
         self.window = Some(window);
         self.gpu = Some(gpu);
         self.surface = Some(surface);
@@ -134,6 +137,7 @@ impl App {
         if !self.drawable || self.occluded {
             return Ok(());
         }
+        self.redraws += 1;
         let start = Instant::now();
         let (Some(gpu), Some(surface), Some(config)) = (&mut self.gpu, &self.surface, &self.config)
         else {
@@ -217,11 +221,18 @@ impl App {
         if let Some(editor) = &self.editor {
             self.input.build_overlay(editor, &self.camera);
         }
-        gpu.render_product_overlay(
+        gpu.render_spatial(
             &frame.texture.create_view(&Default::default()),
             &self.camera,
             &self.draws,
             &self.input.gizmo.quads,
+            self.input.grid_visible.then(|| tack_render::GridView {
+                spacing: tack_app::spatial_snap::grid_spacing(
+                    self.camera.zoom(),
+                    self.input.gizmo.scale,
+                ),
+                dpi: self.input.gizmo.scale,
+            }),
         )?;
         let cpu_ms = cpu_start.elapsed().as_secs_f64() * 1000.;
         let elapsed_ms = self.started.elapsed().as_secs_f64() * 1000.;
@@ -295,7 +306,7 @@ impl App {
             .and_then(|g| g.timing_samples())
             .map(|s| s.iter().map(|s| json!({"pass_ms":s.pass_ms})).collect())
             .unwrap_or_default();
-        let report = json!({"operation":"open","editing":self.editor.as_ref().map(|e|json!({"dirty":e.is_dirty(),"generation":e.generation(),"undo_entries":e.undo_len(),"redo_entries":e.redo_len(),"selected":self.input.images.selection.len(),"save_completed":self.save.completed})),"interaction":self.benchmark.as_ref().map(|b|json!({"scenario":b.name(),"input_ms":b.samples,"commits":b.commits,"cancels":b.cancels,"invariants":b.invariants})),"native_startup_ms":self.native_startup_ms,"camera_clamped":self.camera_clamped,"navigation_end_pending":self.navigation_end_pending,"drain_ms":self.drain_ms,"state_counts_scope":"requested sources only","recognizable_clock":"CPU submission before present","metadata_load_ms":self.metadata_ms,"metadata_bytes":self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"first_recognizable_ms":self.first_content_ms,"ordinary_view_80_percent_ms":self.useful_ms,"source_bytes_before_detail":stats.source_bytes,"container_bytes":stats.container_bytes+self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"overview_reused":stats.reused,"overview_regenerated":stats.regenerated,"errors":stats.errors,"source_missing":counts(SourceState::Missing),"source_changed":counts(SourceState::Changed),"source_foreign":counts(SourceState::Foreign),"peak_pending":stats.peak_pending,"cpu_payload_bytes":stats.cpu_bytes,"adapter":gpu.map(|g|g.adapter_info.name.clone()),"backend":gpu.map(|g|format!("{:?}",g.adapter_info.backend)),"frames":self.frames,"gpu_samples":samples,"detail":"overview-only vertical slice; no detail request issued"});
+        let report = json!({"spatial":{"grid":self.input.grid_visible,"snapping":self.input.snap.enabled,"frames":self.editor.as_ref().map(|e|e.document().objects().filter(|o|matches!(o.kind(),tack_core::ObjectKind::Frame(_))).count()).unwrap_or(0),"groups":self.editor.as_ref().map(|e|e.document().groups().count()).unwrap_or(0)},"redraw_count":self.redraws,"wait_count":self.wakeups,"operation":"open","editing":self.editor.as_ref().map(|e|json!({"dirty":e.is_dirty(),"generation":e.generation(),"undo_entries":e.undo_len(),"redo_entries":e.redo_len(),"selected":self.input.images.selection.len(),"save_completed":self.save.completed})),"interaction":self.benchmark.as_ref().map(|b|json!({"scenario":b.name(),"input_ms":b.samples,"snap_query_ms":b.snap_queries,"commits":b.commits,"cancels":b.cancels,"invariants":b.invariants})),"native_startup_ms":self.native_startup_ms,"camera_clamped":self.camera_clamped,"navigation_end_pending":self.navigation_end_pending,"drain_ms":self.drain_ms,"state_counts_scope":"requested sources only","recognizable_clock":"CPU submission before present","metadata_load_ms":self.metadata_ms,"metadata_bytes":self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"first_recognizable_ms":self.first_content_ms,"ordinary_view_80_percent_ms":self.useful_ms,"source_bytes_before_detail":stats.source_bytes,"container_bytes":stats.container_bytes+self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"overview_reused":stats.reused,"overview_regenerated":stats.regenerated,"errors":stats.errors,"source_missing":counts(SourceState::Missing),"source_changed":counts(SourceState::Changed),"source_foreign":counts(SourceState::Foreign),"peak_pending":stats.peak_pending,"cpu_payload_bytes":stats.cpu_bytes,"adapter":gpu.map(|g|g.adapter_info.name.clone()),"backend":gpu.map(|g|format!("{:?}",g.adapter_info.backend)),"frames":self.frames,"gpu_samples":samples,"detail":"overview-only vertical slice; no detail request issued"});
         crate::report_output::write_new(path, &serde_json::to_vec_pretty(&report)?)?;
         Ok(())
     }
@@ -374,6 +385,7 @@ impl ApplicationHandler<Event> for App {
         }
     }
     fn about_to_wait(&mut self, e: &ActiveEventLoop) {
+        self.wakeups += 1;
         if let Some(editor) = &mut self.editor {
             self.dirty |= self.save.poll(editor);
         }
@@ -430,9 +442,28 @@ impl ApplicationHandler<Event> for App {
                         .count()
                 })
                 .unwrap_or(0);
+            let frame_name = self
+                .input
+                .name_edit
+                .as_ref()
+                .map(|edit| edit.value.as_str())
+                .or_else(|| {
+                    self.input.images.selection.ids().find_map(|id| {
+                        match editor.document().object(id)?.kind() {
+                            tack_core::ObjectKind::Frame(n) => Some(n.as_str()),
+                            _ => None,
+                        }
+                    })
+                });
             let title = format!(
-                "Tack — {state} · {mode} · {} selected · {missing} missing / {changed} changed sources{}",
+                "Tack — {state} · {mode} · {} selected · {missing} missing / {changed} changed sources{}{}{}",
                 self.input.images.selection.len(),
+                frame_name.map(|n| format!(" · {n}")).unwrap_or_default(),
+                if self.input.name_edit.is_some() {
+                    " · Enter confirm / Esc cancel"
+                } else {
+                    ""
+                },
                 self.save
                     .last_error
                     .as_ref()

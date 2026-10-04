@@ -183,7 +183,7 @@ fn invalid_commands_are_atomic_and_preserve_redo() -> TestResult {
     editor.execute(Command::RemoveObject(object))?;
     editor.undo()?;
     let before = editor.document().clone();
-    let duplicate = *editor.document().object(object).ok_or("missing")?;
+    let duplicate = editor.document().object(object).ok_or("missing")?.clone();
     let invalid = [
         Command::RemoveObject(ObjectId::new(99)?),
         Command::SetOpacity {
@@ -191,7 +191,7 @@ fn invalid_commands_are_atomic_and_preserve_redo() -> TestResult {
             opacity: Opacity::OPAQUE,
         },
         Command::AddObject {
-            object: duplicate,
+            object: duplicate.clone(),
             index: 0,
         },
         Command::AddObject {

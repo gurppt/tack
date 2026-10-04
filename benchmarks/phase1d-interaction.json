@@ -1,0 +1,612 @@
+{
+  "provenance": {
+    "binary_sha256": "eb0bd8f5a3d0c0053593e355ca0953a07922d236b4696a2ae5f1d5626101c37c",
+    "source_snapshot_sha256": "fca5d8a6faa676840224d051d98d85e705ccf9a4dbcf02e6f689f18b41829127",
+    "harness_sha256": "8d86bcf9afc833a231a9788ebbe616362f4eeca46e8264bf6333e77407b42d0d",
+    "board_sha256": "9aba657a3756a9130aee9f324fa39d481db33c123c87c452cf35f24789a9ecbe",
+    "board_path": "/home/gurp/softs/tack/benchmark-results/phase1b-product-export-safe/linked.tack",
+    "platform": "Linux-7.1.5-76070105-generic-x86_64-with-glibc2.39",
+    "display": ":0.0",
+    "percentile": "sorted floor(p*(n-1))",
+    "rss": "/proc VmHWM sampled every 20ms",
+    "allocations": "not instrumented; preview storage reused, no event queue",
+    "cpu_note": "input_ms includes begin/commit/undo; render cpu_ms excludes driver, callback includes driver"
+  },
+  "runs": [
+    {
+      "name": "drag",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-interaction-final/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1b-product-export-safe/linked.tack",
+        "--seconds",
+        "12",
+        "--interaction",
+        "drag",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-interaction-final/drag.json"
+      ],
+      "report_sha256": "ec81a53a366d2d423a674fce09de647e1c65334918d954d7b5506c390e8fc162",
+      "peak_rss_bytes": 336756736,
+      "input": {
+        "samples": 659,
+        "p50_ms": 0.00162,
+        "p99_ms": 0.12555,
+        "max_ms": 0.15468099999999999
+      },
+      "cpu": {
+        "samples": 679,
+        "p50_ms": 0.27625099999999997,
+        "p99_ms": 0.468631,
+        "max_ms": 1.0899429999999999
+      },
+      "callback": {
+        "samples": 679,
+        "p50_ms": 0.37356100000000003,
+        "p99_ms": 2.7384269999999997,
+        "max_ms": 17.622647
+      },
+      "present": {
+        "samples": 679,
+        "p50_ms": 0.06014,
+        "p99_ms": 2.471266,
+        "max_ms": 17.213067
+      },
+      "acquire": {
+        "samples": 679,
+        "p50_ms": 0.01401,
+        "p99_ms": 0.03208,
+        "max_ms": 0.13108
+      },
+      "gpu": {
+        "samples": 679,
+        "p50_ms": 0.049312,
+        "p99_ms": 0.075744,
+        "max_ms": 0.09024
+      },
+      "commits": 10,
+      "cancels": 0,
+      "invariants": true,
+      "bounds": true,
+      "source_bytes": 0,
+      "peak_pending": 4,
+      "end_pending": 0,
+      "overview_reused": 4,
+      "first_useful_ms": 711.022472,
+      "frames": 679
+    },
+    {
+      "name": "resize",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-interaction-final/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1b-product-export-safe/linked.tack",
+        "--seconds",
+        "12",
+        "--interaction",
+        "resize",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-interaction-final/resize.json"
+      ],
+      "report_sha256": "66ed4798ba108363187223b8fc9a6769c0248ab7e8c190e5e16b1f5bff26a9f6",
+      "peak_rss_bytes": 337727488,
+      "input": {
+        "samples": 660,
+        "p50_ms": 0.00206,
+        "p99_ms": 0.00752,
+        "max_ms": 0.037110000000000004
+      },
+      "cpu": {
+        "samples": 678,
+        "p50_ms": 0.26829000000000003,
+        "p99_ms": 0.47165100000000004,
+        "max_ms": 1.030623
+      },
+      "callback": {
+        "samples": 678,
+        "p50_ms": 0.355091,
+        "p99_ms": 2.3757159999999997,
+        "max_ms": 6.631988
+      },
+      "present": {
+        "samples": 678,
+        "p50_ms": 0.05919,
+        "p99_ms": 2.034245,
+        "max_ms": 5.902776
+      },
+      "acquire": {
+        "samples": 678,
+        "p50_ms": 0.01392,
+        "p99_ms": 0.02796,
+        "max_ms": 0.04899
+      },
+      "gpu": {
+        "samples": 678,
+        "p50_ms": 0.045888,
+        "p99_ms": 0.092448,
+        "max_ms": 0.100352
+      },
+      "commits": 10,
+      "cancels": 0,
+      "invariants": true,
+      "bounds": true,
+      "source_bytes": 0,
+      "peak_pending": 4,
+      "end_pending": 0,
+      "overview_reused": 4,
+      "first_useful_ms": 741.342093,
+      "frames": 678
+    },
+    {
+      "name": "rotate",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-interaction-final/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1b-product-export-safe/linked.tack",
+        "--seconds",
+        "12",
+        "--interaction",
+        "rotate",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-interaction-final/rotate.json"
+      ],
+      "report_sha256": "81fac75f8ccd27d466760c83170e0e022d758cb16a53a6a5895b8a55e2f7ba56",
+      "peak_rss_bytes": 337022976,
+      "input": {
+        "samples": 660,
+        "p50_ms": 0.0024600000000000004,
+        "p99_ms": 0.1314,
+        "max_ms": 0.23377
+      },
+      "cpu": {
+        "samples": 678,
+        "p50_ms": 0.297081,
+        "p99_ms": 0.848733,
+        "max_ms": 1.437364
+      },
+      "callback": {
+        "samples": 678,
+        "p50_ms": 0.41446099999999997,
+        "p99_ms": 3.1019379999999996,
+        "max_ms": 16.990715
+      },
+      "present": {
+        "samples": 678,
+        "p50_ms": 0.06194000000000001,
+        "p99_ms": 2.5896869999999996,
+        "max_ms": 16.541694
+      },
+      "acquire": {
+        "samples": 678,
+        "p50_ms": 0.01466,
+        "p99_ms": 0.11881,
+        "max_ms": 0.25084
+      },
+      "gpu": {
+        "samples": 678,
+        "p50_ms": 0.051392,
+        "p99_ms": 0.072832,
+        "max_ms": 0.086784
+      },
+      "commits": 10,
+      "cancels": 0,
+      "invariants": true,
+      "bounds": true,
+      "source_bytes": 0,
+      "peak_pending": 4,
+      "end_pending": 0,
+      "overview_reused": 4,
+      "first_useful_ms": 733.345262,
+      "frames": 678
+    },
+    {
+      "name": "crop",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-interaction-final/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1b-product-export-safe/linked.tack",
+        "--seconds",
+        "12",
+        "--interaction",
+        "crop",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-interaction-final/crop.json"
+      ],
+      "report_sha256": "43452e0b97321130addcce6e86020c677c37ca279ffe741246ac7084ae29ffca",
+      "peak_rss_bytes": 337633280,
+      "input": {
+        "samples": 660,
+        "p50_ms": 0.00213,
+        "p99_ms": 0.00661,
+        "max_ms": 0.01751
+      },
+      "cpu": {
+        "samples": 679,
+        "p50_ms": 0.272561,
+        "p99_ms": 0.599951,
+        "max_ms": 1.098213
+      },
+      "callback": {
+        "samples": 679,
+        "p50_ms": 0.361421,
+        "p99_ms": 2.656237,
+        "max_ms": 16.836634999999998
+      },
+      "present": {
+        "samples": 679,
+        "p50_ms": 0.06035,
+        "p99_ms": 2.370936,
+        "max_ms": 16.541434000000002
+      },
+      "acquire": {
+        "samples": 679,
+        "p50_ms": 0.01367,
+        "p99_ms": 0.02824,
+        "max_ms": 0.245821
+      },
+      "gpu": {
+        "samples": 679,
+        "p50_ms": 0.042912,
+        "p99_ms": 0.075776,
+        "max_ms": 0.08576
+      },
+      "commits": 10,
+      "cancels": 0,
+      "invariants": true,
+      "bounds": true,
+      "source_bytes": 0,
+      "peak_pending": 4,
+      "end_pending": 0,
+      "overview_reused": 4,
+      "first_useful_ms": 717.649969,
+      "frames": 679
+    },
+    {
+      "name": "multi10",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-interaction-final/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1b-product-export-safe/linked.tack",
+        "--seconds",
+        "12",
+        "--interaction",
+        "multi10",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-interaction-final/multi10.json"
+      ],
+      "report_sha256": "65f4de506ff504137276dd751ff9e1096bed2d61dde19ee691c02f423c3141f6",
+      "peak_rss_bytes": 337031168,
+      "input": {
+        "samples": 659,
+        "p50_ms": 0.00358,
+        "p99_ms": 0.12687,
+        "max_ms": 0.23725
+      },
+      "cpu": {
+        "samples": 674,
+        "p50_ms": 0.292471,
+        "p99_ms": 0.556621,
+        "max_ms": 1.2023730000000001
+      },
+      "callback": {
+        "samples": 674,
+        "p50_ms": 0.379821,
+        "p99_ms": 2.996318,
+        "max_ms": 16.798464
+      },
+      "present": {
+        "samples": 674,
+        "p50_ms": 0.05881,
+        "p99_ms": 2.515627,
+        "max_ms": 16.483014
+      },
+      "acquire": {
+        "samples": 674,
+        "p50_ms": 0.013040000000000001,
+        "p99_ms": 0.02827,
+        "max_ms": 0.226241
+      },
+      "gpu": {
+        "samples": 674,
+        "p50_ms": 0.047104,
+        "p99_ms": 0.092448,
+        "max_ms": 0.108544
+      },
+      "commits": 10,
+      "cancels": 0,
+      "invariants": true,
+      "bounds": true,
+      "source_bytes": 0,
+      "peak_pending": 4,
+      "end_pending": 0,
+      "overview_reused": 4,
+      "first_useful_ms": 782.945903,
+      "frames": 674
+    },
+    {
+      "name": "multi100",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-interaction-final/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1b-product-export-safe/linked.tack",
+        "--seconds",
+        "12",
+        "--interaction",
+        "multi100",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-interaction-final/multi100.json"
+      ],
+      "report_sha256": "904514061480632b886d38d61d6a411b12132d2dbc188268be90be90f287e2b8",
+      "peak_rss_bytes": 337162240,
+      "input": {
+        "samples": 658,
+        "p50_ms": 0.01997,
+        "p99_ms": 0.18767,
+        "max_ms": 0.22514099999999998
+      },
+      "cpu": {
+        "samples": 678,
+        "p50_ms": 0.34914100000000003,
+        "p99_ms": 0.542821,
+        "max_ms": 1.197943
+      },
+      "callback": {
+        "samples": 678,
+        "p50_ms": 0.455561,
+        "p99_ms": 16.936695,
+        "max_ms": 33.350339
+      },
+      "present": {
+        "samples": 678,
+        "p50_ms": 0.060309999999999996,
+        "p99_ms": 16.552033,
+        "max_ms": 32.887868
+      },
+      "acquire": {
+        "samples": 678,
+        "p50_ms": 0.01324,
+        "p99_ms": 0.057510000000000006,
+        "max_ms": 0.28125999999999995
+      },
+      "gpu": {
+        "samples": 678,
+        "p50_ms": 0.047072,
+        "p99_ms": 0.077184,
+        "max_ms": 0.094176
+      },
+      "commits": 10,
+      "cancels": 0,
+      "invariants": true,
+      "bounds": true,
+      "source_bytes": 0,
+      "peak_pending": 4,
+      "end_pending": 0,
+      "overview_reused": 4,
+      "first_useful_ms": 716.0721159999999,
+      "frames": 678
+    },
+    {
+      "name": "cancel",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-interaction-final/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1b-product-export-safe/linked.tack",
+        "--seconds",
+        "12",
+        "--interaction",
+        "cancel",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-interaction-final/cancel.json"
+      ],
+      "report_sha256": "e638703996719e7c76d3e773a87ddb2938d42c3dcf91a169e0729822f6c7bd6d",
+      "peak_rss_bytes": 337731584,
+      "input": {
+        "samples": 659,
+        "p50_ms": 0.00157,
+        "p99_ms": 0.11553999999999999,
+        "max_ms": 0.13198100000000001
+      },
+      "cpu": {
+        "samples": 679,
+        "p50_ms": 0.26866,
+        "p99_ms": 0.479541,
+        "max_ms": 1.4786739999999998
+      },
+      "callback": {
+        "samples": 679,
+        "p50_ms": 0.353771,
+        "p99_ms": 3.095569,
+        "max_ms": 16.798255
+      },
+      "present": {
+        "samples": 679,
+        "p50_ms": 0.058839999999999996,
+        "p99_ms": 2.806758,
+        "max_ms": 16.512834
+      },
+      "acquire": {
+        "samples": 679,
+        "p50_ms": 0.01425,
+        "p99_ms": 0.034480000000000004,
+        "max_ms": 0.040131
+      },
+      "gpu": {
+        "samples": 679,
+        "p50_ms": 0.047104,
+        "p99_ms": 0.100352,
+        "max_ms": 0.120928
+      },
+      "commits": 0,
+      "cancels": 10,
+      "invariants": true,
+      "bounds": true,
+      "source_bytes": 0,
+      "peak_pending": 4,
+      "end_pending": 0,
+      "overview_reused": 4,
+      "first_useful_ms": 706.29563,
+      "frames": 679
+    }
+  ],
+  "multi100_paired_repeat": {
+    "reason": "first1D multi100 callbackp99=16.94ms/max33.35ms; keepfirsttrial and compare fresh processes without codechanges",
+    "baseline1c": {
+      "provenance": {
+        "binary_sha256": "b11d3e5096c2e33234484afe050d03b89d3cbf9b0efa4dbae1b5c8401c5de978",
+        "source_snapshot_sha256": "dd0bc2a12079be7332a44b635a1c17dfd9da4a6d87c3628670b0064397dc08ab",
+        "harness_sha256": "8d86bcf9afc833a231a9788ebbe616362f4eeca46e8264bf6333e77407b42d0d",
+        "board_sha256": "9aba657a3756a9130aee9f324fa39d481db33c123c87c452cf35f24789a9ecbe",
+        "board_path": "/home/gurp/softs/tack/benchmark-results/phase1b-product-export-safe/linked.tack",
+        "platform": "Linux-7.1.5-76070105-generic-x86_64-with-glibc2.39",
+        "display": ":0.0",
+        "percentile": "sorted floor(p*(n-1))",
+        "rss": "/proc VmHWM sampled every 20ms",
+        "allocations": "not instrumented; preview storage reused, no event queue",
+        "cpu_note": "input_ms includes begin/commit/undo; render cpu_ms excludes driver, callback includes driver"
+      },
+      "runs": [
+        {
+          "name": "multi100",
+          "command": [
+            "/home/gurp/softs/tack/benchmark-results/phase1d-multi100-baseline-repeat/tack-app",
+            "open",
+            "/home/gurp/softs/tack/benchmark-results/phase1b-product-export-safe/linked.tack",
+            "--seconds",
+            "12",
+            "--interaction",
+            "multi100",
+            "--output",
+            "/home/gurp/softs/tack/benchmark-results/phase1d-multi100-baseline-repeat/multi100.json"
+          ],
+          "report_sha256": "de997238a77bd3633a0e396998170b8747558b08b637af0b735d52fd3ade257c",
+          "peak_rss_bytes": 336494592,
+          "input": {
+            "samples": 659,
+            "p50_ms": 0.020051000000000003,
+            "p99_ms": 0.22537100000000002,
+            "max_ms": 0.397361
+          },
+          "cpu": {
+            "samples": 680,
+            "p50_ms": 0.34592100000000003,
+            "p99_ms": 0.623452,
+            "max_ms": 1.086543
+          },
+          "callback": {
+            "samples": 680,
+            "p50_ms": 0.453241,
+            "p99_ms": 2.019295,
+            "max_ms": 15.555641
+          },
+          "present": {
+            "samples": 680,
+            "p50_ms": 0.06048,
+            "p99_ms": 1.5949740000000001,
+            "max_ms": 15.18476
+          },
+          "acquire": {
+            "samples": 680,
+            "p50_ms": 0.01362,
+            "p99_ms": 0.029220000000000003,
+            "max_ms": 0.389921
+          },
+          "gpu": {
+            "samples": 680,
+            "p50_ms": 0.045088,
+            "p99_ms": 0.072032,
+            "max_ms": 0.089152
+          },
+          "commits": 10,
+          "cancels": 0,
+          "invariants": true,
+          "bounds": true,
+          "source_bytes": 0,
+          "peak_pending": 4,
+          "end_pending": 0,
+          "overview_reused": 4,
+          "first_useful_ms": 684.976973,
+          "frames": 680
+        }
+      ]
+    },
+    "phase1d": {
+      "provenance": {
+        "binary_sha256": "eb0bd8f5a3d0c0053593e355ca0953a07922d236b4696a2ae5f1d5626101c37c",
+        "source_snapshot_sha256": "dd0bc2a12079be7332a44b635a1c17dfd9da4a6d87c3628670b0064397dc08ab",
+        "harness_sha256": "8d86bcf9afc833a231a9788ebbe616362f4eeca46e8264bf6333e77407b42d0d",
+        "board_sha256": "9aba657a3756a9130aee9f324fa39d481db33c123c87c452cf35f24789a9ecbe",
+        "board_path": "/home/gurp/softs/tack/benchmark-results/phase1b-product-export-safe/linked.tack",
+        "platform": "Linux-7.1.5-76070105-generic-x86_64-with-glibc2.39",
+        "display": ":0.0",
+        "percentile": "sorted floor(p*(n-1))",
+        "rss": "/proc VmHWM sampled every 20ms",
+        "allocations": "not instrumented; preview storage reused, no event queue",
+        "cpu_note": "input_ms includes begin/commit/undo; render cpu_ms excludes driver, callback includes driver"
+      },
+      "runs": [
+        {
+          "name": "multi100",
+          "command": [
+            "/home/gurp/softs/tack/benchmark-results/phase1d-multi100-repeat/tack-app",
+            "open",
+            "/home/gurp/softs/tack/benchmark-results/phase1b-product-export-safe/linked.tack",
+            "--seconds",
+            "12",
+            "--interaction",
+            "multi100",
+            "--output",
+            "/home/gurp/softs/tack/benchmark-results/phase1d-multi100-repeat/multi100.json"
+          ],
+          "report_sha256": "2687cd6cc9dfab518de8b41d7cc18119d1c5fb161a65c317dd4cc5750f690516",
+          "peak_rss_bytes": 336674816,
+          "input": {
+            "samples": 657,
+            "p50_ms": 0.0205,
+            "p99_ms": 0.20550000000000002,
+            "max_ms": 0.25555100000000003
+          },
+          "cpu": {
+            "samples": 678,
+            "p50_ms": 0.360561,
+            "p99_ms": 0.576251,
+            "max_ms": 0.6847920000000001
+          },
+          "callback": {
+            "samples": 678,
+            "p50_ms": 0.474242,
+            "p99_ms": 2.754608,
+            "max_ms": 17.818168
+          },
+          "present": {
+            "samples": 678,
+            "p50_ms": 0.060059999999999995,
+            "p99_ms": 2.297737,
+            "max_ms": 17.180496
+          },
+          "acquire": {
+            "samples": 678,
+            "p50_ms": 0.01512,
+            "p99_ms": 0.0305,
+            "max_ms": 0.03787
+          },
+          "gpu": {
+            "samples": 678,
+            "p50_ms": 0.047072,
+            "p99_ms": 0.07168,
+            "max_ms": 0.083872
+          },
+          "commits": 10,
+          "cancels": 0,
+          "invariants": true,
+          "bounds": true,
+          "source_bytes": 0,
+          "peak_pending": 4,
+          "end_pending": 0,
+          "overview_reused": 4,
+          "first_useful_ms": 677.661473,
+          "frames": 678
+        }
+      ]
+    }
+  }
+}

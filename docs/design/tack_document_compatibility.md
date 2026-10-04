@@ -143,3 +143,10 @@ large metadata sets and geometry-before-heavy-assets opening. Recovery must not
 overwrite the only viable copy. Atomic replacement/transaction and fsync/durability
 semantics must be measured; process SIGKILL + rename consistency is not a claim
 of power-loss durability. Choose the container only after this evidence.
+# Phase 1D extension
+
+Schema 1 remains supported and is still written for ungrouped image-only boards.
+Frames and groups require schema 2; see [spatial wire format](tack_file_format_v2.md).
+Readers that only understand schema 1 refuse schema 2; Tack refuses schemas >2,
+unknown durable record kinds and invalid references without changing the input.
+The schema is selected from the actual durable content, not the application version.

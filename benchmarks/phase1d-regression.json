@@ -1,0 +1,219 @@
+{
+  "raw_root": "benchmark-results/phase1d-renderer-final",
+  "binary_sha256": "eb0bd8f5a3d0c0053593e355ca0953a07922d236b4696a2ae5f1d5626101c37c",
+  "raw_summary_sha256": "fe4d88481faa2ce5fac5cea6c3291f2c097a71679be24e903f391882e348eb3f",
+  "source_snapshot_sha256": "fca5d8a6faa676840224d051d98d85e705ccf9a4dbcf02e6f689f18b41829127",
+  "conditions": "fresh process/cache per12s scenario; serialized nativeVulkan; kernelpagecache not flushed; pan is distant-jump diagnostic",
+  "runs": [
+    {
+      "scenario": "pan-normal",
+      "objects": 1000,
+      "duration_seconds": 12.0,
+      "cpu_p50_ms": 0.192001,
+      "cpu_p99_ms": 4.284331,
+      "cpu_max_ms": 7.352409,
+      "gpu_pass": {
+        "max_ms": 0.726656,
+        "p50_ms": 0.179136,
+        "p99_ms": 0.632864,
+        "samples": 710
+      },
+      "callback": {
+        "max_ms": 16.715764,
+        "p50_ms": 0.31919099999999995,
+        "p99_ms": 14.475478,
+        "samples": 710
+      },
+      "present": {
+        "max_ms": 16.516554,
+        "p50_ms": 0.07866,
+        "p99_ms": 14.239218,
+        "samples": 710
+      },
+      "acquire": {
+        "max_ms": 0.232221,
+        "p50_ms": 0.01986,
+        "p99_ms": 0.04877,
+        "samples": 710
+      },
+      "rss_high_water_kib": 547116,
+      "pending_peak": 4,
+      "cpu_cache_peak_bytes": 31948800,
+      "gpu_resident_peak_bytes": 69206016,
+      "content_coverage_fraction": 0.8156327543424318,
+      "gpu_completion_fps": 59.166666666666664,
+      "asset_pending_after_drain": 0,
+      "surface_other_errors": 0,
+      "surface_timeouts": 0,
+      "upload_count_limit": 8
+    },
+    {
+      "scenario": "pan-fast",
+      "objects": 1000,
+      "duration_seconds": 12.0,
+      "cpu_p50_ms": 0.17419,
+      "cpu_p99_ms": 2.248856,
+      "cpu_max_ms": 6.0059759999999995,
+      "gpu_pass": {
+        "max_ms": 0.21424,
+        "p50_ms": 0.090112,
+        "p99_ms": 0.179968,
+        "samples": 712
+      },
+      "callback": {
+        "max_ms": 17.292636,
+        "p50_ms": 0.309411,
+        "p99_ms": 12.781414,
+        "samples": 712
+      },
+      "present": {
+        "max_ms": 16.787415,
+        "p50_ms": 0.07453000000000001,
+        "p99_ms": 12.670003000000001,
+        "samples": 712
+      },
+      "acquire": {
+        "max_ms": 0.057890000000000004,
+        "p50_ms": 0.01528,
+        "p99_ms": 0.033769999999999994,
+        "samples": 712
+      },
+      "rss_high_water_kib": 510736,
+      "pending_peak": 6,
+      "cpu_cache_peak_bytes": 38043648,
+      "gpu_resident_peak_bytes": 71860224,
+      "content_coverage_fraction": 0.7787418655097614,
+      "gpu_completion_fps": 59.333333333333336,
+      "asset_pending_after_drain": 0,
+      "surface_other_errors": 0,
+      "surface_timeouts": 0,
+      "upload_count_limit": 8
+    },
+    {
+      "scenario": "zoom-traverse",
+      "objects": 1000,
+      "duration_seconds": 12.0,
+      "cpu_p50_ms": 0.18069000000000002,
+      "cpu_p99_ms": 0.775832,
+      "cpu_max_ms": 6.279717,
+      "gpu_pass": {
+        "max_ms": 1.654784,
+        "p50_ms": 0.109792,
+        "p99_ms": 1.483392,
+        "samples": 709
+      },
+      "callback": {
+        "max_ms": 23.291242,
+        "p50_ms": 0.299251,
+        "p99_ms": 9.403525,
+        "samples": 709
+      },
+      "present": {
+        "max_ms": 23.084121999999997,
+        "p50_ms": 0.06969099999999999,
+        "p99_ms": 8.975544000000001,
+        "samples": 709
+      },
+      "acquire": {
+        "max_ms": 0.08768,
+        "p50_ms": 0.01762,
+        "p99_ms": 0.040771,
+        "samples": 709
+      },
+      "rss_high_water_kib": 491716,
+      "pending_peak": 16,
+      "cpu_cache_peak_bytes": 37896192,
+      "gpu_resident_peak_bytes": 67780608,
+      "content_coverage_fraction": 0.4085214463057561,
+      "gpu_completion_fps": 59.083333333333336,
+      "asset_pending_after_drain": 0,
+      "surface_other_errors": 0,
+      "surface_timeouts": 0,
+      "upload_count_limit": 8
+    },
+    {
+      "scenario": "pressure",
+      "objects": 1000,
+      "duration_seconds": 12.0,
+      "cpu_p50_ms": 0.1193,
+      "cpu_p99_ms": 2.854678,
+      "cpu_max_ms": 6.139736,
+      "gpu_pass": {
+        "max_ms": 0.219168,
+        "p50_ms": 0.113568,
+        "p99_ms": 0.171456,
+        "samples": 711
+      },
+      "callback": {
+        "max_ms": 14.874438999999999,
+        "p50_ms": 0.216331,
+        "p99_ms": 12.786184,
+        "samples": 711
+      },
+      "present": {
+        "max_ms": 14.758649,
+        "p50_ms": 0.06551,
+        "p99_ms": 12.654593,
+        "samples": 711
+      },
+      "acquire": {
+        "max_ms": 0.04995,
+        "p50_ms": 0.013890000000000001,
+        "p99_ms": 0.02948,
+        "samples": 711
+      },
+      "rss_high_water_kib": 457496,
+      "pending_peak": 1,
+      "cpu_cache_peak_bytes": 12877824,
+      "gpu_resident_peak_bytes": 12877824,
+      "content_coverage_fraction": 0.9549929676511955,
+      "gpu_completion_fps": 59.25,
+      "asset_pending_after_drain": 0,
+      "surface_other_errors": 0,
+      "surface_timeouts": 0,
+      "upload_count_limit": 8
+    },
+    {
+      "scenario": "pan",
+      "objects": 1000,
+      "duration_seconds": 12.0,
+      "cpu_p50_ms": 0.182151,
+      "cpu_p99_ms": 0.403721,
+      "cpu_max_ms": 0.7334820000000001,
+      "gpu_pass": {
+        "max_ms": 0.055264,
+        "p50_ms": 0.038912,
+        "p99_ms": 0.0528,
+        "samples": 709
+      },
+      "callback": {
+        "max_ms": 24.860316,
+        "p50_ms": 0.28887999999999997,
+        "p99_ms": 9.040894000000002,
+        "samples": 709
+      },
+      "present": {
+        "max_ms": 24.559745,
+        "p50_ms": 0.072761,
+        "p99_ms": 8.820843,
+        "samples": 709
+      },
+      "acquire": {
+        "max_ms": 0.29452100000000003,
+        "p50_ms": 0.01926,
+        "p99_ms": 0.03238,
+        "samples": 709
+      },
+      "rss_high_water_kib": 349204,
+      "pending_peak": 16,
+      "cpu_cache_peak_bytes": 0,
+      "gpu_resident_peak_bytes": 0,
+      "content_coverage_fraction": 0.0,
+      "gpu_completion_fps": 59.083333333333336,
+      "asset_pending_after_drain": 0,
+      "surface_other_errors": 0,
+      "surface_timeouts": 0,
+      "upload_count_limit": 8
+    }
+  ]
+}

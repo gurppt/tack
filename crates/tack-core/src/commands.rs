@@ -37,6 +37,12 @@ pub enum Command {
         filtering: ImageFiltering,
     },
     /// Final back-to-front index after removing the object's old position.
+    AddGroup(crate::Group),
+    RemoveGroup(crate::GroupId),
+    SetFrameName {
+        object: ObjectId,
+        name: String,
+    },
     SetZOrder {
         object: ObjectId,
         index: usize,
@@ -45,6 +51,10 @@ pub enum Command {
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum CommandError {
+    InvalidGroup,
+    ObjectInGroup(ObjectId),
+    WrongObjectKind(ObjectId),
+    InvalidFrame,
     DuplicateObject(ObjectId),
     DuplicateAsset(AssetId),
     DuplicateSource(SourceId),
@@ -76,7 +86,22 @@ impl Command {
     /// Conservative retained allocation accounting; no image payloads are commands.
     pub fn retained_bytes(&self) -> usize {
         let extra = match self {
-            Self::Batch(edits) => edits.capacity() * std::mem::size_of::<Command>(),
+            Self::Batch(edits) => {
+                edits.capacity() * std::mem::size_of::<Command>()
+                    + edits
+                        .iter()
+                        .map(|e| {
+                            e.retained_bytes()
+                                .saturating_sub(std::mem::size_of::<Command>())
+                        })
+                        .sum::<usize>()
+            }
+            Self::AddGroup(g) => g.retained_bytes(),
+            Self::SetFrameName { name, .. } => name.capacity(),
+            Self::AddObject { object, .. } => match object.kind() {
+                ObjectKind::Frame(name) => name.capacity(),
+                _ => 0,
+            },
             Self::AddSource(_) | Self::SetSource(_) => crate::MAX_SOURCE_PATH_BYTES,
             _ => 0,
         };
@@ -92,6 +117,9 @@ impl Command {
                 | Self::SetOpacity { .. }
                 | Self::SetImageFiltering { .. }
                 | Self::SetZOrder { .. }
+                | Self::AddGroup(_)
+                | Self::RemoveGroup(_)
+                | Self::SetFrameName { .. }
         )
     }
 }
@@ -201,6 +229,7 @@ impl Document {
                 }
                 if self.objects.values().any(|o| match o.kind {
                     ObjectKind::Image(image) => image.asset_id() == id,
+                    ObjectKind::Frame(_) => false,
                 }) {
                     return Err(CommandError::AssetInUse(id));
                 }
@@ -211,8 +240,9 @@ impl Document {
                 if self.objects.contains_key(&id) {
                     return Err(CommandError::DuplicateObject(id));
                 }
-                let ObjectKind::Image(image) = object.kind;
-                if !self.assets.contains_key(&image.asset_id()) {
+                if let ObjectKind::Image(image) = &object.kind
+                    && !self.assets.contains_key(&image.asset_id())
+                {
                     return Err(CommandError::MissingAsset(image.asset_id()));
                 }
                 if index > self.order.len() {
@@ -224,17 +254,26 @@ impl Document {
                 if self.objects.len() >= self.limits.objects {
                     return Err(CommandError::LimitReached("objects"));
                 }
+                if matches!(object.kind(), ObjectKind::Frame(_)) {
+                    self.frame_count += 1;
+                }
                 self.order.insert(index, id);
                 self.objects.insert(id, object);
                 Some(RemoveObject(id))
             }
             RemoveObject(id) => {
+                if self.memberships.contains_key(&id) {
+                    return Err(CommandError::ObjectInGroup(id));
+                }
                 let index = self.position(id)?;
                 let object = self
                     .objects
                     .remove(&id)
                     .ok_or(CommandError::MissingObject(id))?;
                 self.order.remove(index);
+                if matches!(object.kind(), ObjectKind::Frame(_)) {
+                    self.frame_count -= 1;
+                }
                 Some(AddObject { object, index })
             }
             SetTransform { object, transform } => {
@@ -242,6 +281,11 @@ impl Document {
                     .objects
                     .get_mut(&object)
                     .ok_or(CommandError::MissingObject(object))?;
+                if matches!(target.kind(), ObjectKind::Frame(_))
+                    && (transform.rotation() != 0. || transform.flips() != [false; 2])
+                {
+                    return Err(CommandError::InvalidFrame);
+                }
                 replace(&mut target.transform, transform)
                     .map(|transform| SetTransform { object, transform })
             }
@@ -250,7 +294,8 @@ impl Document {
                     .objects
                     .get_mut(&object)
                     .ok_or(CommandError::MissingObject(object))?
-                    .image_mut();
+                    .image_mut()
+                    .ok_or(CommandError::WrongObjectKind(object))?;
                 replace(&mut target.crop, crop).map(|crop| SetCrop { object, crop })
             }
             SetOpacity { object, opacity } => {
@@ -258,7 +303,8 @@ impl Document {
                     .objects
                     .get_mut(&object)
                     .ok_or(CommandError::MissingObject(object))?
-                    .image_mut();
+                    .image_mut()
+                    .ok_or(CommandError::WrongObjectKind(object))?;
                 replace(&mut target.opacity, opacity).map(|opacity| SetOpacity { object, opacity })
             }
             SetImageFiltering { object, filtering } => {
@@ -266,9 +312,30 @@ impl Document {
                     .objects
                     .get_mut(&object)
                     .ok_or(CommandError::MissingObject(object))?
-                    .image_mut();
+                    .image_mut()
+                    .ok_or(CommandError::WrongObjectKind(object))?;
                 replace(&mut target.filtering, filtering)
                     .map(|filtering| SetImageFiltering { object, filtering })
+            }
+            AddGroup(group) => return self.add_group(group),
+            RemoveGroup(id) => return self.remove_group(id),
+            SetFrameName { object, name } => {
+                crate::validate_frame_name(&name).map_err(|_| CommandError::InvalidFrame)?;
+                let target = self
+                    .objects
+                    .get_mut(&object)
+                    .ok_or(CommandError::MissingObject(object))?;
+                let ObjectKind::Frame(previous) = &mut target.kind else {
+                    return Err(CommandError::WrongObjectKind(object));
+                };
+                if *previous == name {
+                    None
+                } else {
+                    Some(SetFrameName {
+                        object,
+                        name: std::mem::replace(previous, name),
+                    })
+                }
             }
             SetZOrder { object, index } => {
                 let previous = self.position(object)?;

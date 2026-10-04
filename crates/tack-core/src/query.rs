@@ -23,7 +23,9 @@ pub trait DocumentQuery {
 impl DocumentQuery for Document {
     fn object_render_data(&self, id: ObjectId) -> Option<ImageRenderData> {
         let object = self.object(id)?;
-        let ObjectKind::Image(image) = object.kind();
+        let ObjectKind::Image(image) = object.kind() else {
+            return None;
+        };
         Some(ImageRenderData {
             object_id: id,
             asset_id: image.asset_id(),

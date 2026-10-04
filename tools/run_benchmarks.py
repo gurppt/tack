@@ -63,6 +63,7 @@ def main():
     source_paths += [p for p in (source_root / "crates").rglob("*") if p.suffix in [".rs", ".wgsl", ".toml"]]
     source_paths += list((source_root / "tools").glob("*.py"))
     source_paths += [p for p in (source_root / ".cargo").glob("*.toml")]
+    source_paths += [p for p in (source_root / "assets/pixel-font").glob("*") if p.is_file()]
     digest = hashlib.sha256()
     if args.source_snapshot is not None:
         shutil.copy2(args.source_snapshot, root / "source-snapshot.zip")

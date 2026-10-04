@@ -41,6 +41,7 @@ pub fn run(command: &str, args: Vec<OsString>, started: Instant) -> Result<(), A
         "inspect" => inspect(args),
         "open" => crate::product_window::run(args, started),
         "query-scale" => query_scale(args),
+        "spatial-scale" => crate::spatial_cli::run(args),
         _ => Err("unknown product command".into()),
     }
 }

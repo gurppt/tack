@@ -1,0 +1,664 @@
+{
+  "provenance": {
+    "binary_sha256": "eb0bd8f5a3d0c0053593e355ca0953a07922d236b4696a2ae5f1d5626101c37c",
+    "source_sha256": "fee2f61ca8d3abf489ad6e675cf94dfe8ee2a2f2d54c1e4e135cd0108e921c6d",
+    "source_snapshot_sha256": "af05cc60cf27b65b72ab081a7aae11b6476be19e07374a0b89be76ad2c16ed9a",
+    "harness_sha256": "6040c00c50f11f6abfb38236a454f2e96537d50f8cbce872a66e4c8dffa554db",
+    "input_manifest_sha256": "8bd27d9631560213365df47b842e37720421703608b13e79ee54f8524ad44af6",
+    "source_inventory_sha256": "aa8f802549ac7445b2c5373912f7926c1c3743b6af720af8f017a2ed2c6cffd9",
+    "platform": "Linux-7.1.5-76070105-generic-x86_64-with-glibc2.39",
+    "percentile": "sorted value at floor(p*(n-1)); frame coverage weighted by visible objects",
+    "rss": "sampled /proc VmHWM every 10 ms; peak may be missed for very short processes",
+    "cache": "fresh process RAM/VRAM; kernel page cache not flushed",
+    "native_build": {
+      "version": "3.2.0",
+      "source_url": "https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.2.0/libjpeg-turbo-3.2.0.tar.gz",
+      "source_sha256": "6f30092cef9fb839779646608f4ee14ae3cbac989c47fa05e841b0841f09878e",
+      "cmake_command": [
+        "cmake",
+        "-S",
+        "/home/gurp/softs/tack/target/native/source/libjpeg-turbo-3.2.0",
+        "-B",
+        "/home/gurp/softs/tack/target/native/turbojpeg-build",
+        "-DCMAKE_INSTALL_PREFIX=/home/gurp/softs/tack/target/native/libjpeg-turbo-3.2.0",
+        "-DCMAKE_INSTALL_LIBDIR=lib",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DENABLE_SHARED=OFF",
+        "-DENABLE_STATIC=ON",
+        "-DWITH_TURBOJPEG=ON",
+        "-DREQUIRE_SIMD=ON",
+        "-DWITH_JAVA=OFF"
+      ],
+      "nasm": "NASM version 2.16.01",
+      "library_sha256": {
+        "libturbojpeg.a": "e3fb98a1b4e3814c1e620b6e599b4a293badfde689a49430e0d1a43455269658"
+      }
+    },
+    "native_library_sha256": "e3fb98a1b4e3814c1e620b6e599b4a293badfde689a49430e0d1a43455269658",
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\n",
+    "gpu": "name, driver_version, memory.total [MiB]\nNVIDIA GeForce RTX 2060, 580.173.02, 6144 MiB\n"
+  },
+  "runs": [
+    {
+      "name": "create-linked-1k",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/tack-app",
+        "create",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/linked.tack",
+        "--linked",
+        "--manifest",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/corpus/manifest.json",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/create-linked-1k.json"
+      ],
+      "wall_ms": 36959.21912299673,
+      "peak_rss_bytes": 79261696,
+      "report_sha256": "6d0736c49017785a5ae53da082cff6d6a11deab339ba013964285a185e7e04df",
+      "summary": {
+        "container_bytes_read": 324096,
+        "derived_bytes_written": 46821740,
+        "dirty_after_save": false,
+        "embedded": false,
+        "errors": 0,
+        "file_bytes": 47209836,
+        "metadata_import_ms": 123.122847,
+        "metadata_source_bytes": 179000,
+        "objects": 1000,
+        "operation": "create",
+        "overview_generated": 1000,
+        "overview_reused": 0,
+        "peak_pending": 16,
+        "preparation_ms": 36600.451468,
+        "progress": [
+          {
+            "elapsed_ms": 0.00629,
+            "errors": 0,
+            "ready": 0
+          },
+          {
+            "elapsed_ms": 3665.239493,
+            "errors": 0,
+            "ready": 100
+          },
+          {
+            "elapsed_ms": 9138.91599,
+            "errors": 0,
+            "ready": 250
+          },
+          {
+            "elapsed_ms": 18221.749579,
+            "errors": 0,
+            "ready": 500
+          },
+          {
+            "elapsed_ms": 27424.199787999998,
+            "errors": 0,
+            "ready": 750
+          },
+          {
+            "elapsed_ms": 32934.954832999996,
+            "errors": 0,
+            "ready": 900
+          },
+          {
+            "elapsed_ms": 36600.450868,
+            "errors": 0,
+            "ready": 1000
+          }
+        ],
+        "save_ms": 160.022176,
+        "source_bytes_read": 7110972177,
+        "total_ms": 36895.087272
+      }
+    },
+    {
+      "name": "reopen-prepared",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/linked.tack",
+        "--seconds",
+        "6",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/reopen-prepared.json"
+      ],
+      "wall_ms": 6296.857509994879,
+      "peak_rss_bytes": 332091392,
+      "report_sha256": "14dd1fb06b76d77769f3d120602689b82db30d492e70ef83a03acaa1f2af7fe2",
+      "summary": {
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "camera_clamped": false,
+        "container_bytes": 575050,
+        "cpu_payload_bytes": 196608,
+        "detail": "overview-only vertical slice; no detail request issued",
+        "drain_ms": 0.01151,
+        "editing": {
+          "dirty": false,
+          "generation": 0,
+          "redo_entries": 0,
+          "save_completed": 0,
+          "selected": 0,
+          "undo_entries": 0
+        },
+        "errors": 0,
+        "first_recognizable_ms": 727.685566,
+        "interaction": null,
+        "metadata_bytes": 388096,
+        "metadata_load_ms": 4.907763,
+        "native_startup_ms": 620.730231,
+        "navigation_end_pending": 0,
+        "operation": "open",
+        "ordinary_view_80_percent_ms": 744.5215010000001,
+        "overview_regenerated": 0,
+        "overview_reused": 4,
+        "peak_pending": 4,
+        "recognizable_clock": "CPU submission before present",
+        "redraw_count": 3,
+        "source_bytes_before_detail": 0,
+        "source_changed": 0,
+        "source_foreign": 0,
+        "source_missing": 0,
+        "spatial": {
+          "frames": 0,
+          "grid": false,
+          "groups": 0,
+          "snapping": false
+        },
+        "state_counts_scope": "requested sources only",
+        "wait_count": 331
+      },
+      "frame_summary": {
+        "frames": 3,
+        "p99_representative": false,
+        "cpu_max_ms": 1.443643,
+        "upload_max_ms": 0.577651,
+        "callback_max_ms": 5.7206649999999994,
+        "cpu_p99_ms": 0.862443,
+        "upload_p99_ms": 0.386681,
+        "callback_p99_ms": 1.511994,
+        "gpu_pass_p99_ms": 0.012992,
+        "recognizable_fraction": 0.5,
+        "bounds_pass": true
+      }
+    },
+    {
+      "name": "reopen-warm",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/linked.tack",
+        "--seconds",
+        "6",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/reopen-warm.json"
+      ],
+      "wall_ms": 6285.423141998763,
+      "peak_rss_bytes": 331517952,
+      "report_sha256": "d30d87650fee907c4a9d0623eb0b9220d667804b830f063d8f0f8eb09c6a3ef4",
+      "summary": {
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "camera_clamped": false,
+        "container_bytes": 575050,
+        "cpu_payload_bytes": 196608,
+        "detail": "overview-only vertical slice; no detail request issued",
+        "drain_ms": 0.00994,
+        "editing": {
+          "dirty": false,
+          "generation": 0,
+          "redo_entries": 0,
+          "save_completed": 0,
+          "selected": 0,
+          "undo_entries": 0
+        },
+        "errors": 0,
+        "first_recognizable_ms": 651.6081839999999,
+        "interaction": null,
+        "metadata_bytes": 388096,
+        "metadata_load_ms": 4.909654000000001,
+        "native_startup_ms": 572.1926229999999,
+        "navigation_end_pending": 0,
+        "operation": "open",
+        "ordinary_view_80_percent_ms": 651.6081839999999,
+        "overview_regenerated": 0,
+        "overview_reused": 4,
+        "peak_pending": 4,
+        "recognizable_clock": "CPU submission before present",
+        "redraw_count": 2,
+        "source_bytes_before_detail": 0,
+        "source_changed": 0,
+        "source_foreign": 0,
+        "source_missing": 0,
+        "spatial": {
+          "frames": 0,
+          "grid": false,
+          "groups": 0,
+          "snapping": false
+        },
+        "state_counts_scope": "requested sources only",
+        "wait_count": 335
+      },
+      "frame_summary": {
+        "frames": 2,
+        "p99_representative": false,
+        "cpu_max_ms": 1.220173,
+        "upload_max_ms": 0.531231,
+        "callback_max_ms": 3.92579,
+        "cpu_p99_ms": 0.724142,
+        "upload_p99_ms": 0.0,
+        "callback_p99_ms": 0.905993,
+        "gpu_pass_p99_ms": 0.012096,
+        "recognizable_fraction": 0.5,
+        "bounds_pass": true
+      }
+    },
+    {
+      "name": "reopen-tour",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/linked.tack",
+        "--seconds",
+        "12",
+        "--board-tour",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/reopen-tour.json"
+      ],
+      "wall_ms": 12257.955234999827,
+      "peak_rss_bytes": 394821632,
+      "report_sha256": "e278bbb6f88b697263656cc404e848b4b6b4537f40caaf12ec9babdcf3012c8f",
+      "summary": {
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "camera_clamped": false,
+        "container_bytes": 47209836,
+        "cpu_payload_bytes": 49152000,
+        "detail": "overview-only vertical slice; no detail request issued",
+        "drain_ms": 0.05082,
+        "editing": {
+          "dirty": false,
+          "generation": 0,
+          "redo_entries": 0,
+          "save_completed": 0,
+          "selected": 0,
+          "undo_entries": 0
+        },
+        "errors": 0,
+        "first_recognizable_ms": 711.359883,
+        "interaction": null,
+        "metadata_bytes": 388096,
+        "metadata_load_ms": 4.372971,
+        "native_startup_ms": 617.7501239999999,
+        "navigation_end_pending": 0,
+        "operation": "open",
+        "ordinary_view_80_percent_ms": 1676.32621,
+        "overview_regenerated": 0,
+        "overview_reused": 1000,
+        "peak_pending": 16,
+        "recognizable_clock": "CPU submission before present",
+        "redraw_count": 624,
+        "source_bytes_before_detail": 0,
+        "source_changed": 0,
+        "source_foreign": 0,
+        "source_missing": 0,
+        "spatial": {
+          "frames": 0,
+          "grid": false,
+          "groups": 0,
+          "snapping": false
+        },
+        "state_counts_scope": "requested sources only",
+        "wait_count": 1248
+      },
+      "frame_summary": {
+        "frames": 624,
+        "p99_representative": true,
+        "cpu_max_ms": 4.233551,
+        "upload_max_ms": 2.1437060000000003,
+        "callback_max_ms": 14.627098,
+        "cpu_p99_ms": 2.847547,
+        "upload_p99_ms": 1.927576,
+        "callback_p99_ms": 12.468983,
+        "gpu_pass_p99_ms": 1.490144,
+        "recognizable_fraction": 0.9540264065659569,
+        "bounds_pass": true
+      }
+    },
+    {
+      "name": "reopen-missing",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/linked.tack",
+        "--seconds",
+        "6",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/reopen-missing.json"
+      ],
+      "wall_ms": 6328.918896004325,
+      "peak_rss_bytes": 331169792,
+      "report_sha256": "d524c54ac7749433dd13f556e48e443daddfdb8718f05132f3032d2dbb5ea46b",
+      "summary": {
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "camera_clamped": false,
+        "container_bytes": 575050,
+        "cpu_payload_bytes": 196608,
+        "detail": "overview-only vertical slice; no detail request issued",
+        "drain_ms": 0.00835,
+        "editing": {
+          "dirty": false,
+          "generation": 0,
+          "redo_entries": 0,
+          "save_completed": 0,
+          "selected": 0,
+          "undo_entries": 0
+        },
+        "errors": 0,
+        "first_recognizable_ms": 749.9285249999999,
+        "interaction": null,
+        "metadata_bytes": 388096,
+        "metadata_load_ms": 4.936653,
+        "native_startup_ms": 622.066365,
+        "navigation_end_pending": 0,
+        "operation": "open",
+        "ordinary_view_80_percent_ms": 749.9285249999999,
+        "overview_regenerated": 0,
+        "overview_reused": 4,
+        "peak_pending": 4,
+        "recognizable_clock": "CPU submission before present",
+        "redraw_count": 2,
+        "source_bytes_before_detail": 0,
+        "source_changed": 0,
+        "source_foreign": 0,
+        "source_missing": 2,
+        "spatial": {
+          "frames": 0,
+          "grid": false,
+          "groups": 0,
+          "snapping": false
+        },
+        "state_counts_scope": "requested sources only",
+        "wait_count": 330
+      },
+      "frame_summary": {
+        "frames": 2,
+        "p99_representative": false,
+        "cpu_max_ms": 0.6246109999999999,
+        "upload_max_ms": 0.35902,
+        "callback_max_ms": 13.661346,
+        "cpu_p99_ms": 0.41730100000000003,
+        "upload_p99_ms": 0.0,
+        "callback_p99_ms": 0.703472,
+        "gpu_pass_p99_ms": 0.012288,
+        "recognizable_fraction": 0.5,
+        "bounds_pass": true
+      }
+    },
+    {
+      "name": "repair-three",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/tack-app",
+        "repair",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/corrupt-overviews.tack",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/repaired.tack",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/repair-three.json"
+      ],
+      "wall_ms": 410.3060330016888,
+      "peak_rss_bytes": 68493312,
+      "report_sha256": "5902fea8226ef32f4b17a2b4447080b7452eb48ba1d27a44a283ca267159956e",
+      "summary": {
+        "container_bytes": 47209836,
+        "derived_bytes_written": 140450,
+        "errors": 0,
+        "objects": 1000,
+        "operation": "repair",
+        "overview_regenerated": 3,
+        "overview_reused": 997,
+        "preparation_ms": 236.467319,
+        "save_ms": 153.80529900000002,
+        "source_bytes": 21343224,
+        "total_ms": 393.002656
+      }
+    },
+    {
+      "name": "reopen-repaired",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/repaired.tack",
+        "--seconds",
+        "6",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/reopen-repaired.json"
+      ],
+      "wall_ms": 6321.510185000079,
+      "peak_rss_bytes": 331264000,
+      "report_sha256": "4b1faca340909542ec5b0144e830f5eeabc3f984b1fce466ec3e2d1c690847fb",
+      "summary": {
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "camera_clamped": false,
+        "container_bytes": 575050,
+        "cpu_payload_bytes": 196608,
+        "detail": "overview-only vertical slice; no detail request issued",
+        "drain_ms": 0.010679999999999999,
+        "editing": {
+          "dirty": false,
+          "generation": 0,
+          "redo_entries": 0,
+          "save_completed": 0,
+          "selected": 0,
+          "undo_entries": 0
+        },
+        "errors": 0,
+        "first_recognizable_ms": 663.309205,
+        "interaction": null,
+        "metadata_bytes": 388096,
+        "metadata_load_ms": 4.255841,
+        "native_startup_ms": 576.082293,
+        "navigation_end_pending": 0,
+        "operation": "open",
+        "ordinary_view_80_percent_ms": 663.309205,
+        "overview_regenerated": 0,
+        "overview_reused": 4,
+        "peak_pending": 4,
+        "recognizable_clock": "CPU submission before present",
+        "redraw_count": 2,
+        "source_bytes_before_detail": 0,
+        "source_changed": 0,
+        "source_foreign": 0,
+        "source_missing": 0,
+        "spatial": {
+          "frames": 0,
+          "grid": false,
+          "groups": 0,
+          "snapping": false
+        },
+        "state_counts_scope": "requested sources only",
+        "wait_count": 335
+      },
+      "frame_summary": {
+        "frames": 2,
+        "p99_representative": false,
+        "cpu_max_ms": 0.541901,
+        "upload_max_ms": 0.34463099999999997,
+        "callback_max_ms": 1.561784,
+        "cpu_p99_ms": 0.510351,
+        "upload_p99_ms": 0.0,
+        "callback_p99_ms": 0.579611,
+        "gpu_pass_p99_ms": 0.012096,
+        "recognizable_fraction": 0.5,
+        "bounds_pass": true
+      }
+    },
+    {
+      "name": "create-embedded",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/tack-app",
+        "create",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/embedded.tack",
+        "--embedded",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/embedded-fixture.png",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/create-embedded.json"
+      ],
+      "wall_ms": 21.073546005936805,
+      "peak_rss_bytes": 7172096,
+      "report_sha256": "1585982ffd929ec6d606c322756def042a9a4b04d90e333414a1f3a59ef5fbbe",
+      "summary": {
+        "container_bytes_read": 1030,
+        "derived_bytes_written": 504,
+        "dirty_after_save": false,
+        "embedded": true,
+        "errors": 0,
+        "file_bytes": 1170,
+        "metadata_import_ms": 0.32432,
+        "metadata_source_bytes": 428,
+        "objects": 1,
+        "operation": "create",
+        "overview_generated": 1,
+        "overview_reused": 0,
+        "peak_pending": 1,
+        "preparation_ms": 2.131196,
+        "progress": [
+          {
+            "elapsed_ms": 0.00486,
+            "errors": 0,
+            "ready": 0
+          },
+          {
+            "elapsed_ms": 2.130986,
+            "errors": 0,
+            "ready": 1
+          }
+        ],
+        "save_ms": 4.981363,
+        "source_bytes_read": 641,
+        "total_ms": 11.483989999999999
+      }
+    },
+    {
+      "name": "reopen-embedded-after-deletion",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/embedded.tack",
+        "--seconds",
+        "3",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/reopen-embedded-after-deletion.json"
+      ],
+      "wall_ms": 3175.923414994031,
+      "peak_rss_bytes": 328777728,
+      "report_sha256": "d649c15c174a710d89d84b4a96d5215277491ed6f631f53bdeb8c6e1371a0a84",
+      "summary": {
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "camera_clamped": false,
+        "container_bytes": 957,
+        "cpu_payload_bytes": 43520,
+        "detail": "overview-only vertical slice; no detail request issued",
+        "drain_ms": 0.010180000000000002,
+        "editing": {
+          "dirty": false,
+          "generation": 0,
+          "redo_entries": 0,
+          "save_completed": 0,
+          "selected": 0,
+          "undo_entries": 0
+        },
+        "errors": 0,
+        "first_recognizable_ms": 652.2028359999999,
+        "interaction": null,
+        "metadata_bytes": 453,
+        "metadata_load_ms": 0.06263,
+        "native_startup_ms": 570.217528,
+        "navigation_end_pending": 0,
+        "operation": "open",
+        "ordinary_view_80_percent_ms": 652.2028359999999,
+        "overview_regenerated": 0,
+        "overview_reused": 1,
+        "peak_pending": 1,
+        "recognizable_clock": "CPU submission before present",
+        "redraw_count": 2,
+        "source_bytes_before_detail": 0,
+        "source_changed": 0,
+        "source_foreign": 0,
+        "source_missing": 0,
+        "spatial": {
+          "frames": 0,
+          "grid": false,
+          "groups": 0,
+          "snapping": false
+        },
+        "state_counts_scope": "requested sources only",
+        "wait_count": 150
+      },
+      "frame_summary": {
+        "frames": 2,
+        "p99_representative": false,
+        "cpu_max_ms": 1.124613,
+        "upload_max_ms": 0.480301,
+        "callback_max_ms": 5.7128049999999995,
+        "cpu_p99_ms": 0.554972,
+        "upload_p99_ms": 0.0,
+        "callback_p99_ms": 1.663755,
+        "gpu_pass_p99_ms": 0.008192,
+        "recognizable_fraction": 0.5,
+        "bounds_pass": true
+      }
+    },
+    {
+      "name": "query-scale",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/tack-app",
+        "query-scale",
+        "/home/gurp/softs/tack/benchmark-results/phase1d-product-final/query-scale.json"
+      ],
+      "wall_ms": 195.73480099643348,
+      "peak_rss_bytes": 13205504,
+      "report_sha256": "17d79a35f61d4f55b1516bd1f90e73dee2cdaad876b79d05fcbe3a07a00cf15e",
+      "summary": {
+        "complexity": "ordered O(n log n) scan; allocation-free query; no spatial index",
+        "operation": "query-scale",
+        "runs": [
+          {
+            "file_bytes": 135186,
+            "load_ms": 0.713722,
+            "metadata_read_bytes": 135186,
+            "objects": 1000,
+            "query_max_ms": 0.07083,
+            "query_p50_ms": 0.045309999999999996,
+            "query_p99_ms": 0.061779999999999995,
+            "query_visible": 9,
+            "save_ms": 5.206344
+          },
+          {
+            "file_bytes": 675186,
+            "load_ms": 3.84659,
+            "metadata_read_bytes": 675186,
+            "objects": 5000,
+            "query_max_ms": 0.412401,
+            "query_p50_ms": 0.383701,
+            "query_p99_ms": 0.412261,
+            "query_visible": 9,
+            "save_ms": 6.7889289999999995
+          },
+          {
+            "file_bytes": 1350186,
+            "load_ms": 7.8165700000000005,
+            "metadata_read_bytes": 1350186,
+            "objects": 10000,
+            "query_max_ms": 0.919283,
+            "query_p50_ms": 0.871132,
+            "query_p99_ms": 0.9057130000000001,
+            "query_visible": 9,
+            "save_ms": 15.666362
+          }
+        ]
+      }
+    }
+  ]
+}

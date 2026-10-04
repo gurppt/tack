@@ -9,3 +9,5 @@ pub use timing::GpuSample;
 
 mod overlay;
 pub use overlay::{MAX_OVERLAY_QUADS, OverlayQuad};
+mod grid;
+pub use grid::GridView;

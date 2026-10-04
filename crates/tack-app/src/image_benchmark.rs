@@ -5,8 +5,17 @@ use crate::{
 };
 use tack_assets::AssetError;
 use tack_core::{Camera, DocumentEditor, DocumentQuery, ImageRenderData};
-pub const SCENARIOS: [&str; 7] = [
-    "drag", "resize", "rotate", "crop", "multi10", "multi100", "cancel",
+pub const SCENARIOS: [&str; 10] = [
+    "drag",
+    "resize",
+    "rotate",
+    "crop",
+    "multi10",
+    "multi100",
+    "cancel",
+    "snap",
+    "grid-hidden",
+    "grid-visible",
 ];
 pub struct ImageBenchmark {
     name: String,
@@ -17,6 +26,7 @@ pub struct ImageBenchmark {
     pub commits: usize,
     pub cancels: usize,
     pub invariants: bool,
+    pub snap_queries: Vec<f64>,
 }
 impl ImageBenchmark {
     pub fn new(name: String) -> Result<Self, AssetError> {
@@ -32,6 +42,7 @@ impl ImageBenchmark {
             commits: 0,
             cancels: 0,
             invariants: true,
+            snap_queries: Vec::new(),
         })
     }
     pub fn drive(
@@ -41,6 +52,20 @@ impl ImageBenchmark {
         camera: &mut Camera,
     ) -> Result<(), AssetError> {
         let started = std::time::Instant::now();
+        if self.name.starts_with("grid-") {
+            input.grid_visible = self.name == "grid-visible";
+            self.frame += 1;
+            if self.samples.len() < 7200 {
+                self.samples.push(started.elapsed().as_secs_f64() * 1000.);
+            }
+            return Ok(());
+        }
+        if self.name == "snap" {
+            input.snap.enabled = true;
+            input.snap.grid = true;
+            input.snap.measure = true;
+        }
+        input.snap.last_query_ms = None;
         let phase = self.frame % 61;
         let token = HoldToken(1_000_000 + self.frame as u64 / 61);
         if phase == 0 {
@@ -150,6 +175,11 @@ impl ImageBenchmark {
             if !self.invariants {
                 return Err("native gesture history/cancellation invariant failed".into());
             }
+        }
+        if let Some(ms) = input.snap.last_query_ms
+            && self.snap_queries.len() < 7200
+        {
+            self.snap_queries.push(ms);
         }
         self.frame += 1;
         if self.samples.len() < 7200 {

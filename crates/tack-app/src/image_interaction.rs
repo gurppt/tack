@@ -43,6 +43,32 @@ impl SelectionState {
             }
         }
     }
+    pub fn select_object(&mut self, doc: &Document, id: Option<ObjectId>, toggle: bool) {
+        if !toggle {
+            self.clear();
+        }
+        if let Some(id) = id {
+            if let Some(group) = doc.group_for(id) {
+                let remove = toggle && group.members().iter().all(|id| self.contains(*id));
+                for id in group.members() {
+                    if remove {
+                        self.ids.remove(id);
+                    } else {
+                        self.ids.insert(*id);
+                    }
+                }
+            } else {
+                self.select(Some(id), toggle);
+            }
+        }
+    }
+    pub fn expand_groups(&mut self, doc: &Document) {
+        for group in doc.groups() {
+            if group.members().iter().any(|id| self.contains(*id)) {
+                self.ids.extend(group.members());
+            }
+        }
+    }
     pub fn prune(&mut self, doc: &Document) {
         self.ids.retain(|id| doc.object(*id).is_some());
     }
@@ -51,13 +77,20 @@ impl SelectionState {
             self.clear();
         }
         for id in doc.object_order() {
-            if doc
-                .object(*id)
-                .is_some_and(|o| geometry::intersects(o.transform(), r))
-            {
+            if doc.object(*id).is_some_and(|o| match o.kind() {
+                tack_core::ObjectKind::Image(_) => geometry::intersects(o.transform(), r),
+                tack_core::ObjectKind::Frame(_) => {
+                    let b = o.transform().bounds();
+                    r.x <= b.x
+                        && r.y <= b.y
+                        && r.x + r.width >= b.x + b.width
+                        && r.y + r.height >= b.y + b.height
+                }
+            }) {
                 self.ids.insert(*id);
             }
         }
+        self.expand_groups(doc);
     }
 }
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -69,12 +102,31 @@ pub enum GestureKind {
     Crop { handle: usize },
     Opacity,
 }
+#[derive(Clone, Copy)]
+struct EditData {
+    object_id: ObjectId,
+    transform: Transform,
+    crop: tack_core::Crop,
+    opacity: Opacity,
+}
+impl EditData {
+    fn get(doc: &Document, id: ObjectId) -> Option<Self> {
+        let o = doc.object(id)?;
+        let image = doc.object_render_data(id);
+        Some(Self {
+            object_id: id,
+            transform: o.transform(),
+            crop: image.map_or(tack_core::Crop::FULL, |d| d.crop),
+            opacity: image.map_or(Opacity::OPAQUE, |d| d.opacity),
+        })
+    }
+}
 struct Gesture {
     kind: GestureKind,
     start: [f64; 2],
     frame: Transform,
-    initial: Vec<ImageRenderData>,
-    preview: Vec<ImageRenderData>,
+    initial: Vec<EditData>,
+    preview: Vec<EditData>,
     lookup: BTreeMap<ObjectId, usize>,
     generation: u64,
 }
@@ -94,16 +146,34 @@ impl ImageInteraction {
     pub fn preview(&self, data: ImageRenderData) -> ImageRenderData {
         self.gesture
             .as_ref()
-            .and_then(|g| g.lookup.get(&data.object_id).map(|i| g.preview[*i]))
+            .and_then(|g| {
+                g.lookup.get(&data.object_id).map(|i| {
+                    let p = g.preview[*i];
+                    ImageRenderData {
+                        transform: p.transform,
+                        crop: p.crop,
+                        opacity: p.opacity,
+                        ..data
+                    }
+                })
+            })
             .unwrap_or(data)
     }
     pub fn frame(&self, doc: &Document) -> Option<Transform> {
-        geometry::frame(
+        geometry::frame_transforms(
             self.selection
                 .ids()
-                .filter_map(|id| doc.object_render_data(id))
-                .map(|d| self.preview(d)),
+                .filter_map(|id| self.preview_transform(doc, id)),
         )
+    }
+    pub fn preview_transform(&self, doc: &Document, id: ObjectId) -> Option<Transform> {
+        self.gesture
+            .as_ref()
+            .and_then(|g| g.lookup.get(&id).map(|i| g.preview[*i].transform))
+            .or_else(|| doc.object(id).map(|o| o.transform()))
+    }
+    pub fn gesture_kind(&self) -> Option<GestureKind> {
+        self.gesture.as_ref().map(|g| g.kind)
     }
     pub fn hit(&self, doc: &Document, point: [f64; 2]) -> Option<ObjectId> {
         doc.object_order()
@@ -121,6 +191,7 @@ impl ImageInteraction {
         pointer: [f64; 2],
         editor: &DocumentEditor,
     ) -> Result<bool, GeometryError> {
+        self.selection.expand_groups(editor.document());
         if !pointer.iter().all(|p| p.is_finite()) {
             return Err(GeometryError);
         }
@@ -133,9 +204,19 @@ impl ImageInteraction {
         let initial: Vec<_> = self
             .selection
             .ids()
-            .filter_map(|id| editor.document().object_render_data(id))
+            .filter_map(|id| EditData::get(editor.document(), id))
             .collect();
-        let Some(frame) = geometry::frame(initial.iter().copied()) else {
+        if !matches!(
+            kind,
+            GestureKind::Move | GestureKind::Resize { .. } | GestureKind::Scale
+        ) && self
+            .selection
+            .ids()
+            .any(|id| editor.document().object_render_data(id).is_none())
+        {
+            return Ok(false);
+        }
+        let Some(frame) = geometry::frame_transforms(initial.iter().map(|d| d.transform)) else {
             return Ok(false);
         };
         let lookup = initial
@@ -190,7 +271,7 @@ impl ImageInteraction {
             (pointer[1] - g.frame.center()[1]).atan2(pointer[0] - g.frame.center()[0])
                 - (g.start[1] - g.frame.center()[1]).atan2(g.start[0] - g.frame.center()[0])
         };
-        let calculate = |data: ImageRenderData| -> Result<ImageRenderData, GeometryError> {
+        let calculate = |data: EditData| -> Result<EditData, GeometryError> {
             let t = data.transform;
             let transform = match g.kind {
                 GestureKind::Move => Transform::new(
@@ -239,10 +320,20 @@ impl ImageInteraction {
                     )?
                 }
                 GestureKind::Crop { handle } => {
-                    return geometry::crop(data, delta, geometry::HANDLE_DIRECTIONS[handle]);
+                    let (transform, crop) = geometry::crop_transform(
+                        data.transform,
+                        data.crop,
+                        delta,
+                        geometry::HANDLE_DIRECTIONS[handle],
+                    )?;
+                    return Ok(EditData {
+                        transform,
+                        crop,
+                        ..data
+                    });
                 }
                 GestureKind::Opacity => {
-                    return Ok(ImageRenderData {
+                    return Ok(EditData {
                         opacity: Opacity::new(
                             (data.opacity.value() + delta[0] / g.frame.size()[0]).clamp(0., 1.),
                         )?,
@@ -250,7 +341,7 @@ impl ImageInteraction {
                     });
                 }
             };
-            Ok(ImageRenderData { transform, ..data })
+            Ok(EditData { transform, ..data })
         };
         for &data in &g.initial {
             calculate(data)?;
@@ -294,7 +385,14 @@ impl ImageInteraction {
     }
     pub fn delete(&mut self, editor: &mut DocumentEditor) -> Result<bool, CommandError> {
         self.cancel();
-        let edits = self.selection.ids().map(Command::RemoveObject).collect();
+        self.selection.expand_groups(editor.document());
+        let mut edits: Vec<_> = editor
+            .document()
+            .groups()
+            .filter(|g| g.members().iter().any(|id| self.selection.contains(*id)))
+            .map(|g| Command::RemoveGroup(g.id()))
+            .collect();
+        edits.extend(self.selection.ids().map(Command::RemoveObject));
         let changed = editor.execute(Command::Batch(edits))?;
         self.selection.clear();
         Ok(changed)
@@ -312,6 +410,7 @@ impl ImageInteraction {
             .selection
             .ids()
             .filter_map(|id| editor.document().object(id))
+            .filter(|o| matches!(o.kind(), tack_core::ObjectKind::Image(_)))
             .map(|o| {
                 let t = o.transform();
                 let mut flips = t.flips();
@@ -351,11 +450,11 @@ impl ImageInteraction {
         camera: &mut Camera,
         id: ObjectId,
     ) -> Result<(), GeometryError> {
-        let data = doc.object_render_data(id).ok_or(GeometryError)?;
-        let b = data.transform.bounds();
+        let t = doc.object(id).ok_or(GeometryError)?.transform();
+        let b = t.bounds();
         let view = camera.viewport();
         camera.set_view(
-            data.transform.center().map(|v| v.clamp(-1e8, 1e8)),
+            t.center().map(|v| v.clamp(-1e8, 1e8)),
             (view.width * camera.zoom() / b.width).min(view.height * camera.zoom() / b.height)
                 * 0.9,
         )

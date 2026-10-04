@@ -100,6 +100,8 @@ pub fn run(args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
         drain_ms: 0.,
         title: String::new(),
         interaction_error: None,
+        redraws: 0,
+        wakeups: 0,
     };
     events.run_app(&mut app)?;
     if let Some(editor) = &mut app.editor {

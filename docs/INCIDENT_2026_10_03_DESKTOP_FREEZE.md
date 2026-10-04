@@ -72,3 +72,15 @@ A final kernel-log check after all native tests again found zero NVIDIA Xid, OOM
 or lockup/hung-task signals. The retained `/dev/sdc` read errors in this boot are
 timestamped 11:20:18–11:20:29, during boot, rather than the later test interval.
 Raw check: `benchmark-results/phase1c-incident/post-tests-kernel.log`.
+
+## Phase 1D follow-up — 2026-10-04
+
+Serialized native spatial/manipulation/persistence/regression runs completed
+without another freeze. Ten-second ordinary idle observations show zero redraw
+and source/file I/O, zero main/worker CPU ticks, and 0.3–0.5% aggregate CPU
+(comparable 1C baseline 0.4%). Separate GDB stacks locate the residual periodic
+threads in the NVIDIA driver; Tack's main loop waits in epoll and overview
+workers wait on their channels. This does not establish the historical freeze
+cause. No global driver/disk/desktop changes were made. Final kernel check
+contains no new Xid/OOM/hung-task/lockup signal. See MISSION_1D_REPORT.md and
+benchmarks/phase1d-idle.json for measured evidence and its limits.
