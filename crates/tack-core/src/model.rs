@@ -146,6 +146,7 @@ impl ImageObject {
 pub enum ObjectKind {
     Image(ImageObject),
     Frame(String),
+    Annotation(Box<crate::Annotation>),
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -155,6 +156,26 @@ pub struct DocumentObject {
     pub(crate) kind: ObjectKind,
 }
 impl DocumentObject {
+    pub fn annotation(
+        id: ObjectId,
+        annotation: crate::Annotation,
+        transform: Transform,
+    ) -> Result<Self, crate::GeometryError> {
+        annotation.bounds(transform)?;
+        Ok(Self {
+            id,
+            transform,
+            kind: ObjectKind::Annotation(Box::new(annotation)),
+        })
+    }
+    pub fn bounds(&self) -> crate::WorldRect {
+        match self.kind() {
+            ObjectKind::Annotation(a) => {
+                a.bounds(self.transform).unwrap_or(self.transform.bounds())
+            }
+            _ => self.transform.bounds(),
+        }
+    }
     pub fn image(id: ObjectId, asset: AssetId, transform: Transform) -> Self {
         Self {
             id,
@@ -185,7 +206,7 @@ impl DocumentObject {
     pub(crate) fn image_mut(&mut self) -> Option<&mut ImageObject> {
         match &mut self.kind {
             ObjectKind::Image(image) => Some(image),
-            ObjectKind::Frame(_) => None,
+            _ => None,
         }
     }
 }
@@ -207,6 +228,7 @@ pub enum ModelError {
     InvalidPixelSize,
     InvalidSourceRevision,
     InvalidFrame,
+    InvalidAnnotation,
 }
 impl fmt::Display for ModelError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

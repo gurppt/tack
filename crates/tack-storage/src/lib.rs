@@ -1,4 +1,5 @@
 //! Explicit bounded snapshot storage. All functions are worker/startup operations.
+mod annotation_codec;
 mod codec;
 mod reader;
 mod save;

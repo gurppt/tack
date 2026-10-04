@@ -23,12 +23,17 @@ struct OpenOptions {
     output: Option<PathBuf>,
     tour: bool,
     interaction: Option<String>,
+    annotation_benchmark: bool,
 }
 enum Event {
-    Loaded(Result<(TackFile, f64), AssetError>),
+    Loaded(Box<Result<(TackFile, f64), AssetError>>),
+    SourceDone(Result<(), String>),
 }
 struct App {
     options: OpenOptions,
+    proxy: winit::event_loop::EventLoopProxy<Event>,
+    source_active: bool,
+    annotations: Option<Box<tack_app::annotation_scene::AnnotationScene>>,
     started: Instant,
     window: Option<Arc<Window>>,
     gpu: Option<Gpu>,
@@ -109,6 +114,9 @@ impl App {
             self.camera_clamped = center != t.center();
             self.camera
                 .set_view(center, (600. / t.size()[0]).clamp(0.000001, 1000.))?;
+        }
+        if self.options.annotation_benchmark {
+            self.camera.set_view([600., 300.], 1.)?;
         }
         for data in board
             .document
@@ -221,19 +229,58 @@ impl App {
         if let Some(editor) = &self.editor {
             self.input.build_overlay(editor, &self.camera);
         }
-        gpu.render_spatial(
-            &frame.texture.create_view(&Default::default()),
-            &self.camera,
-            &self.draws,
-            &self.input.gizmo.quads,
-            self.input.grid_visible.then(|| tack_render::GridView {
-                spacing: tack_app::spatial_snap::grid_spacing(
-                    self.camera.zoom(),
-                    self.input.gizmo.scale,
-                ),
-                dpi: self.input.gizmo.scale,
-            }),
-        )?;
+        let grid = self.input.grid_visible.then(|| tack_render::GridView {
+            spacing: tack_app::spatial_snap::grid_spacing(
+                self.camera.zoom(),
+                self.input.gizmo.scale,
+            ),
+            dpi: self.input.gizmo.scale,
+        });
+        let annotated = self
+            .editor
+            .as_ref()
+            .is_some_and(|e| e.document().annotation_count() > 0)
+            || self.input.annotation.creation.is_some()
+            || self.input.annotation.edit.is_some();
+        if annotated {
+            let scene = self.annotations.get_or_insert_with(Box::default);
+            if let Some(editor) = &self.editor {
+                scene.build(
+                    editor.document(),
+                    &self.input.images,
+                    &self.input.annotation,
+                    &self.camera,
+                    &self.draws,
+                );
+            }
+            gpu.render_annotated(
+                &frame.texture.create_view(&Default::default()),
+                &self.camera,
+                &self.draws,
+                &self.input.gizmo.quads,
+                grid,
+                tack_render::AnnotationDraws {
+                    primitives: &scene.primitives,
+                    order: &scene.order,
+                },
+            )?;
+        } else {
+            if let Some(scene) = &mut self.annotations {
+                scene.primitives.clear();
+                scene.order.clear();
+                scene.glyphs = 0;
+                scene.omitted = 0;
+                scene.layout_ms = 0.;
+                scene.build_ms = 0.;
+            }
+            gpu.render_spatial(
+                &frame.texture.create_view(&Default::default()),
+                &self.camera,
+                &self.draws,
+                &self.input.gizmo.quads,
+                grid,
+            )?;
+        }
         let cpu_ms = cpu_start.elapsed().as_secs_f64() * 1000.;
         let elapsed_ms = self.started.elapsed().as_secs_f64() * 1000.;
         if recognizable > 0 && self.first_content_ms.is_none() {
@@ -253,7 +300,7 @@ impl App {
         frame.present();
         let present_ms = present_start.elapsed().as_secs_f64() * 1000.;
         if self.options.output.is_some() && self.frames.len() < 7200 {
-            self.frames.push(json!({"elapsed_ms":elapsed_ms,"cpu_ms":cpu_ms,"visible":self.draws.len(),"recognizable":recognizable,"upload_cpu_ms":stats.upload_cpu_ms,"upload_bytes":stats.upload_bytes,"uploads":stats.uploads,"gpu_bytes":stats.gpu_bytes,"in_flight":stats.in_flight,"acquire_ms":acquire_ms,"present_ms":present_ms,"callback_ms":start.elapsed().as_secs_f64()*1000.}));
+            self.frames.push(json!({"annotations":self.annotations.as_ref().map(|a|json!({"primitives":a.primitives.len(),"glyphs":a.glyphs,"omitted":a.omitted,"layout_ms":a.layout_ms,"build_ms":a.build_ms})),"elapsed_ms":elapsed_ms,"cpu_ms":cpu_ms,"visible":self.draws.len(),"recognizable":recognizable,"upload_cpu_ms":stats.upload_cpu_ms,"upload_bytes":stats.upload_bytes,"uploads":stats.uploads,"gpu_bytes":stats.gpu_bytes,"in_flight":stats.in_flight,"acquire_ms":acquire_ms,"present_ms":present_ms,"callback_ms":start.elapsed().as_secs_f64()*1000.}));
         }
         self.dirty = self.draws.iter().any(|d| {
             d.key.is_none()
@@ -263,6 +310,45 @@ impl App {
                     .is_some_and(|a| !a.failed(d.data.asset_id))
         });
         Ok(())
+    }
+    fn start_source(&mut self, action: tack_app::actions::Action) {
+        use tack_app::{
+            actions::Action,
+            source_actions::{SourceOperation, SourceRequest},
+        };
+        let result = (|| -> Result<(), AssetError> {
+            if self.source_active {
+                return Err("a source action is already running".into());
+            }
+            let editor = self.editor.as_ref().ok_or("no open document")?;
+            if self.input.images.selection.len() != 1 {
+                return Err("source actions require one selected image".into());
+            }
+            let id = self
+                .input
+                .images
+                .selection
+                .ids()
+                .next()
+                .ok_or("no selected image")?;
+            let operation = match action {
+                Action::OpenSource => SourceOperation::Open,
+                Action::RevealSource => SourceOperation::Reveal,
+                Action::CopySourcePath => SourceOperation::CopyPath,
+                _ => return Err("invalid source action".into()),
+            };
+            let request = SourceRequest::new(editor.document(), id, &self.options.path, operation)?;
+            let proxy = self.proxy.clone();
+            std::thread::Builder::new()
+                .name("tack-source-action".into())
+                .spawn(move || {
+                    let result = request.perform().map_err(|e| e.to_string());
+                    let _ = proxy.send_event(Event::SourceDone(result));
+                })?;
+            self.source_active = true;
+            Ok(())
+        })();
+        self.interaction_error = result.err().map(|e| e.to_string());
     }
     fn drain(&mut self) -> Result<(), AssetError> {
         self.navigation_end_pending = self.assets.as_ref().map(|a| a.stats().pending).unwrap_or(0);
@@ -306,7 +392,7 @@ impl App {
             .and_then(|g| g.timing_samples())
             .map(|s| s.iter().map(|s| json!({"pass_ms":s.pass_ms})).collect())
             .unwrap_or_default();
-        let report = json!({"spatial":{"grid":self.input.grid_visible,"snapping":self.input.snap.enabled,"frames":self.editor.as_ref().map(|e|e.document().objects().filter(|o|matches!(o.kind(),tack_core::ObjectKind::Frame(_))).count()).unwrap_or(0),"groups":self.editor.as_ref().map(|e|e.document().groups().count()).unwrap_or(0)},"redraw_count":self.redraws,"wait_count":self.wakeups,"operation":"open","editing":self.editor.as_ref().map(|e|json!({"dirty":e.is_dirty(),"generation":e.generation(),"undo_entries":e.undo_len(),"redo_entries":e.redo_len(),"selected":self.input.images.selection.len(),"save_completed":self.save.completed})),"interaction":self.benchmark.as_ref().map(|b|json!({"scenario":b.name(),"input_ms":b.samples,"snap_query_ms":b.snap_queries,"commits":b.commits,"cancels":b.cancels,"invariants":b.invariants})),"native_startup_ms":self.native_startup_ms,"camera_clamped":self.camera_clamped,"navigation_end_pending":self.navigation_end_pending,"drain_ms":self.drain_ms,"state_counts_scope":"requested sources only","recognizable_clock":"CPU submission before present","metadata_load_ms":self.metadata_ms,"metadata_bytes":self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"first_recognizable_ms":self.first_content_ms,"ordinary_view_80_percent_ms":self.useful_ms,"source_bytes_before_detail":stats.source_bytes,"container_bytes":stats.container_bytes+self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"overview_reused":stats.reused,"overview_regenerated":stats.regenerated,"errors":stats.errors,"source_missing":counts(SourceState::Missing),"source_changed":counts(SourceState::Changed),"source_foreign":counts(SourceState::Foreign),"peak_pending":stats.peak_pending,"cpu_payload_bytes":stats.cpu_bytes,"adapter":gpu.map(|g|g.adapter_info.name.clone()),"backend":gpu.map(|g|format!("{:?}",g.adapter_info.backend)),"frames":self.frames,"gpu_samples":samples,"detail":"overview-only vertical slice; no detail request issued"});
+        let report = json!({"annotation_resources":gpu.map(|g|g.annotation_bytes()),"annotations":self.editor.as_ref().map(|e|e.document().annotation_count()).unwrap_or(0),"spatial":{"grid":self.input.grid_visible,"snapping":self.input.snap.enabled,"frames":self.editor.as_ref().map(|e|e.document().objects().filter(|o|matches!(o.kind(),tack_core::ObjectKind::Frame(_))).count()).unwrap_or(0),"groups":self.editor.as_ref().map(|e|e.document().groups().count()).unwrap_or(0)},"redraw_count":self.redraws,"wait_count":self.wakeups,"operation":"open","editing":self.editor.as_ref().map(|e|json!({"dirty":e.is_dirty(),"generation":e.generation(),"undo_entries":e.undo_len(),"redo_entries":e.redo_len(),"selected":self.input.images.selection.len(),"save_completed":self.save.completed})),"interaction":self.benchmark.as_ref().map(|b|json!({"scenario":b.name(),"input_ms":b.samples,"snap_query_ms":b.snap_queries,"commits":b.commits,"cancels":b.cancels,"invariants":b.invariants})),"native_startup_ms":self.native_startup_ms,"camera_clamped":self.camera_clamped,"navigation_end_pending":self.navigation_end_pending,"drain_ms":self.drain_ms,"state_counts_scope":"requested sources only","recognizable_clock":"CPU submission before present","metadata_load_ms":self.metadata_ms,"metadata_bytes":self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"first_recognizable_ms":self.first_content_ms,"ordinary_view_80_percent_ms":self.useful_ms,"source_bytes_before_detail":stats.source_bytes,"container_bytes":stats.container_bytes+self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"overview_reused":stats.reused,"overview_regenerated":stats.regenerated,"errors":stats.errors,"source_missing":counts(SourceState::Missing),"source_changed":counts(SourceState::Changed),"source_foreign":counts(SourceState::Foreign),"peak_pending":stats.peak_pending,"cpu_payload_bytes":stats.cpu_bytes,"adapter":gpu.map(|g|g.adapter_info.name.clone()),"backend":gpu.map(|g|format!("{:?}",g.adapter_info.backend)),"frames":self.frames,"gpu_samples":samples,"detail":"overview-only vertical slice; no detail request issued"});
         crate::report_output::write_new(path, &serde_json::to_vec_pretty(&report)?)?;
         Ok(())
     }
@@ -321,11 +407,18 @@ impl ApplicationHandler<Event> for App {
         }
     }
     fn user_event(&mut self, e: &ActiveEventLoop, event: Event) {
-        let Event::Loaded(result) = event;
-        let result = result.and_then(|(b, ms)| self.loaded(b, ms));
-        if let Err(error) = result {
-            self.error = Some(error);
-            e.exit();
+        match event {
+            Event::Loaded(result) => {
+                if let Err(error) = (*result).and_then(|(b, ms)| self.loaded(b, ms)) {
+                    self.error = Some(error);
+                    e.exit();
+                }
+            }
+            Event::SourceDone(result) => {
+                self.source_active = false;
+                self.interaction_error = result.err();
+                self.dirty = true;
+            }
         }
     }
     fn window_event(&mut self, e: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
@@ -341,9 +434,19 @@ impl ApplicationHandler<Event> for App {
                 && self.benchmark.is_none()
                 && let Some(editor) = &mut self.editor
             {
+                if matches!(&event,WindowEvent::KeyboardInput {event,..} if event.state==winit::event::ElementState::Pressed)
+                    || matches!(
+                        event,
+                        WindowEvent::MouseInput {
+                            state: winit::event::ElementState::Pressed,
+                            ..
+                        }
+                    )
+                {
+                    self.interaction_error = None;
+                }
                 match self.input.handle(&event, editor, &mut self.camera) {
                     Ok(requested) => {
-                        self.interaction_error = None;
                         if requested
                             && let (Some(board), Some(assets)) = (&self.board, &self.assets)
                             && let Err(error) = self.save.start(
@@ -359,6 +462,9 @@ impl ApplicationHandler<Event> for App {
                     Err(error) => self.interaction_error = Some(error.to_string()),
                 }
                 self.dirty = true;
+            }
+            if let Some(action) = self.input.pending_source.take() {
+                self.start_source(action);
             }
             match event {
                 WindowEvent::Resized(size) => {
@@ -471,6 +577,33 @@ impl ApplicationHandler<Event> for App {
                     .map(|s| format!(" · {s}"))
                     .unwrap_or_default()
             );
+            let warning = if self.annotations.as_ref().is_some_and(|a| a.omitted > 0) {
+                " · annotation display limit: some objects omitted"
+            } else if self
+                .input
+                .annotation
+                .creation
+                .as_ref()
+                .is_some_and(|c| c.capped)
+            {
+                " · stroke point limit reached"
+            } else {
+                ""
+            };
+            let note = if self.input.annotation.edit.is_some() {
+                " · Ctrl+Enter confirm / Esc cancel / Ctrl+A replace"
+            } else {
+                ""
+            };
+            let title = format!(
+                "{title} · {}{note}{warning}{}",
+                self.input.annotation.tools.tool().label(),
+                if self.source_active {
+                    " · source action"
+                } else {
+                    ""
+                }
+            );
             if self.title != title {
                 window.set_title(&title);
                 self.title = title;
@@ -489,7 +622,10 @@ impl ApplicationHandler<Event> for App {
             e.exit();
             return;
         }
-        let active = (self.dirty || self.options.tour || self.benchmark.is_some())
+        let active = (self.dirty
+            || self.options.tour
+            || self.benchmark.is_some()
+            || self.options.annotation_benchmark)
             && self.drawable
             && !self.occluded;
         if active && self.drawable && !self.occluded && Instant::now() >= self.next_frame {

@@ -1,0 +1,2269 @@
+{
+  "protocol": "Owned Xvfb :91, same RTX2060/Vulkan, no WM/user input; asserted loaded title/grid/editor before observing; 10s settled interval per row",
+  "runs": {
+    "baseline": {
+      "baseline": false,
+      "note_editing": false,
+      "display": ":91",
+      "isolated_no_wm": true,
+      "binary_sha256": "eb0bd8f5a3d0c0053593e355ca0953a07922d236b4696a2ae5f1d5626101c37c",
+      "harness_sha256": "1983d83bf0b6a59ceda1b1406a727a1b2874eedfd02981b6d3bcc3427019240e",
+      "board_sha256": "e0ebb3969a73af9678eea6cec3f941e6e6848e25843b6d9fd57ee134c0dc67b0",
+      "application_timer": "none; ordinary open has no --seconds/--interaction/tour",
+      "network": "Tack has no network client; socket_count includes native X11/driver IPC, not a network-byte counter",
+      "wakeups": "per-thread voluntary/involuntary context switches; total event-loop waits include startup/shutdown, not exact idle wakeups",
+      "gpu": "redraw submissions observed; nvidia-smi global utilization is not per-process attribution",
+      "runs": [
+        {
+          "grid": "hidden",
+          "interval_seconds": 10.024964981988887,
+          "cpu_ticks": 4,
+          "cpu_percent_of_one_core": 0.399003887513473,
+          "rss_initial_bytes": 350220288,
+          "rss_final_bytes": 350220288,
+          "idle_redraws": 0,
+          "idle_gpu_submissions": 0,
+          "total_redraws": 3,
+          "total_waits": 7,
+          "threads": [
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-0",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-1",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-2",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-3",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-4",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-5",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-6",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-7",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-8",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-9",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-10",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-11",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-12",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-13",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-14",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-15",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-ap:disk$0",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 5,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkcf] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkrt] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 101,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkps] Update",
+              "cpu_ticks": 2,
+              "voluntary_switches": 40,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 2,
+              "voluntary_switches": 997,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-ov",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-ov",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            }
+          ],
+          "new_threads": [],
+          "departed_threads": [],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          },
+          "socket_count": 4,
+          "source_bytes": 0,
+          "report_sha256": "acd9d55d90745742b8ef0d971e7c983c282e2a88630723e1696f7a24de90b8f1",
+          "observed_title": "Tack \u2014 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources"
+        },
+        {
+          "grid": "visible",
+          "interval_seconds": 10.02389146600035,
+          "cpu_ticks": 4,
+          "cpu_percent_of_one_core": 0.39904661912665806,
+          "rss_initial_bytes": 350507008,
+          "rss_final_bytes": 350507008,
+          "idle_redraws": 0,
+          "idle_gpu_submissions": 0,
+          "total_redraws": 4,
+          "total_waits": 9,
+          "threads": [
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-0",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-1",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-2",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-3",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-4",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-5",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-6",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-7",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-8",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-9",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-10",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-11",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-12",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-13",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-14",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-15",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-ap:disk$0",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 5,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkcf] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkrt] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 100,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkps] Update",
+              "cpu_ticks": 2,
+              "voluntary_switches": 40,
+              "involuntary_switches": 1
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 2,
+              "voluntary_switches": 997,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-ov",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-ov",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            }
+          ],
+          "new_threads": [],
+          "departed_threads": [],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          },
+          "socket_count": 4,
+          "source_bytes": 0,
+          "report_sha256": "759662d3e5f8d275c140ec7006c49dbc0821c27e3cd4afae783dc6d5239ce477",
+          "observed_title": "Tack \u2014 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources"
+        }
+      ]
+    },
+    "unused": {
+      "baseline": false,
+      "note_editing": false,
+      "display": ":91",
+      "isolated_no_wm": true,
+      "binary_sha256": "b929230b4f1d7373cfb806e1144606f5f7959d654bb80793ab0cf80fdb63cdd9",
+      "harness_sha256": "1983d83bf0b6a59ceda1b1406a727a1b2874eedfd02981b6d3bcc3427019240e",
+      "board_sha256": "e0ebb3969a73af9678eea6cec3f941e6e6848e25843b6d9fd57ee134c0dc67b0",
+      "application_timer": "none; ordinary open has no --seconds/--interaction/tour",
+      "network": "Tack has no network client; socket_count includes native X11/driver IPC, not a network-byte counter",
+      "wakeups": "per-thread voluntary/involuntary context switches; total event-loop waits include startup/shutdown, not exact idle wakeups",
+      "gpu": "redraw submissions observed; nvidia-smi global utilization is not per-process attribution",
+      "runs": [
+        {
+          "grid": "hidden",
+          "interval_seconds": 10.02102506000665,
+          "cpu_ticks": 4,
+          "cpu_percent_of_one_core": 0.3991607621024496,
+          "rss_initial_bytes": 350642176,
+          "rss_final_bytes": 350642176,
+          "idle_redraws": 0,
+          "idle_gpu_submissions": 0,
+          "total_redraws": 3,
+          "total_waits": 6,
+          "threads": [
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-0",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-1",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-2",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-3",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-4",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-5",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-6",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-7",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-8",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-9",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-10",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-11",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-12",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-13",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-14",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-15",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-ap:disk$0",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 5,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkcf] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkrt] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 100,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkps] Update",
+              "cpu_ticks": 2,
+              "voluntary_switches": 40,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 2,
+              "voluntary_switches": 997,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-ov",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-ov",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            }
+          ],
+          "new_threads": [],
+          "departed_threads": [],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          },
+          "socket_count": 4,
+          "source_bytes": 0,
+          "report_sha256": "910bc0544b321aadec8f41b60a5e400869aadcd2fb7b5f80884b8c4406d70f4d",
+          "observed_title": "Tack \u2014 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+        },
+        {
+          "grid": "visible",
+          "interval_seconds": 10.024387994999415,
+          "cpu_ticks": 5,
+          "cpu_percent_of_one_core": 0.4987835668864982,
+          "rss_initial_bytes": 350871552,
+          "rss_final_bytes": 350871552,
+          "idle_redraws": 0,
+          "idle_gpu_submissions": 0,
+          "total_redraws": 4,
+          "total_waits": 9,
+          "threads": [
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-0",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-1",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-2",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-3",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-4",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-5",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-6",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-7",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-8",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-9",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-10",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-11",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-12",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-13",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-14",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-15",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-ap:disk$0",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 5,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkcf] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkrt] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 100,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkps] Update",
+              "cpu_ticks": 3,
+              "voluntary_switches": 41,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 2,
+              "voluntary_switches": 997,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-ov",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-ov",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            }
+          ],
+          "new_threads": [],
+          "departed_threads": [],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          },
+          "socket_count": 4,
+          "source_bytes": 0,
+          "report_sha256": "18cfad01206e62c60d61d2ecae22bae378d2545c61e4d7ef8fe45e09458b6f54",
+          "observed_title": "Tack \u2014 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+        }
+      ]
+    },
+    "annotations": {
+      "baseline": false,
+      "note_editing": false,
+      "display": ":91",
+      "isolated_no_wm": true,
+      "binary_sha256": "b929230b4f1d7373cfb806e1144606f5f7959d654bb80793ab0cf80fdb63cdd9",
+      "harness_sha256": "1983d83bf0b6a59ceda1b1406a727a1b2874eedfd02981b6d3bcc3427019240e",
+      "board_sha256": "6d2b221796b19a58fae0f2eef0cf9330893e35ecfa31007c59d880bbc0b0ad20",
+      "application_timer": "none; ordinary open has no --seconds/--interaction/tour",
+      "network": "Tack has no network client; socket_count includes native X11/driver IPC, not a network-byte counter",
+      "wakeups": "per-thread voluntary/involuntary context switches; total event-loop waits include startup/shutdown, not exact idle wakeups",
+      "gpu": "redraw submissions observed; nvidia-smi global utilization is not per-process attribution",
+      "runs": [
+        {
+          "grid": "hidden",
+          "interval_seconds": 10.01929738400213,
+          "cpu_ticks": 5,
+          "cpu_percent_of_one_core": 0.49903698915889344,
+          "rss_initial_bytes": 353550336,
+          "rss_final_bytes": 353550336,
+          "idle_redraws": 0,
+          "idle_gpu_submissions": 0,
+          "total_redraws": 3,
+          "total_waits": 6,
+          "threads": [
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-0",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-1",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-2",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-3",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-4",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-5",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-6",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-7",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-8",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-9",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-10",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-11",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-12",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-13",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-14",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-15",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-ap:disk$0",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 5,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkcf] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkrt] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 100,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkps] Update",
+              "cpu_ticks": 3,
+              "voluntary_switches": 40,
+              "involuntary_switches": 1
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 2,
+              "voluntary_switches": 998,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-ov",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-ov",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            }
+          ],
+          "new_threads": [],
+          "departed_threads": [],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          },
+          "socket_count": 4,
+          "source_bytes": 0,
+          "report_sha256": "fa4aedfa17dd335678bc79384e2d10001208d96894ae5303dd3cd9d60aab735e",
+          "observed_title": "Tack \u2014 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+        },
+        {
+          "grid": "visible",
+          "interval_seconds": 10.023775994006428,
+          "cpu_ticks": 4,
+          "cpu_percent_of_one_core": 0.39905121606785127,
+          "rss_initial_bytes": 353337344,
+          "rss_final_bytes": 353337344,
+          "idle_redraws": 0,
+          "idle_gpu_submissions": 0,
+          "total_redraws": 4,
+          "total_waits": 9,
+          "threads": [
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-0",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-1",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-2",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-3",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-4",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-5",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-6",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-7",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-8",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-9",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-10",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-11",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-12",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-13",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-14",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-15",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-ap:disk$0",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 5,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkcf] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkrt] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 100,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkps] Update",
+              "cpu_ticks": 2,
+              "voluntary_switches": 40,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 2,
+              "voluntary_switches": 998,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-ov",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-ov",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            }
+          ],
+          "new_threads": [],
+          "departed_threads": [],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          },
+          "socket_count": 4,
+          "source_bytes": 0,
+          "report_sha256": "d2006ab96b8470bdeb53a431c40349b4a707ab1dca9440f3ad0a4913759fc398",
+          "observed_title": "Tack \u2014 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+        }
+      ]
+    },
+    "edit": {
+      "baseline": false,
+      "note_editing": true,
+      "display": ":91",
+      "isolated_no_wm": true,
+      "binary_sha256": "b929230b4f1d7373cfb806e1144606f5f7959d654bb80793ab0cf80fdb63cdd9",
+      "harness_sha256": "1983d83bf0b6a59ceda1b1406a727a1b2874eedfd02981b6d3bcc3427019240e",
+      "board_sha256": "6d2b221796b19a58fae0f2eef0cf9330893e35ecfa31007c59d880bbc0b0ad20",
+      "application_timer": "none; ordinary open has no --seconds/--interaction/tour",
+      "network": "Tack has no network client; socket_count includes native X11/driver IPC, not a network-byte counter",
+      "wakeups": "per-thread voluntary/involuntary context switches; total event-loop waits include startup/shutdown, not exact idle wakeups",
+      "gpu": "redraw submissions observed; nvidia-smi global utilization is not per-process attribution",
+      "runs": [
+        {
+          "grid": "hidden",
+          "interval_seconds": 10.02351608099707,
+          "cpu_ticks": 4,
+          "cpu_percent_of_one_core": 0.3990615635947688,
+          "rss_initial_bytes": 353677312,
+          "rss_final_bytes": 353677312,
+          "idle_redraws": 0,
+          "idle_gpu_submissions": 0,
+          "total_redraws": 3,
+          "total_waits": 6,
+          "threads": [
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-0",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-1",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-2",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-3",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-4",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-5",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-6",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-7",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-8",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-9",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-10",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-11",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-12",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-13",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-14",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-15",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-ap:disk$0",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 5,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkcf] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkrt] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 100,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkps] Update",
+              "cpu_ticks": 3,
+              "voluntary_switches": 40,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 1,
+              "voluntary_switches": 996,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-ov",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-ov",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            }
+          ],
+          "new_threads": [],
+          "departed_threads": [],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          },
+          "socket_count": 4,
+          "source_bytes": 0,
+          "report_sha256": "fedbdc10b7aad5b7251703b2868c4b32d144c87135847d7567351417aaa02f7d",
+          "observed_title": "Tack \u2014 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Text \u00b7 Ctrl+Enter confirm / Esc cancel / Ctrl+A replace"
+        },
+        {
+          "grid": "visible",
+          "interval_seconds": 10.023394108997309,
+          "cpu_ticks": 5,
+          "cpu_percent_of_one_core": 0.49883302458513984,
+          "rss_initial_bytes": 353521664,
+          "rss_final_bytes": 353521664,
+          "idle_redraws": 0,
+          "idle_gpu_submissions": 0,
+          "total_redraws": 5,
+          "total_waits": 11,
+          "threads": [
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-0",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-1",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-2",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-3",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-4",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-5",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-6",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-7",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-8",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-9",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-10",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-11",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-12",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-13",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-14",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-15",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-ap:disk$0",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 0,
+              "voluntary_switches": 5,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkcf] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkrt] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 100,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkps] Update",
+              "cpu_ticks": 3,
+              "voluntary_switches": 40,
+              "involuntary_switches": 1
+            },
+            {
+              "name": "tack-app",
+              "cpu_ticks": 2,
+              "voluntary_switches": 997,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-ov",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-ov",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            }
+          ],
+          "new_threads": [],
+          "departed_threads": [],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          },
+          "socket_count": 4,
+          "source_bytes": 0,
+          "report_sha256": "34e003a557cfdd977c941d92005fdb096dc83939a35399d66b674973a87d7f3b",
+          "observed_title": "Tack \u2014 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Text \u00b7 Ctrl+Enter confirm / Esc cancel / Ctrl+A replace"
+        }
+      ]
+    }
+  },
+  "excluded_trials": {
+    "phase1e-idle-unused/annotations/edit": "Live desktop user input confirmed by user; no input board writes",
+    "phase1e-idle-isolated-*": "Preliminary isolation harness sent keys before document initialization; inactive grid/editor states not accepted as evidence"
+  }
+}

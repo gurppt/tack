@@ -15,6 +15,100 @@ pub fn product_keymap() -> Result<Keymap, BindingError> {
     let ctrl = Modifiers::CONTROL;
     let shift = Modifiers::SHIFT;
     let alt = Modifiers::ALT;
+    use crate::{actions::Tool, annotation_tool::StyleAction};
+    for (code, mods, action) in [
+        (
+            KeyCode::KeyV,
+            Modifiers::NONE,
+            Action::SelectTool(Tool::Pointer),
+        ),
+        (
+            KeyCode::KeyT,
+            Modifiers::NONE,
+            Action::SelectTool(Tool::Text),
+        ),
+        (
+            KeyCode::KeyR,
+            Modifiers::NONE,
+            Action::SelectTool(Tool::Rectangle),
+        ),
+        (
+            KeyCode::KeyO,
+            Modifiers::NONE,
+            Action::SelectTool(Tool::Ellipse),
+        ),
+        (
+            KeyCode::KeyL,
+            Modifiers::NONE,
+            Action::SelectTool(Tool::Line),
+        ),
+        (
+            KeyCode::KeyA,
+            Modifiers::NONE,
+            Action::SelectTool(Tool::Arrow),
+        ),
+        (
+            KeyCode::KeyP,
+            Modifiers::NONE,
+            Action::SelectTool(Tool::Scribble),
+        ),
+        (KeyCode::KeyN, ctrl, Action::SelectTool(Tool::Text)),
+        (
+            KeyCode::KeyC,
+            Modifiers::NONE,
+            Action::AnnotationStyle(StyleAction::Color),
+        ),
+        (
+            KeyCode::KeyF,
+            Modifiers::NONE,
+            Action::AnnotationStyle(StyleAction::Fill),
+        ),
+        (
+            KeyCode::BracketRight,
+            Modifiers::NONE,
+            Action::AnnotationStyle(StyleAction::Wider),
+        ),
+        (
+            KeyCode::BracketLeft,
+            Modifiers::NONE,
+            Action::AnnotationStyle(StyleAction::Narrower),
+        ),
+        (
+            KeyCode::Period,
+            ctrl.union(shift),
+            Action::AnnotationStyle(StyleAction::LargerText),
+        ),
+        (
+            KeyCode::Comma,
+            ctrl.union(shift),
+            Action::AnnotationStyle(StyleAction::SmallerText),
+        ),
+        (
+            KeyCode::BracketRight,
+            shift,
+            Action::AnnotationStyle(StyleAction::OpacityUp),
+        ),
+        (
+            KeyCode::BracketLeft,
+            shift,
+            Action::AnnotationStyle(StyleAction::OpacityDown),
+        ),
+        (
+            KeyCode::KeyE,
+            ctrl.union(shift),
+            Action::AnnotationStyle(StyleAction::AlignText),
+        ),
+        (KeyCode::KeyO, ctrl.union(shift), Action::OpenSource),
+        (KeyCode::KeyO, ctrl.union(alt), Action::RevealSource),
+        (KeyCode::KeyC, ctrl.union(shift), Action::CopySourcePath),
+    ] {
+        map.bind(Binding {
+            control: PhysicalControl::Key(PhysicalKey::Code(code)),
+            modifiers: ModifierMatch::Exact(mods),
+            trigger: Trigger::Press,
+            action,
+        })?;
+    }
     for (mods, action) in [
         (Modifiers::NONE, Action::ImagePointer),
         (shift, Action::ToggleSelection),

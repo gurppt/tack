@@ -1,0 +1,112 @@
+{
+  "binary_sha256": "b929230b4f1d7373cfb806e1144606f5f7959d654bb80793ab0cf80fdb63cdd9",
+  "harness_sha256": "f177e3fadaaec9267f87aef10a3d1316ab9a8d10ac04cf9a5b6d607c31941d14",
+  "runs": [
+    {
+      "name": "ellipse-1000",
+      "cpu": {
+        "samples": 622,
+        "p50_ms": 0.532441,
+        "p99_ms": 0.860552,
+        "max_ms": 1.106332
+      },
+      "gpu": {
+        "samples": 641,
+        "p50_ms": 0.063488,
+        "p99_ms": 0.245568,
+        "max_ms": 0.259616
+      },
+      "callback": {
+        "samples": 622,
+        "p50_ms": 0.661072,
+        "p99_ms": 17.000008,
+        "max_ms": 30.031876
+      },
+      "rss_peak_bytes": 336027648,
+      "primitives": 1000,
+      "report_sha256": "6336ebfafd3950835f363e293d7fa54975f167e0f06276ca9c42d27f25b7c977",
+      "board_sha256": "4013eddc96d52cfea06ef2a6d25c4c2a5f3bb944d5f18503ca48d8b8ba3f226a",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1e-annotations-measured/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1e-ellipse-measured/ellipse-1000.tack",
+        "--annotation-benchmark",
+        "--seconds",
+        "12",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1e-ellipse-measured/ellipse-1000.json"
+      ]
+    },
+    {
+      "name": "ellipse-10000",
+      "cpu": {
+        "samples": 518,
+        "p50_ms": 3.9137679999999997,
+        "p99_ms": 5.235831,
+        "max_ms": 6.530265
+      },
+      "gpu": {
+        "samples": 531,
+        "p50_ms": 0.219776,
+        "p99_ms": 0.385856,
+        "max_ms": 0.464
+      },
+      "callback": {
+        "samples": 518,
+        "p50_ms": 4.441031,
+        "p99_ms": 18.419071,
+        "max_ms": 31.647579
+      },
+      "rss_peak_bytes": 347086848,
+      "primitives": 10000,
+      "report_sha256": "a797952ac951c9762988b237a4331acf5d6ffeddf117d5a19b61e084a86e7117",
+      "board_sha256": "81eec146106454379b90e276f8d455c46c3cbb180996c0e6112714d09e741f5f",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1e-annotations-measured/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1e-ellipse-measured/ellipse-10000.tack",
+        "--annotation-benchmark",
+        "--seconds",
+        "12",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1e-ellipse-measured/ellipse-10000.json"
+      ]
+    },
+    {
+      "name": "ellipse-full",
+      "cpu": {
+        "samples": 646,
+        "p50_ms": 0.1177,
+        "p99_ms": 0.22378,
+        "max_ms": 0.27376
+      },
+      "gpu": {
+        "samples": 664,
+        "p50_ms": 0.299008,
+        "p99_ms": 0.376384,
+        "max_ms": 0.384768
+      },
+      "callback": {
+        "samples": 646,
+        "p50_ms": 0.24596099999999999,
+        "p99_ms": 17.140028,
+        "max_ms": 17.774928999999997
+      },
+      "rss_peak_bytes": 335609856,
+      "primitives": 1,
+      "report_sha256": "d2aac91da022d48ab9d2d3ed3f9bd5a9b4992643ac190a0b127564e5d4e5f4d4",
+      "board_sha256": "8a334c316590c72021381db787295f2a1c9b001dd27a5c15955d3e8ea8db50c9",
+      "command": [
+        "/home/gurp/softs/tack/benchmark-results/phase1e-annotations-measured/tack-app",
+        "open",
+        "/home/gurp/softs/tack/benchmark-results/phase1e-ellipse-measured/ellipse-full.tack",
+        "--annotation-benchmark",
+        "--seconds",
+        "12",
+        "--output",
+        "/home/gurp/softs/tack/benchmark-results/phase1e-ellipse-measured/ellipse-full.json"
+      ]
+    }
+  ],
+  "fixture": "only owned schema3 metadata, preserved IDs, no image payloads; full ellipse covers1200x680 with opaque fill/stroke globalopacity0.5"
+}

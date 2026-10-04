@@ -144,6 +144,7 @@ pub struct Gpu {
     pub format: wgpu::TextureFormat,
     pipeline: wgpu::RenderPipeline,
     overlay: crate::overlay::Overlay,
+    annotations: Option<Box<crate::annotations::Annotations>>,
     grid: Option<crate::grid::Grid>,
     layout: wgpu::BindGroupLayout,
     sampler: wgpu::Sampler,
@@ -295,6 +296,7 @@ impl Gpu {
             adapter_info,
             format,
             overlay,
+            annotations: None,
             grid: None,
             pipeline,
             layout,
@@ -450,7 +452,7 @@ impl Gpu {
         camera: &Camera,
         images: &[DrawImage],
     ) -> Result<(), AssetError> {
-        self.render_images(target, camera, images, &[], None)
+        self.render_images(target, camera, images, &[], None, None)
     }
     pub fn render_product(
         &mut self,
@@ -458,7 +460,7 @@ impl Gpu {
         camera: &Camera,
         images: &[DrawProductImage],
     ) -> Result<(), AssetError> {
-        self.render_images(target, camera, images, &[], None)
+        self.render_images(target, camera, images, &[], None, None)
     }
     pub fn render_product_overlay(
         &mut self,
@@ -467,7 +469,7 @@ impl Gpu {
         images: &[DrawProductImage],
         overlay: &[crate::OverlayQuad],
     ) -> Result<(), AssetError> {
-        self.render_images(target, camera, images, overlay, None)
+        self.render_images(target, camera, images, overlay, None, None)
     }
     pub fn render_spatial(
         &mut self,
@@ -477,7 +479,22 @@ impl Gpu {
         overlay: &[crate::OverlayQuad],
         grid: Option<crate::GridView>,
     ) -> Result<(), AssetError> {
-        self.render_images(target, camera, images, overlay, grid)
+        self.render_images(target, camera, images, overlay, grid, None)
+    }
+    pub fn render_annotated(
+        &mut self,
+        target: &wgpu::TextureView,
+        camera: &Camera,
+        images: &[DrawProductImage],
+        overlay: &[crate::OverlayQuad],
+        grid: Option<crate::GridView>,
+        scene: crate::AnnotationDraws<'_>,
+    ) -> Result<(), AssetError> {
+        self.render_images(target, camera, images, overlay, grid, Some(scene))
+    }
+    /// Retained instance bytes (CPU/GPU each) and fixed atlas texture payload.
+    pub fn annotation_bytes(&self) -> (usize, usize) {
+        self.annotations.as_ref().map_or((0, 0), |a| a.bytes())
     }
     fn render_images<T: CanvasImage>(
         &mut self,
@@ -486,7 +503,31 @@ impl Gpu {
         images: &[T],
         overlay: &[crate::OverlayQuad],
         grid: Option<crate::GridView>,
+        scene: Option<crate::AnnotationDraws<'_>>,
     ) -> Result<(), AssetError> {
+        if let Some(scene) = scene {
+            if scene.order.len() > crate::MAX_ANNOTATION_PRIMITIVES + MAX_OBJECTS
+                || scene.primitives.len() > crate::MAX_ANNOTATION_PRIMITIVES
+                || scene.order.iter().any(|d| match *d {
+                    crate::CanvasDraw::Image(i) => i >= images.len(),
+                    crate::CanvasDraw::Annotations { start, end } => {
+                        start >= end || end > scene.primitives.len()
+                    }
+                })
+            {
+                return Err("invalid annotation draw ranges".into());
+            }
+            if !scene.primitives.is_empty() {
+                let annotations = self.annotations.get_or_insert_with(|| {
+                    Box::new(crate::annotations::Annotations::new(
+                        &self.device,
+                        &self.queue,
+                        self.format,
+                    ))
+                });
+                annotations.prepare(&self.device, &self.queue, camera, scene.primitives)?;
+            }
+        }
         if let Some(view) = grid {
             let dots = self
                 .grid
@@ -542,7 +583,24 @@ impl Gpu {
             }
             pass.set_pipeline(&self.pipeline);
             pass.set_vertex_buffer(0, self.buffer.slice(..));
-            for (index, image) in images.iter().enumerate() {
+            let draws = scene.map_or(images.len(), |s| s.order.len());
+            for draw in 0..draws {
+                let index = if let Some(scene) = scene {
+                    match scene.order[draw] {
+                        crate::CanvasDraw::Annotations { start, end } => {
+                            if let Some(annotations) = &self.annotations {
+                                annotations.draw(&mut pass, start, end);
+                            }
+                            continue;
+                        }
+                        crate::CanvasDraw::Image(i) => i,
+                    }
+                } else {
+                    draw
+                };
+                let image = &images[index];
+                pass.set_pipeline(&self.pipeline);
+                pass.set_vertex_buffer(0, self.buffer.slice(..));
                 let texture = image
                     .key()
                     .and_then(|key| {

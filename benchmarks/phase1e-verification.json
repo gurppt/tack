@@ -1,0 +1,60 @@
+{
+  "starting_head": "3071e2377dfee6974033c7942635bc7fa8516012",
+  "binary_sha256": "b929230b4f1d7373cfb806e1144606f5f7959d654bb80793ab0cf80fdb63cdd9",
+  "source_snapshot_sha256": "43f0c19cea9e0dbdf5b5de14f03ae1dcd17c820a917d3eed1954bd3669101edb",
+  "shipping_files_match_snapshot": true,
+  "local_checks": {
+    "command": "PATH=/tmp/tack-tools/bin:$PATH bash tools/check.sh",
+    "exit_code": 0,
+    "gates": [
+      "fmt",
+      "check all targets/features locked",
+      "clippy -D warnings",
+      "workspace tests all features locked",
+      "docs",
+      "Python 7 tests",
+      "cargo-deny advisories/bans/licenses/sources"
+    ]
+  },
+  "gpu": {
+    "product_gpu": 6,
+    "smoke": 1,
+    "passed": true,
+    "quantization_tolerance": "one 8-bit channel unit in adjacent joint comparison"
+  },
+  "font_reproduction": {
+    "exact_hashes": true,
+    "runtime_packages_added": 0
+  },
+  "logs": {
+    "/tmp/tack-1e-quality-completion-final.log": {
+      "sha256": "0bcd4289ed99ca99b8ee3e60d4b0a8d3cdfb256d32a062c16286b8a8070d1051",
+      "bytes": 62831
+    },
+    "/tmp/tack-1e-gpu-final.log": {
+      "sha256": "bffb821676bcccfce44c922988cf9eb9eb768cc8d4ad49cef99004c74f2f753f",
+      "bytes": 1075
+    },
+    "/tmp/tack-1e-font-reproduce.log": {
+      "sha256": "19b509b377bb4f835b205ae5e4925810ca8d407fb243d490704a0f636886ed00",
+      "bytes": 697
+    }
+  },
+  "binary_sizes_bytes": {
+    "1d_strip_debug": 19919264,
+    "1e_strip_debug": 20591112,
+    "delta_strip_debug": 671848,
+    "1d_fully_stripped": 16827336,
+    "1e_fully_stripped": 17460688,
+    "delta_fully_stripped": 633352
+  },
+  "independent_final_review": "pending; recorded after reviewer response",
+  "limits": [
+    "No exact allocation/wakeup instrumentation",
+    "No Windows native/stylus feel",
+    "Plain UTF8 scalar layout, no bidi/complex shaping",
+    "Ellipse marquee 64-segment approximation",
+    "Nonadjacent scribble self-intersections use ordinary overdraw",
+    "Distant-jump supply/high-LOD fairness and presentation tails retained"
+  ]
+}

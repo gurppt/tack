@@ -7,6 +7,38 @@ pub enum Tool {
     Pointer,
     Pan,
     RotateView,
+    Text,
+    Rectangle,
+    Ellipse,
+    Line,
+    Arrow,
+    Scribble,
+}
+impl Tool {
+    pub fn is_annotation(self) -> bool {
+        matches!(
+            self,
+            Self::Text
+                | Self::Rectangle
+                | Self::Ellipse
+                | Self::Line
+                | Self::Arrow
+                | Self::Scribble
+        )
+    }
+    pub fn label(self) -> &'static str {
+        match self {
+            Self::Pointer => "Pointer",
+            Self::Pan => "Pan",
+            Self::RotateView => "Rotate view",
+            Self::Text => "Text",
+            Self::Rectangle => "Rectangle",
+            Self::Ellipse => "Ellipse",
+            Self::Line => "Line",
+            Self::Arrow => "Arrow",
+            Self::Scribble => "Scribble",
+        }
+    }
 }
 
 /// Canonical semantic commands for this slice. Input and future menus use the
@@ -45,10 +77,14 @@ pub enum Action {
     FocusFrame,
     NextFrame,
     PreviousFrame,
+    AnnotationStyle(crate::annotation_tool::StyleAction),
+    OpenSource,
+    RevealSource,
+    CopySourcePath,
 }
 impl Action {
     /// Enumerable action catalog, including currently unassigned actions.
-    pub const ALL: [Self; 47] = [
+    pub const ALL: [Self; 71] = [
         Self::SelectTool(Tool::Pointer),
         Self::SelectTool(Tool::Pan),
         Self::SelectTool(Tool::RotateView),
@@ -96,6 +132,30 @@ impl Action {
         Self::FocusFrame,
         Self::NextFrame,
         Self::PreviousFrame,
+        Self::SelectTool(Tool::Text),
+        Self::SelectTool(Tool::Rectangle),
+        Self::SelectTool(Tool::Ellipse),
+        Self::SelectTool(Tool::Line),
+        Self::SelectTool(Tool::Arrow),
+        Self::SelectTool(Tool::Scribble),
+        Self::TemporaryTool(Tool::Text),
+        Self::TemporaryTool(Tool::Rectangle),
+        Self::TemporaryTool(Tool::Ellipse),
+        Self::TemporaryTool(Tool::Line),
+        Self::TemporaryTool(Tool::Arrow),
+        Self::TemporaryTool(Tool::Scribble),
+        Self::AnnotationStyle(crate::annotation_tool::StyleAction::Color),
+        Self::AnnotationStyle(crate::annotation_tool::StyleAction::Fill),
+        Self::AnnotationStyle(crate::annotation_tool::StyleAction::Wider),
+        Self::AnnotationStyle(crate::annotation_tool::StyleAction::Narrower),
+        Self::AnnotationStyle(crate::annotation_tool::StyleAction::LargerText),
+        Self::AnnotationStyle(crate::annotation_tool::StyleAction::SmallerText),
+        Self::AnnotationStyle(crate::annotation_tool::StyleAction::OpacityUp),
+        Self::AnnotationStyle(crate::annotation_tool::StyleAction::OpacityDown),
+        Self::AnnotationStyle(crate::annotation_tool::StyleAction::AlignText),
+        Self::OpenSource,
+        Self::RevealSource,
+        Self::CopySourcePath,
     ];
     pub fn captured_hold(self) -> bool {
         matches!(
@@ -161,6 +221,22 @@ impl Action {
             Self::FocusFrame => "Focus selected frame",
             Self::NextFrame => "Focus next frame",
             Self::PreviousFrame => "Focus previous frame",
+            Self::SelectTool(tool) => tool.label(),
+            Self::TemporaryTool(tool) => tool.label(),
+            Self::AnnotationStyle(style) => match style {
+                crate::annotation_tool::StyleAction::Color => "Cycle annotation color",
+                crate::annotation_tool::StyleAction::Fill => "Toggle annotation fill",
+                crate::annotation_tool::StyleAction::Wider => "Increase stroke width",
+                crate::annotation_tool::StyleAction::Narrower => "Decrease stroke width",
+                crate::annotation_tool::StyleAction::LargerText => "Increase note size",
+                crate::annotation_tool::StyleAction::SmallerText => "Decrease note size",
+                crate::annotation_tool::StyleAction::OpacityUp => "Increase annotation opacity",
+                crate::annotation_tool::StyleAction::OpacityDown => "Decrease annotation opacity",
+                crate::annotation_tool::StyleAction::AlignText => "Cycle note alignment",
+            },
+            Self::OpenSource => "Open linked image source",
+            Self::RevealSource => "Reveal linked image source",
+            Self::CopySourcePath => "Copy linked source path",
         }
     }
 }
@@ -215,7 +291,7 @@ impl Interaction {
             }
             ActionEvent {
                 action: Action::TemporaryTool(_),
-                phase: ActionPhase::End(token),
+                phase: ActionPhase::End(token) | ActionPhase::Cancel(token),
             } => self.temporary.retain(|(held, _)| *held != token),
             _ => return Err(ActionError::WrongTargetOrPhase),
         }

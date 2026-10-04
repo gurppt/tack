@@ -7,7 +7,7 @@ use std::{error::Error, fmt};
 /// Metadata-only deterministic commands. No renderer/UI/storage payloads.
 #[derive(Clone, Debug, PartialEq)]
 pub enum Command {
-    /// Flat image edits only; one atomic operation and one inverse.
+    /// Flat bounded object edits; one atomic operation and one inverse.
     Batch(Vec<Command>),
     AddSource(Source),
     RemoveSource(SourceId),
@@ -42,6 +42,14 @@ pub enum Command {
     SetFrameName {
         object: ObjectId,
         name: String,
+    },
+    SetAnnotationStyle {
+        object: ObjectId,
+        style: crate::AnnotationStyle,
+    },
+    SetText {
+        object: ObjectId,
+        text: crate::TextObject,
     },
     SetZOrder {
         object: ObjectId,
@@ -98,8 +106,10 @@ impl Command {
             }
             Self::AddGroup(g) => g.retained_bytes(),
             Self::SetFrameName { name, .. } => name.capacity(),
+            Self::SetText { text, .. } => text.retained_bytes(),
             Self::AddObject { object, .. } => match object.kind() {
                 ObjectKind::Frame(name) => name.capacity(),
+                ObjectKind::Annotation(a) => a.retained_bytes(),
                 _ => 0,
             },
             Self::AddSource(_) | Self::SetSource(_) => crate::MAX_SOURCE_PATH_BYTES,
@@ -120,6 +130,8 @@ impl Command {
                 | Self::AddGroup(_)
                 | Self::RemoveGroup(_)
                 | Self::SetFrameName { .. }
+                | Self::SetText { .. }
+                | Self::SetAnnotationStyle { .. }
         )
     }
 }
@@ -229,7 +241,7 @@ impl Document {
                 }
                 if self.objects.values().any(|o| match o.kind {
                     ObjectKind::Image(image) => image.asset_id() == id,
-                    ObjectKind::Frame(_) => false,
+                    _ => false,
                 }) {
                     return Err(CommandError::AssetInUse(id));
                 }
@@ -257,6 +269,9 @@ impl Document {
                 if matches!(object.kind(), ObjectKind::Frame(_)) {
                     self.frame_count += 1;
                 }
+                if matches!(object.kind(), ObjectKind::Annotation(_)) {
+                    self.annotation_count += 1;
+                }
                 self.order.insert(index, id);
                 self.objects.insert(id, object);
                 Some(RemoveObject(id))
@@ -274,6 +289,9 @@ impl Document {
                 if matches!(object.kind(), ObjectKind::Frame(_)) {
                     self.frame_count -= 1;
                 }
+                if matches!(object.kind(), ObjectKind::Annotation(_)) {
+                    self.annotation_count -= 1;
+                }
                 Some(AddObject { object, index })
             }
             SetTransform { object, transform } => {
@@ -281,6 +299,10 @@ impl Document {
                     .objects
                     .get_mut(&object)
                     .ok_or(CommandError::MissingObject(object))?;
+                if let ObjectKind::Annotation(a) = target.kind() {
+                    a.bounds(transform)
+                        .map_err(|_| CommandError::LimitReached("annotation bounds"))?;
+                }
                 if matches!(target.kind(), ObjectKind::Frame(_))
                     && (transform.rotation() != 0. || transform.flips() != [false; 2])
                 {
@@ -302,10 +324,24 @@ impl Document {
                 let target = self
                     .objects
                     .get_mut(&object)
-                    .ok_or(CommandError::MissingObject(object))?
-                    .image_mut()
-                    .ok_or(CommandError::WrongObjectKind(object))?;
-                replace(&mut target.opacity, opacity).map(|opacity| SetOpacity { object, opacity })
+                    .ok_or(CommandError::MissingObject(object))?;
+                match &mut target.kind {
+                    ObjectKind::Image(image) => replace(&mut image.opacity, opacity)
+                        .map(|opacity| SetOpacity { object, opacity }),
+                    ObjectKind::Annotation(a) => {
+                        let old = a.style.opacity();
+                        if old == opacity {
+                            None
+                        } else {
+                            a.style.set_opacity(opacity);
+                            Some(SetOpacity {
+                                object,
+                                opacity: old,
+                            })
+                        }
+                    }
+                    _ => return Err(CommandError::WrongObjectKind(object)),
+                }
             }
             SetImageFiltering { object, filtering } => {
                 let target = self
@@ -319,6 +355,38 @@ impl Document {
             }
             AddGroup(group) => return self.add_group(group),
             RemoveGroup(id) => return self.remove_group(id),
+            SetAnnotationStyle { object, style } => {
+                let target = self
+                    .objects
+                    .get_mut(&object)
+                    .ok_or(CommandError::MissingObject(object))?;
+                let ObjectKind::Annotation(a) = &mut target.kind else {
+                    return Err(CommandError::WrongObjectKind(object));
+                };
+                a.bounds_with_style(target.transform, style)
+                    .map_err(|_| CommandError::LimitReached("annotation bounds"))?;
+                replace(&mut a.style, style).map(|style| SetAnnotationStyle { object, style })
+            }
+            SetText { object, text } => {
+                let target = self
+                    .objects
+                    .get_mut(&object)
+                    .ok_or(CommandError::MissingObject(object))?;
+                let ObjectKind::Annotation(a) = &mut target.kind else {
+                    return Err(CommandError::WrongObjectKind(object));
+                };
+                let crate::AnnotationKind::Text(previous) = &mut a.kind else {
+                    return Err(CommandError::WrongObjectKind(object));
+                };
+                if *previous == text {
+                    None
+                } else {
+                    Some(SetText {
+                        object,
+                        text: std::mem::replace(previous, text),
+                    })
+                }
+            }
             SetFrameName { object, name } => {
                 crate::validate_frame_name(&name).map_err(|_| CommandError::InvalidFrame)?;
                 let target = self

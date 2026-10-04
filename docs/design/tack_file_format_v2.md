@@ -2,10 +2,11 @@
 
 The 80-byte container header, checksums, source/asset encoding, payload directories
 and bounds from [v1](tack_file_format_v1.md) remain unchanged. Container is 1;
-schema at offset 12 is 2. Reserved capability bytes remain zero. Schema >2 is
-refused; no editable partial document or replacement file is published.
+schema at offset 12 is 2. Reserved capability bytes remain zero. The Phase 1D
+reader refuses >2; the Phase 1E reader also accepts [schema 3](tack_file_format_v3.md),
+with unchanged frame/group records. Unsupported authority is never replaced.
 
-Schema 2 is emitted only if frames or groups exist. Ungrouped image-only documents
+Schema 2 is emitted when frames/groups exist and no annotation is present. Ungrouped image-only documents
 continue to emit schema 1. Schema 1 records and image records remain byte-compatible.
 
 Object records begin with u16 record version (1), u16 kind and u128 ObjectId.

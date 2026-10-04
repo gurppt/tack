@@ -1,6 +1,7 @@
 //! Resident document metadata, deterministic commands and streaming policy.
 //! No UI, storage, window, GPU, network or decoder dependencies.
 
+mod annotations;
 mod camera;
 mod commands;
 mod document;
@@ -9,7 +10,13 @@ mod ids;
 mod model;
 mod query;
 mod residency;
+mod stroke;
 mod transform;
+pub use annotations::{
+    Annotation, AnnotationKind, AnnotationStyle, Color, LineObject, MAX_STROKE_POINTS,
+    MAX_TEXT_BYTES, ScribbleObject, TextAlignment, TextObject,
+};
+pub use stroke::{segment_distance, simplify_stroke};
 
 pub use camera::{Camera, GeometryError, WorldRect};
 pub use commands::{Command, CommandError};

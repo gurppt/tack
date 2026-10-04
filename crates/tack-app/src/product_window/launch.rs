@@ -11,6 +11,7 @@ pub fn run(args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
         output: None,
         tour: false,
         interaction: None,
+        annotation_benchmark: false,
     };
     let mut it = args.into_iter().skip(1);
     while let Some(a) = it.next() {
@@ -27,6 +28,7 @@ pub fn run(args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
                 options.output = Some(PathBuf::from(it.next().ok_or("output path")?))
             }
             Some("--board-tour") => options.tour = true,
+            Some("--annotation-benchmark") => options.annotation_benchmark = true,
             Some("--interaction") => {
                 options.interaction = Some(
                     it.next()
@@ -46,6 +48,9 @@ pub fn run(args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
             "interaction benchmark requires --seconds and --output, without --board-tour".into(),
         );
     }
+    if options.annotation_benchmark && (options.seconds.is_none() || options.output.is_none()) {
+        return Err("annotation benchmark requires --seconds and --output".into());
+    }
     let benchmark = options
         .interaction
         .clone()
@@ -54,6 +59,7 @@ pub fn run(args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
     crate::report_output::preflight(options.output.as_deref(), Some(&options.path))?;
     let events = EventLoop::<Event>::with_user_event().build()?;
     let proxy = events.create_proxy();
+    let read_proxy = proxy.clone();
     let input = options.path.clone();
     std::thread::Builder::new()
         .name("tack-document-read".into())
@@ -62,7 +68,7 @@ pub fn run(args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
             let result = TackFile::open(input)
                 .map(|b| (b, start.elapsed().as_secs_f64() * 1000.))
                 .map_err(|e| Box::new(e) as AssetError);
-            let _ = proxy.send_event(Event::Loaded(result));
+            let _ = read_proxy.send_event(Event::Loaded(Box::new(result)));
         })?;
     let work = std::env::temp_dir().join(format!(
         "tack-product-open-{:032x}",
@@ -70,6 +76,9 @@ pub fn run(args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
     ));
     let mut app = App {
         options,
+        proxy,
+        source_active: false,
+        annotations: None,
         started,
         window: None,
         gpu: None,

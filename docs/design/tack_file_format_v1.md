@@ -222,3 +222,6 @@ Concurrent creation/replacement remains outside the single-writer guarantee.
 
 This remains the emitted format for ungrouped image-only boards. Documents with
 groups or frames use [schema 2](tack_file_format_v2.md), retaining the same container.
+
+Phase 1E annotations use [schema 3](tack_file_format_v3.md), retaining the same
+container, image records, sources and derived-data directories.

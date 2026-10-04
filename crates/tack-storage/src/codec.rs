@@ -107,6 +107,7 @@ pub(crate) fn encode_document(doc: &Document) -> Result<Vec<u8>> {
             .objects()
             .map(|o| match o.kind() {
                 ObjectKind::Frame(n) => n.len() + 4,
+                ObjectKind::Annotation(a) => crate::annotation_codec::estimate(a),
                 _ => 0,
             })
             .sum::<usize>()
@@ -157,6 +158,10 @@ pub(crate) fn encode_document(doc: &Document) -> Result<Vec<u8>> {
         let o = doc
             .object(*id)
             .ok_or(StorageError::Invalid("object order"))?;
+        if let ObjectKind::Annotation(a) = o.kind() {
+            crate::annotation_codec::encode(&mut out, o, a);
+            continue;
+        }
         if let ObjectKind::Frame(name) = o.kind() {
             out.extend(1u16.to_le_bytes());
             out.extend(2u16.to_le_bytes());
@@ -196,7 +201,7 @@ pub(crate) fn encode_document(doc: &Document) -> Result<Vec<u8>> {
     for id in doc.object_order() {
         out.extend(id.value().to_le_bytes());
     }
-    if spatial_schema(doc) == 2 {
+    if spatial_schema(doc) >= 2 {
         out.extend((doc.groups().count() as u32).to_le_bytes());
         for g in doc.groups() {
             out.extend(1u16.to_le_bytes());
@@ -210,6 +215,12 @@ pub(crate) fn encode_document(doc: &Document) -> Result<Vec<u8>> {
     Ok(out)
 }
 pub(crate) fn spatial_schema(doc: &Document) -> u32 {
+    if doc
+        .objects()
+        .any(|o| matches!(o.kind(), ObjectKind::Annotation(_)))
+    {
+        return 3;
+    }
     if doc.groups().next().is_some()
         || doc
             .objects()
@@ -291,10 +302,16 @@ pub(crate) fn decode_document(
     for index in 0..counts[2] {
         d.version()?;
         let kind = d.u16()?;
-        if kind != 1 && !(schema == 2 && kind == 2) {
+        if kind != 1 && !(schema >= 2 && kind == 2) && !(schema == 3 && (3..=8).contains(&kind)) {
             return Err(StorageError::Unsupported("object kind"));
         }
         let id = ObjectId::new(d.id()?).map_err(invalid)?;
+        if kind >= 3 {
+            let object = crate::annotation_codec::decode(d, id, kind)?;
+            doc.apply(Command::AddObject { object, index })
+                .map_err(invalid)?;
+            continue;
+        }
         if kind == 2 {
             let center = [d.f64()?, d.f64()?];
             let size = [d.f64()?, d.f64()?];
@@ -352,7 +369,7 @@ pub(crate) fn decode_document(
             return Err(StorageError::Invalid("ordering metadata"));
         }
     }
-    if schema == 2 {
+    if schema >= 2 {
         let count = d.u32()? as usize;
         if count > MAX_RECORDS || count > counts[2] / 2 {
             return Err(StorageError::Invalid("group count"));

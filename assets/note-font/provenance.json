@@ -1,0 +1,29 @@
+{
+  "source_sha256": "395fa5ab8d40c8eba390ced528744ea75a7f69aabf3e68b6f925ca0e39a27370",
+  "source": "https://github.com/liberationfonts/liberation-fonts",
+  "package": "Debian fonts-liberation 1:2.1.5-3; original TTF names/license verified",
+  "derivative": "Tack Note Mono",
+  "build_dependencies": {
+    "Pillow": "10.2.0",
+    "numpy": "1.26.4",
+    "scipy": "1.12.0",
+    "fonttools": "4.55.3"
+  },
+  "atlas_size": [
+    1024,
+    1824
+  ],
+  "glyphs": 1197,
+  "freetype": "2.13.2",
+  "advance_em": 0.6015625,
+  "generated": {
+    "atlas.png": {
+      "bytes": 416042,
+      "sha256": "8cd3481367ec144ba03de3d038894ea705c2a27b384e6c780d4b8e760eea6577"
+    },
+    "slots.bin": {
+      "bytes": 2560,
+      "sha256": "06b73543390a353a75daaabc51ca0aabf1c1038dfa52ad5b97fc417b4f1bf53b"
+    }
+  }
+}

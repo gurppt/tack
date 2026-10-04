@@ -1,3 +1,4 @@
+mod annotation_cli;
 mod benchmark;
 mod coverage;
 mod navigation;
@@ -97,9 +98,10 @@ fn main() -> Result<(), AssetError> {
         .is_some_and(|a| a == "--font-license")
     {
         print!(
-            "{}\n{}",
+            "{}\n{}\n{}",
             include_str!("../../../assets/pixel-font/COPYRIGHT.txt"),
-            include_str!("../../../assets/pixel-font/OFL-1.1.txt")
+            include_str!("../../../assets/pixel-font/OFL-1.1.txt"),
+            include_str!("../../../assets/note-font/COPYRIGHT.txt")
         );
         return Ok(());
     }
@@ -121,6 +123,7 @@ fn main() -> Result<(), AssetError> {
             "open",
             "query-scale",
             "spatial-scale",
+            "annotation-scale",
         ]
         .contains(&command)
     {

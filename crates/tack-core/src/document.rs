@@ -33,6 +33,7 @@ pub struct Document {
     pub(crate) order: Vec<ObjectId>,
     pub(crate) groups: BTreeMap<crate::GroupId, crate::Group>,
     pub(crate) frame_count: usize,
+    pub(crate) annotation_count: usize,
     pub(crate) memberships: BTreeMap<ObjectId, crate::GroupId>,
 }
 impl Document {
@@ -47,6 +48,7 @@ impl Document {
             groups: BTreeMap::new(),
             memberships: BTreeMap::new(),
             frame_count: 0,
+            annotation_count: 0,
         }
     }
     pub fn id(&self) -> DocumentId {
@@ -79,6 +81,9 @@ impl Document {
     }
     pub fn frame_count(&self) -> usize {
         self.frame_count
+    }
+    pub fn annotation_count(&self) -> usize {
+        self.annotation_count
     }
     pub fn groups(&self) -> impl Iterator<Item = &crate::Group> {
         self.groups.values()

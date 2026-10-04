@@ -56,6 +56,16 @@ fn pixels_spatial(
     overlay: &[OverlayQuad],
     grid: Option<tack_render::GridView>,
 ) -> Result<Vec<u8>, AssetError> {
+    pixels_scene(gpu, d, key, overlay, grid, None)
+}
+fn pixels_scene(
+    gpu: &mut Gpu,
+    d: ImageRenderData,
+    key: ProductKey,
+    overlay: &[OverlayQuad],
+    grid: Option<tack_render::GridView>,
+    scene: Option<tack_render::AnnotationDraws<'_>>,
+) -> Result<Vec<u8>, AssetError> {
     let target = gpu.device.create_texture(&wgpu::TextureDescriptor {
         label: Some("product readback"),
         size: wgpu::Extent3d {
@@ -73,16 +83,28 @@ fn pixels_spatial(
     let mut camera = Camera::new([64, 64]);
     camera.set_view([32., 32.], 1.)?;
     gpu.begin_frame()?;
-    gpu.render_spatial(
-        &target.create_view(&Default::default()),
-        &camera,
-        &[DrawProductImage {
-            data: d,
-            key: Some(key),
-        }],
-        overlay,
-        grid,
-    )?;
+    let images = [DrawProductImage {
+        data: d,
+        key: Some(key),
+    }];
+    if let Some(scene) = scene {
+        gpu.render_annotated(
+            &target.create_view(&Default::default()),
+            &camera,
+            &images,
+            overlay,
+            grid,
+            scene,
+        )?;
+    } else {
+        gpu.render_spatial(
+            &target.create_view(&Default::default()),
+            &camera,
+            &images,
+            overlay,
+            grid,
+        )?;
+    }
     let buffer = gpu.device.create_buffer(&wgpu::BufferDescriptor {
         label: None,
         size: 64 * 256,
@@ -332,5 +354,202 @@ fn canvas_overlay_is_on_top_without_asset_or_document_changes() -> Result<(), As
         )
         .is_err()
     );
+    Ok(())
+}
+
+#[test]
+#[ignore = "explicit native annotation shader, atlas and mixed-order pixel readback"]
+fn annotations_preserve_order_and_lazy_bounded_atlas() -> Result<(), AssetError> {
+    use tack_render::{AnnotationDraws, AnnotationPrimitive, CanvasDraw};
+    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::from_env_or_default());
+    let mut gpu = pollster::block_on(Gpu::new(
+        &instance,
+        None,
+        wgpu::TextureFormat::Rgba8UnormSrgb,
+        1024 * 1024,
+    ))?;
+    assert_eq!(gpu.annotation_bytes(), (0, 0));
+    let d = data();
+    let key = ProductKey {
+        asset: d.asset_id,
+        revision: 1,
+    };
+    gpu.begin_frame()?;
+    gpu.upload_product(
+        key,
+        &Decoded {
+            width: 1,
+            height: 1,
+            rgba: vec![255, 0, 0, 255],
+        },
+    );
+    let mut p = AnnotationPrimitive {
+        points: [[10., 10.], [10., 54.], [54., 10.], [54., 54.]],
+        size: [40., 40.],
+        width: 2.,
+        opacity: 1.,
+        kind: 1,
+        stroke: [0., 1., 0., 1.],
+        fill: [0., 1., 0., 1.],
+        atlas_uv: [0.; 4],
+        bitmap: [0; 8],
+    };
+    let on_top = pixels_scene(
+        &mut gpu,
+        d,
+        key,
+        &[],
+        None,
+        Some(AnnotationDraws {
+            primitives: &[p],
+            order: &[
+                CanvasDraw::Image(0),
+                CanvasDraw::Annotations { start: 0, end: 1 },
+            ],
+        }),
+    )?;
+    assert_eq!(pixel(&on_top, 32, 32), [0, 255, 0, 255]);
+    assert_eq!(gpu.annotation_bytes().1, 0);
+    let below = pixels_scene(
+        &mut gpu,
+        d,
+        key,
+        &[],
+        None,
+        Some(AnnotationDraws {
+            primitives: &[p],
+            order: &[
+                CanvasDraw::Annotations { start: 0, end: 1 },
+                CanvasDraw::Image(0),
+            ],
+        }),
+    )?;
+    assert_eq!(pixel(&below, 32, 32), [255, 0, 0, 255]);
+    p.kind = 5;
+    p.atlas_uv = tack_render::note_glyph_uv('A').ok_or("glyph missing")?;
+    p.fill = [0.; 4];
+    let glyph = pixels_scene(
+        &mut gpu,
+        d,
+        key,
+        &[],
+        None,
+        Some(AnnotationDraws {
+            primitives: &[p],
+            order: &[
+                CanvasDraw::Image(0),
+                CanvasDraw::Annotations { start: 0, end: 1 },
+            ],
+        }),
+    )?;
+    assert_ne!(glyph, below);
+    assert_eq!(gpu.annotation_bytes().1, 1024 * 1824);
+    assert!(
+        pixels_scene(
+            &mut gpu,
+            d,
+            key,
+            &[],
+            None,
+            Some(AnnotationDraws {
+                primitives: &[p],
+                order: &[CanvasDraw::Annotations { start: 0, end: 2 }]
+            })
+        )
+        .is_err()
+    );
+    assert!(
+        pixels_scene(
+            &mut gpu,
+            d,
+            key,
+            &[],
+            None,
+            Some(AnnotationDraws {
+                primitives: &vec![p; tack_render::MAX_ANNOTATION_PRIMITIVES + 1],
+                order: &[]
+            })
+        )
+        .is_err()
+    );
+    p.kind = 1;
+    p.width = 10.;
+    p.opacity = 0.5;
+    p.stroke = [0., 1., 0., 1.];
+    p.fill = [0., 1., 0., 1.];
+    let alpha = pixels_scene(
+        &mut gpu,
+        d,
+        key,
+        &[],
+        None,
+        Some(AnnotationDraws {
+            primitives: &[p],
+            order: &[
+                CanvasDraw::Image(0),
+                CanvasDraw::Annotations { start: 0, end: 1 },
+            ],
+        }),
+    )?;
+    assert_eq!(pixel(&alpha, 32, 32), pixel(&alpha, 13, 32));
+    p.kind = 2;
+    p.opacity = 1.;
+    p.width = 30.;
+    p.size = [200., 20.];
+    p.points = [[-84., 5.], [-84., 59.], [148., 5.], [148., 59.]];
+    p.fill = [0.; 4];
+    let ellipse = pixels_scene(
+        &mut gpu,
+        d,
+        key,
+        &[],
+        None,
+        Some(AnnotationDraws {
+            primitives: &[p],
+            order: &[
+                CanvasDraw::Image(0),
+                CanvasDraw::Annotations { start: 0, end: 1 },
+            ],
+        }),
+    )?;
+    assert_eq!(pixel(&ellipse, 52, 32), [0, 255, 0, 255]);
+    let segment = AnnotationPrimitive {
+        points: [[4., 26.], [4., 38.], [38., 26.], [38., 38.]],
+        size: [22., 0.],
+        width: 10.,
+        kind: 3,
+        opacity: 0.5,
+        stroke: [0., 1., 0., 0.5],
+        fill: [0.; 4],
+        atlas_uv: [0.; 4],
+        bitmap: [0; 8],
+    };
+    let mut joined = segment;
+    joined.points = [[26., 26.], [26., 38.], [60., 26.], [60., 38.]];
+    joined.atlas_uv = [10., 32., 32., 32.];
+    joined.bitmap[0] = 1;
+    let stroke = pixels_scene(
+        &mut gpu,
+        d,
+        key,
+        &[],
+        None,
+        Some(AnnotationDraws {
+            primitives: &[segment, joined],
+            order: &[
+                CanvasDraw::Image(0),
+                CanvasDraw::Annotations { start: 0, end: 2 },
+            ],
+        }),
+    )?;
+    assert_eq!(pixel(&stroke, 20, 32), pixel(&stroke, 32, 32));
+    // Two sRGB framebuffer blends can quantize by one code value at the AA join.
+    assert!(
+        pixel(&stroke, 20, 32)
+            .into_iter()
+            .zip(pixel(&stroke, 36, 32))
+            .all(|(a, b)| a.abs_diff(b) <= 1)
+    );
+    assert!(gpu.annotation_bytes().0 <= tack_render::MAX_ANNOTATION_PRIMITIVES * 128);
     Ok(())
 }

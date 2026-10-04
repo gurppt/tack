@@ -150,3 +150,14 @@ Frames and groups require schema 2; see [spatial wire format](tack_file_format_v
 Readers that only understand schema 1 refuse schema 2; Tack refuses schemas >2,
 unknown durable record kinds and invalid references without changing the input.
 The schema is selected from the actual durable content, not the application version.
+
+# Phase 1E extension
+
+Schema 3 adds plain text, rectangle, ellipse, line, arrow and scribble; see
+[annotation wire format](tack_file_format_v3.md). Current readers support schemas
+1/2/3 and refuse >3 or unknown authoritative records without editing the input.
+The previous paragraph's >2 limit describes the shipped Phase 1D reader only.
+Schema-2 frame/group records remain byte compatible, including inside schema 3.
+Annotations have no media/source relationship. Transient editing/capture/font
+resources remain outside persistence. Mixed annotation groups are deferred and
+refused explicitly in the authoring UI; existing image groups are retained.

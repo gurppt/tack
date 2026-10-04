@@ -126,6 +126,9 @@ pub struct InputState {
     next_token: u64,
 }
 impl InputState {
+    pub fn modifiers(&self) -> Modifiers {
+        self.modifiers
+    }
     pub fn held_len(&self) -> usize {
         self.held.len()
     }

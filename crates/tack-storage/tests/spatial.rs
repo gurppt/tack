@@ -80,7 +80,7 @@ fn old_schema_and_all_spatial_records_roundtrip_exact_with_missing_sources() -> 
     // Refusal never mutates the file; old readers refuse schema 2 at its header.
     let original = fs::read(&path)?;
     let mut future = original.clone();
-    future[12..16].copy_from_slice(&3u32.to_le_bytes());
+    future[12..16].copy_from_slice(&4u32.to_le_bytes());
     fs::write(&path, &future)?;
     assert!(TackFile::open(&path).is_err());
     assert_eq!(fs::read(&path)?, future);

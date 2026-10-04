@@ -16,4 +16,11 @@ pub mod spatial_layout;
 mod spatial_overlay;
 pub mod spatial_snap;
 
+pub mod annotation_geometry;
+mod annotation_input;
+pub mod annotation_scene;
+mod annotation_text_scene;
+pub mod annotation_tool;
+pub mod note_layout;
 mod product_bindings;
+pub mod source_actions;

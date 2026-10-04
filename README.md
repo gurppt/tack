@@ -228,3 +228,42 @@ python3 tools/run_spatial.py --output benchmark-results/my-spatial-run
 python3 tools/run_native_spatial_checks.py --output benchmark-results/my-spatial-native
 python3 tools/run_idle.py --board benchmark-results/my-spatial-native/board.tack --output benchmark-results/my-idle
 ```
+
+## Phase 1E annotations and sources
+
+Open a local board, choose `T` text (`Ctrl+N` also selects this tool), `R` rectangle,
+`O` ellipse, `L` line, `A` arrow or `P` scribble, then drag. Text also accepts a
+click for a default box. Type plain text; Enter adds a line, Ctrl+Enter commits,
+Escape/focus loss cancels. `V` returns to selection. F2 or double-click edits a
+selected note; Ctrl+A replaces its text, Backspace removes one Unicode scalar.
+Editing supports append/replace, not a rich text cursor/navigation system.
+
+For selected annotations, `C` cycles eight stroke/text colors, `F` toggles fill,
+`[`/`]` decrease/increase world stroke width, Shift+`[`/`]` adjust opacity,
+Ctrl+Shift+`,`/`.` change note font size, Ctrl+Shift+E cycles left/center/right
+alignment. Move/resize/rotate/delete and mixed marquee use existing gestures and
+atomic Undo/Redo. Crop/flips/filtering and flat groups remain image-only; grouping
+a selection containing annotations gives an explicit error. Ctrl+S saves all
+committed kinds exactly in [schema 3](docs/design/tack_file_format_v3.md), while
+old schema-1/2 boards remain supported.
+
+With exactly one linked image selected, Ctrl+Shift+O opens its actual source,
+Ctrl+Alt+O reveals its parent directory, Ctrl+Shift+C copies the canonical path.
+Linux uses `gio open`, and `xclip` on X11 or `wl-copy` on Wayland for clipboard;
+Windows uses Explorer and clip. These tools must exist on the host. Embedded,
+missing, foreign, executable or unsupported source files give explicit errors.
+Only JPEG/PNG regular files are opened; no shell command is built from a path.
+Each request runs off the UI thread; at most one is active, no idle source worker.
+
+Notes use a lazy compact smooth font subset with the existing Unicode fallback;
+UI labels remain pixel-native. See [font decision](docs/design/text_rendering_decision.md)
+and [annotation integration](docs/design/annotation_objects.md). Advanced shaping,
+bidi and rich text are deferred. Display is capped at 32768 annotation primitives;
+selected/edited/transient objects receive priority, whole omitted objects trigger
+a visible warning, and durable data is retained. Stroke capture is capped at4096
+points with a visible warning and deterministic simplification on completion.
+
+Reproduction: `tools/run_annotations.py`, `tools/run_native_annotation_checks.py`
+and the existing image/spatial/persistence/idle harnesses. `annotation-scale`
+generates owned fixture documents; `open --annotation-benchmark` forces redraw
+only for timed instrumentation, never for ordinary editing/idle.

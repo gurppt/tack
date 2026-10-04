@@ -1,0 +1,587 @@
+{
+  "native-final": {
+    "provenance.json": {
+      "binary_sha256": "b929230b4f1d7373cfb806e1144606f5f7959d654bb80793ab0cf80fdb63cdd9",
+      "harness_sha256": "5629f6391c2923318feed4e955866df4cd30b34e493d0e976cd6471bc3681053",
+      "board_sha256": "6d2b221796b19a58fae0f2eef0cf9330893e35ecfa31007c59d880bbc0b0ad20",
+      "checks": 31,
+      "dpi_env": null,
+      "native": "X11 automated physical mouse/key input and owned captures; no artist/tablet feel claim"
+    },
+    "checks.json": [
+      {
+        "name": "native text creation, multiline and atomic commit",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "native edit Escape preserves note",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "native note edit persists",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "note undo exact",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "note redo exact",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "native create kind 4",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Rectangle"
+      },
+      {
+        "name": "native create kind 5",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Ellipse"
+      },
+      {
+        "name": "native create kind 6",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Line"
+      },
+      {
+        "name": "native create kind 7",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Arrow"
+      },
+      {
+        "name": "scribble Escape discards preview",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Scribble"
+      },
+      {
+        "name": "native scribble commits bounded vector",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Scribble"
+      },
+      {
+        "name": "semantic color fill width opacity styling",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "annotation move changes transform",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "annotation move undo exact",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "native annotation resize",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "resize undo exact",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "native annotation rotate",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "rotate undo exact",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "frame coexists with annotations",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Frame \u00b7 Pointer"
+      },
+      {
+        "name": "mixed grouping deferred with explicit error",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 9 selected \u00b7 0 missing / 0 changed sources \u00b7 Frame \u00b7 groups support images only; deselect annotations before grouping \u00b7 Pointer"
+      },
+      {
+        "name": "mixed marquee selects images and annotations",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 8 selected \u00b7 0 missing / 0 changed sources \u00b7 Frame \u00b7 Pointer"
+      },
+      {
+        "name": "native source Open completed",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "native source Reveal completed",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "native source Copy completed",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "clipboard contains actual canonical descriptor",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "native missing source reports safe error",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 linked source is missing or unavailable \u00b7 Pointer"
+      },
+      {
+        "name": "annotations remain visible across native zoom",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "schema3 retains all six kinds with frame/images",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "native annotation delete",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "native delete undo exact",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "save/reopen keeps authored authority exact",
+        "observed": true,
+        "title": "closed"
+      }
+    ]
+  },
+  "native-dpi2": {
+    "provenance.json": {
+      "binary_sha256": "b929230b4f1d7373cfb806e1144606f5f7959d654bb80793ab0cf80fdb63cdd9",
+      "harness_sha256": "5629f6391c2923318feed4e955866df4cd30b34e493d0e976cd6471bc3681053",
+      "board_sha256": "aceda051cf9eb406a6f075def5b9c20b0655d166613f6b38ce6dcb684bed0207",
+      "checks": 26,
+      "dpi_env": "2",
+      "native": "X11 automated physical mouse/key input and owned captures; no artist/tablet feel claim"
+    },
+    "checks.json": [
+      {
+        "name": "native text creation, multiline and atomic commit",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "native edit Escape preserves note",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "native note edit persists",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "note undo exact",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "note redo exact",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "native create kind 4",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Rectangle"
+      },
+      {
+        "name": "native create kind 5",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Ellipse"
+      },
+      {
+        "name": "native create kind 6",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Line"
+      },
+      {
+        "name": "native create kind 7",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Arrow"
+      },
+      {
+        "name": "scribble Escape discards preview",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Scribble"
+      },
+      {
+        "name": "native scribble commits bounded vector",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Scribble"
+      },
+      {
+        "name": "semantic color fill width opacity styling",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "annotation move changes transform",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "annotation move undo exact",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "native annotation resize",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "resize undo exact",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "native annotation rotate",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "rotate undo exact",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "frame coexists with annotations",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Frame \u00b7 Pointer"
+      },
+      {
+        "name": "mixed grouping deferred with explicit error",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 9 selected \u00b7 0 missing / 0 changed sources \u00b7 Frame \u00b7 groups support images only; deselect annotations before grouping \u00b7 Pointer"
+      },
+      {
+        "name": "mixed marquee selects images and annotations",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 8 selected \u00b7 0 missing / 0 changed sources \u00b7 Frame \u00b7 Pointer"
+      },
+      {
+        "name": "annotations remain visible across native zoom",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "schema3 retains all six kinds with frame/images",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "native annotation delete",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "native delete undo exact",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "save/reopen keeps authored authority exact",
+        "observed": true,
+        "title": "closed"
+      }
+    ]
+  },
+  "native-image-regression": {
+    "provenance.json": {
+      "binary_sha256": "b929230b4f1d7373cfb806e1144606f5f7959d654bb80793ab0cf80fdb63cdd9",
+      "harness_sha256": "c774a50dcf1a20f88b4e4d19346ad5c2e5bef82cb72b084a9eff6138c56e83aa",
+      "requested_scale": 1.0,
+      "missing_link": true
+    },
+    "checks.json": [
+      {
+        "name": "missing linked preview remains visible",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 0 selected \u00b7 1 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "marquee selects both",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 2 selected \u00b7 1 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "empty click clears",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 0 selected \u00b7 1 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "single selection",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 1 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "move commits",
+        "observed": true,
+        "title": "Tack \u2014 modified \u00b7 transform \u00b7 1 selected \u00b7 1 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "resize expands without ratio drift",
+        "observed": true,
+        "title": "Tack \u2014 modified \u00b7 transform \u00b7 1 selected \u00b7 1 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "rotation handle changes geometry",
+        "observed": true,
+        "title": "Tack \u2014 modified \u00b7 transform \u00b7 1 selected \u00b7 1 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "crop mode",
+        "observed": true,
+        "title": "Tack \u2014 modified \u00b7 crop \u00b7 1 selected \u00b7 1 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "crop removes right pixels",
+        "observed": true,
+        "title": "Tack \u2014 modified \u00b7 crop \u00b7 1 selected \u00b7 1 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "Escape restores visible geometry",
+        "observed": true,
+        "title": "Tack \u2014 modified \u00b7 transform \u00b7 1 selected \u00b7 1 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "Shift adds second image",
+        "observed": true,
+        "title": "Tack \u2014 modified \u00b7 transform \u00b7 2 selected \u00b7 1 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "Shift toggles second image off",
+        "observed": true,
+        "title": "Tack \u2014 modified \u00b7 transform \u00b7 1 selected \u00b7 1 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "middle pans over selection",
+        "observed": true,
+        "title": "Tack \u2014 modified \u00b7 transform \u00b7 1 selected \u00b7 1 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "wheel zoom changes coverage",
+        "observed": true,
+        "title": "Tack \u2014 modified \u00b7 transform \u00b7 1 selected \u00b7 1 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "select all",
+        "observed": true,
+        "title": "Tack \u2014 modified \u00b7 transform \u00b7 2 selected \u00b7 1 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "delete clears selection",
+        "observed": true,
+        "title": "Tack \u2014 modified \u00b7 transform \u00b7 0 selected \u00b7 1 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "save acknowledges committed generation",
+        "observed": true,
+        "title": "Tack \u2014 saved \u00b7 transform \u00b7 1 selected \u00b7 1 missing / 0 changed sources \u00b7 Pointer"
+      }
+    ]
+  },
+  "native-spatial-regression": {
+    "checks.json": [
+      {
+        "name": "missing source retains prepared image",
+        "observed": true
+      },
+      {
+        "name": "grid toggle adds dots without changing history",
+        "observed": true
+      },
+      {
+        "name": "grid remains visible across zoom",
+        "observed": true
+      },
+      {
+        "name": "X changes active snapped preview",
+        "observed": true
+      },
+      {
+        "name": "release restores same stable snap",
+        "observed": true
+      },
+      {
+        "name": "Escape has no committed snap edit",
+        "observed": true
+      },
+      {
+        "name": "group saves membership",
+        "observed": true
+      },
+      {
+        "name": "member selects entire group",
+        "observed": true
+      },
+      {
+        "name": "group members move by equal delta",
+        "observed": true
+      },
+      {
+        "name": "group gesture undo exact",
+        "observed": true
+      },
+      {
+        "name": "ungroup preserves transforms",
+        "observed": true
+      },
+      {
+        "name": "alignment fixture selects one ungrouped member",
+        "observed": true
+      },
+      {
+        "name": "alignment fixture has distinct world top edges",
+        "observed": true
+      },
+      {
+        "name": "top alignment shares world edge",
+        "observed": true
+      },
+      {
+        "name": "alignment undo exact",
+        "observed": true
+      },
+      {
+        "name": "vertical distribution changes layout",
+        "observed": true
+      },
+      {
+        "name": "distribution undo exact",
+        "observed": true
+      },
+      {
+        "name": "create named frame uses schema 2",
+        "observed": true
+      },
+      {
+        "name": "F2 name saved exact",
+        "observed": true
+      },
+      {
+        "name": "frame focus shows label",
+        "observed": true
+      },
+      {
+        "name": "frame edge resize preserves images",
+        "observed": true
+      },
+      {
+        "name": "frame move leaves contained images fixed",
+        "observed": true
+      },
+      {
+        "name": "frame navigation preserves selection",
+        "observed": true
+      },
+      {
+        "name": "delete frame preserves images",
+        "observed": true
+      },
+      {
+        "name": "undo frame delete exact",
+        "observed": true
+      }
+    ]
+  },
+  "native-zoom-regression": {
+    "provenance.json": {
+      "binary_sha256": "b929230b4f1d7373cfb806e1144606f5f7959d654bb80793ab0cf80fdb63cdd9",
+      "board_sha256": "e0ebb3969a73af9678eea6cec3f941e6e6848e25843b6d9fd57ee134c0dc67b0",
+      "harness_sha256": "3ea7efe01a5bf33b2a3aca335fbc86bb7fe9a5354ee3be13efa480f93da9b455",
+      "shared_harness_sha256": "c774a50dcf1a20f88b4e4d19346ad5c2e5bef82cb72b084a9eff6138c56e83aa",
+      "returncode": 0,
+      "checks": [
+        {
+          "name": "low zoom image remains targetable",
+          "observed": true
+        },
+        {
+          "name": "low zoom corner handle resizes",
+          "observed": true
+        },
+        {
+          "name": "low zoom resize undo restores geometry",
+          "observed": true
+        },
+        {
+          "name": "low zoom drag Escape restores geometry",
+          "observed": true
+        },
+        {
+          "name": "high zoom image fills viewport",
+          "observed": true
+        },
+        {
+          "name": "high zoom drag visibly tracks pointer",
+          "observed": true
+        },
+        {
+          "name": "high zoom undo restores interior pixels",
+          "observed": true
+        },
+        {
+          "name": "high zoom Escape restores interior pixels",
+          "observed": true
+        }
+      ]
+    },
+    "checks.json": [
+      {
+        "name": "low zoom image remains targetable",
+        "observed": true
+      },
+      {
+        "name": "low zoom corner handle resizes",
+        "observed": true
+      },
+      {
+        "name": "low zoom resize undo restores geometry",
+        "observed": true
+      },
+      {
+        "name": "low zoom drag Escape restores geometry",
+        "observed": true
+      },
+      {
+        "name": "high zoom image fills viewport",
+        "observed": true
+      },
+      {
+        "name": "high zoom drag visibly tracks pointer",
+        "observed": true
+      },
+      {
+        "name": "high zoom undo restores interior pixels",
+        "observed": true
+      },
+      {
+        "name": "high zoom Escape restores interior pixels",
+        "observed": true
+      }
+    ]
+  }
+}

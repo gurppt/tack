@@ -1,8 +1,8 @@
 use crate::{Command, CommandError, Document};
 use std::collections::VecDeque;
 
-/// Exclusive document/history ownership. Each retained inverse stores at most
-/// one bounded source descriptor or fixed-size domain record, never image bytes.
+/// Exclusive document/history ownership. Retained inverses include bounded
+/// annotation strings/points and source descriptors, never decoded image bytes.
 /// Oldest undo entries are dropped at capacity; undo+redo share that capacity.
 pub struct DocumentEditor {
     document: Document,
@@ -73,8 +73,10 @@ impl DocumentEditor {
             || self.history_bytes() > 32 * 1024 * 1024
         {
             if self.undo.pop_front().is_none() {
-                self.redo.clear();
-                break;
+                if self.redo.is_empty() {
+                    break;
+                }
+                self.redo.remove(0);
             }
         }
     }
@@ -100,6 +102,10 @@ impl DocumentEditor {
         let Some(inverse) = self.document.apply_reversible(command)? else {
             return Ok(false);
         };
+        if self.capacity > 0 && inverse.retained_bytes() > 32 * 1024 * 1024 {
+            self.document.apply_reversible(inverse)?;
+            return Err(CommandError::LimitReached("history inverse bytes"));
+        }
         self.generation = generation;
         self.source_revision_high_water = next_high_water;
         self.dirty = true;
@@ -128,6 +134,7 @@ impl DocumentEditor {
         if let Some(inverse) = inverse {
             self.redo.push(inverse);
         }
+        self.trim_history();
         Ok(true)
     }
     pub fn redo(&mut self) -> Result<bool, CommandError> {
@@ -145,6 +152,7 @@ impl DocumentEditor {
         if let Some(inverse) = inverse {
             self.undo.push_back(inverse);
         }
+        self.trim_history();
         Ok(true)
     }
     /// Discard history explicitly without changing document state.

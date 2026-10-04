@@ -149,6 +149,16 @@ impl ImageInput {
                 )?)?;
             }
             Action::GroupSelection => {
+                if self.images.selection.ids().any(|id| {
+                    editor
+                        .document()
+                        .object(id)
+                        .is_some_and(|o| matches!(o.kind(), tack_core::ObjectKind::Annotation(_)))
+                }) {
+                    return Err(
+                        "groups support images only; deselect annotations before grouping".into(),
+                    );
+                }
                 let ids: Vec<_> = self
                     .images
                     .selection

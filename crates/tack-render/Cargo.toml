@@ -11,6 +11,7 @@ tack-assets.workspace = true
 wgpu.workspace = true
 bytemuck.workspace = true
 tracing.workspace = true
+image.workspace = true
 
 [dev-dependencies]
 pollster.workspace = true

@@ -11,3 +11,8 @@ mod overlay;
 pub use overlay::{MAX_OVERLAY_QUADS, OverlayQuad};
 mod grid;
 pub use grid::GridView;
+mod annotations;
+pub use annotations::{
+    AnnotationDraws, AnnotationPrimitive, CanvasDraw, MAX_ANNOTATION_PRIMITIVES, NOTE_ATLAS_SIZE,
+    note_glyph_uv,
+};

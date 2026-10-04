@@ -27,3 +27,12 @@ SHA-256 provenance and reproduction instructions are in
 [assets/pixel-font](../assets/pixel-font/README.md).
 `tack-app --font-license` displays the embedded copyright and OFL notice.
 No system font engine or new Rust dependency was added.
+
+## Tack Note Mono
+
+Bundled signed-distance atlas derives from Liberation Mono Regular 2.1.5 under
+SIL Open Font License 1.1, renamed Tack Note Mono. Upstream Google/Red Hat notices,
+reserved names, full OFL, pinned original and derivative SHA-256 provenance are in
+[assets/note-font](../assets/note-font/README.md). The original TTF is only a
+reproduction asset. The binary includes the compact atlas/slot map and prints the
+additional copyright notice through `tack-app --font-license`.

@@ -79,6 +79,9 @@ impl SelectionState {
         for id in doc.object_order() {
             if doc.object(*id).is_some_and(|o| match o.kind() {
                 tack_core::ObjectKind::Image(_) => geometry::intersects(o.transform(), r),
+                tack_core::ObjectKind::Annotation(a) => {
+                    crate::annotation_geometry::intersects(a, o.transform(), r)
+                }
                 tack_core::ObjectKind::Frame(_) => {
                     let b = o.transform().bounds();
                     r.x <= b.x
@@ -108,6 +111,7 @@ struct EditData {
     transform: Transform,
     crop: tack_core::Crop,
     opacity: Opacity,
+    margin: f64,
 }
 impl EditData {
     fn get(doc: &Document, id: ObjectId) -> Option<Self> {
@@ -117,7 +121,14 @@ impl EditData {
             object_id: id,
             transform: o.transform(),
             crop: image.map_or(tack_core::Crop::FULL, |d| d.crop),
-            opacity: image.map_or(Opacity::OPAQUE, |d| d.opacity),
+            opacity: image.map_or_else(
+                || match o.kind() {
+                    tack_core::ObjectKind::Annotation(a) => a.style().opacity(),
+                    _ => Opacity::OPAQUE,
+                },
+                |d| d.opacity,
+            ),
+            margin: (o.transform().bounds().x - o.bounds().x).max(0.),
         })
     }
 }
@@ -166,6 +177,11 @@ impl ImageInteraction {
                 .filter_map(|id| self.preview_transform(doc, id)),
         )
     }
+    pub fn preview_opacity(&self, id: ObjectId) -> Option<Opacity> {
+        self.gesture
+            .as_ref()
+            .and_then(|g| g.lookup.get(&id).map(|i| g.preview[*i].opacity))
+    }
     pub fn preview_transform(&self, doc: &Document, id: ObjectId) -> Option<Transform> {
         self.gesture
             .as_ref()
@@ -176,12 +192,28 @@ impl ImageInteraction {
         self.gesture.as_ref().map(|g| g.kind)
     }
     pub fn hit(&self, doc: &Document, point: [f64; 2]) -> Option<ObjectId> {
+        self.hit_with_tolerance(doc, point, 0.)
+    }
+    pub fn hit_with_tolerance(
+        &self,
+        doc: &Document,
+        point: [f64; 2],
+        tolerance: f64,
+    ) -> Option<ObjectId> {
         doc.object_order()
             .iter()
             .rev()
             .find(|id| {
-                doc.object_render_data(**id)
-                    .is_some_and(|d| geometry::hit(self.preview(d).transform, point))
+                doc.object(**id).is_some_and(|o| {
+                    let t = self.preview_transform(doc, **id).unwrap_or(o.transform());
+                    match o.kind() {
+                        tack_core::ObjectKind::Image(_) => geometry::hit(t, point),
+                        tack_core::ObjectKind::Annotation(a) => {
+                            crate::annotation_geometry::hit(a, t, point, tolerance)
+                        }
+                        _ => false,
+                    }
+                })
             })
             .copied()
     }
@@ -209,11 +241,18 @@ impl ImageInteraction {
         if !matches!(
             kind,
             GestureKind::Move | GestureKind::Resize { .. } | GestureKind::Scale
-        ) && self
-            .selection
-            .ids()
-            .any(|id| editor.document().object_render_data(id).is_none())
-        {
+        ) && self.selection.ids().any(|id| {
+            editor
+                .document()
+                .object(id)
+                .is_some_and(|o| match o.kind() {
+                    tack_core::ObjectKind::Frame(_) => true,
+                    tack_core::ObjectKind::Annotation(_) => {
+                        matches!(kind, GestureKind::Crop { .. })
+                    }
+                    _ => false,
+                })
+        }) {
             return Ok(false);
         }
         let Some(frame) = geometry::frame_transforms(initial.iter().map(|d| d.transform)) else {
@@ -344,7 +383,17 @@ impl ImageInteraction {
             Ok(EditData { transform, ..data })
         };
         for &data in &g.initial {
-            calculate(data)?;
+            let next = calculate(data)?;
+            // Annotation styles may extend outside the shared transform box.
+            if data.margin > 0. {
+                let b = next.transform.bounds();
+                WorldRect::new(
+                    b.x - data.margin,
+                    b.y - data.margin,
+                    b.width + 2. * data.margin,
+                    b.height + 2. * data.margin,
+                )?;
+            }
         }
         for (&data, next) in g.initial.iter().zip(&mut g.preview) {
             *next = calculate(data)?;

@@ -23,7 +23,9 @@ pub struct ImageInput {
     pub snap: crate::spatial_snap::SnapState,
     pub name_edit: Option<crate::spatial_input::FrameNameEdit>,
     pub(crate) name_replace: bool,
-    state: InputState,
+    pub annotation: crate::annotation_tool::AnnotationInput,
+    pub pending_source: Option<Action>,
+    pub(crate) state: InputState,
     cursor: [f64; 2],
     active_token: Option<HoldToken>,
     center_handle: bool,
@@ -41,6 +43,8 @@ impl ImageInput {
             snap: crate::spatial_snap::SnapState::default(),
             name_edit: None,
             name_replace: true,
+            annotation: Default::default(),
+            pending_source: None,
             state: InputState::default(),
             cursor: [0.; 2],
             active_token: None,
@@ -51,6 +55,8 @@ impl ImageInput {
         })
     }
     pub fn cancel(&mut self) {
+        self.annotation.creation = None;
+        self.annotation.edit = None;
         self.images.cancel();
         self.snap.clear();
         self.active_token = None;
@@ -62,7 +68,10 @@ impl ImageInput {
         self.cursor
     }
     pub fn active(&self) -> bool {
-        self.images.active() || self.marquee.is_some()
+        self.images.active()
+            || self.marquee.is_some()
+            || self.annotation.creation.is_some()
+            || self.annotation.edit.is_some()
     }
     pub fn hover(&self, editor: &DocumentEditor, camera: &Camera) -> Option<GizmoHit> {
         let frame_selected = editor.document().frame_count() > 0
@@ -89,6 +98,29 @@ impl ImageInput {
         self.gizmo
             .build(&self.images, editor.document(), camera, hover);
         self.spatial_overlay(editor, camera);
+        if let Some(c) = &self.annotation.creation
+            && c.tool != crate::actions::Tool::Scribble
+            && let Ok(t) = c.transform()
+        {
+            self.gizmo.outline(t, camera, self.gizmo.style.selection);
+        }
+        if let Some(e) = &self.annotation.edit {
+            self.gizmo
+                .outline(e.transform, camera, self.gizmo.style.selection);
+        }
+        if self.annotation.tools.tool().is_annotation() || self.annotation.edit.is_some() {
+            let label = if self.annotation.edit.is_some() {
+                "Text Ctrl+Enter"
+            } else {
+                self.annotation.tools.tool().label()
+            };
+            self.gizmo.label(
+                camera,
+                [8. * self.gizmo.scale, 8. * self.gizmo.scale],
+                label,
+                &mut 32,
+            );
+        }
         if let Some((start, end, _)) = self.marquee {
             let size = [(end[0] - start[0]).abs(), (end[1] - start[1]).abs()];
             if let Ok(frame) = Transform::new(
@@ -111,6 +143,10 @@ impl ImageInput {
         camera: &mut Camera,
     ) -> Result<bool, AssetError> {
         let ActionEvent { action, phase } = event;
+        if matches!(action, Action::TemporaryTool(_)) {
+            self.annotation_action(event, editor)?;
+            return Ok(false);
+        }
         if action == Action::SnapDisable {
             self.snap.disabled = matches!(phase, ActionPhase::Begin(_));
             self.snap.clear();
@@ -126,6 +162,7 @@ impl ImageInput {
         if let ActionPhase::End(token) = phase {
             if self.active_token == Some(token) {
                 self.active_token = None;
+                self.finish_annotation(editor, camera)?;
                 self.images.commit(editor)?;
                 self.snap.clear();
                 if let Some((start, end, additive)) = self.marquee.take()
@@ -146,7 +183,15 @@ impl ImageInput {
                             && time.duration_since(last) < Duration::from_millis(400)
                             && (p[0] - point[0]).hypot(p[1] - point[1]) < self.gizmo.scale * 5.
                     }) {
-                        self.images.focus(editor.document(), camera, id)?;
+                        if !self.annotation_action(
+                            ActionEvent {
+                                action: Action::RenameFrame,
+                                phase: ActionPhase::Invoke,
+                            },
+                            editor,
+                        )? {
+                            self.images.focus(editor.document(), camera, id)?;
+                        }
                         self.last_click = None;
                     } else {
                         self.last_click = Some((id, p, time));
@@ -202,6 +247,9 @@ impl ImageInput {
             }
             self.cancel();
             self.active_token = Some(token);
+            if action == Action::ImagePointer && self.begin_annotation(pointer, editor, camera) {
+                return Ok(false);
+            }
             if action == Action::ImagePointer
                 && let Some(handle) = handle
             {
@@ -223,7 +271,11 @@ impl ImageInput {
             }
             let hit = self
                 .images
-                .hit(editor.document(), pointer)
+                .hit_with_tolerance(
+                    editor.document(),
+                    pointer,
+                    6. * self.gizmo.scale / camera.zoom(),
+                )
                 .or_else(|| self.frame_hit(editor, camera));
             if action == Action::ToggleSelection {
                 self.images
@@ -264,6 +316,10 @@ impl ImageInput {
                 return Ok(true);
             }
             self.cancel();
+            if self.annotation_action(event, editor)? {
+                self.images.selection.prune(editor.document());
+                return Ok(false);
+            }
             match action {
                 Action::CancelInteraction => {}
                 Action::Undo => {
@@ -363,6 +419,9 @@ impl ImageInput {
             camera.pan(delta)?;
         } else {
             let world = camera.screen_to_world(next);
+            if let Some(c) = &mut self.annotation.creation {
+                c.update(world);
+            }
             if let Some((_, end, _)) = &mut self.marquee {
                 *end = world;
             }
@@ -378,6 +437,10 @@ impl ImageInput {
         editor: &mut DocumentEditor,
         camera: &mut Camera,
     ) -> Result<bool, AssetError> {
+        if self.annotation.edit.is_some() {
+            self.note_event(event, editor, camera)?;
+            return Ok(false);
+        }
         if self.name_edit.is_some() {
             // Modal text consumes presses, but releases/modifiers must not linger.
             for physical in crate::input::normalize(event).into_iter().flatten() {

@@ -26,6 +26,7 @@ def main():
     paths += [p for p in (project / 'crates').rglob('*') if p.suffix in ('.rs', '.wgsl', '.toml')]
     paths += list((project / 'tools').glob('*.py')) + list((project / '.cargo').glob('*.toml'))
     paths += [p for p in (project / 'assets/pixel-font').glob('*') if p.is_file()]
+    paths += [p for p in (project / "assets/note-font").glob("*") if p.is_file()]
     with zipfile.ZipFile(root / 'source-snapshot.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
         for p in sorted(paths): archive.write(p, p.relative_to(project))
     metadata = root / 'metadata'
