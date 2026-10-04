@@ -35,5 +35,39 @@
     ]
   },
   "native_windows": "notexercised; compilation/tests only",
-  "followup_tests": "pending"
+  "followup_tests": {
+    "sha": "aefc3a3b98e0361c8727d447ecf108dc41aa7940",
+    "runs": [
+      {
+        "id": 37165649336,
+        "name": "Quality",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/gurppt/tack/actions/runs/37165649336",
+        "jobs": [
+          {
+            "name": "rust (ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "current_step": null,
+            "steps": []
+          },
+          {
+            "name": "rust (windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "current_step": null,
+            "steps": []
+          },
+          {
+            "name": "dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "current_step": null,
+            "steps": []
+          }
+        ]
+      }
+    ]
+  }
 }

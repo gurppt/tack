@@ -1,8 +1,9 @@
 # Mission 1D — Spatial organization
 
 Date: 2026-10-04. Local implementation, quality, GPU, persistence, spatial,
-idle and native regression gates are complete. Independent local evidence review is complete; remote Linux/Windows CI remains
-pending at this initial checkpoint.
+idle and native regression gates are complete. Independent evidence review
+and configured Linux/Windows CI are successful, including the test-only
+follow-up.
 No Phase 1E work has begun.
 
 ## Starting state and implemented result
@@ -323,12 +324,15 @@ storage. No second model, deep hierarchy, abandoned index, unused dependency/
 feature, duplicate transform or per-object widget remains.
 Final independent local report/evidence review, including the added tests, is clear. The review also corrected
 the design wording: alignment uses the initial AABB as a reference and need not
-preserve the resulting AABB. Code CI passed; test-only follow-up CI remains pending.
+preserve the resulting AABB. Code and test-only follow-up CI both pass.
 
 Configured remote Quality CI on code commit 78ee494 passes on Linux, Windows
 and dependencies: [run 37165287330](https://github.com/gurppt/tack/actions/runs/37165287330).
 A test-only follow-up adds explicit rotated/frame snap and 4096-frame overlay-cap
-coverage; its CI is pending. Windows native input remains unestablished.
+coverage; its [Quality run 37165649336](https://github.com/gurppt/tack/actions/runs/37165649336)
+passes on Linux, Windows and dependencies. [CI receipt](../benchmarks/phase1d-ci.json).
+Subsequent report/receipt changes are documentation-only and skip redundant CI.
+Windows native input remains unestablished.
 
 ## Remaining risks and stop gate
 
@@ -343,8 +347,8 @@ through 10k, not 50k or a universal weak-machine guarantee. Allocation counts,
 network bytes and exact idle wakeups are not instrumented. System-freeze root
 cause remains unknown.
 
-Stop after 1D; no automatic 1E start. Provisional recommendation is repeat only
-until remote CI completes, not permission to broaden
-this phase.
+The implemented spatial path passes this phase for human review and authoring
+the next brief. All limitations above remain explicit. Stop after 1D; no
+automatic 1E start.
 
-B — REPEAT
+A — PASS
