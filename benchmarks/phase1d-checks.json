@@ -69,5 +69,12 @@
     "sha256": "658e2493253edd6f37c5fb043c0d309cb1a53d12b89fec98cf6fe82514cba8e6",
     "new_Xid_OOM_hung_lockup": false,
     "scope": "currentdate kernel entries; no cause claimed for historicalfreeze"
+  },
+  "followup_tests": {
+    "reason": "explicit rotated/frame snap and crowded4096frames overlay bounds tests; runtimeunchanged",
+    "app_spatial_tests": 9,
+    "clippy_all_workspace_all_targets_all_features": true,
+    "spatial_log_sha256": "ed7e4e20df70d212c169eae846aa5fb33ba59310ac6efe8399058390c9c6fc88",
+    "clippy_log_sha256": "afce57d19484187cb155c9c9bcc29f892447e5a5f07443dad9eea03ba22e7780"
   }
 }

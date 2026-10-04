@@ -134,7 +134,9 @@ Tracked compact JSON receipts below include binary/source/harness/input/report
 hashes; full ignored raw reports, logs, binary and source archives remain local.
 The final native spatial harness was strengthened after the archive freeze to
 require a displaced single image before alignment; its individual final harness
-hash is authoritative. Rust/WGSL/font runtime stayed identical. Initial failed
+hash is authoritative. Additional snap/overlay tests were also added after
+the freeze, verified by their local/CI receipts. Production Rust/WGSL/font runtime
+stayed identical. Initial failed
 native fixtures, WM-intercepted shortcut trials, screenshot failures and
 pre-correction binaries remain diagnostic artifacts and are not acceptance runs.
 
@@ -287,7 +289,7 @@ deterministic tests; a fractional desktop compositor was not manually exercised.
 No Windows native input, artist, tablet or stylus evaluation was available.
 These concrete observations do not claim human feel equivalence.
 
-The earlier desktop-freeze incident remains root-cause unconfirmed. All 1D owned
+The earlier desktop-freeze incident remains root-cause unconfirmed. All accepted final 1D owned
 windows exited normally, one GPU process at a time, without another freeze.
 Final kernel check finds no new NVIDIA Xid/OOM/hung-task/lockup signal. This does
 not establish the historical machine-freeze cause or fix system hardware.
@@ -298,12 +300,13 @@ See [incident record](INCIDENT_2026_10_03_DESKTOP_FREEZE.md).
 [Local quality receipt](../benchmarks/phase1d-checks.json): cargo fmt --check,
 workspace/all-target/all-feature check and Clippy -D warnings, workspace tests,
 no-deps docs, cargo-deny, Python/tool tests and release build pass. Regular suite:
-99 Rust test invocations; 7 Python tests (rerun after final harness changes).
+99 Rust test invocations initially, then all 9 app spatial tests pass after
+explicit rotated/frame snapping and crowded-overlay coverage additions; 7 Python tests (rerun after final harness changes).
 Explicit GPU smoke: 1 pass; product GPU suite: 5 passes including ignored native
 readbacks. Bitmap conversion exactly reproduces the pinned table.
 No ignored GPU test is claimed without explicit execution.
 
-New spatial integration coverage: 8 app, 3 core and 1 storage tests, plus font and
+New spatial integration coverage: 9 app, 3 core and 1 storage tests, plus font and
 GPU/grid cases. Covers threshold/ties/hysteresis/DPI/grid/bypass, frame and rotated
 bounds policies, modal UTF-8/IME/bounds/reusable F2, uniform corner projection
 normal/centered/extreme aspect, frame containment, atomic layout/history, invalid
@@ -318,13 +321,14 @@ modal names retaining held keys; extreme-aspect corner snapping amplifying a sma
 delta into a large jump. Binary-size review additionally removed duplicate font
 storage. No second model, deep hierarchy, abandoned index, unused dependency/
 feature, duplicate transform or per-object widget remains.
-Final independent local report/evidence review is clear. The review also corrected
+Final independent local report/evidence review, including the added tests, is clear. The review also corrected
 the design wording: alignment uses the initial AABB as a reference and need not
-preserve the resulting AABB. Remote CI remains pending.
+preserve the resulting AABB. Code CI passed; test-only follow-up CI remains pending.
 
-Configured remote Quality CI on Linux and Windows is pending the initial code
-push. Its receipt will distinguish Windows compilation/tests from native input,
-which remains unestablished.
+Configured remote Quality CI on code commit 78ee494 passes on Linux, Windows
+and dependencies: [run 37165287330](https://github.com/gurppt/tack/actions/runs/37165287330).
+A test-only follow-up adds explicit rotated/frame snap and 4096-frame overlay-cap
+coverage; its CI is pending. Windows native input remains unestablished.
 
 ## Remaining risks and stop gate
 

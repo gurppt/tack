@@ -44,7 +44,7 @@ fn invoke(input: &mut ImageInput, e: &mut DocumentEditor, c: &mut Camera, action
 }
 #[test]
 fn snap_threshold_ties_hysteresis_grid_disable_and_rotated_bounds() -> R {
-    let e = fixture()?;
+    let mut e = fixture()?;
     let mut selection = SelectionState::default();
     selection.select(Some(ObjectId::new(1)?), false);
     let mut snap = SnapState {
@@ -106,6 +106,55 @@ fn snap_threshold_ties_hysteresis_grid_disable_and_rotated_bounds() -> R {
     assert_eq!(grid_spacing(1., 1.), 32.);
     assert_eq!(grid_spacing(0.5, 1.), 64.);
     assert_eq!(grid_spacing(1., 2.), 64.);
+    // A rotated candidate uses its world AABB, with stable ID tie-breaking.
+    for id in [2, 3] {
+        e.execute(Command::SetTransform {
+            object: ObjectId::new(id)?,
+            transform: Transform::new(
+                [150., 0.],
+                [100., 50.],
+                std::f64::consts::FRAC_PI_2,
+                [false; 2],
+            )?,
+        })?;
+    }
+    snap = SnapState {
+        enabled: true,
+        ..Default::default()
+    };
+    assert_eq!(
+        snap.resolve(
+            e.document(),
+            &selection,
+            WorldRect::new(20., 200., 100., 20.)?,
+            1.,
+            1.,
+            None
+        ),
+        [5., 0.]
+    );
+    assert_eq!(snap.guide_object(0), Some(ObjectId::new(2)?));
+    e.execute(Command::AddObject {
+        object: DocumentObject::frame(
+            ObjectId::new(99)?,
+            "Frame snap target".into(),
+            Transform::new([750., 200.], [100., 50.], 0., [false; 2])?,
+        )?,
+        index: 3,
+    })?;
+    snap.clear();
+    assert_eq!(
+        snap.resolve(
+            e.document(),
+            &selection,
+            WorldRect::new(595., 300., 100., 20.)?,
+            1.,
+            1.,
+            None
+        ),
+        [5., 0.]
+    );
+    assert_eq!(snap.guide_object(0), Some(ObjectId::new(99)?));
     Ok(())
 }
 #[test]
@@ -494,5 +543,50 @@ fn uniform_corner_snap_bounds_final_displacement_including_extreme_aspect_ratio(
             assert_eq!(e.document(), &initial);
         }
     }
+    Ok(())
+}
+
+#[test]
+fn crowded_frames_keep_overlay_and_glyph_bounds_and_guide_priority() -> R {
+    let mut document = fixture()?.document().clone();
+    for id in 1000..5096 {
+        document.apply(Command::AddObject {
+            object: DocumentObject::frame(
+                ObjectId::new(id)?,
+                "Références 猫".into(),
+                Transform::new([0., 0.], [400., 400.], 0., [false; 2])?,
+            )?,
+            index: document.object_order().len(),
+        })?;
+    }
+    let e = DocumentEditor::new(document, 200);
+    let mut input = ImageInput::new()?;
+    let mut camera = Camera::new([1280, 720]);
+    input.snap.enabled = true;
+    input
+        .images
+        .selection
+        .select(Some(ObjectId::new(1)?), false);
+    input.images.begin(GestureKind::Move, [0., 0.], &e)?;
+    input.cursor_moved(camera.world_to_screen([55., 0.]), &e, &mut camera)?;
+    assert!(input.snap.guides.iter().all(Option::is_some));
+    input.build_overlay(&e, &camera);
+    assert!(input.gizmo.quads.len() <= tack_render::MAX_OVERLAY_QUADS);
+    let glyphs = input
+        .gizmo
+        .quads
+        .iter()
+        .filter(|q| q.bitmap.is_some())
+        .count();
+    assert!(glyphs > 0 && glyphs <= 512);
+    assert!(
+        input
+            .gizmo
+            .quads
+            .iter()
+            .rev()
+            .take(2)
+            .all(|q| q.color == [0.95, 0.70, 0.30, 1.])
+    );
     Ok(())
 }
