@@ -144,16 +144,17 @@ fn relink_missing_shared_and_foreign_preserves_layout_and_does_not_recycle_revis
     fs::write(&p, PNG)?;
     let mut e = editor()?;
     let sid = SourceId::new(1)?;
-    let previous = Source::from_descriptor(
-        sid,
-        SourceLocation::Linked(LinkedPath::encoded(
-            PathPlatform::Windows,
-            true,
-            b"C:\\missing.png",
-        )?),
-        1,
-        None,
-    )?;
+    let foreign = if cfg!(windows) {
+        LinkedPath::encoded(PathPlatform::Unix, true, b"/missing.png")?
+    } else {
+        let bytes: Vec<u8> = "C:\\missing.png"
+            .encode_utf16()
+            .flat_map(u16::to_le_bytes)
+            .collect();
+        LinkedPath::encoded(PathPlatform::Windows, true, &bytes)?
+    };
+    assert!(foreign.to_native().is_none());
+    let previous = Source::from_descriptor(sid, SourceLocation::Linked(foreign), 1, None)?;
     e.execute(Command::AddSource(previous.clone()))?;
     for i in 1..=2 {
         e.execute(Command::AddAsset(ImageAsset::new(
