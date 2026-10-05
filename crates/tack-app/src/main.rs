@@ -7,6 +7,7 @@ mod product_window;
 mod report_output;
 mod session;
 mod spatial_cli;
+mod supply_cli;
 mod window;
 
 use std::{path::PathBuf, time::Instant};
@@ -135,6 +136,7 @@ fn main() -> Result<(), AssetError> {
             "open",
             "query-scale",
             "spatial-scale",
+            "supply-scale",
             "annotation-scale",
         ]
         .contains(&command)

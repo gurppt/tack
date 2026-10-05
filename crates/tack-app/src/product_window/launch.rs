@@ -27,6 +27,10 @@ fn run_mode(args: Vec<OsString>, started: Instant, new: bool) -> Result<(), Asse
         tour: false,
         interaction: None,
         annotation_benchmark: false,
+        potato: false,
+        supply_stress: false,
+        immediate: false,
+        dense: false,
     };
     let mut it = args.into_iter().skip(1);
     while let Some(a) = it.next() {
@@ -42,6 +46,10 @@ fn run_mode(args: Vec<OsString>, started: Instant, new: bool) -> Result<(), Asse
             Some("--output") => {
                 options.output = Some(PathBuf::from(it.next().ok_or("output path")?))
             }
+            Some("--dense-view") => options.dense = true,
+            Some("--potato") => options.potato = true,
+            Some("--supply-stress") => options.supply_stress = true,
+            Some("--present-immediate") => options.immediate = true,
             Some("--board-tour") => options.tour = true,
             Some("--annotation-benchmark") => options.annotation_benchmark = true,
             Some("--interaction") => {
@@ -208,6 +216,9 @@ fn run_mode(args: Vec<OsString>, started: Instant, new: bool) -> Result<(), Asse
         interaction_error: None,
         redraws: 0,
         wakeups: 0,
+        event_samples: Vec::new(),
+        supply_pending: false,
+        visibility: Default::default(),
     };
     events.run_app(&mut app)?;
     app.local.worker.cancel();

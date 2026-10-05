@@ -43,6 +43,7 @@ pub fn run(command: &str, args: Vec<OsString>, started: Instant) -> Result<(), A
         "new" => crate::product_window::run_new(args, started),
         "query-scale" => query_scale(args),
         "annotation-scale" => crate::annotation_cli::run(args),
+        "supply-scale" => crate::supply_cli::run(args),
         "spatial-scale" => crate::spatial_cli::run(args),
         _ => Err("unknown product command".into()),
     }

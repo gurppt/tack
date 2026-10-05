@@ -30,6 +30,10 @@ impl DiskCache {
         }
     }
 
+    pub(crate) fn budget_bytes(&self) -> usize {
+        self.budget
+    }
+
     pub(crate) fn prepare(&mut self) {
         if !self.checked
             && self.enabled

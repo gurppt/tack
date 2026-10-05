@@ -447,6 +447,7 @@ impl App {
             }
             LocalUpdate::Restored(result) => {
                 let board = Arc::new(result.map_err(AssetError::from)?);
+                self.visibility.invalidate();
                 self.editor = Some(DocumentEditor::recovered(board.document.clone(), 200));
                 self.local.cache_generation = None;
                 if let Some(assets) = &mut self.assets {
@@ -611,6 +612,7 @@ impl App {
                 self.local.untitled = false;
                 self.local.retire_seed = self.local.seed.is_some();
                 if reset {
+                    self.visibility.invalidate();
                     self.editor = Some(DocumentEditor::new(board.document.clone(), 200));
                     self.local.cache_generation = None;
                 }

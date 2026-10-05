@@ -3,3 +3,5 @@
 /benchmark-data/
 /benchmark-results/
 __pycache__/
+
+/bin/

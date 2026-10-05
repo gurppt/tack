@@ -3,7 +3,7 @@ use crate::AssetError;
 use turbojpeg::{Colorspace, Decompressor, Image, PixelFormat, ScalingFactor};
 
 const MAX_SOURCE: usize = 64 * 1024 * 1024;
-const MAX_OUTPUT: usize = 2 * 1024 * 1024;
+const MAX_OUTPUT: usize = 32 * 1024 * 1024;
 
 /// Validated 128-pixel JPEG decode job, borrowing the same immutable encoded input
 /// throughout header and decode. A fresh native handle is destroyed on every error
@@ -31,6 +31,14 @@ impl<'a> NativeThumbnail<'a> {
     /// also bounds marker storage. Progressive native scratch remains proportional
     /// to full dimensions; the output limit alone is not a scratch-memory limit.
     pub fn new(encoded: &'a [u8]) -> Result<Self, AssetError> {
+        Self::with_edge(encoded, 128)
+    }
+
+    /// Bounded display decode; never selects full resolution merely on zoom.
+    pub fn with_edge(encoded: &'a [u8], edge: u32) -> Result<Self, AssetError> {
+        if ![8, 16, 32, 64, 128, 512, 2048].contains(&edge) {
+            return Err("invalid JPEG display edge".into());
+        }
         if encoded.is_empty() || encoded.len() > MAX_SOURCE {
             return Err("JPEG encoded input is empty or exceeds 64 MiB".into());
         }
@@ -58,7 +66,7 @@ impl<'a> NativeThumbnail<'a> {
             ScalingFactor::ONE,
         ]
         .into_iter()
-        .find(|factor| factor.scale(header.width.max(header.height)) >= 128)
+        .find(|factor| factor.scale(header.width.max(header.height)) >= edge as usize)
         .unwrap_or(ScalingFactor::ONE);
         let width = factor.scale(header.width);
         let height = factor.scale(header.height);

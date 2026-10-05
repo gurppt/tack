@@ -79,14 +79,14 @@ impl<R: Seek> Seek for CountRead<R> {
     }
 }
 pub(crate) fn decode_png(bytes: &[u8], size: Option<[u32; 2]>) -> Result<Decoded, AssetError> {
-    if bytes.len() > 1024 * 1024 {
+    if bytes.len() > 20 * 1024 * 1024 {
         return Err("overview encoded budget".into());
     }
     let mut reader = ImageReader::new(Cursor::new(bytes)).with_guessed_format()?;
     let mut limits = Limits::default();
-    limits.max_image_width = Some(512);
-    limits.max_image_height = Some(512);
-    limits.max_alloc = Some(4 * 1024 * 1024);
+    limits.max_image_width = Some(2048);
+    limits.max_image_height = Some(2048);
+    limits.max_alloc = Some(32 * 1024 * 1024);
     reader.limits(limits);
     let pixels = reader.decode()?.into_rgba8();
     if size.is_some_and(|s| s != [pixels.width(), pixels.height()]) {
@@ -108,9 +108,10 @@ pub(crate) fn encode(pixels: &image::RgbaImage) -> Result<Vec<u8>, AssetError> {
     )?;
     Ok(bytes)
 }
-pub(crate) fn derive_linked(
+pub(crate) fn derive_linked_edge(
     path: &Path,
     read: &mut u64,
+    edge: u32,
 ) -> Result<(image::RgbaImage, u32), AssetError> {
     let mut reader = CountRead {
         inner: File::open(path)?,
@@ -128,21 +129,28 @@ pub(crate) fn derive_linked(
             if bytes.len() as u64 > ENCODED_LIMIT {
                 return Err("JPEG exceeds 64 MiB decode input budget".into());
             }
-            let pixels = NativeThumbnail::new(&bytes)?.decode()?;
+            let pixels = NativeThumbnail::with_edge(&bytes, edge)?.decode()?;
             return Ok((
                 image::DynamicImage::ImageRgb8(pixels)
-                    .thumbnail(128, 128)
+                    .thumbnail(edge, edge)
                     .into_rgba8(),
                 1,
             ));
         }
-        Ok((derive_stream(&mut reader)?, 2))
+        Ok((derive_stream_edge(&mut reader, edge)?, 2))
     })();
     *read += reader.count;
     result
 }
+#[cfg(test)]
 pub(crate) fn derive_stream<R: Read + Seek>(
     source: &mut R,
+) -> Result<image::RgbaImage, AssetError> {
+    derive_stream_edge(source, 128)
+}
+pub(crate) fn derive_stream_edge<R: Read + Seek>(
+    source: &mut R,
+    edge: u32,
 ) -> Result<image::RgbaImage, AssetError> {
     let mut magic = [0; 2];
     source.read_exact(&mut magic)?;
@@ -162,7 +170,7 @@ pub(crate) fn derive_stream<R: Read + Seek>(
         ) {
             return Err("unsupported JPEG pixel format".into());
         }
-        d.scale(128, 128)?;
+        d.scale(edge as u16, edge as u16)?;
         let bytes = d.decode()?;
         let info = d.info().ok_or("JPEG metadata absent")?;
         let (w, h) = (u32::from(info.width), u32::from(info.height));
@@ -175,7 +183,7 @@ pub(crate) fn derive_stream<R: Read + Seek>(
             ),
             _ => return Err("JPEG pixel format".into()),
         };
-        return Ok(pixels.thumbnail(128, 128).into_rgba8());
+        return Ok(pixels.thumbnail(edge, edge).into_rgba8());
     }
     let mut reader =
         ImageReader::new(BufReader::new(BudgetReader::new(source))).with_guessed_format()?;
@@ -184,7 +192,7 @@ pub(crate) fn derive_stream<R: Read + Seek>(
     limits.max_image_height = Some(4500);
     limits.max_alloc = Some(192 * 1024 * 1024);
     reader.limits(limits);
-    Ok(reader.decode()?.thumbnail(128, 128).into_rgba8())
+    Ok(reader.decode()?.thumbnail(edge, edge).into_rgba8())
 }
 
 /// Bound cumulative parser reads including repeated seeks; storage originals can be larger.

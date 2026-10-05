@@ -37,3 +37,7 @@ pub mod native_files;
 pub mod local_worker;
 
 pub mod local_ui;
+
+pub mod supply_plan;
+
+pub mod visibility;

@@ -6,7 +6,9 @@ use std::sync::{
 };
 use std::time::Instant;
 use tack_assets::{AssetError, AssetKey, Decoded};
-use tack_core::{AssetId, ByteCache, Camera, ImageFiltering, ImageRenderData, Lod, WorldRect};
+use tack_core::{
+    AssetId, ByteCache, Camera, ImageFiltering, ImageRenderData, Lod, SourceId, WorldRect,
+};
 use wgpu::util::DeviceExt;
 
 const MAX_OBJECTS: usize = 10000;
@@ -42,7 +44,10 @@ pub struct DrawImage {
 /// Stable product representation identity, independent of benchmark u32 keys.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct ProductKey {
-    pub asset: AssetId,
+    pub asset: Option<AssetId>,
+    pub source: SourceId,
+    pub lod: Lod,
+    pub edge: u32,
     pub revision: u64,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -54,7 +59,7 @@ impl TextureKey {
     fn is_thumbnail(self) -> bool {
         match self {
             Self::Benchmark(k) => k.lod == Lod::Thumbnail,
-            Self::Product(_) => true,
+            Self::Product(k) => k.lod == Lod::Thumbnail,
         }
     }
 }
@@ -134,6 +139,9 @@ pub struct RenderStats {
     pub in_flight: usize,
     pub thumbnail_bytes: usize,
     pub upload_cpu_ms: f64,
+    pub encode_ms: f64,
+    pub submit_ms: f64,
+    pub poll_ms: f64,
 }
 
 /// Texture ownership and GPU submission only; no file access or codec calls.
@@ -161,6 +169,12 @@ pub struct Gpu {
     upload_cpu_ms: f64,
     timings: Option<Timings>,
     submissions: usize,
+    diagnostics: bool,
+    encode_ms: f64,
+    submit_ms: f64,
+    poll_ms: f64,
+    upload_budget: usize,
+    max_uploads: usize,
 }
 
 impl Gpu {
@@ -314,6 +328,12 @@ impl Gpu {
             upload_cpu_ms: 0.0,
             timings,
             submissions: 0,
+            diagnostics: false,
+            encode_ms: 0.,
+            submit_ms: 0.,
+            poll_ms: 0.,
+            upload_budget: UPLOAD_BUDGET_BYTES,
+            max_uploads: MAX_UPLOADS,
         })
     }
 
@@ -387,7 +407,9 @@ impl Gpu {
 
     /// Non-blocking GPU completion polling; skip work when submission capacity is full.
     pub fn begin_frame(&mut self) -> Result<bool, AssetError> {
+        let start = self.diagnostics.then(Instant::now);
         let _ = self.device.poll(wgpu::PollType::Poll)?;
+        self.poll_ms = start.map_or(0., |t| t.elapsed().as_secs_f64() * 1000.);
         if let Some(timings) = &mut self.timings {
             timings.poll();
         }
@@ -397,8 +419,22 @@ impl Gpu {
         Ok(self.in_flight.load(Ordering::Relaxed) < MAX_IN_FLIGHT)
     }
 
+    pub fn configure_diagnostics(&mut self, enabled: bool) {
+        self.diagnostics = enabled;
+        if !enabled {
+            self.timings = None;
+        }
+    }
+    pub fn constrain_uploads(&mut self, bytes: usize, count: usize) {
+        self.upload_budget = bytes.clamp(1024 * 1024, UPLOAD_BUDGET_BYTES);
+        self.max_uploads = count.clamp(1, MAX_UPLOADS);
+    }
     pub fn contains_product(&self, key: ProductKey) -> bool {
-        self.thumbnails.contains(TextureKey::Product(key))
+        if key.lod == Lod::Thumbnail {
+            self.thumbnails.contains(TextureKey::Product(key))
+        } else {
+            self.textures.contains(TextureKey::Product(key))
+        }
     }
     pub fn upload_product(&mut self, key: ProductKey, image: &Decoded) -> bool {
         self.upload_key(TextureKey::Product(key), image)
@@ -412,8 +448,8 @@ impl Gpu {
             self.thumbnails.contains(key)
         } else {
             self.textures.contains(key)
-        }) || self.uploads >= MAX_UPLOADS
-            || bytes > UPLOAD_BUDGET_BYTES - self.upload_bytes
+        }) || self.uploads >= self.max_uploads
+            || bytes > self.upload_budget.saturating_sub(self.upload_bytes)
             || bytes
                 > if key.is_thumbnail() {
                     self.thumbnails.budget_bytes()
@@ -505,6 +541,7 @@ impl Gpu {
         grid: Option<crate::GridView>,
         scene: Option<crate::AnnotationDraws<'_>>,
     ) -> Result<(), AssetError> {
+        let encode_start = self.diagnostics.then(Instant::now);
         if let Some(scene) = scene {
             if scene.order.len() > crate::MAX_ANNOTATION_PRIMITIVES + MAX_OBJECTS
                 || scene.primitives.len() > crate::MAX_ANNOTATION_PRIMITIVES
@@ -631,7 +668,11 @@ impl Gpu {
             timings.resolve(&mut encoder, index);
         }
         self.in_flight.fetch_add(1, Ordering::Relaxed);
-        self.queue.submit([encoder.finish()]);
+        let command = encoder.finish();
+        self.encode_ms = encode_start.map_or(0., |t| t.elapsed().as_secs_f64() * 1000.);
+        let submit_start = self.diagnostics.then(Instant::now);
+        self.queue.submit([command]);
+        self.submit_ms = submit_start.map_or(0., |t| t.elapsed().as_secs_f64() * 1000.);
         self.submissions += 1;
         if let Some(index) = timing_slot
             && let Some(timings) = &self.timings
@@ -657,6 +698,9 @@ impl Gpu {
             in_flight: self.in_flight.load(Ordering::Relaxed),
             thumbnail_bytes: self.thumbnails.used_bytes(),
             upload_cpu_ms: self.upload_cpu_ms,
+            encode_ms: self.encode_ms,
+            submit_ms: self.submit_ms,
+            poll_ms: self.poll_ms,
         }
     }
 

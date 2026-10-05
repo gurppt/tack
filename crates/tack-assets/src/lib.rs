@@ -7,7 +7,9 @@ mod preparation;
 mod product;
 mod profile;
 mod representation;
-pub use product::{PreparedOverview, ProductAssetStats, ProductAssets, SourceState};
+pub use product::{
+    PreparedOverview, ProductAssetStats, ProductAssets, ProductDemand, SourceState, SupplyLimits,
+};
 pub use representation::{image_metadata, source_fingerprint};
 
 pub use board::{BenchmarkBoard, BenchmarkImage};

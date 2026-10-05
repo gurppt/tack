@@ -187,7 +187,10 @@ fn procedural_grid_hidden_path_and_bitmap_labels_are_crisp() -> Result<(), Asset
     let mut d = data();
     d.opacity = Opacity::new(0.)?;
     let key = ProductKey {
-        asset: d.asset_id,
+        asset: Some(d.asset_id),
+        source: tack_core::SourceId::new(d.asset_id.value())?,
+        lod: tack_core::Lod::Thumbnail,
+        edge: 128,
         revision: 1,
     };
     gpu.begin_frame()?;
@@ -247,7 +250,10 @@ fn product_gpu_honors_sampling_alpha_crop_flip_rotation_and_revision() -> Result
     );
     let mut d = data();
     let key = ProductKey {
-        asset: d.asset_id,
+        asset: Some(d.asset_id),
+        source: tack_core::SourceId::new(d.asset_id.value())?,
+        lod: tack_core::Lod::Thumbnail,
+        edge: 128,
         revision: 1,
     };
     gpu.begin_frame()?;
@@ -296,6 +302,9 @@ fn product_gpu_honors_sampling_alpha_crop_flip_rotation_and_revision() -> Result
     assert!(pixel(&transparent, 32, 32)[0] < 100);
     let changed = ProductKey {
         asset: key.asset,
+        source: key.source,
+        lod: key.lod,
+        edge: key.edge,
         revision: 2,
     };
     gpu.begin_frame()?;
@@ -326,7 +335,10 @@ fn canvas_overlay_is_on_top_without_asset_or_document_changes() -> Result<(), As
     ))?;
     let d = data();
     let key = ProductKey {
-        asset: d.asset_id,
+        asset: Some(d.asset_id),
+        source: tack_core::SourceId::new(d.asset_id.value())?,
+        lod: tack_core::Lod::Thumbnail,
+        edge: 128,
         revision: 1,
     };
     gpu.begin_frame()?;
@@ -384,7 +396,10 @@ fn annotations_preserve_order_and_bounded_bitmap_primitives() -> Result<(), Asse
     assert_eq!(gpu.annotation_bytes(), (0, 0));
     let d = data();
     let key = ProductKey {
-        asset: d.asset_id,
+        asset: Some(d.asset_id),
+        source: tack_core::SourceId::new(d.asset_id.value())?,
+        lod: tack_core::Lod::Thumbnail,
+        edge: 128,
         revision: 1,
     };
     gpu.begin_frame()?;
@@ -560,7 +575,10 @@ fn integer_logical_pixels_preserve_all_bitmap_rows_without_aa() -> Result<(), As
     ))?;
     let d = data();
     let key = ProductKey {
-        asset: d.asset_id,
+        asset: Some(d.asset_id),
+        source: tack_core::SourceId::new(d.asset_id.value())?,
+        lod: tack_core::Lod::Thumbnail,
+        edge: 128,
         revision: 1,
     };
     gpu.begin_frame()?;

@@ -17,12 +17,16 @@ struct Fixture {
 }
 impl Fixture {
     fn new(embedded: bool) -> Self {
+        Self::sized(embedded, [96, 64])
+    }
+    fn sized(embedded: bool, size: [u32; 2]) -> Self {
         let root = std::env::temp_dir().join(format!(
             "tack-product-test-{:032x}",
             new_document_id().unwrap().value()
         ));
         fs::create_dir(&root).unwrap();
-        let pixels = image::RgbImage::from_fn(96, 64, |x, y| image::Rgb([x as u8, y as u8, 200]));
+        let pixels =
+            image::RgbImage::from_fn(size[0], size[1], |x, y| image::Rgb([x as u8, y as u8, 200]));
         pixels.save(root.join("source.png")).unwrap();
         let source = new_source_id().unwrap();
         let asset = new_asset_id().unwrap();
@@ -42,7 +46,7 @@ impl Fixture {
         document.apply(Command::AddSource(s)).unwrap();
         document
             .apply(Command::AddAsset(
-                ImageAsset::new(asset, source, [96, 64]).unwrap(),
+                ImageAsset::new(asset, source, size).unwrap(),
             ))
             .unwrap();
         document
@@ -480,4 +484,219 @@ fn more_than_256_missing_sources_settle_and_removed_ids_do_not_republish() {
     for id in ids {
         assert!(!supply.failed(id));
     }
+}
+
+fn settle_view(a: &mut ProductAssets) {
+    let start = Instant::now();
+    while a.stats().pending > 0 {
+        a.poll();
+        a.schedule();
+        assert!(start.elapsed() < Duration::from_secs(10));
+        std::thread::sleep(Duration::from_millis(1));
+    }
+}
+#[test]
+fn high_lod_is_worker_only_bounded_and_reuses_derived_cache() {
+    use tack_assets::ProductDemand;
+    let f = Fixture::sized(true, [1600, 1000]);
+    f.prepared();
+    let (_, mut a) = f.load("ready.tack");
+    let demand = [ProductDemand {
+        asset: f.asset,
+        lod: Lod::Medium,
+        edge: 512,
+        priority: 2,
+        resident: false,
+    }];
+    a.replace_view(&demand, &f.document, &Default::default());
+    settle_view(&mut a);
+    let i = a.get_rep(f.asset, 1, Lod::Medium, 512).unwrap();
+    assert_eq!(i.width, 512);
+    assert!(i.rgba.len() <= 512 * 512 * 4);
+    assert!(a.prepared.is_empty()); // High LOD cannot become persisted document authority.
+    assert!(a.stats().container_bytes > 0);
+    let completed = a.stats().completed;
+    for _ in 0..30 {
+        a.replace_view(&demand, &f.document, &Default::default());
+        a.poll();
+    }
+    assert_eq!(a.stats().completed, completed);
+    assert_eq!(a.stats().pending, 0);
+}
+#[test]
+fn stale_view_completion_is_discarded_and_suspended_supply_settles() {
+    use tack_assets::ProductDemand;
+    let f = Fixture::sized(false, [900, 600]);
+    f.seed();
+    let (_, mut a) = f.load("seed.tack");
+    a.replace_view(
+        &[ProductDemand {
+            asset: f.asset,
+            lod: Lod::Detail,
+            edge: 2048,
+            priority: 2,
+            resident: false,
+        }],
+        &f.document,
+        &Default::default(),
+    );
+    a.suspend();
+    settle_view(&mut a);
+    assert_eq!(a.stats().discarded, 1);
+    assert_eq!(a.stats().cpu_bytes, 0);
+    assert!(a.prepared.is_empty());
+    assert!(a.states.is_empty());
+    a.replace_view(
+        &[ProductDemand {
+            asset: f.asset,
+            lod: Lod::Thumbnail,
+            edge: 32,
+            priority: 0,
+            resident: false,
+        }],
+        &f.document,
+        &Default::default(),
+    );
+    settle_view(&mut a);
+    assert_eq!(a.get_rep(f.asset, 1, Lod::Thumbnail, 32).unwrap().width, 32);
+}
+#[test]
+fn potato_limits_and_existing_disk_cache_are_enforced_without_new_writes() {
+    use tack_assets::{ProductDemand, SupplyLimits};
+    let f = Fixture::sized(false, [512, 512]);
+    f.prepared();
+    let path = f.root.join("ready.tack");
+    let dir = f.root.join("bounded");
+    fs::create_dir(&dir).unwrap();
+    fs::write(dir.join("old-2048.png"), vec![0; 10 * 1024 * 1024]).unwrap();
+    let mut a = ProductAssets::with_limits(
+        Arc::new(TackFile::open(&path).unwrap()),
+        &path,
+        dir.clone(),
+        SupplyLimits::potato(),
+    )
+    .unwrap();
+    a.replace_view(
+        &[ProductDemand {
+            asset: f.asset,
+            lod: Lod::Thumbnail,
+            edge: 128,
+            priority: 2,
+            resident: false,
+        }],
+        &f.document,
+        &Default::default(),
+    );
+    settle_view(&mut a);
+    assert_eq!(a.stats().derived_bytes, 0);
+    assert!(!dir.join("old-2048.png").exists());
+    assert!(a.stats().peak_pending <= 4);
+    assert!(a.stats().cpu_peak <= 8 * 1024 * 1024);
+    assert!(
+        fs::read_dir(&dir)
+            .unwrap()
+            .map(|p| p.unwrap().metadata().unwrap().len())
+            .sum::<u64>()
+            <= 8 * 1024 * 1024
+    );
+}
+
+#[test]
+fn distant_jump_replaces_old_queued_demand_and_progresses_new_view() {
+    use tack_assets::{ProductDemand, SupplyLimits};
+    let mut f = Fixture::sized(false, [640, 400]);
+    let mut ids = vec![f.asset];
+    for _ in 0..24 {
+        let id = new_asset_id().unwrap();
+        f.document
+            .apply(Command::AddAsset(
+                ImageAsset::new(id, f.source, [640, 400]).unwrap(),
+            ))
+            .unwrap();
+        ids.push(id);
+    }
+    f.seed();
+    let path = f.root.join("seed.tack");
+    let mut a = ProductAssets::with_limits(
+        Arc::new(TackFile::open(&path).unwrap()),
+        &path,
+        f.root.join("jump-cache"),
+        SupplyLimits::potato(),
+    )
+    .unwrap();
+    let demands: Vec<_> = ids[..20]
+        .iter()
+        .map(|id| ProductDemand {
+            asset: *id,
+            lod: Lod::Thumbnail,
+            edge: 128,
+            priority: 0,
+            resident: false,
+        })
+        .collect();
+    a.replace_view(&demands, &f.document, &Default::default());
+    assert!(a.stats().pending <= 4);
+    assert!(a.stats().queued > 0);
+    let new = [ProductDemand {
+        asset: ids[24],
+        lod: Lod::Thumbnail,
+        edge: 128,
+        priority: 0,
+        resident: false,
+    }];
+    a.replace_view(&new, &f.document, &Default::default());
+    settle_view(&mut a);
+    assert!(a.stats().reprioritized > 0);
+    assert!(a.stats().discarded > 0);
+    assert!(a.get_rep(ids[24], 1, Lod::Thumbnail, 128).is_some());
+    assert!(a.get_rep(ids[1], 1, Lod::Thumbnail, 128).is_none());
+    let completed = a.stats().completed;
+    for _ in 0..100 {
+        a.replace_view(&new, &f.document, &Default::default());
+        a.poll();
+    }
+    assert_eq!(completed, a.stats().completed);
+    assert_eq!(a.stats().pending, 0);
+}
+
+#[test]
+fn closing_revokes_queue_without_deriving_closed_view() {
+    use tack_assets::{ProductDemand, SupplyLimits};
+    let mut f = Fixture::sized(false, [640, 400]);
+    let mut ids = vec![f.asset];
+    for _ in 0..6 {
+        let id = new_asset_id().unwrap();
+        f.document
+            .apply(Command::AddAsset(
+                ImageAsset::new(id, f.source, [640, 400]).unwrap(),
+            ))
+            .unwrap();
+        ids.push(id);
+    }
+    f.seed();
+    let path = f.root.join("seed.tack");
+    let mut a = ProductAssets::with_limits(
+        Arc::new(TackFile::open(&path).unwrap()),
+        &path,
+        f.root.join("close-cache"),
+        SupplyLimits::potato(),
+    )
+    .unwrap();
+    let demand: Vec<_> = ids
+        .iter()
+        .map(|id| ProductDemand {
+            asset: *id,
+            lod: Lod::Thumbnail,
+            edge: 128,
+            priority: 0,
+            resident: false,
+        })
+        .collect();
+    a.replace_view(&demand, &f.document, &Default::default());
+    assert!(a.stats().queued > 0);
+    a.suspend();
+    settle_view(&mut a);
+    assert_eq!(a.stats().completed, 1);
+    assert_eq!(a.stats().cpu_bytes, 0);
+    assert_eq!(a.stats().pending, 0);
 }
