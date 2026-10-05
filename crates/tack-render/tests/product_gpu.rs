@@ -250,10 +250,10 @@ fn product_gpu_honors_sampling_alpha_crop_flip_rotation_and_revision() -> Result
     );
     let mut d = data();
     let key = ProductKey {
-        asset: Some(d.asset_id),
+        asset: None,
         source: tack_core::SourceId::new(d.asset_id.value())?,
-        lod: tack_core::Lod::Thumbnail,
-        edge: 128,
+        lod: tack_core::Lod::Medium,
+        edge: 512,
         revision: 1,
     };
     gpu.begin_frame()?;

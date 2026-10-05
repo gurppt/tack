@@ -33,6 +33,7 @@ def main():
         # Alternate resize, zoom reversal and pan; other window remains idle.
         baseline = [observe(s.process.pid) for s in sessions]
         for s in sessions:
+            command('xdotool', 'windowraise', s.window)
             s.focus()
             command('xdotool', 'mousemove', '--window', s.window, '700', '420')
             for _ in range(6):

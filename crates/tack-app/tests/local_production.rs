@@ -199,9 +199,41 @@ fn recovery_worker_does_not_mark_clean_and_edits_during_save_remain_dirty() -> R
     let r = Root::new()?;
     let path = r.0.join("board.tack");
     let mut e = editor()?;
-    save(&path, e.document(), vec![])?;
+    let sid = new_source_id()?;
+    let aid = new_asset_id()?;
+    let original = r.0.join("original.png");
+    fs::write(&original, PNG)?;
+    e.execute(Command::AddSource(Source::embedded(sid)))?;
+    e.execute(Command::AddAsset(ImageAsset::new(aid, sid, [2, 1])?))?;
+    e.execute(Command::AddObject {
+        object: DocumentObject::image(
+            new_object_id()?,
+            aid,
+            Transform::new([100.; 2], [20., 10.], 0., [false; 2])?,
+        ),
+        index: 0,
+    })?;
+    save(
+        &path,
+        e.document(),
+        vec![BlobInput::original(sid, 1, Payload::File(original))],
+    )?;
     let owner = Arc::new(BoardLease::acquire(&path)?);
     let board = Arc::new(owner.open()?);
+    let mut supply =
+        tack_assets::ProductAssets::new(Arc::clone(&board), &path, r.0.join("display-cache"))?;
+    supply.replace_view(
+        &[tack_assets::ProductDemand {
+            asset: aid,
+            lod: Lod::Medium,
+            edge: 512,
+            priority: 2,
+            resident: false,
+        }],
+        e.document(),
+        &BTreeMap::new(),
+    );
+    assert_eq!(supply.stats().pending, 1);
     let mut save = ImageSave::default();
     e.execute(Command::AddObject {
         object: DocumentObject::frame(
@@ -226,7 +258,7 @@ fn recovery_worker_does_not_mark_clean_and_edits_during_save_remain_dirty() -> R
     assert_eq!(owner.open()?.document, board.document);
     save.start_owned(
         Arc::clone(&owner),
-        board,
+        Arc::clone(&board),
         &e,
         &BTreeMap::new(),
         &Originals::new(),
@@ -246,6 +278,17 @@ fn recovery_worker_does_not_mark_clean_and_edits_during_save_remain_dirty() -> R
     assert!(e.is_dirty());
     assert_ne!(owner.open()?.document, *e.document());
     assert!(owner.recovery(e.document().id())?.is_none());
+    let generation = e.generation();
+    let start = Instant::now();
+    while supply.stats().pending > 0 {
+        supply.poll();
+        supply.schedule();
+        assert!(start.elapsed() < Duration::from_secs(5));
+        std::thread::sleep(Duration::from_millis(1));
+    }
+    assert_eq!(supply.stats().errors, 0);
+    assert_eq!(e.generation(), generation);
+    owner.open()?.verify_originals()?;
     Ok(())
 }
 #[test]
