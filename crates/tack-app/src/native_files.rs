@@ -1,7 +1,8 @@
 //! Optional native helpers, fixed executable/arguments and bounded disk output.
 //! Called only from local workers. No helper stays resident while unused.
+#[cfg(target_os = "linux")]
+use std::fs::File;
 use std::{
-    fs::File,
     io::Read,
     path::{Path, PathBuf},
     process::{Command, Stdio},
