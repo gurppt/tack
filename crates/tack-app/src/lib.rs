@@ -36,7 +36,9 @@ pub mod native_files;
 
 pub mod local_worker;
 
+pub mod context_menu;
 pub mod local_ui;
+pub mod selection_commands;
 
 pub mod supply_plan;
 

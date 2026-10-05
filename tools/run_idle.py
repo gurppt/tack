@@ -59,8 +59,11 @@ def main():
     parser.add_argument('--seconds',type=float,default=10)
     parser.add_argument('--no-wm',action='store_true',help='Isolated X11 display: direct focus and scoped WM_DELETE, no desktop shortcuts')
     parser.add_argument('--edit-note',action='store_true',help='Observe transient new note editing without a caret timer')
+    parser.add_argument('--context-menu',choices=('none','canvas','application','closed'),default='none',help='Mission 1H: observe an open static popup or the settled state after closing it')
     parser.add_argument('--baseline',action='store_true',help='One hidden-grid observation for older binaries without spatial telemetry')
     args=parser.parse_args()
+    if args.context_menu!='none' and (not args.no_wm or os.environ.get('DISPLAY') in (None,':0',':0.0')):parser.error('context-menu checks require an explicitly owned isolated X11 display and --no-wm')
+    if args.context_menu!='none' and args.edit_note:parser.error('note draft and menu probes are separate observations')
     if not 5<=args.seconds<=30:parser.error('interval 5..30 seconds')
     root=args.output.resolve();root.mkdir(parents=True,exist_ok=False);binary=args.binary.resolve();board=args.board.resolve();before_hash=digest(board);rows=[]
     for visible in ((False,) if args.baseline else (False,True)):
@@ -87,12 +90,18 @@ def main():
                 if visible:command('xdotool','key','g')
                 if args.edit_note:
                     command('xdotool','key','t');command('xdotool','mousemove','--window',window,30,30);command('xdotool','click','1')
+                if args.context_menu!='none':
+                    if args.context_menu=='application':command('xdotool','key','F10')
+                    else:
+                        command('xdotool','mousemove','--window',window,250,180);command('xdotool','click','3')
+                    if args.context_menu=='closed':command('xdotool','key','Escape')
                 time.sleep(3)
                 observed_title=command('xdotool','getwindowname',window).strip()
                 if args.edit_note and 'Ctrl+Enter confirm' not in observed_title:
                     raise AssertionError('note editor did not become active')
                 begin=time.monotonic();initial=observe(process.pid);time.sleep(args.seconds);final=observe(process.pid);end=time.monotonic()
                 if args.edit_note:command('xdotool','key','Escape')
+                if args.context_menu in ('canvas','application'):command('xdotool','key','Escape')
                 if args.no_wm:close_owned_window(window)
                 else:command('xdotool','key','alt+F4')
                 process.wait(timeout=5)
@@ -115,7 +124,7 @@ def main():
         row['observed_title']=observed_title
         rows.append(row);(root/'observations.json').write_text(json.dumps(rows,indent=2)+'\n');print(name,'idle redraws',len(frames),'ticks',ticks,flush=True)
     if digest(board)!=before_hash:raise AssertionError('idle input board changed')
-    summary={'baseline':args.baseline,'note_editing':args.edit_note,'display':os.environ.get('DISPLAY'),'isolated_no_wm':args.no_wm,'binary_sha256':digest(binary),'harness_sha256':digest(__file__),'board_sha256':before_hash,'application_timer':'none; ordinary open has no --seconds/--interaction/tour','network':'Tack has no network client; socket_count includes native X11/driver IPC, not a network-byte counter','wakeups':'per-thread voluntary/involuntary context switches; total event-loop waits include startup/shutdown, not exact idle wakeups','gpu':'redraw submissions observed; nvidia-smi global utilization is not per-process attribution','runs':rows}
+    summary={'context_menu':args.context_menu,'baseline':args.baseline,'note_editing':args.edit_note,'display':os.environ.get('DISPLAY'),'isolated_no_wm':args.no_wm,'binary_sha256':digest(binary),'harness_sha256':digest(__file__),'board_sha256':before_hash,'application_timer':'none; ordinary open has no --seconds/--interaction/tour','network':'Tack has no network client; socket_count includes native X11/driver IPC, not a network-byte counter','wakeups':'per-thread voluntary/involuntary context switches; total event-loop waits include startup/shutdown, not exact idle wakeups','gpu':'redraw submissions observed; nvidia-smi global utilization is not per-process attribution','runs':rows}
     (root/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
 
 

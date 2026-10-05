@@ -383,6 +383,9 @@ impl ProductAssets {
                 || d.resident
                 || self.queue.len() + self.pending.len() >= self.limits.requests
                 || self.queue.iter().any(|j| j.key() == k)
+                // At most two queued representations per source leave admission
+                // space for other visible sources, with one ready successor.
+                || self.queue.iter().filter(|j| j.source.id() == k.source).count() >= 2
             {
                 continue;
             }
@@ -410,11 +413,10 @@ impl ProductAssets {
             // Reserve worker zero for overviews when two workers are available.
             // Detail cannot block immediately useful previews; with one worker,
             // the caller's sorted, overview-first demand is used.
-            let pos = if i == 0 && self.workers.len() > 1 {
-                self.queue.iter().position(|j| j.lod == Lod::Thumbnail)
-            } else {
-                (!self.queue.is_empty()).then_some(0)
-            };
+            let pos = self.queue.iter().position(|j| {
+                (i != 0 || self.workers.len() == 1 || j.lod == Lod::Thumbnail)
+                    && !self.pending.keys().any(|k| k.source == j.source.id())
+            });
             if let Some(pos) = pos {
                 let job = self.queue.remove(pos);
                 let key = job.key();

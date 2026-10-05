@@ -31,10 +31,15 @@ fn run_mode(args: Vec<OsString>, started: Instant, new: bool) -> Result<(), Asse
         supply_stress: false,
         immediate: false,
         dense: false,
+        window_size: [1280, 720],
     };
     let mut it = args.into_iter().skip(1);
     while let Some(a) = it.next() {
         match a.to_str() {
+            Some("--window-size") => {
+                let size = it.next().ok_or("window size WIDTHxHEIGHT")?;
+                options.window_size = parse_window_size(size.to_str().ok_or("window size text")?)?;
+            }
             Some("--seconds") => {
                 let value = it.next().ok_or("duration")?;
                 let seconds: f64 = value.to_str().ok_or("duration text")?.parse()?;
@@ -175,6 +180,7 @@ fn run_mode(args: Vec<OsString>, started: Instant, new: bool) -> Result<(), Asse
             })();
             let _ = read_proxy.send_event(Event::Loaded(Box::new(result)));
         })?;
+    let window_size = options.window_size;
     let mut app = App {
         options,
         local: Box::new(local),
@@ -188,7 +194,7 @@ fn run_mode(args: Vec<OsString>, started: Instant, new: bool) -> Result<(), Asse
         config: None,
         board: None,
         assets: None,
-        camera: Camera::new([1280, 720]),
+        camera: Camera::new(window_size),
         input: ImageInput::new()?,
         editor: None,
         load_failed: false,
@@ -219,6 +225,9 @@ fn run_mode(args: Vec<OsString>, started: Instant, new: bool) -> Result<(), Asse
         event_samples: Vec::new(),
         supply_pending: false,
         visibility: Default::default(),
+        context: None,
+        pointer: [0.; 2],
+        cursor_icon: winit::window::CursorIcon::Default,
     };
     events.run_app(&mut app)?;
     app.local.worker.cancel();
@@ -247,4 +256,26 @@ fn run_mode(args: Vec<OsString>, started: Instant, new: bool) -> Result<(), Asse
         return Err(error);
     }
     Ok(())
+}
+
+// Developer measurements start at the requested physical size; OS resizing is
+// still authoritative. This adds no preferences or ordinary event-path work.
+fn parse_window_size(text: &str) -> Result<[u32; 2], AssetError> {
+    let (width, height) = text.split_once('x').ok_or("window size WIDTHxHEIGHT")?;
+    let size = [width.parse()?, height.parse()?];
+    if !(320..=8192).contains(&size[0]) || !(240..=8192).contains(&size[1]) {
+        return Err("window size 320x240..8192x8192".into());
+    }
+    Ok(size)
+}
+#[cfg(test)]
+mod size_tests {
+    use super::parse_window_size;
+    #[test]
+    fn diagnostic_window_size_is_bounded() {
+        assert_eq!(parse_window_size("800x600").ok(), Some([800, 600]));
+        for value in ["", "0x600", "800x0", "8193x600", "800x600x2", "-800x600"] {
+            assert!(parse_window_size(value).is_err());
+        }
+    }
 }

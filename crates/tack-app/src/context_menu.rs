@@ -1,0 +1,903 @@
+//! On-demand bitmap command lists. No timer, thread, widget tree or texture cache.
+use crate::{
+    actions::{Action, Tool},
+    annotation_tool::StyleAction,
+    bindings::{Keymap, ModifierMatch, Trigger},
+    image_gizmo::ImageGizmo,
+    image_interaction::SelectionState,
+    input::{Modifiers, PhysicalControl},
+    selection_commands::{Alpha, Order as ZOrder},
+    spatial_layout::Layout as Arrangement,
+};
+use tack_core::{
+    AnnotationKind, Camera, DocumentEditor, DocumentQuery, ImageFiltering, ObjectKind,
+    SourceLocation,
+};
+use winit::{
+    event::{ElementState, MouseButton, WindowEvent},
+    keyboard::{KeyCode, PhysicalKey},
+};
+const ROW: i32 = 18;
+const PAD: i32 = 2;
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ContextKind {
+    Canvas,
+    Image,
+    Multiple,
+    Note,
+    Frame,
+    Annotation,
+    Application,
+}
+#[derive(Clone, Copy)]
+pub struct Context {
+    pub kind: ContextKind,
+    selection_kind: ContextKind,
+    pub generation: u64,
+    undo: bool,
+    redo: bool,
+    any: bool,
+    all_images: bool,
+    group: bool,
+    ungroup: bool,
+    align: bool,
+    linked: bool,
+    forward: bool,
+    backward: bool,
+    filtering: Option<ImageFiltering>,
+    opacity: Option<f64>,
+    grid: bool,
+    snapping: bool,
+    has_objects: bool,
+    has_frames: bool,
+    annotation_fill: bool,
+}
+impl Context {
+    pub fn selection(
+        editor: &DocumentEditor,
+        selection: &SelectionState,
+        grid: bool,
+        snapping: bool,
+    ) -> Self {
+        let doc = editor.document();
+        let ids = || selection.ids().filter(|id| doc.object(*id).is_some());
+        let count = ids().count();
+        let first_id = ids().next();
+        let all_images = count > 0 && ids().all(|id| doc.object_render_data(id).is_some());
+        let kind = if count > 1 {
+            ContextKind::Multiple
+        } else {
+            match first_id.and_then(|id| doc.object(id)).map(|o| o.kind()) {
+                Some(ObjectKind::Image(_)) => ContextKind::Image,
+                Some(ObjectKind::Frame(_)) => ContextKind::Frame,
+                Some(ObjectKind::Annotation(a)) if matches!(a.kind(), AnnotationKind::Text(_)) => {
+                    ContextKind::Note
+                }
+                Some(ObjectKind::Annotation(_)) => ContextKind::Annotation,
+                None => ContextKind::Canvas,
+            }
+        };
+        let unit = |id| doc.group_for(id).map_or(id, |g| g.members()[0]);
+        let first_unit = first_id.map(unit);
+        let multiple_units = ids().any(|id| Some(unit(id)) != first_unit);
+        let ungroup = ids().any(|id| doc.group_for(id).is_some());
+        let linked = first_id
+            .and_then(|id| doc.object_render_data(id))
+            .and_then(|d| doc.asset(d.asset_id))
+            .and_then(|a| doc.source(a.source_id()))
+            .is_some_and(
+                |s| matches!(s.location(), SourceLocation::Linked(p) if p.to_native().is_some()),
+            );
+        // Checks are only shown for a single image; no selection-sized scratch tree.
+        let first = first_id
+            .filter(|_| count == 1)
+            .and_then(|id| doc.object_render_data(id));
+        let filtering = first.map(|a| a.filtering);
+        let opacity = first.map(|a| a.opacity.value());
+        let order = doc.object_order();
+        let forward = order
+            .windows(2)
+            .any(|pair| selection.contains(pair[0]) && !selection.contains(pair[1]));
+        let backward = order
+            .windows(2)
+            .any(|pair| !selection.contains(pair[0]) && selection.contains(pair[1]));
+        Self {
+            kind,
+            selection_kind: kind,
+            generation: editor.generation(),
+            undo: editor.undo_len() > 0,
+            redo: editor.redo_len() > 0,
+            any: count > 0,
+            all_images,
+            group: all_images && multiple_units,
+            ungroup,
+            align: multiple_units,
+            linked,
+            forward,
+            backward,
+            filtering,
+            opacity,
+            grid,
+            snapping,
+            has_objects: !order.is_empty(),
+            has_frames: doc.frame_count() > 0,
+            annotation_fill: first_id.and_then(|id| doc.object(id)).is_some_and(|o| matches!(o.kind(), ObjectKind::Annotation(a) if matches!(a.kind(), AnnotationKind::Rect))),
+        }
+    }
+    pub fn enabled(self, action: Action) -> bool {
+        match action {
+            Action::Undo => self.undo,
+            Action::Redo => self.redo,
+            Action::SelectAll => self.has_objects,
+            Action::NextFrame | Action::PreviousFrame => self.has_frames,
+            Action::AnnotationStyle(StyleAction::Fill) => self.annotation_fill,
+            Action::DeleteSelection | Action::Order(_) => {
+                self.any
+                    && match action {
+                        Action::Order(ZOrder::Forward | ZOrder::Front) => self.forward,
+                        Action::Order(ZOrder::Backward | ZOrder::Back) => self.backward,
+                        _ => true,
+                    }
+            }
+            Action::CropMode => self.selection_kind == ContextKind::Image,
+            Action::FlipHorizontal
+            | Action::FlipVertical
+            | Action::Filtering(_)
+            | Action::Opacity(_) => self.all_images,
+            Action::GroupSelection => self.group,
+            Action::UngroupSelection => self.ungroup,
+            Action::Layout(_) => self.align,
+            Action::RenameFrame => {
+                matches!(self.selection_kind, ContextKind::Note | ContextKind::Frame)
+            }
+            Action::FocusFrame => self.selection_kind == ContextKind::Frame,
+            Action::RelinkSource => self.selection_kind == ContextKind::Image,
+            Action::OpenSource | Action::RevealSource | Action::CopySourcePath => {
+                self.selection_kind == ContextKind::Image && self.linked
+            }
+            _ => true,
+        }
+    }
+    fn checked(self, action: Action) -> bool {
+        match action {
+            Action::Filtering(f) => self.filtering == Some(f),
+            Action::Opacity(alpha) => self.opacity == Some(alpha.value()),
+            Action::ToggleGrid => self.grid,
+            Action::ToggleSnapping => self.snapping,
+            _ => false,
+        }
+    }
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Group {
+    Sampling,
+    Opacity,
+    Order,
+    Align,
+    Style,
+    Source,
+    File,
+    Edit,
+    View,
+    Tools,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Command {
+    Action(Action),
+    Submenu(Group),
+}
+#[derive(Clone, Debug)]
+pub struct Item {
+    pub label: &'static str,
+    pub command: Command,
+    pub enabled: bool,
+    pub checked: bool,
+    pub shortcut: String,
+}
+/// Only real configured press bindings are advertised; unassigned actions stay blank.
+pub fn shortcut(keymap: &Keymap, action: Action) -> String {
+    keymap
+        .for_action(action)
+        .find_map(|b| {
+            let (
+                PhysicalControl::Key(PhysicalKey::Code(key)),
+                ModifierMatch::Exact(mods),
+                Trigger::Press,
+            ) = (b.control, b.modifiers, b.trigger)
+            else {
+                return None;
+            };
+            let raw = format!("{key:?}");
+            let name = match key {
+                KeyCode::Delete => "Del",
+                KeyCode::Escape => "Esc",
+                KeyCode::PageUp => "PgUp",
+                KeyCode::PageDown => "PgDn",
+                KeyCode::Comma => ",",
+                KeyCode::Period => ".",
+                KeyCode::BracketLeft => "[",
+                KeyCode::BracketRight => "]",
+                KeyCode::ArrowLeft => "Left",
+                KeyCode::ArrowRight => "Right",
+                KeyCode::ArrowUp => "Up",
+                KeyCode::ArrowDown => "Down",
+                _ => raw
+                    .strip_prefix("Key")
+                    .or_else(|| raw.strip_prefix("Digit"))
+                    .unwrap_or(&raw),
+            };
+            let mut label = String::new();
+            for (modifier, text) in [
+                (Modifiers::CONTROL, "Ctrl+"),
+                (Modifiers::SHIFT, "Shift+"),
+                (Modifiers::ALT, "Alt+"),
+                (Modifiers::SUPER, "Super+"),
+            ] {
+                if mods.contains(modifier) {
+                    label.push_str(text);
+                }
+            }
+            label.push_str(name);
+            Some(label)
+        })
+        .unwrap_or_default()
+}
+fn action(label: &'static str, a: Action, context: Context, keymap: &Keymap) -> Item {
+    Item {
+        label,
+        command: Command::Action(a),
+        enabled: context.enabled(a),
+        checked: context.checked(a),
+        shortcut: shortcut(keymap, a),
+    }
+}
+fn group(label: &'static str, g: Group, enabled: bool) -> Item {
+    Item {
+        label,
+        command: Command::Submenu(g),
+        enabled,
+        checked: false,
+        shortcut: String::new(),
+    }
+}
+pub fn items(context: Context, submenu: Option<Group>, keymap: &Keymap) -> Vec<Item> {
+    use Action::*;
+    let a = |label, command| action(label, command, context, keymap);
+    if let Some(g) = submenu {
+        return match g {
+            Group::Sampling => [
+                ("Nearest", ImageFiltering::Nearest),
+                ("Smooth", ImageFiltering::Smooth),
+                ("Default", ImageFiltering::Default),
+            ]
+            .into_iter()
+            .map(|(l, f)| a(l, Filtering(f)))
+            .collect(),
+            Group::Opacity => [
+                ("100%", Alpha::Full),
+                ("75%", Alpha::ThreeQuarters),
+                ("50%", Alpha::Half),
+                ("25%", Alpha::Quarter),
+            ]
+            .into_iter()
+            .map(|(l, v)| a(l, Opacity(v)))
+            .collect(),
+            Group::Order => [
+                ("Bring forward", ZOrder::Forward),
+                ("Bring to front", ZOrder::Front),
+                ("Send backward", ZOrder::Backward),
+                ("Send to back", ZOrder::Back),
+            ]
+            .into_iter()
+            .map(|(l, v)| a(l, Action::Order(v)))
+            .collect(),
+            Group::Align => [
+                ("Left", Arrangement::Left),
+                ("Center", Arrangement::HorizontalCenter),
+                ("Right", Arrangement::Right),
+                ("Top", Arrangement::Top),
+                ("Middle", Arrangement::VerticalCenter),
+                ("Bottom", Arrangement::Bottom),
+                ("Distribute horizontal", Arrangement::DistributeHorizontal),
+                ("Distribute vertical", Arrangement::DistributeVertical),
+                ("Pack horizontal", Arrangement::PackHorizontal),
+                ("Pack vertical", Arrangement::PackVertical),
+            ]
+            .into_iter()
+            .map(|(l, v)| a(l, Action::Layout(v)))
+            .collect(),
+            Group::Style => {
+                let mut v = vec![a("Color", AnnotationStyle(StyleAction::Color))];
+                if context.kind == ContextKind::Note {
+                    v.extend([
+                        a("Larger text", AnnotationStyle(StyleAction::LargerText)),
+                        a("Smaller text", AnnotationStyle(StyleAction::SmallerText)),
+                        a("Text alignment", AnnotationStyle(StyleAction::AlignText)),
+                    ]);
+                } else {
+                    v.extend([
+                        a("Fill", AnnotationStyle(StyleAction::Fill)),
+                        a("Thicker", AnnotationStyle(StyleAction::Wider)),
+                        a("Thinner", AnnotationStyle(StyleAction::Narrower)),
+                    ]);
+                }
+                v.extend([
+                    a("More opaque", AnnotationStyle(StyleAction::OpacityUp)),
+                    a("Less opaque", AnnotationStyle(StyleAction::OpacityDown)),
+                ]);
+                v
+            }
+            Group::Source => vec![
+                a("Open original", OpenSource),
+                a("Reveal original", RevealSource),
+                a("Copy source path", CopySourcePath),
+            ],
+            Group::File => vec![
+                a("New board", NewBoard),
+                a("Open...", OpenBoard),
+                a("Import images...", ImportImages),
+                a("Save", Save),
+                a("Save As...", SaveAs),
+                a("Recent boards", RecentBoards),
+            ],
+            Group::Edit => vec![
+                a("Undo", Undo),
+                a("Redo", Redo),
+                a("Paste", Paste),
+                a("Select all", SelectAll),
+                a("Delete", DeleteSelection),
+                a("Keymap...", KeymapEditor),
+            ],
+            Group::View => vec![
+                a("Grid", ToggleGrid),
+                a("Snapping", ToggleSnapping),
+                a("Focus frame", FocusFrame),
+                a("Next frame", NextFrame),
+                a("Previous frame", PreviousFrame),
+            ],
+            Group::Tools => vec![
+                a("Pointer", SelectTool(Tool::Pointer)),
+                a("Note (click/drag)", SelectTool(Tool::Text)),
+                a("Rectangle", SelectTool(Tool::Rectangle)),
+                a("Line", SelectTool(Tool::Line)),
+                a("Arrow", SelectTool(Tool::Arrow)),
+                a("Freehand", SelectTool(Tool::Scribble)),
+                a("New frame", CreateFrame),
+            ],
+        };
+    }
+    if context.kind == ContextKind::Application {
+        return vec![
+            group("File", Group::File, true),
+            group("Edit", Group::Edit, true),
+            group("View", Group::View, true),
+            group("Tools", Group::Tools, true),
+            a("Preferences...", Preferences),
+        ];
+    }
+    if context.kind == ContextKind::Canvas {
+        return vec![
+            a("Paste", Paste),
+            a("Import images...", ImportImages),
+            a("New note (click/drag)", SelectTool(Tool::Text)),
+            a("New frame", CreateFrame),
+            a("Select all", SelectAll),
+        ];
+    }
+    let mut v = Vec::new();
+    match context.kind {
+        ContextKind::Image => v.extend([
+            a("Crop", CropMode),
+            a("Flip horizontal", FlipHorizontal),
+            a("Flip vertical", FlipVertical),
+            group("Sampling", Group::Sampling, true),
+            group("Opacity", Group::Opacity, true),
+        ]),
+        ContextKind::Note => v.extend([
+            a("Edit note", RenameFrame),
+            group("Text style", Group::Style, true),
+        ]),
+        ContextKind::Frame => v.extend([a("Rename", RenameFrame), a("Focus frame", FocusFrame)]),
+        ContextKind::Annotation => v.push(group("Style", Group::Style, true)),
+        ContextKind::Multiple => v.push(group("Align / distribute", Group::Align, context.align)),
+        _ => {}
+    }
+    v.push(group(
+        "Order",
+        Group::Order,
+        context.forward || context.backward,
+    ));
+    if context.all_images || context.kind == ContextKind::Multiple {
+        v.extend([a("Group", GroupSelection), a("Ungroup", UngroupSelection)]);
+    }
+    if context.kind == ContextKind::Image {
+        v.extend([
+            a("Relink...", RelinkSource),
+            group("Source", Group::Source, context.linked),
+        ]);
+    }
+    v.extend([
+        a("Delete", DeleteSelection),
+        a("Undo", Undo),
+        a("Redo", Redo),
+    ]);
+    v
+}
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct Rect {
+    pub x: i32,
+    pub y: i32,
+    pub width: i32,
+    pub height: i32,
+}
+impl Rect {
+    fn contains(self, p: [i32; 2]) -> bool {
+        p[0] >= self.x
+            && p[0] < self.x + self.width
+            && p[1] >= self.y
+            && p[1] < self.y + self.height
+    }
+}
+struct List {
+    items: Vec<Item>,
+    selected: Option<usize>,
+    first: usize,
+    rect: Rect,
+}
+impl List {
+    fn new(items: Vec<Item>) -> Self {
+        Self {
+            items,
+            selected: None,
+            first: 0,
+            rect: Rect::default(),
+        }
+    }
+    fn visible(&self) -> usize {
+        ((self.rect.height - 2 * PAD) / ROW).max(1) as usize
+    }
+    fn layout(&mut self, anchor: [i32; 2], screen: [i32; 2]) {
+        let width = self
+            .items
+            .iter()
+            .map(|i| ((i.label.len() + i.shortcut.len()) * 8 + 36) as i32)
+            .max()
+            .unwrap_or(100)
+            .clamp(100, 320)
+            .min((screen[0] - 8).max(24));
+        let count = self
+            .items
+            .len()
+            .min(((screen[1] - 8 - 2 * PAD) / ROW).max(1) as usize);
+        let height = count as i32 * ROW + 2 * PAD;
+        self.rect = Rect {
+            x: anchor[0].clamp(2, (screen[0] - width - 2).max(2)),
+            y: anchor[1].clamp(2, (screen[1] - height - 2).max(2)),
+            width,
+            height,
+        };
+        if let Some(s) = self.selected {
+            if s < self.first {
+                self.first = s;
+            } else if s >= self.first + count {
+                self.first = s + 1 - count;
+            }
+        }
+        self.first = self.first.min(self.items.len().saturating_sub(count));
+    }
+    fn hit(&self, p: [i32; 2]) -> Option<usize> {
+        if !self.rect.contains(p) || p[1] < self.rect.y + PAD {
+            return None;
+        }
+        let row = ((p[1] - self.rect.y - PAD) / ROW) as usize;
+        (row < self.visible() && self.first + row < self.items.len()).then_some(self.first + row)
+    }
+    fn step(&mut self, delta: i32) {
+        if self.items.is_empty() {
+            return;
+        }
+        self.selected = Some(match self.selected {
+            None => {
+                if delta < 0 {
+                    self.items.len() - 1
+                } else {
+                    0
+                }
+            }
+            Some(i) => (i as i32 + delta).rem_euclid(self.items.len() as i32) as usize,
+        });
+    }
+    fn draw(&self, gizmo: &mut ImageGizmo, camera: &Camera, budget: &mut usize) {
+        let s = camera.ui_scale();
+        let r = self.rect;
+        let point = |x: i32, y: i32| [x as f64 * s, y as f64 * s];
+        gizmo.pixel_rect(
+            camera,
+            point(r.x, r.y),
+            point(r.x + r.width, r.y + r.height),
+            [0.45, 0.49, 0.50, 1.],
+            None,
+        );
+        gizmo.pixel_rect(
+            camera,
+            point(r.x + 1, r.y + 1),
+            point(r.x + r.width - 1, r.y + r.height - 1),
+            [0.035, 0.045, 0.05, 1.],
+            None,
+        );
+        for (i, item) in self
+            .items
+            .iter()
+            .enumerate()
+            .skip(self.first)
+            .take(self.visible())
+        {
+            let y = r.y + PAD + (i - self.first) as i32 * ROW;
+            if self.selected == Some(i) {
+                gizmo.pixel_rect(
+                    camera,
+                    point(r.x + 2, y),
+                    point(r.x + r.width - 2, y + ROW),
+                    [0.12, 0.23, 0.28, 1.],
+                    None,
+                );
+            }
+            let color = if item.enabled {
+                [0.87, 0.88, 0.85, 1.]
+            } else {
+                [0.40, 0.44, 0.45, 1.]
+            };
+            let suffix = if matches!(item.command, Command::Submenu(_)) {
+                ">"
+            } else {
+                &item.shortcut
+            };
+            let shortcut_width = (suffix.len() * 8) as i32;
+            let show_shortcut =
+                shortcut_width > 0 && r.width - 28 - shortcut_width >= item.label.len() as i32 * 8;
+            let label_width = if show_shortcut {
+                r.width - 32 - shortcut_width
+            } else {
+                r.width - 20
+            };
+            if item.checked {
+                gizmo.ui_text(camera, point(r.x + 3, y + 1), 8., "*", color, budget);
+            }
+            gizmo.ui_text(
+                camera,
+                point(r.x + 14, y + 1),
+                f64::from(label_width),
+                item.label,
+                color,
+                budget,
+            );
+            if show_shortcut {
+                gizmo.ui_text(
+                    camera,
+                    point(r.x + r.width - 8 - shortcut_width, y + 1),
+                    f64::from(shortcut_width),
+                    suffix,
+                    color,
+                    budget,
+                );
+            }
+        }
+        if self.first > 0 {
+            gizmo.ui_text(
+                camera,
+                point(r.x + r.width - 16, r.y),
+                8.,
+                "^",
+                [0.9, 0.7, 0.3, 1.],
+                budget,
+            );
+        }
+        if self.first + self.visible() < self.items.len() {
+            gizmo.ui_text(
+                camera,
+                point(r.x + r.width - 16, r.y + r.height - 16),
+                8.,
+                "v",
+                [0.9, 0.7, 0.3, 1.],
+                budget,
+            );
+        }
+    }
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Result {
+    None,
+    Dismiss,
+    Action(Action),
+}
+pub struct ContextMenu {
+    pub context: Context,
+    anchor: [f64; 2],
+    cursor: [f64; 2],
+    screen: [u32; 2],
+    scale: f64,
+    root: List,
+    child: Option<List>,
+    child_group: Option<Group>,
+    child_focus: bool,
+    modifiers: Modifiers,
+}
+impl ContextMenu {
+    pub fn new(context: Context, anchor: [f64; 2], camera: &Camera, keymap: &Keymap) -> Self {
+        let mut m = Self {
+            context,
+            anchor,
+            cursor: anchor,
+            screen: camera.screen_size(),
+            scale: camera.ui_scale(),
+            root: List::new(items(context, None, keymap)),
+            child: None,
+            child_group: None,
+            child_focus: false,
+            modifiers: Modifiers::NONE,
+        };
+        m.relayout(camera);
+        m
+    }
+    pub fn application(mut context: Context, camera: &Camera, keymap: &Keymap) -> Self {
+        context.kind = ContextKind::Application;
+        Self::new(
+            context,
+            [4. * camera.ui_scale(), 24. * camera.ui_scale()],
+            camera,
+            keymap,
+        )
+    }
+    pub fn root_items(&self) -> &[Item] {
+        &self.root.items
+    }
+    pub fn set_modifiers(&mut self, modifiers: Modifiers) {
+        self.modifiers = modifiers;
+    }
+    /// Developer accounting of owned menu/list/string allocations, not RSS.
+    pub fn allocated_bytes(&self) -> usize {
+        let list = |l: &List| {
+            l.items.capacity() * std::mem::size_of::<Item>()
+                + l.items.iter().map(|i| i.shortcut.capacity()).sum::<usize>()
+        };
+        std::mem::size_of::<Self>() + list(&self.root) + self.child.as_ref().map_or(0, list)
+    }
+    pub fn rectangles(&self) -> Vec<Rect> {
+        std::iter::once(self.root.rect)
+            .chain(self.child.as_ref().map(|c| c.rect))
+            .collect()
+    }
+    fn logical_screen(&self) -> [i32; 2] {
+        self.screen.map(|v| (v as f64 / self.scale).floor() as i32)
+    }
+    fn logical(&self, p: [f64; 2]) -> [i32; 2] {
+        p.map(|v| (v / self.scale).floor() as i32)
+    }
+    pub fn relayout(&mut self, camera: &Camera) {
+        self.screen = camera.screen_size();
+        self.scale = camera.ui_scale();
+        let screen = self.logical_screen();
+        self.root.layout(self.logical(self.anchor), screen);
+        if let Some(child) = &mut self.child {
+            let r = self.root.rect;
+            let y = r.y
+                + PAD
+                + (self
+                    .root
+                    .selected
+                    .unwrap_or(self.root.first)
+                    .saturating_sub(self.root.first)) as i32
+                    * ROW;
+            child.layout([r.x + r.width, y], screen);
+            if r.x + r.width + child.rect.width + 2 > screen[0] {
+                child.layout([r.x - child.rect.width, y], screen);
+            }
+        }
+    }
+    fn open_child(&mut self, g: Group, keymap: &Keymap, camera: &Camera) {
+        if self.child_group != Some(g) {
+            self.child = Some(List::new(items(self.context, Some(g), keymap)));
+            self.child_group = Some(g);
+        }
+        self.relayout(camera);
+    }
+    fn close_child(&mut self) {
+        self.child = None;
+        self.child_group = None;
+        self.child_focus = false;
+    }
+    fn activate(&mut self, child: bool, keymap: &Keymap, camera: &Camera) -> Result {
+        let list = if child {
+            self.child.as_ref()
+        } else {
+            Some(&self.root)
+        };
+        let Some(item) = list
+            .and_then(|l| l.selected.and_then(|i| l.items.get(i)))
+            .cloned()
+        else {
+            return Result::None;
+        };
+        if !item.enabled {
+            return Result::None;
+        }
+        match item.command {
+            Command::Action(action) => Result::Action(action),
+            Command::Submenu(g) => {
+                self.open_child(g, keymap, camera);
+                self.child_focus = true;
+                if let Some(c) = &mut self.child {
+                    c.step(1);
+                }
+                self.relayout(camera);
+                Result::None
+            }
+        }
+    }
+    pub fn move_pointer(&mut self, p: [f64; 2], keymap: &Keymap, camera: &Camera) {
+        self.cursor = p;
+        let point = self.logical(p);
+        if let Some(c) = &mut self.child
+            && let Some(row) = c.hit(point)
+        {
+            c.selected = Some(row);
+            self.child_focus = true;
+            return;
+        }
+        if let Some(row) = self.root.hit(point) {
+            self.root.selected = Some(row);
+            self.child_focus = false;
+            if let Command::Submenu(g) = self.root.items[row].command
+                && self.root.items[row].enabled
+            {
+                self.open_child(g, keymap, camera);
+            } else {
+                self.close_child();
+            }
+        }
+    }
+    pub fn click(&mut self, keymap: &Keymap, camera: &Camera) -> Result {
+        let p = self.logical(self.cursor);
+        if let Some(c) = &mut self.child
+            && let Some(row) = c.hit(p)
+        {
+            c.selected = Some(row);
+            return self.activate(true, keymap, camera);
+        }
+        if let Some(row) = self.root.hit(p) {
+            self.root.selected = Some(row);
+            return self.activate(false, keymap, camera);
+        }
+        Result::Dismiss
+    }
+    pub fn key(&mut self, key: KeyCode, keymap: &Keymap, camera: &Camera) -> Result {
+        match key {
+            KeyCode::Escape => return Result::Dismiss,
+            KeyCode::ArrowLeft if self.child.is_some() => self.close_child(),
+            KeyCode::ArrowDown | KeyCode::ArrowUp => {
+                let list = if self.child_focus {
+                    self.child.as_mut().unwrap_or(&mut self.root)
+                } else {
+                    &mut self.root
+                };
+                list.step(if key == KeyCode::ArrowUp { -1 } else { 1 });
+                if !self.child_focus {
+                    self.close_child();
+                }
+            }
+            KeyCode::Enter => return self.activate(self.child_focus, keymap, camera),
+            KeyCode::ArrowRight => {
+                if !self.child_focus
+                    && self
+                        .root
+                        .selected
+                        .and_then(|i| self.root.items.get(i))
+                        .is_some_and(|i| matches!(i.command, Command::Submenu(_)))
+                {
+                    return self.activate(false, keymap, camera);
+                }
+            }
+            _ => {
+                if let Some(b) = keymap
+                    .matching(
+                        PhysicalControl::Key(PhysicalKey::Code(key)),
+                        self.modifiers,
+                        Trigger::Press,
+                    )
+                    .next()
+                    && self.context.enabled(b.action)
+                {
+                    return Result::Action(b.action);
+                }
+            }
+        }
+        self.relayout(camera);
+        Result::None
+    }
+    pub fn handle(&mut self, event: &WindowEvent, keymap: &Keymap, camera: &Camera) -> Result {
+        match event {
+            WindowEvent::Focused(false) | WindowEvent::Occluded(true) => Result::Dismiss,
+            WindowEvent::ModifiersChanged(m) => {
+                self.modifiers = m.state().into();
+                Result::None
+            }
+            WindowEvent::CursorMoved { position, .. } => {
+                self.move_pointer([position.x, position.y], keymap, camera);
+                Result::None
+            }
+            WindowEvent::MouseInput {
+                state: ElementState::Pressed,
+                button: MouseButton::Left,
+                ..
+            } => self.click(keymap, camera),
+            WindowEvent::MouseInput {
+                state: ElementState::Pressed,
+                ..
+            } => Result::Dismiss,
+            WindowEvent::MouseWheel { delta, .. } => {
+                let dy = crate::input::wheel_steps(*delta)[1];
+                if dy != 0. {
+                    let l = if self.child_focus {
+                        self.child.as_mut().unwrap_or(&mut self.root)
+                    } else {
+                        &mut self.root
+                    };
+                    l.step(if dy > 0. { -1 } else { 1 });
+                    if !self.child_focus {
+                        self.close_child();
+                    }
+                    self.relayout(camera);
+                }
+                Result::None
+            }
+            WindowEvent::KeyboardInput { event, .. } if event.state == ElementState::Pressed => {
+                if let PhysicalKey::Code(key) = event.physical_key {
+                    self.key(key, keymap, camera)
+                } else {
+                    Result::None
+                }
+            }
+            _ => Result::None,
+        }
+    }
+    pub fn draw(&mut self, gizmo: &mut ImageGizmo, camera: &Camera) {
+        self.relayout(camera);
+        let mut budget = 900;
+        self.root.draw(gizmo, camera, &mut budget);
+        if let Some(c) = &self.child {
+            c.draw(gizmo, camera, &mut budget);
+        }
+    }
+}
+pub fn app_button_hit(pointer: [f64; 2], camera: &Camera) -> bool {
+    let s = camera.ui_scale();
+    Rect {
+        x: 4,
+        y: 4,
+        width: 44,
+        height: 18,
+    }
+    .contains(pointer.map(|v| (v / s).floor() as i32))
+}
+pub fn draw_app_button(gizmo: &mut ImageGizmo, camera: &Camera, open: bool) {
+    let s = camera.ui_scale();
+    gizmo.pixel_rect(
+        camera,
+        [4. * s, 4. * s],
+        [48. * s, 22. * s],
+        if open {
+            [0.12, 0.23, 0.28, 1.]
+        } else {
+            [0.035, 0.045, 0.05, 1.]
+        },
+        None,
+    );
+    gizmo.ui_text(
+        camera,
+        [8. * s, 5. * s],
+        36.,
+        "Tack",
+        [0.87, 0.88, 0.85, 1.],
+        &mut 4,
+    );
+}

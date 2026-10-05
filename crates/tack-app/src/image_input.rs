@@ -80,6 +80,75 @@ impl ImageInput {
     pub fn cursor(&self) -> [f64; 2] {
         self.cursor
     }
+    pub fn modifiers(&self) -> crate::input::Modifiers {
+        self.state.modifiers()
+    }
+    /// A popup ends captured canvas gestures, without forgetting held modifiers.
+    pub fn suspend_for_menu(
+        &mut self,
+        editor: &mut DocumentEditor,
+        camera: &mut Camera,
+    ) -> Result<(), AssetError> {
+        let modifiers = self.modifiers();
+        self.commit_drafts(editor)?;
+        self.physical(PhysicalEvent::FocusLost, editor, camera)?;
+        self.physical(PhysicalEvent::Modifiers(modifiers), editor, camera)?;
+        Ok(())
+    }
+    pub fn cursor_icon(
+        &self,
+        editor: &DocumentEditor,
+        camera: &Camera,
+    ) -> winit::window::CursorIcon {
+        use winit::window::CursorIcon;
+        if self.annotation.edit.is_some() || self.name_edit.is_some() {
+            return CursorIcon::Text;
+        }
+        if self.annotation.tools.tool().is_annotation() {
+            return CursorIcon::Crosshair;
+        }
+        match self.hover(editor, camera) {
+            Some(GizmoHit::Rotate) => CursorIcon::Crosshair,
+            Some(GizmoHit::Resize(_)) if self.images.crop_mode => CursorIcon::Crosshair,
+            Some(GizmoHit::Resize(i)) => match i % 4 {
+                0 => CursorIcon::NwseResize,
+                1 => CursorIcon::NsResize,
+                2 => CursorIcon::NeswResize,
+                _ => CursorIcon::EwResize,
+            },
+            None if self.images.active() => CursorIcon::Grabbing,
+            None if self.images.selection.ids().any(|id| {
+                editor.document().object(id).is_some_and(|o| {
+                    crate::image_geometry::hit(o.transform(), camera.screen_to_world(self.cursor))
+                })
+            }) =>
+            {
+                CursorIcon::Move
+            }
+            None => CursorIcon::Default,
+        }
+    }
+    /// Right click targets the same geometry as left click, preserving a selected
+    /// group/multiselection and clearing selection on genuinely empty canvas.
+    pub fn context_selection(&mut self, editor: &DocumentEditor, camera: &Camera) {
+        let hit = self
+            .images
+            .hit_with_tolerance(
+                editor.document(),
+                camera.screen_to_world(self.cursor),
+                6. * self.gizmo.scale / camera.zoom(),
+            )
+            .or_else(|| self.frame_hit(editor, camera));
+        if !hit.is_some_and(|id| self.images.selection.contains(id)) {
+            self.images
+                .selection
+                .select_object(editor.document(), hit, false);
+        }
+        self.images.selection.prune(editor.document());
+        if self.images.selection.len() != 1 {
+            self.images.crop_mode = false;
+        }
+    }
     pub fn active(&self) -> bool {
         self.images.active()
             || self.marquee.is_some()
@@ -129,7 +198,7 @@ impl ImageInput {
             };
             self.gizmo.label(
                 camera,
-                [8. * self.gizmo.scale, 8. * self.gizmo.scale],
+                [56. * self.gizmo.scale, 8. * self.gizmo.scale],
                 label,
                 &mut 32,
             );
@@ -354,6 +423,28 @@ impl ImageInput {
                 }
                 Action::FlipVertical => {
                     self.images.flip(editor, 1)?;
+                }
+                Action::Order(direction) => {
+                    editor.execute(crate::selection_commands::order(
+                        editor.document(),
+                        self.images.selection.ids(),
+                        direction,
+                    ))?;
+                }
+                Action::Opacity(alpha) => {
+                    let commands = self
+                        .images
+                        .selection
+                        .ids()
+                        .filter(|id| editor.document().object_render_data(*id).is_some())
+                        .map(|object| {
+                            Ok(tack_core::Command::SetOpacity {
+                                object,
+                                opacity: tack_core::Opacity::new(alpha.value())?,
+                            })
+                        })
+                        .collect::<Result<Vec<_>, tack_core::GeometryError>>()?;
+                    editor.execute(tack_core::Command::Batch(commands))?;
                 }
                 Action::Filtering(value) => {
                     self.images.filtering(editor, Some(value))?;

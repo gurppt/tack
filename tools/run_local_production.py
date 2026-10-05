@@ -29,7 +29,10 @@ class Session:
         self.root, self.name = root, name
         self.report = root / f'{name}.json'
         self.log = (root / f'{name}.log').open('w')
+        requested_size = env.get('TACK_TEST_WINDOW_SIZE')
         reporting = ['--output', str(self.report)] if arguments else []
+        if arguments and requested_size:
+            reporting += ['--window-size', requested_size]
         self.process = subprocess.Popen([str(binary), *map(str, arguments), *reporting], env=env, stdout=self.log, stderr=subprocess.STDOUT)
         def mapped():
             if self.process.poll() is not None:
@@ -38,6 +41,9 @@ class Session:
             return result.stdout.splitlines()[-1] if result.stdout.strip() else None
         self.window = wait(mapped, 'owned window mapped')
         wait(lambda: 'selected' in self.title(), 'authoring title')
+        if not arguments and requested_size:
+            command('xdotool', 'windowsize', self.window, *requested_size.split('x'))
+            time.sleep(.2)
         self.focus()
 
     def title(self):

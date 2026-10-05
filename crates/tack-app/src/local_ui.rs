@@ -390,11 +390,24 @@ impl LocalUi {
         let scale = camera.ui_scale();
         let mut budget = 900;
         let screen = camera.screen_size();
-        let width = (f64::from(screen[0]) / scale - 24.).clamp(100., 600.);
-        let height = (f64::from(screen[1]) / scale - 24.).clamp(100., 405.);
-        let top = 60.;
+        let width = (f64::from(screen[0]) / scale - 24.).clamp(1., 600.);
+        let height = (f64::from(screen[1]) / scale - 24.).clamp(1., 405.);
+        let top = if height < 100. {
+            34.
+        } else if height < 240. {
+            46.
+        } else {
+            60.
+        };
+        let footer = if height >= 180. {
+            66.
+        } else if height >= 100. {
+            24.
+        } else {
+            0.
+        };
         self.layout = [scale, width, height, top];
-        self.visible = ((height - 140.) / 22.).floor().clamp(1., 12.) as usize;
+        self.visible = ((height + 8. - top - footer) / 22.).floor().clamp(1., 12.) as usize;
         gizmo.pixel_rect(
             camera,
             [12. * scale, 12. * scale],
@@ -413,7 +426,7 @@ impl LocalUi {
         };
         gizmo.ui_text(
             camera,
-            [24. * scale, 22. * scale],
+            [24. * scale, if height < 100. { 14. } else { 22. } * scale],
             width - 24.,
             heading,
             [0.9, 0.9, 0.88, 1.],
@@ -482,7 +495,7 @@ impl LocalUi {
             .min(rows.len().saturating_sub(self.visible));
         self.first = first;
         for (index, row) in rows.iter().enumerate().skip(first).take(self.visible) {
-            let y = 60. + (index - first) as f64 * 22.;
+            let y = top + (index - first) as f64 * 22.;
             if index == self.selected {
                 gizmo.pixel_rect(
                     camera,
@@ -508,15 +521,17 @@ impl LocalUi {
         } else {
             "Up/Down choose; Enter confirm; Escape close"
         };
-        gizmo.ui_text(
-            camera,
-            [24. * scale, (height - 66.) * scale],
-            width - 24.,
-            hint,
-            [0.58, 0.64, 0.68, 1.],
-            &mut budget,
-        );
-        if self.panel == Panel::Keymap {
+        if height >= 180. {
+            gizmo.ui_text(
+                camera,
+                [24. * scale, (height - 66.) * scale],
+                width - 24.,
+                hint,
+                [0.58, 0.64, 0.68, 1.],
+                &mut budget,
+            );
+        }
+        if self.panel == Panel::Keymap && height >= 210. {
             gizmo.ui_text(
                 camera,
                 [24. * scale, (height - 48.) * scale],
@@ -530,13 +545,15 @@ impl LocalUi {
                 &mut budget,
             );
         }
-        gizmo.ui_text(
-            camera,
-            [24. * scale, (height - 28.) * scale],
-            width - 24.,
-            &self.message,
-            [0.96, 0.69, 0.32, 1.],
-            &mut budget,
-        );
+        if height >= 100. {
+            gizmo.ui_text(
+                camera,
+                [24. * scale, (height - 8.) * scale],
+                width - 24.,
+                &self.message,
+                [0.96, 0.69, 0.32, 1.],
+                &mut budget,
+            );
+        }
     }
 }

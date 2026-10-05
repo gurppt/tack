@@ -51,12 +51,16 @@ def main():
     p.add_argument('--binary', type=Path, required=True)
     p.add_argument('--fixtures', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--window-size', default='1280x720')
+    p.add_argument('--seconds', type=int, default=17, choices=range(7, 121))
+    p.add_argument('--cases', help='comma-separated subset; defaults to all')
     a = p.parse_args()
     if os.environ.get('DISPLAY') in (None, ':0', ':0.0'):
         p.error('isolated X11 required')
     root = a.output.resolve(); root.mkdir(parents=True, exist_ok=False)
     binary = a.binary.resolve(); fixtures = a.fixtures.resolve()
     receipt = {'binary_sha256': digest(binary), 'harness_sha256': digest(__file__), 'runs': [],
+               'window_size_requested': a.window_size, 'seconds': a.seconds,
                'scope': 'generated shared-source fixtures, warm OS caches, isolated X11; epochs censored if unfinished; no human/monitor latency claim'}
     for name, fixture, flags in [
             ('1k', 'images-1k', []), ('5k', 'images-5k', []),
@@ -68,8 +72,10 @@ def main():
             ('dense-potato', 'images-5k', ['--dense-view', '--potato']),
             ('oversubscribed-highlod', 'dense-highlod', []),
             ('oversubscribed-potato', 'dense-highlod', ['--potato'])]:
+        if a.cases and name not in a.cases.split(','):
+            continue
         report = root/f'{name}.json'; board = fixtures/f'{fixture}.tack'
-        command = [str(binary), 'open', str(board), '--seconds', '17',
+        command = [str(binary), 'open', str(board), '--seconds', str(a.seconds), '--window-size', a.window_size,
                    '--output', str(report), *flags]
         if not name.startswith(('dense-', 'oversubscribed-')):
             command.append('--supply-stress')
@@ -80,7 +86,7 @@ def main():
             start = time.monotonic()
             try:
                 while process.poll() is None:
-                    if time.monotonic()-start > 45:
+                    if time.monotonic()-start > a.seconds + 30:
                         raise RuntimeError(f'{name} timeout')
                     try:
                         rows = Path(f'/proc/{process.pid}/status').read_text().splitlines()
@@ -95,6 +101,9 @@ def main():
                 if process.poll() is None:
                     process.kill(); process.wait(timeout=4)
         data = json.loads(report.read_text())
+        expected_size = [int(v) for v in a.window_size.split('x')]
+        if data['window_size'] != expected_size or any(f['window_size'] != expected_size for f in data['frames']):
+            raise AssertionError('native viewport dimensions differ')
         summary = summarize(data)
         (root/f'{name}-rss.json').write_text(json.dumps(samples))
         receipt['runs'].append({'name': name, 'board_sha256': digest(board), 'report_sha256': digest(report),

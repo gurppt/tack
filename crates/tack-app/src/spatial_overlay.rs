@@ -94,11 +94,16 @@ impl ImageInput {
         let viewport = camera.viewport();
         let mut labels = 512;
         // Selection was built first and retains priority over crowded frame labels.
-        for o in doc.objects().take(if doc.frame_count() == 0 {
-            0
-        } else {
-            usize::MAX
-        }) {
+        for o in doc
+            .object_order()
+            .iter()
+            .filter_map(|id| doc.object(*id))
+            .take(if doc.frame_count() == 0 {
+                0
+            } else {
+                usize::MAX
+            })
+        {
             let ObjectKind::Frame(name) = o.kind() else {
                 continue;
             };

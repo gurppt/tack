@@ -56,6 +56,8 @@ pub enum Action {
     DeleteSelection,
     FlipHorizontal,
     FlipVertical,
+    Order(crate::selection_commands::Order),
+    Opacity(crate::selection_commands::Alpha),
     Filtering(tack_core::ImageFiltering),
     CycleFiltering,
     Save,
@@ -89,7 +91,7 @@ pub enum Action {
 }
 impl Action {
     /// Enumerable action catalog, including currently unassigned actions.
-    pub const ALL: [Self; 81] = [
+    pub const ALL: [Self; 89] = [
         Self::SelectTool(Tool::Pointer),
         Self::SelectTool(Tool::Pan),
         Self::SelectTool(Tool::RotateView),
@@ -112,6 +114,14 @@ impl Action {
         Self::DeleteSelection,
         Self::FlipHorizontal,
         Self::FlipVertical,
+        Self::Order(crate::selection_commands::Order::Forward),
+        Self::Order(crate::selection_commands::Order::Front),
+        Self::Order(crate::selection_commands::Order::Backward),
+        Self::Order(crate::selection_commands::Order::Back),
+        Self::Opacity(crate::selection_commands::Alpha::Full),
+        Self::Opacity(crate::selection_commands::Alpha::ThreeQuarters),
+        Self::Opacity(crate::selection_commands::Alpha::Half),
+        Self::Opacity(crate::selection_commands::Alpha::Quarter),
         Self::Filtering(tack_core::ImageFiltering::Default),
         Self::Filtering(tack_core::ImageFiltering::Smooth),
         Self::Filtering(tack_core::ImageFiltering::Nearest),
@@ -251,10 +261,22 @@ impl Action {
             Self::CenterPointer => "Pan or resize handle about center",
             Self::CancelInteraction => "Cancel interaction",
             Self::CropMode => "Crop gizmo",
-            Self::SelectAll => "Select all images",
-            Self::DeleteSelection => "Delete selected images",
+            Self::SelectAll => "Select all",
+            Self::DeleteSelection => "Delete selection",
             Self::FlipHorizontal => "Flip horizontal",
             Self::FlipVertical => "Flip vertical",
+            Self::Order(order) => match order {
+                crate::selection_commands::Order::Forward => "Bring forward",
+                crate::selection_commands::Order::Front => "Bring to front",
+                crate::selection_commands::Order::Backward => "Send backward",
+                crate::selection_commands::Order::Back => "Send to back",
+            },
+            Self::Opacity(alpha) => match alpha {
+                crate::selection_commands::Alpha::Full => "Opacity 100%",
+                crate::selection_commands::Alpha::ThreeQuarters => "Opacity 75%",
+                crate::selection_commands::Alpha::Half => "Opacity 50%",
+                crate::selection_commands::Alpha::Quarter => "Opacity 25%",
+            },
             Self::Filtering(tack_core::ImageFiltering::Default) => "Default sampling",
             Self::Filtering(tack_core::ImageFiltering::Smooth) => "Smooth sampling",
             Self::Filtering(tack_core::ImageFiltering::Nearest) => "Nearest sampling",

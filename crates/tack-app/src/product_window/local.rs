@@ -135,6 +135,7 @@ impl App {
         self.local.close_after_discard = false;
     }
     pub(super) fn local_error(&mut self, message: impl Into<String>) {
+        self.context = None;
         let message = message.into();
         eprintln!(
             "[tack/local] {}",
@@ -147,6 +148,7 @@ impl App {
         self.dirty = true;
     }
     pub(super) fn panel(&mut self, panel: Panel) {
+        self.context = None;
         if let Some(editor) = &mut self.editor {
             let _ = self.input.physical(
                 tack_app::input::PhysicalEvent::FocusLost,
@@ -228,7 +230,7 @@ impl App {
         }
         self.local.ui = None;
         match action {
-            ApplicationMenu => self.panel(Panel::Menu),
+            ApplicationMenu => self.open_application_menu()?,
             Preferences => self.panel(Panel::Preferences),
             KeymapEditor => self.panel(Panel::Keymap),
             RecentBoards => self.panel(Panel::Recent),

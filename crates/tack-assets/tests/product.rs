@@ -700,3 +700,70 @@ fn closing_revokes_queue_without_deriving_closed_view() {
     assert_eq!(a.stats().cpu_bytes, 0);
     assert_eq!(a.stats().pending, 0);
 }
+
+#[test]
+fn repeated_expensive_source_leaves_admission_for_small_visible_source() {
+    use tack_assets::ProductDemand;
+    let mut f = Fixture::sized(false, [640, 400]);
+    let mut ids = vec![f.asset];
+    for _ in 0..24 {
+        let id = new_asset_id().unwrap();
+        f.document
+            .apply(Command::AddAsset(
+                ImageAsset::new(id, f.source, [640, 400]).unwrap(),
+            ))
+            .unwrap();
+        ids.push(id);
+    }
+    let small_source = new_source_id().unwrap();
+    let small_asset = new_asset_id().unwrap();
+    image::RgbImage::new(8, 8)
+        .save(f.root.join("small.png"))
+        .unwrap();
+    f.document
+        .apply(Command::AddSource(
+            Source::from_descriptor(
+                small_source,
+                SourceLocation::Linked(LinkedPath::native(Path::new("small.png")).unwrap()),
+                1,
+                None,
+            )
+            .unwrap(),
+        ))
+        .unwrap();
+    f.document
+        .apply(Command::AddAsset(
+            ImageAsset::new(small_asset, small_source, [8, 8]).unwrap(),
+        ))
+        .unwrap();
+    ids.push(small_asset);
+    f.seed();
+    let (_, mut a) = f.load("seed.tack");
+    let demands: Vec<_> = ids
+        .iter()
+        .map(|id| ProductDemand {
+            asset: *id,
+            lod: Lod::Thumbnail,
+            edge: 128,
+            priority: u8::from(*id == small_asset),
+            resident: false,
+        })
+        .collect();
+    a.replace_view(&demands, &f.document, &Default::default());
+    // 25 aliases must not fill all 16 requests ahead of a lower-priority source.
+    assert_eq!(a.stats().pending, 3);
+    assert_eq!(a.stats().queued, 1);
+    settle_view(&mut a);
+    assert!(a.get_rep(small_asset, 1, Lod::Thumbnail, 128).is_some());
+    assert!(a.get_rep(ids[2], 1, Lod::Thumbnail, 128).is_none());
+    assert_eq!(a.stats().completed, 3);
+    // The remaining aliases eventually resolve through subsequent visible demand.
+    for _ in 0..24 {
+        a.replace_view(&demands, &f.document, &Default::default());
+        settle_view(&mut a);
+    }
+    assert!(
+        ids.iter()
+            .all(|id| a.get_rep(*id, 1, Lod::Thumbnail, 128).is_some())
+    );
+}

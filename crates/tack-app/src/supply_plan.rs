@@ -1,6 +1,14 @@
 //! Stable visible-set admission. Quality degrades before residency can churn.
 use std::collections::HashMap;
-use tack_core::{AssetId, Lod, SourceId};
+use tack_core::{AssetId, Lod, SourceId, Transform};
+/// The longest displayed edge drives both refinement and preview urgency.
+/// Portrait and landscape sources must have the same scheduling semantics.
+pub fn projected_edge(transform: Transform, zoom: f64) -> f64 {
+    transform.size().into_iter().fold(0., f64::max) * zoom
+}
+pub fn preview_priority(transform: Transform, zoom: f64) -> u8 {
+    u8::from(projected_edge(transform, zoom) <= 128.)
+}
 #[derive(Clone, Copy)]
 pub struct Need {
     pub asset: AssetId,
@@ -61,6 +69,23 @@ pub fn plan(needs: &[Need], gpu_bytes: usize, max_lod: Lod) -> Plan {
 mod tests {
     #![allow(clippy::unwrap_used)]
     use super::*;
+    #[test]
+    fn portrait_and_landscape_overtake_small_previews_identically() {
+        let images = [[100., 80.], [100., 2000.], [2000., 100.]]
+            .map(|size| Transform::new([0.; 2], size, 0., [false; 2]).unwrap());
+        let mut order = [0, 1, 2];
+        order.sort_by_key(|i| preview_priority(images[*i], 1.));
+        assert_eq!(order, [1, 2, 0]);
+        assert_eq!(
+            Lod::for_projected_edge(projected_edge(images[1], 1.)),
+            Lod::Detail
+        );
+        assert_eq!(
+            Lod::for_projected_edge(projected_edge(images[2], 1.)),
+            Lod::Detail
+        );
+        assert_eq!(preview_priority(images[1], 0.01), 1);
+    }
     fn needs(n: usize) -> Vec<Need> {
         (0..n)
             .map(|i| Need {

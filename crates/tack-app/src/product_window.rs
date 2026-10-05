@@ -32,6 +32,7 @@ struct OpenOptions {
     supply_stress: bool,
     immediate: bool,
     dense: bool,
+    window_size: [u32; 2],
 }
 enum Event {
     Loaded(Box<Result<LoadedBoard, AssetError>>),
@@ -82,6 +83,9 @@ struct App {
     event_samples: Vec<f64>,
     supply_pending: bool,
     visibility: tack_app::visibility::Visibility,
+    context: Option<Box<tack_app::context_menu::ContextMenu>>,
+    pointer: [f64; 2],
+    cursor_icon: winit::window::CursorIcon,
 }
 impl App {
     fn initialize(&mut self, event_loop: &ActiveEventLoop) -> Result<(), AssetError> {
@@ -89,7 +93,10 @@ impl App {
             event_loop.create_window(
                 Window::default_attributes()
                     .with_title("Tack — loading local board")
-                    .with_inner_size(winit::dpi::PhysicalSize::new(1280, 720)),
+                    .with_inner_size(winit::dpi::PhysicalSize::new(
+                        self.options.window_size[0],
+                        self.options.window_size[1],
+                    )),
             )?,
         );
         let gpu_started = Instant::now();
@@ -109,11 +116,13 @@ impl App {
         if self.options.potato {
             gpu.constrain_uploads(1024 * 1024, 2);
         }
+        let size = window.inner_size();
+        self.camera.resize([size.width.max(1), size.height.max(1)]);
         let config = wgpu::SurfaceConfiguration {
             usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
             format: gpu.format,
-            width: 1280,
-            height: 720,
+            width: size.width.max(1),
+            height: size.height.max(1),
             present_mode: if self.options.immediate {
                 wgpu::PresentMode::AutoNoVsync
             } else {
@@ -307,8 +316,10 @@ impl App {
                     Some(tack_app::supply_plan::Need {
                         asset: a.id(),
                         source: s.id(),
-                        projected: draw.data.transform.size().into_iter().fold(0., f64::max)
-                            * self.camera.zoom(),
+                        projected: tack_app::supply_plan::projected_edge(
+                            draw.data.transform,
+                            self.camera.zoom(),
+                        ),
                         source_edge: a.pixel_size().into_iter().max().unwrap_or(0),
                         crop: [uv[2], uv[3]],
                     })
@@ -348,11 +359,10 @@ impl App {
                     asset: draw.data.asset_id,
                     lod: Lod::Thumbnail,
                     edge: plan.overview_edge,
-                    priority: if draw.data.transform.size()[0] * self.camera.zoom() > 128. {
-                        0
-                    } else {
-                        1
-                    },
+                    priority: tack_app::supply_plan::preview_priority(
+                        draw.data.transform,
+                        self.camera.zoom(),
+                    ),
                     resident: gpu.contains_product(key(Lod::Thumbnail)),
                 });
                 if desired != Lod::Thumbnail {
@@ -426,6 +436,19 @@ impl App {
         }
         if let Some(editor) = &self.editor {
             self.input.build_overlay(editor, &self.camera);
+        }
+        // Keep the application entry and popup reachable even on a saturated
+        // canvas overlay; reserve their bounded budget before drawing either.
+        self.input.gizmo.quads.truncate(
+            tack_render::MAX_OVERLAY_QUADS - if self.context.is_some() { 1024 } else { 8 },
+        );
+        tack_app::context_menu::draw_app_button(
+            &mut self.input.gizmo,
+            &self.camera,
+            self.context.is_some(),
+        );
+        if let Some(menu) = &mut self.context {
+            menu.draw(&mut self.input.gizmo, &self.camera);
         }
         if let Some(ui) = &mut self.local.ui {
             self.input
@@ -514,7 +537,7 @@ impl App {
         frame.present();
         let present_ms = present_start.elapsed().as_secs_f64() * 1000.;
         if self.options.output.is_some() && self.frames.len() < 7200 {
-            self.frames.push(json!({"annotations":self.annotations.as_ref().map(|a|json!({"primitives":a.primitives.len(),"glyphs":a.glyphs,"omitted":a.omitted,"layout_ms":a.layout_ms,"build_ms":a.build_ms})),"camera":self.camera.screen_to_world(self.camera.screen_size().map(|v|f64::from(v)/2.)),"zoom":self.camera.zoom(),"overview_edge":overview_edge,"detail_reserved":detail_reserved,"desired_detail":desired_count,"quality_resolved":resolved_count,"scene_ms":scene_ms,"query_ms":query_ms,"supply_ms":supply_ms,"detailed":detailed,"supply":self.assets.as_ref().map(|a| {let s=a.stats();json!({"pending":s.pending,"queued":s.queued,"cpu_bytes":s.cpu_bytes,"evictions":s.evictions,"source_bytes":s.source_bytes,"container_bytes":s.container_bytes,"decode_count":s.decode_count,"decode_ms":s.decode_ms,"discarded":s.discarded})}),"encode_ms":stats.encode_ms,"submit_ms":stats.submit_ms,"poll_ms":stats.poll_ms,"elapsed_ms":elapsed_ms,"cpu_ms":cpu_ms,"visible":self.draws.len(),"recognizable":recognizable,"upload_cpu_ms":stats.upload_cpu_ms,"upload_bytes":stats.upload_bytes,"uploads":stats.uploads,"gpu_bytes":stats.gpu_bytes,"in_flight":stats.in_flight,"acquire_ms":acquire_ms,"present_ms":present_ms,"callback_ms":start.elapsed().as_secs_f64()*1000.}));
+            self.frames.push(json!({"window_size":self.camera.screen_size(),"annotations":self.annotations.as_ref().map(|a|json!({"primitives":a.primitives.len(),"glyphs":a.glyphs,"omitted":a.omitted,"layout_ms":a.layout_ms,"build_ms":a.build_ms})),"camera":self.camera.screen_to_world(self.camera.screen_size().map(|v|f64::from(v)/2.)),"zoom":self.camera.zoom(),"overview_edge":overview_edge,"detail_reserved":detail_reserved,"desired_detail":desired_count,"quality_resolved":resolved_count,"scene_ms":scene_ms,"query_ms":query_ms,"supply_ms":supply_ms,"detailed":detailed,"supply":self.assets.as_ref().map(|a| {let s=a.stats();json!({"pending":s.pending,"queued":s.queued,"cpu_bytes":s.cpu_bytes,"evictions":s.evictions,"source_bytes":s.source_bytes,"container_bytes":s.container_bytes,"decode_count":s.decode_count,"decode_ms":s.decode_ms,"discarded":s.discarded})}),"encode_ms":stats.encode_ms,"submit_ms":stats.submit_ms,"poll_ms":stats.poll_ms,"elapsed_ms":elapsed_ms,"cpu_ms":cpu_ms,"visible":self.draws.len(),"recognizable":recognizable,"upload_cpu_ms":stats.upload_cpu_ms,"upload_bytes":stats.upload_bytes,"uploads":stats.uploads,"gpu_bytes":stats.gpu_bytes,"in_flight":stats.in_flight,"acquire_ms":acquire_ms,"present_ms":present_ms,"callback_ms":start.elapsed().as_secs_f64()*1000.}));
         }
         self.dirty = self.supply_pending;
         Ok(())
@@ -603,7 +626,7 @@ impl App {
             .and_then(|g| g.timing_samples())
             .map(|s| s.iter().map(|s| json!({"pass_ms":s.pass_ms})).collect())
             .unwrap_or_default();
-        let mut report = json!({"load_failed":self.load_failed,"local":{"operations":self.local.worker.operations,"recoveries":self.save.recoveries,"recovery_generation":self.save.recovery_generation,"recovery_bytes":self.save.recovery_bytes,"last_storage_worker_ms":self.save.last_worker_ms,"ui_scale":self.camera.ui_scale(),"discarded_asset_results":stats.discarded},"first_frame_ms":self.first_frame_ms,"gpu_setup_ms":self.gpu_setup_ms,"annotation_resources":gpu.map(|g|g.annotation_bytes()),"annotations":self.editor.as_ref().map(|e|e.document().annotation_count()).unwrap_or(0),"spatial":{"grid":self.input.grid_visible,"snapping":self.input.snap.enabled,"frames":self.editor.as_ref().map(|e|e.document().objects().filter(|o|matches!(o.kind(),tack_core::ObjectKind::Frame(_))).count()).unwrap_or(0),"groups":self.editor.as_ref().map(|e|e.document().groups().count()).unwrap_or(0)},"redraw_count":self.redraws,"wait_count":self.wakeups,"operation":"open","editing":self.editor.as_ref().map(|e|json!({"dirty":e.is_dirty(),"generation":e.generation(),"undo_entries":e.undo_len(),"redo_entries":e.redo_len(),"selected":self.input.images.selection.len(),"save_completed":self.save.completed})),"interaction":self.benchmark.as_ref().map(|b|json!({"scenario":b.name(),"input_ms":b.samples,"snap_query_ms":b.snap_queries,"commits":b.commits,"cancels":b.cancels,"invariants":b.invariants})),"native_startup_ms":self.native_startup_ms,"camera_clamped":self.camera_clamped,"navigation_end_pending":self.navigation_end_pending,"drain_ms":self.drain_ms,"state_counts_scope":"requested sources only","recognizable_clock":"CPU submission before present","metadata_load_ms":self.metadata_ms,"metadata_bytes":self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"first_recognizable_ms":self.first_content_ms,"ordinary_view_80_percent_ms":self.useful_ms,"source_bytes_before_detail":stats.source_bytes,"container_bytes":stats.container_bytes+self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"overview_reused":stats.reused,"overview_regenerated":stats.regenerated,"errors":stats.errors,"source_missing":counts(SourceState::Missing),"source_changed":counts(SourceState::Changed),"source_foreign":counts(SourceState::Foreign),"peak_pending":stats.peak_pending,"cpu_payload_bytes":stats.cpu_bytes,"adapter":gpu.map(|g|g.adapter_info.name.clone()),"backend":gpu.map(|g|format!("{:?}",g.adapter_info.backend)),"frames":self.frames,"gpu_samples":samples,"detail":"bounded projected 128/512/2048 display supply"});
+        let mut report = json!({"window_size":self.camera.screen_size(),"load_failed":self.load_failed,"local":{"operations":self.local.worker.operations,"recoveries":self.save.recoveries,"recovery_generation":self.save.recovery_generation,"recovery_bytes":self.save.recovery_bytes,"last_storage_worker_ms":self.save.last_worker_ms,"ui_scale":self.camera.ui_scale(),"discarded_asset_results":stats.discarded},"first_frame_ms":self.first_frame_ms,"gpu_setup_ms":self.gpu_setup_ms,"annotation_resources":gpu.map(|g|g.annotation_bytes()),"annotations":self.editor.as_ref().map(|e|e.document().annotation_count()).unwrap_or(0),"spatial":{"grid":self.input.grid_visible,"snapping":self.input.snap.enabled,"frames":self.editor.as_ref().map(|e|e.document().objects().filter(|o|matches!(o.kind(),tack_core::ObjectKind::Frame(_))).count()).unwrap_or(0),"groups":self.editor.as_ref().map(|e|e.document().groups().count()).unwrap_or(0)},"redraw_count":self.redraws,"wait_count":self.wakeups,"operation":"open","editing":self.editor.as_ref().map(|e|json!({"dirty":e.is_dirty(),"generation":e.generation(),"undo_entries":e.undo_len(),"redo_entries":e.redo_len(),"selected":self.input.images.selection.len(),"save_completed":self.save.completed})),"interaction":self.benchmark.as_ref().map(|b|json!({"scenario":b.name(),"input_ms":b.samples,"snap_query_ms":b.snap_queries,"commits":b.commits,"cancels":b.cancels,"invariants":b.invariants})),"native_startup_ms":self.native_startup_ms,"camera_clamped":self.camera_clamped,"navigation_end_pending":self.navigation_end_pending,"drain_ms":self.drain_ms,"state_counts_scope":"requested sources only","recognizable_clock":"CPU submission before present","metadata_load_ms":self.metadata_ms,"metadata_bytes":self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"first_recognizable_ms":self.first_content_ms,"ordinary_view_80_percent_ms":self.useful_ms,"source_bytes_before_detail":stats.source_bytes,"container_bytes":stats.container_bytes+self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"overview_reused":stats.reused,"overview_regenerated":stats.regenerated,"errors":stats.errors,"source_missing":counts(SourceState::Missing),"source_changed":counts(SourceState::Changed),"source_foreign":counts(SourceState::Foreign),"peak_pending":stats.peak_pending,"cpu_payload_bytes":stats.cpu_bytes,"adapter":gpu.map(|g|g.adapter_info.name.clone()),"backend":gpu.map(|g|format!("{:?}",g.adapter_info.backend)),"frames":self.frames,"gpu_samples":samples,"detail":"bounded projected 128/512/2048 display supply"});
         let supply_receipt = json!({"potato":self.options.potato,"present_mode":self.config.as_ref().map(|c|format!("{:?}",c.present_mode)),"event_samples_ms":self.event_samples,"cpu_payload_peak":stats.cpu_peak,"cpu_evictions":stats.evictions,"reprioritized":stats.reprioritized,"discarded":stats.discarded,"peak_queued":stats.peak_queued,"visibility_memo_bytes":self.visibility.bytes()});
         if let Some(obj) = report.as_object_mut()
             && let Some(extra) = supply_receipt.as_object()
@@ -696,6 +719,7 @@ impl ApplicationHandler<Event> for App {
         self.wakeups += 1;
         self.poll_local();
         self.poll_storage();
+        self.invalidate_context();
         if self.local.close_ready {
             e.exit();
             return;
@@ -911,6 +935,7 @@ impl App {
             if event.state == winit::event::ElementState::Pressed
             && event.physical_key == winit::keyboard::PhysicalKey::Code(winit::keyboard::KeyCode::Escape))
             && self.local.ui.is_none()
+            && self.context.is_none()
         {
             self.local.worker.cancel();
             self.local.queued = None;
@@ -932,7 +957,13 @@ impl App {
         let result = if matches!(event, WindowEvent::RedrawRequested) {
             self.redraw()
         } else {
-            let ui = self.local_ui_event(&event);
+            let ui = self.context_event(&event).and_then(|used| {
+                if used {
+                    Ok(true)
+                } else {
+                    self.local_ui_event(&event)
+                }
+            });
             let consumed = match ui {
                 Ok(consumed) => consumed,
                 Err(error) => {
@@ -1006,6 +1037,7 @@ impl App {
                 }
                 _ => {}
             }
+            self.update_cursor();
             Ok(())
         };
         if let Err(error) = result {
@@ -1014,3 +1046,4 @@ impl App {
         }
     }
 }
+mod menus;
