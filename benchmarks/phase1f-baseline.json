@@ -1,5 +1,5 @@
 {
-  "protocol": "Same owned Xvfb :92 + noncomposited xfwm4; RTX2060/Vulkan; same generated input files; single 5s idle observation per board, warm kernel page cache, not a startup significance study",
+  "protocol": "Same owned Xvfb :92 + noncomposited xfwm4; RTX2060/Vulkan; same final generated input files; single 5s settled interval; warm kernel cache. Empty compares 1F New versus 1E Open of that empty file. Not a startup significance study.",
   "runs": [
     {
       "baseline": true,
@@ -8,7 +8,7 @@
       "isolated_no_wm": true,
       "binary_sha256": "b929230b4f1d7373cfb806e1144606f5f7959d654bb80793ab0cf80fdb63cdd9",
       "harness_sha256": "22719cbac2b46964897fd3f39143e21f50cd5ca4ba3f4809bc793e757aac4356",
-      "board_sha256": "e5b710fc9e60c77eedbbfe46fbedec93f74228750bc8748dd432b07e09393aec",
+      "board_sha256": "e2da99716eac4b9bcb6c4a1c39fcd75d26558feb92d695c73f1a7be6a2fdc5f6",
       "application_timer": "none; ordinary open has no --seconds/--interaction/tour",
       "network": "Tack has no network client; socket_count includes native X11/driver IPC, not a network-byte counter",
       "wakeups": "per-thread voluntary/involuntary context switches; total event-loop waits include startup/shutdown, not exact idle wakeups",
@@ -16,11 +16,11 @@
       "runs": [
         {
           "grid": "hidden",
-          "interval_seconds": 5.0236100039910525,
+          "interval_seconds": 5.024053411994828,
           "cpu_ticks": 2,
-          "cpu_percent_of_one_core": 0.39812007668013283,
-          "rss_initial_bytes": 350334976,
-          "rss_final_bytes": 350334976,
+          "cpu_percent_of_one_core": 0.39808493978687404,
+          "rss_initial_bytes": 350515200,
+          "rss_final_bytes": 350515200,
           "idle_redraws": 0,
           "idle_gpu_submissions": 0,
           "total_redraws": 1,
@@ -258,7 +258,7 @@
               "name": "tack-app",
               "cpu_ticks": 1,
               "voluntary_switches": 499,
-              "involuntary_switches": 1
+              "involuntary_switches": 0
             },
             {
               "name": "tack-product-ov",
@@ -286,20 +286,20 @@
           },
           "socket_count": 4,
           "source_bytes": 0,
-          "report_sha256": "bafe0a63b648d0beeb096fe5fea53bf9958107f7037f020de0828b267f40583f",
+          "report_sha256": "c315b1147a79875a870d5d3a9f4aef44e61f1c5c98232448ee49ab0e1c4d9ef0",
           "observed_title": "Tack \u2014 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
         }
       ],
       "name": "empty",
       "startup": {
-        "native_startup_ms": 454.10159100000004,
-        "metadata_load_ms": 0.03816,
+        "native_startup_ms": 440.470759,
+        "metadata_load_ms": 0.02783,
         "first_recognizable_ms": null,
         "ordinary_view_80_percent_ms": null,
         "first_frame_ms": null,
         "gpu_setup_ms": null
       },
-      "startup_field_scope": "1E did not instrument first_frame_ms/gpu_setup_ms; null is unavailable, not zero"
+      "startup_field_scope": "1E lacks first-frame/GPU-setup instrumentation; null is unavailable"
     },
     {
       "baseline": true,
@@ -308,7 +308,7 @@
       "isolated_no_wm": true,
       "binary_sha256": "b929230b4f1d7373cfb806e1144606f5f7959d654bb80793ab0cf80fdb63cdd9",
       "harness_sha256": "22719cbac2b46964897fd3f39143e21f50cd5ca4ba3f4809bc793e757aac4356",
-      "board_sha256": "868f08b4012a0cfb7759231574236323b666c2b54439b403ccc02a80c666e569",
+      "board_sha256": "e16447996fcba85045b8c34c752a778add8dc507263b8c273129ddd186d4f14f",
       "application_timer": "none; ordinary open has no --seconds/--interaction/tour",
       "network": "Tack has no network client; socket_count includes native X11/driver IPC, not a network-byte counter",
       "wakeups": "per-thread voluntary/involuntary context switches; total event-loop waits include startup/shutdown, not exact idle wakeups",
@@ -316,11 +316,11 @@
       "runs": [
         {
           "grid": "hidden",
-          "interval_seconds": 5.0231140890100505,
-          "cpu_ticks": 2,
-          "cpu_percent_of_one_core": 0.3981593817221376,
-          "rss_initial_bytes": 351551488,
-          "rss_final_bytes": 351551488,
+          "interval_seconds": 5.02446609098115,
+          "cpu_ticks": 1,
+          "cpu_percent_of_one_core": 0.19902612175948142,
+          "rss_initial_bytes": 351842304,
+          "rss_final_bytes": 351842304,
           "idle_redraws": 0,
           "idle_gpu_submissions": 0,
           "total_redraws": 2,
@@ -551,12 +551,12 @@
             {
               "name": "[vkps] Update",
               "cpu_ticks": 1,
-              "voluntary_switches": 20,
+              "voluntary_switches": 19,
               "involuntary_switches": 0
             },
             {
               "name": "tack-app",
-              "cpu_ticks": 1,
+              "cpu_ticks": 0,
               "voluntary_switches": 499,
               "involuntary_switches": 0
             },
@@ -586,20 +586,20 @@
           },
           "socket_count": 4,
           "source_bytes": 0,
-          "report_sha256": "0217d1c47a31593a5fcf9b1a07351f8ff41b04e95b88a1062d5b59882063ec53",
+          "report_sha256": "08e626a920d7396161024c51e728f73b311fa391abd409f32d20cf3fda12bbc6",
           "observed_title": "Tack \u2014 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
         }
       ],
       "name": "small",
       "startup": {
-        "native_startup_ms": 438.87490299999996,
-        "metadata_load_ms": 0.059751,
-        "first_recognizable_ms": 492.07641,
-        "ordinary_view_80_percent_ms": 492.07641,
+        "native_startup_ms": 458.433038,
+        "metadata_load_ms": 0.08193,
+        "first_recognizable_ms": 512.207185,
+        "ordinary_view_80_percent_ms": 512.207185,
         "first_frame_ms": null,
         "gpu_setup_ms": null
       },
-      "startup_field_scope": "1E did not instrument first_frame_ms/gpu_setup_ms; null is unavailable, not zero"
+      "startup_field_scope": "1E lacks first-frame/GPU-setup instrumentation; null is unavailable"
     },
     {
       "baseline": true,
@@ -616,11 +616,11 @@
       "runs": [
         {
           "grid": "hidden",
-          "interval_seconds": 5.025804370001424,
+          "interval_seconds": 5.02408941500471,
           "cpu_ticks": 2,
-          "cpu_percent_of_one_core": 0.39794624954720104,
-          "rss_initial_bytes": 353681408,
-          "rss_final_bytes": 353681408,
+          "cpu_percent_of_one_core": 0.39808208707967935,
+          "rss_initial_bytes": 353828864,
+          "rss_final_bytes": 353828864,
           "idle_redraws": 0,
           "idle_gpu_submissions": 0,
           "total_redraws": 2,
@@ -886,20 +886,20 @@
           },
           "socket_count": 4,
           "source_bytes": 0,
-          "report_sha256": "bf03657f095dc886e0134dd43c74f5d6c463bfb70eb2cc274b9fe155335028d9",
+          "report_sha256": "29eefb3af3d089b2e42e5d55392fb58df194e5c3fd3ee0c10b9bbc641d77ad05",
           "observed_title": "Tack \u2014 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
         }
       ],
       "name": "prepared-1k",
       "startup": {
-        "native_startup_ms": 444.874298,
-        "metadata_load_ms": 2.353526,
-        "first_recognizable_ms": 499.271878,
-        "ordinary_view_80_percent_ms": 499.271878,
+        "native_startup_ms": 426.749814,
+        "metadata_load_ms": 4.366745,
+        "first_recognizable_ms": 480.98368200000004,
+        "ordinary_view_80_percent_ms": 480.98368200000004,
         "first_frame_ms": null,
         "gpu_setup_ms": null
       },
-      "startup_field_scope": "1E did not instrument first_frame_ms/gpu_setup_ms; null is unavailable, not zero"
+      "startup_field_scope": "1E lacks first-frame/GPU-setup instrumentation; null is unavailable"
     }
   ]
 }

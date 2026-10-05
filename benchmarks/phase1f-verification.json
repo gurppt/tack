@@ -2,7 +2,6 @@
   "starting_head": "759fee0ac8ace8558556571498c84a6270b44760",
   "binary_sha256": "92e50f202a196fe919dacc1ac2031143b12f70f3392fd3ad84fcc68c18001a66",
   "source_snapshot_sha256": "44e89897d6fd5d875dc96e2c84540683953f36ac423969f681f1de912ba945c7",
-  "shipping_files_match_snapshot": true,
   "local_checks": {
     "command": "PATH=/tmp/tack-tools/bin:$PATH bash tools/check.sh",
     "exit_code": 0,
@@ -37,7 +36,8 @@
   "font_tests": {
     "packed_primary_glyphs": 1001,
     "packed_primary_bytes": 37037,
-    "no_full_unicode_heap_or_texture_preload": true
+    "no_full_unicode_heap_or_texture_preload": true,
+    "shipping_license_command_passed": true
   },
   "logs": {
     "/tmp/tack-1f-quality-last.log": {
@@ -55,6 +55,26 @@
     "/tmp/tack-1f-gpu-shipping.log": {
       "sha256": "7a59d81b2d88609ea2a9f705739f31afcaad2a3868910846fcbfa520bd105e93",
       "bytes": 1303
+    },
+    "/tmp/tack-1f-font-license-final.log": {
+      "sha256": "f2595a60b127d505681c7ee14bbd5679b053029ea459599ca95b692eb44628eb",
+      "bytes": 6063
+    },
+    "/tmp/tack-1f-quality-windows-fix.log": {
+      "sha256": "6e09a3b7e643b6bdba2c18886f571adeaaca9136ea91e63186572d6461c419da",
+      "bytes": 65005
+    },
+    "/tmp/tack-1f-release-windows-fix.log": {
+      "sha256": "acdf28adeb8146669fe960e03515e08fe9995769ffb8f6a757e2b41e27416d39",
+      "bytes": 143
+    },
+    "/tmp/tack-1f-portable-test.log": {
+      "sha256": "dc140a47c217933af8a02feb805e7132bc19b36f0b145ec366e06897cdd4eaf3",
+      "bytes": 920
+    },
+    "/tmp/tack-1f-portable-test-clippy.log": {
+      "sha256": "afce57d19484187cb155c9c9bcc29f892447e5a5f07443dad9eea03ba22e7780",
+      "bytes": 141
     }
   },
   "serial_suite_receipts": [
@@ -262,12 +282,93 @@
       ]
     }
   ],
-  "independent_verifier": "/root/phase1f_verifier; read-only independent of implementation; findings fixed and affected evidence rerun",
+  "independent_verifier": "Final read-only reviews by /root/phase1f_verifier: both binary/source snapshots (164 files), exactly two post-freeze source/test changes, final native counts and benchmark tables reconciled; no runtime issue. Two stale report scope/pending phrases corrected; final CI passed separately.",
   "method_limits": [
     "Xvfb driver/llvmpipe RSS and threads included",
     "no native Windows or live multi-monitor DPI proof",
     "no cold kernel cache",
     "exact allocator/network/per-process GPU timing counts unavailable",
     "no power-loss guarantee"
-  ]
+  ],
+  "post_measurement_platform_fix": {
+    "commit": "f6df3eb573da578156c90a5154cf842c7ee4586c",
+    "change": "Gate std::fs::File import to Linux; fixes Windows unused-import Clippy failure. No workflow/renderer/storage/format behavior changed.",
+    "path": "crates/tack-app/src/native_files.rs",
+    "current_binary_sha256": "0c84424ad55e4ccd3ff1fdb79747044794a8a4c1d0d0464f54ce715d35b5fcc5",
+    "current_source_snapshot_sha256": "c6216c21d97d1cf6d39ac55544fc43e174a61dd49440ff56184949de7e707410",
+    "quality_log": {
+      "sha256": "6e09a3b7e643b6bdba2c18886f571adeaaca9136ea91e63186572d6461c419da",
+      "bytes": 65005
+    },
+    "binary_sizes_bytes": {
+      "unstripped": 113568768,
+      "strip_debug": 20814152,
+      "fully_stripped": 17588432
+    },
+    "affected_native_reruns": [
+      {
+        "name": "production",
+        "returncode": 0,
+        "command": [
+          "python3",
+          "tools/run_local_production.py",
+          "--binary",
+          "benchmark-results/phase1f-platform-final/tack-app",
+          "--output",
+          "benchmark-results/phase1f-platform-production"
+        ]
+      },
+      {
+        "name": "recovery",
+        "returncode": 0,
+        "command": [
+          "python3",
+          "tools/run_native_recovery_checks.py",
+          "--binary",
+          "benchmark-results/phase1f-platform-final/tack-app",
+          "--output",
+          "benchmark-results/phase1f-platform-recovery"
+        ]
+      },
+      {
+        "name": "resources",
+        "returncode": 0,
+        "command": [
+          "python3",
+          "tools/run_local_resources.py",
+          "--prepared-board",
+          "benchmark-results/phase1e-product-measured/linked.tack",
+          "--binary",
+          "benchmark-results/phase1f-platform-final/tack-app",
+          "--output",
+          "benchmark-results/phase1f-platform-resources"
+        ]
+      },
+      {
+        "name": "multi",
+        "returncode": 0,
+        "command": [
+          "python3",
+          "tools/run_multi_instance_resources.py",
+          "--board",
+          "benchmark-results/phase1f-platform-production/saved-as.tack",
+          "--binary",
+          "benchmark-results/phase1f-platform-final/tack-app",
+          "--output",
+          "benchmark-results/phase1f-platform-multi"
+        ]
+      }
+    ],
+    "code_commit_with_portable_fixture": "273e0dd81c48f9a1a8ec529fc7c44fbfc959c3a5",
+    "canonical_snapshot_differences": [
+      "crates/tack-app/src/native_files.rs",
+      "crates/tack-app/tests/local_production.rs"
+    ],
+    "additional_test_only_fix": "Foreign relink fixture uses the other platform with correct encoding, instead of byte ASCII labeled Windows UTF-16LE; asserted unresolved before relink.",
+    "current_files_match_snapshot": true
+  },
+  "benchmark_freeze_files_matched_snapshot_before_platform_import_fix": true,
+  "serial_suite_scope": "Full regressions measured on pre-import-guard binary; affected local production/recovery/resources/multi rerun after guard. All unaffected runtime files are byte-identical.",
+  "final_gate": "A \u2014 PASS",
+  "configured_ci_commit": "273e0dd81c48f9a1a8ec529fc7c44fbfc959c3a5"
 }

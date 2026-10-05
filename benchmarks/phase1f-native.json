@@ -1,238 +1,4 @@
 {
-  "local-native-shipping2": {
-    "raw_directory": "benchmark-results/phase1f-verified-local-native-shipping2",
-    "checks": [
-      {
-        "name": "native new board is empty",
-        "observed": true,
-        "detail": null
-      },
-      {
-        "name": "native picker embedded import, save",
-        "observed": true,
-        "detail": null
-      },
-      {
-        "name": "real XDND multi-file drop",
-        "observed": true,
-        "detail": null
-      },
-      {
-        "name": "native clipboard PNG paste",
-        "observed": true,
-        "detail": null
-      },
-      {
-        "name": "native linked default preference",
-        "observed": true,
-        "detail": null
-      },
-      {
-        "name": "native clipboard file URI paste",
-        "observed": true,
-        "detail": null
-      },
-      {
-        "name": "native clipboard UTF8 text into note",
-        "observed": true,
-        "detail": null
-      },
-      {
-        "name": "oversized clipboard preserves saved authority",
-        "observed": true,
-        "detail": null
-      },
-      {
-        "name": "pending multi-import preserves note draft and resumes after commit",
-        "observed": true,
-        "detail": null
-      },
-      {
-        "name": "native keymap search and second keyboard binding",
-        "observed": true,
-        "detail": null
-      },
-      {
-        "name": "native reset action restores defaults",
-        "observed": true,
-        "detail": null
-      },
-      {
-        "name": "readable native keymap export",
-        "observed": true,
-        "detail": null
-      },
-      {
-        "name": "native resize/unmap/restore preserves authority",
-        "observed": true,
-        "detail": null
-      },
-      {
-        "name": "native SaveAs retains document ID and geometry",
-        "observed": true,
-        "detail": null
-      },
-      {
-        "name": "same-file second native editor refused",
-        "observed": true,
-        "detail": null
-      },
-      {
-        "name": "distinct native boards idle independently",
-        "observed": true,
-        "detail": [
-          {
-            "rss_bytes": 353083392,
-            "threads": 41,
-            "cpu_ticks_5s": 3,
-            "io_delta": {
-              "rchar": 0,
-              "wchar": 0,
-              "syscr": 0,
-              "syscw": 0,
-              "read_bytes": 0,
-              "write_bytes": 0,
-              "cancelled_write_bytes": 0
-            }
-          },
-          {
-            "rss_bytes": 351424512,
-            "threads": 41,
-            "cpu_ticks_5s": 2,
-            "io_delta": {
-              "rchar": 0,
-              "wchar": 0,
-              "syscr": 0,
-              "syscw": 0,
-              "read_bytes": 0,
-              "write_bytes": 0,
-              "cancelled_write_bytes": 0
-            }
-          }
-        ]
-      },
-      {
-        "name": "recovery leaves authoritative normal file byte-identical",
-        "observed": true,
-        "detail": null
-      },
-      {
-        "name": "native crash restore includes new note and normal Save",
-        "observed": true,
-        "detail": null
-      },
-      {
-        "name": "close/reopen retains saved recovered document",
-        "observed": true,
-        "detail": null
-      },
-      {
-        "name": "Untitled cleanup skips symlink to external empty board",
-        "observed": true,
-        "detail": null
-      },
-      {
-        "name": "clean Untitled retires own seed only",
-        "observed": true,
-        "detail": null
-      }
-    ],
-    "provenance": {
-      "binary_sha256": "92e50f202a196fe919dacc1ac2031143b12f70f3392fd3ad84fcc68c18001a66",
-      "harness_sha256": "0271acec627e81ba170192baf08d6e935891ce2036111a48fb6d4e596809b72f",
-      "drop_harness_sha256": "7f2a6b01ed3f2f28d8c7fb49cb6c5ae2196ae3136a409903134f1f05e8412f8c",
-      "display": ":92",
-      "checks": 21,
-      "input": "owned generated files; real X11 keys/pointer, zenity, xclip and XDND; no artist feel or Windows runtime claim"
-    }
-  },
-  "recovery-native-shipping6": {
-    "raw_directory": "benchmark-results/phase1f-verified-recovery-native-shipping6",
-    "checks": [
-      {
-        "name": "shared native import uses one source/asset and two objects",
-        "observed": true
-      },
-      {
-        "name": "missing shared source keeps last-known preview visible",
-        "observed": true
-      },
-      {
-        "name": "native shared relink preserves IDs/layout and advances revision",
-        "observed": true
-      },
-      {
-        "name": "native relink undo restores source revision with exact geometry",
-        "observed": true
-      },
-      {
-        "name": "native relink redo retains fresh source revision",
-        "observed": true
-      },
-      {
-        "name": "failed normal save refuses newer external bytes and exposes failure",
-        "observed": true
-      },
-      {
-        "name": "dismissed Save error keeps the real document editable",
-        "observed": true
-      },
-      {
-        "name": "failed Save retains committed dirty generation until explicit discard",
-        "observed": true
-      },
-      {
-        "name": "explicit close discard still preserves external authoritative replacement",
-        "observed": true
-      },
-      {
-        "name": "dirty close Cancel keeps the window and work",
-        "observed": true
-      },
-      {
-        "name": "corrupt recovery leaves normal save exact",
-        "observed": true
-      },
-      {
-        "name": "native corrupt recovery discard affects only owned artifacts",
-        "observed": true
-      },
-      {
-        "name": "native future open exposes an error and preserves authority",
-        "observed": true
-      },
-      {
-        "name": "failed-open event loop sleeps without recovery spin or file writes",
-        "observed": true
-      },
-      {
-        "name": "native future Dismiss closes error-only window without authoring or changing bytes",
-        "observed": true
-      },
-      {
-        "name": "native truncated open exposes an error and preserves authority",
-        "observed": true
-      },
-      {
-        "name": "native truncated Dismiss closes error-only window without authoring or changing bytes",
-        "observed": true
-      },
-      {
-        "name": "native locked open exposes an error and preserves authority",
-        "observed": true
-      },
-      {
-        "name": "native locked Dismiss closes error-only window without authoring or changing bytes",
-        "observed": true
-      }
-    ],
-    "provenance": {
-      "binary_sha256": "92e50f202a196fe919dacc1ac2031143b12f70f3392fd3ad84fcc68c18001a66",
-      "harness_sha256": "ecb4348f728b36f6b2bfca327bcbf74dc52130e59bddc93be0ae333df103f2be",
-      "checks": 19,
-      "scope": "isolated real X11 input and owned files; no Windows/power-loss claim"
-    }
-  },
   "native-annotations-final": {
     "raw_directory": "benchmark-results/phase1f-verified-native-annotations-final",
     "checks": [
@@ -1023,7 +789,7 @@
     }
   },
   "failed_open_idle": {
-    "cpu_ticks": 16,
+    "cpu_ticks": 15,
     "main_cpu_ticks": 0,
     "main_voluntary_switches": 0,
     "scope": "6s after shortcuts/drop; driver CPU remains included in total, main-thread spin asserted separately",
@@ -1224,8 +990,8 @@
       },
       {
         "name": "[vkps] Update",
-        "cpu_ticks": 15,
-        "voluntary_switches": 117
+        "cpu_ticks": 14,
+        "voluntary_switches": 119
       },
       {
         "name": "tack-app",
@@ -1278,5 +1044,240 @@
       }
     ],
     "unparsed_left_intact": []
-  }
+  },
+  "production-final": {
+    "raw_directory": "benchmark-results/phase1f-platform-production",
+    "checks": [
+      {
+        "name": "native new board is empty",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "native picker embedded import, save",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "real XDND multi-file drop",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "native clipboard PNG paste",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "native linked default preference",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "native clipboard file URI paste",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "native clipboard UTF8 text into note",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "oversized clipboard preserves saved authority",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "pending multi-import preserves note draft and resumes after commit",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "native keymap search and second keyboard binding",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "native reset action restores defaults",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "readable native keymap export",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "native resize/unmap/restore preserves authority",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "native SaveAs retains document ID and geometry",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "same-file second native editor refused",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "distinct native boards idle independently",
+        "observed": true,
+        "detail": [
+          {
+            "rss_bytes": 352833536,
+            "threads": 41,
+            "cpu_ticks_5s": 2,
+            "io_delta": {
+              "rchar": 0,
+              "wchar": 0,
+              "syscr": 0,
+              "syscw": 0,
+              "read_bytes": 0,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          },
+          {
+            "rss_bytes": 351703040,
+            "threads": 41,
+            "cpu_ticks_5s": 2,
+            "io_delta": {
+              "rchar": 0,
+              "wchar": 0,
+              "syscr": 0,
+              "syscw": 0,
+              "read_bytes": 0,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          }
+        ]
+      },
+      {
+        "name": "recovery leaves authoritative normal file byte-identical",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "native crash restore includes new note and normal Save",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "close/reopen retains saved recovered document",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "Untitled cleanup skips symlink to external empty board",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "clean Untitled retires own seed only",
+        "observed": true,
+        "detail": null
+      }
+    ],
+    "provenance": {
+      "binary_sha256": "0c84424ad55e4ccd3ff1fdb79747044794a8a4c1d0d0464f54ce715d35b5fcc5",
+      "harness_sha256": "0271acec627e81ba170192baf08d6e935891ce2036111a48fb6d4e596809b72f",
+      "drop_harness_sha256": "7f2a6b01ed3f2f28d8c7fb49cb6c5ae2196ae3136a409903134f1f05e8412f8c",
+      "display": ":92",
+      "checks": 21,
+      "input": "owned generated files; real X11 keys/pointer, zenity, xclip and XDND; no artist feel or Windows runtime claim"
+    }
+  },
+  "recovery-final": {
+    "raw_directory": "benchmark-results/phase1f-platform-recovery",
+    "checks": [
+      {
+        "name": "shared native import uses one source/asset and two objects",
+        "observed": true
+      },
+      {
+        "name": "missing shared source keeps last-known preview visible",
+        "observed": true
+      },
+      {
+        "name": "native shared relink preserves IDs/layout and advances revision",
+        "observed": true
+      },
+      {
+        "name": "native relink undo restores source revision with exact geometry",
+        "observed": true
+      },
+      {
+        "name": "native relink redo retains fresh source revision",
+        "observed": true
+      },
+      {
+        "name": "failed normal save refuses newer external bytes and exposes failure",
+        "observed": true
+      },
+      {
+        "name": "dismissed Save error keeps the real document editable",
+        "observed": true
+      },
+      {
+        "name": "failed Save retains committed dirty generation until explicit discard",
+        "observed": true
+      },
+      {
+        "name": "explicit close discard still preserves external authoritative replacement",
+        "observed": true
+      },
+      {
+        "name": "dirty close Cancel keeps the window and work",
+        "observed": true
+      },
+      {
+        "name": "corrupt recovery leaves normal save exact",
+        "observed": true
+      },
+      {
+        "name": "native corrupt recovery discard affects only owned artifacts",
+        "observed": true
+      },
+      {
+        "name": "native future open exposes an error and preserves authority",
+        "observed": true
+      },
+      {
+        "name": "failed-open event loop sleeps without recovery spin or file writes",
+        "observed": true
+      },
+      {
+        "name": "native future Dismiss closes error-only window without authoring or changing bytes",
+        "observed": true
+      },
+      {
+        "name": "native truncated open exposes an error and preserves authority",
+        "observed": true
+      },
+      {
+        "name": "native truncated Dismiss closes error-only window without authoring or changing bytes",
+        "observed": true
+      },
+      {
+        "name": "native locked open exposes an error and preserves authority",
+        "observed": true
+      },
+      {
+        "name": "native locked Dismiss closes error-only window without authoring or changing bytes",
+        "observed": true
+      }
+    ],
+    "provenance": {
+      "binary_sha256": "0c84424ad55e4ccd3ff1fdb79747044794a8a4c1d0d0464f54ce715d35b5fcc5",
+      "harness_sha256": "ecb4348f728b36f6b2bfca327bcbf74dc52130e59bddc93be0ae333df103f2be",
+      "checks": 19,
+      "scope": "isolated real X11 input and owned files; no Windows/power-loss claim"
+    }
+  },
+  "scope": "Final production/recovery reruns use platform-corrected binary; annotation/spatial/image/zoom regressions retain the earlier frozen binary. The only subsequent runtime source difference is the Linux-only import guard; renderer/input/core/storage/assets are unchanged."
 }

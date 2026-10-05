@@ -1,0 +1,50 @@
+{
+  "sha": "273e0dd81c48f9a1a8ec529fc7c44fbfc959c3a5",
+  "runs": [
+    {
+      "id": 37259554934,
+      "name": "Quality",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/gurppt/tack/actions/runs/37259554934",
+      "jobs": [
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "current_step": null,
+          "steps": []
+        },
+        {
+          "name": "rust (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "current_step": null,
+          "steps": []
+        },
+        {
+          "name": "rust (ubuntu-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "current_step": null,
+          "steps": []
+        }
+      ]
+    }
+  ],
+  "scope": "Configured Linux/Windows Rust gates and Linux dependencies/software Vulkan GPU gates; no Windows native manual claim. Following commits only finalize Markdown/JSON evidence and skip redundant CI.",
+  "previous_attempts": [
+    {
+      "commit": "d390084ec2b66186dfb1bb3c35302773f041465b",
+      "run_id": 37258465066,
+      "conclusion": "failure",
+      "finding": "Windows Clippy unused std::fs::File import; Linux job cancelled by matrix fail-fast; fixed with Linux cfg guard."
+    },
+    {
+      "commit": "f6df3eb573da578156c90a5154cf842c7ee4586c",
+      "run_id": 37258933129,
+      "conclusion": "failure",
+      "finding": "Windows foreign-relink fixture used incorrectly encoded Windows bytes; Linux/dependencies passed; corrected test-only fixture uses other platform and encoding."
+    }
+  ]
+}

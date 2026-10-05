@@ -7,8 +7,8 @@ backlog, settings audit and current interaction/spatial/annotation/format
 contracts were read. The user's amendment removes ellipses completely and
 updates the ignored product brief; no contrary compatibility requirement remains.
 
-This report is being finalized. Final measurements and configured CI receipts
-must be present before the final gate can pass.
+Final implementation, measurements, independent verification and configured
+Linux/Windows CI are complete. This phase stops for human review.
 
 ## Delivered local workflows
 
@@ -134,15 +134,28 @@ created persistent logs; user-directed shell capture is not rotated by Tack.
 
 ## Measured evidence
 
-Final shipping binary SHA-256:
+Regression/quantitative freeze before the Windows import lint correction:
+SHA-256:
 `92e50f202a196fe919dacc1ac2031143b12f70f3392fd3ad84fcc68c18001a66`.
-Canonical source ZIP SHA-256:
+Its source ZIP SHA-256 is
 `44e89897d6fd5d875dc96e2c84540683953f36ac423969f681f1de912ba945c7`.
-It includes runtime, manifests, lockfile, all bitmap assets and reproducible
-harnesses; runtime files compare byte-for-byte to the measured implementation in
-[verification](../benchmarks/phase1f-verification.json). Each suite retains its own
-binary/harness/board/report provenance. Earlier incomplete binaries and failed
-harness attempts remain local and are not substituted for accepted evidence.
+Final compiled local binary SHA-256 is
+`0c84424ad55e4ccd3ff1fdb79747044794a8a4c1d0d0464f54ce715d35b5fcc5`;
+final canonical source ZIP SHA-256 is
+`c6216c21d97d1cf6d39ac55544fc43e174a61dd49440ff56184949de7e707410`.
+
+Windows CI prompted two narrow post-freeze corrections: a Linux-only import
+was guarded to avoid Windows Clippy's unused-import error, and an integration
+test's foreign path fixture now uses the other platform with correct encoding.
+The latter changes no product code. Canonical snapshots differ only in those two
+files; renderer/input/core/storage/assets/manifests are byte-identical. All local
+production/recovery/startup/idle/import/autosave/multi evidence below was rerun
+on the final compiled binary; unaffected image/spatial/annotation/navigation
+regressions retain their actual earlier SHA rather than a false rerun claim.
+Final workspace quality and the affected seven integration tests were rerun.
+[Verification](../benchmarks/phase1f-verification.json) records both scopes,
+source/file hashes and actual log/receipt hashes. Earlier failed harness attempts
+remain local and are not substituted for accepted evidence.
 
 Linux 7.1.5, Rust 1.95.0, RTX 2060 6 GiB/NVIDIA 580.173.02, Vulkan; owned
 **Xvfb :92 with noncomposited xfwm4**, 1280×720 clients. Measurements are serialized,
@@ -155,9 +168,9 @@ These measurements do not establish low-end-machine readiness or monitor latency
 
 | Generated board | Native startup ms | Metadata ms | First frame ms | 80% image-useful ms | GPU setup ms | Settled RSS MiB |
 |---|---:|---:|---:|---:|---:|---:|
-| Empty/new | 523.2 | 5.06 | 539.2 | N/A | 498.4 | 335.21 |
-| Small, 8 embedded refs | 459.2 | 0.27 | 475.1 | 513.0 | 433.8 | 335.77 |
-| Prepared, 1k linked refs | 463.3 | 3.13 | 479.7 | 517.5 | 437.3 | 337.97 |
+| Empty/new | 495.3 | 6.03 | 510.9 | N/A | 474.8 | 335.36 |
+| Small, 8 embedded refs | 444.5 | 0.29 | 460.4 | 498.0 | 423.6 | 335.77 |
+| Prepared, 1k linked refs | 439.3 | 3.15 | 455.9 | 493.8 | 414.4 | 337.90 |
 
 The first useful clock is CPU submission of image coverage before present, not
 monitor presentation or annotation readiness. Empty boards have no image clock.
@@ -166,25 +179,24 @@ is separately charged in the product regression rather than hidden as startup:
 1k synthetic source preparation took 35.72 seconds and read 7.11 GB of originals.
 
 Each ordinary idle row observes five settled seconds without application benchmark
-timers. Total process CPU: **0.4%, 0.2%, 0.2% of one core** respectively; all have
+timers. Total process CPU: **0.4%, 0.4%, 0.4% of one core** respectively; all have
 41 threads, unchanged RSS, zero redraws/submissions, zero title-property updates
 and zero /proc file I/O. Per-thread switches remain in
 [local measurements](../benchmarks/phase1f-local.json): the sleeping event loop
 and no local polling thread do not imply NVIDIA driver threads never wake.
 The prior frozen 1E binary is remeasured against the same owned fixtures/display;
 matched comparison is recorded in [baseline](../benchmarks/phase1f-baseline.json).
-The observed matched 1E RSS is 334.11/335.27/337.30 MiB, giving 1F deltas
-+1.11/+0.50/+0.68 MiB. Thread counts remain 41; both versions have zero idle
-redraws/submissions/I/O. Native startup deltas are +69.1/+20.3/+18.4 ms in these
-single observations. Empty 1F includes New/ownership/seed creation; its 1E
-counterpart opens that empty file because old 1E has no native New workflow.
-The two prepared comparisons use ordinary Open on the same files. Single samples
-and GPU setup variability are not a statistically significant speed/regression
-claim; 1E lacks separate GPU-setup/first-frame instrumentation.
+The observed matched 1E RSS is 334.28/335.54/337.44 MiB, giving 1F deltas
++1.08/+0.22/+0.46 MiB. Threads remain 41; both versions have zero idle
+redraws/submissions/I/O. Observed native startup deltas: +54.8/-13.9/+12.6 ms.
+Empty 1F includes New/ownership/seed creation; old 1E opens that empty file.
+The prepared comparisons open the exact same final files. Single samples and
+GPU setup variability are not a significant speed/regression claim; 1E lacks
+separate GPU-setup/first-frame instrumentation.
 
 The extra failed-open-after-drop check has zero main-thread CPU/context switches
-and zero I/O over six seconds. Total CPU is **16 ticks (~2.67% of one core)**,
-15 in NVIDIA `[vkps] Update` plus one driver tick. This is a remaining native-driver
+and zero I/O over six seconds. Total CPU is **15 ticks (~2.50% of one core)**,
+14 in NVIDIA `[vkps] Update` plus one driver tick. This is a remaining native-driver
 cost in that tested error/drop sequence; the application's expired recovery
 spin is eliminated. A separate error-only diagnostic without input measured one
 total tick. Initial harness failures conflated total driver work with event-loop
@@ -194,10 +206,10 @@ spin; the accepted receipt preserves both and checks the latter directly.
 
 | Native drop | Admitted/requested | Encoded input | Admission ms | Peak RSS MiB | Preview overviews generated |
 |---|---:|---:|---:|---:|---:|
-| One small PNG | 1/1 | 233 B | 126.1 | 336.00 | 1 |
-| Many small PNGs | 64/64 | 26329 B | 2412.5 | 337.61 | 12 |
-| Three 4000×2500 PNGs | 3/3 | 27375679 B | 233.0 | 345.77 | 3 |
-| Cancel 120 repeated large paths | 4/120 | 1095027160 B requested | 264.8 | 345.85 | 3 |
+| One small PNG | 1/1 | 233 B | 125.5 | 335.87 | 1 |
+| Many small PNGs | 64/64 | 26329 B | 2427.6 | 337.42 | 12 |
+| Three 4000×2500 PNGs | 3/3 | 27375679 B | 234.2 | 345.73 | 3 |
+| Cancel 120 repeated large paths | 4/120 | 1095027160 B requested | 273.8 | 345.82 | 3 |
 
 Admission clocks include drop coalescing/input, not full preview preparation or
 normal Save. Only visible previews are scheduled; 12 overviews after 64 imports
@@ -209,8 +221,8 @@ large embedded final containers are about 27.4 MB.
 
 | Recovery board | Debounce to manifest ms | Storage worker ms | Recovery directory B | /proc physical write B | Pan callback p99/max ms |
 |---|---:|---:|---:|---:|---:|
-| Small/8 refs | 4965.4 | 14.42 | 12318 | 20480 | 43.31 / 44.56 |
-| Prepared/1k | 5069.0 | 156.78 | 47213092 | 47222784 | 41.38 / 46.62 |
+| Small/8 refs | 4967.9 | 16.58 | 12318 | 20480 | 39.10 / 46.13 |
+| Prepared/1k | 5119.1 | 168.77 | 47213092 | 47222784 | 41.11 / 42.32 |
 
 Normal board hashes stayed exact and both editors remained dirty. Recovery is
 one completed generation, not a normal-save clean acknowledgement. Native pan
@@ -221,7 +233,7 @@ snapshot includes persisted derived previews; it is not an incremental journal.
 
 ### Regression costs and native cases
 
-On the final binary: seven image manipulation/cancel traces, eight spatial
+On the regression freeze binary `92e50…`: seven image manipulation/cancel traces, eight spatial
 snap/grid/frame traces, nine shape/text/scribble/mixed traces, ten product
 persistence/preparation/repair/reopen runs and four navigation/pressure/tour
 traces pass. Traces use six seconds here; annotation steady CPU begins after
@@ -254,17 +266,17 @@ regressions do not establish 50k or the final maximum-performance target.
 
 ### Multiple instances and binary weight
 
-The production flow's two simultaneous boards use 336.73/335.14 MiB RSS,
-41 threads each, 0.6%/0.4% of one CPU core and zero I/O over five seconds.
-A dedicated repeated two-board audit measures 336.04/335.42 MiB, 41 threads,
-0.2% CPU each and zero I/O. NVIDIA reports **24 MiB graphics-process allocation
+The production flow's simultaneous boards use 336.49/335.41 MiB RSS,
+41 threads each, 0.4% CPU per core and zero I/O over five seconds.
+A dedicated repeated two-board audit measures 336.16/335.43 MiB, 41 threads,
+0.4% CPU each and zero I/O. NVIDIA reports **24 MiB graphics-process allocation
 per instance** in that snapshot, including driver allocations; application image
 payloads are 222208 B for the mixed board's current view and zero for the empty
 one. Offscreen annotations allocate zero annotation buffers. This is per-process
 memory attribution, not a per-process GPU-time or whole-machine capacity claim.
 
-Final ELF sizes: full/debug **113568696 B**, strip-debug **20814072 B**,
-fully stripped **17588432 B**. Against measured 1E, strip-debug grows **222960 B
+Final ELF sizes: full/debug **113568768 B**, strip-debug **20814152 B**,
+fully stripped **17588432 B**. Against measured 1E, strip-debug grows **223040 B
 (+1.08%)**, fully stripped grows **127744 B (+0.73%)**. The selected font removes
 an atlas but new workflows/ownership/recovery code still have a measured binary
 cost. No Rust package/version or GUI framework is added; unused panel/font
@@ -283,8 +295,10 @@ preferences/keymap, UI/fonts, budgets, dependencies and resource evidence.
 Findings led to fixes for seed symlink reclamation, CLI ownership/release,
 SaveAs revision high-water and loaded-original history, deferred relink while
 editing, note confirmation preserving validation failures, DPI draft preservation,
-and the unsaveable failed-open/error-dismiss mode. A final review of the latter
-found no remaining concrete issue. A corrected numerical count is 21 production
+and the unsaveable failed-open/error-dismiss mode. The final independent review reconciled both snapshots, new local measurements,
+regression scopes, licenses and the Windows corrections. No remaining concrete
+runtime or evidence issue was identified; two stale scope/pending phrases were
+corrected without another runtime change. A corrected numerical count is 21 production
 checks in the initial full native production harness, rather than a larger claim.
 
 Native X11 workflows and regression suites use an owned isolated display and
@@ -312,8 +326,17 @@ seven product tests (five hardware/offscreen checks, two ordinary tests), plus
 one GPU smoke test. Streaming persistence/recovery/ownership/clipboard/keymap
 and bounded input tests pass. `git diff --check` passes.
 
-Configured Linux/Windows Rust and Linux dependency/software-GPU CI is pending
-the implementation push. No Windows CI pass is claimed before its receipt.
+Configured CI passes on code commit
+`273e0dd81c48f9a1a8ec529fc7c44fbfc959c3a5`: Linux and Windows Rust gates,
+Linux dependency audit and software-Vulkan GPU tests.
+[Successful Quality run](https://github.com/gurppt/tack/actions/runs/37259554934)
+and [CI receipt](../benchmarks/phase1f-ci.json) record the exact commit/jobs.
+Earlier Windows failures (unused Linux-only import, then malformed foreign
+fixture) and their fixes remain recorded; none is described as a pass.
+The last fixture-only correction passed local formatting/all-targets Clippy and
+all seven affected integration tests; final CI reran the full workspace suite.
+Final report/receipt commits change Markdown/JSON only and skip redundant CI.
+Windows native manual interaction/DPI remains untested.
 
 ## Retained limits and stop
 
@@ -331,4 +354,4 @@ No server/auth/collaboration, media playback, presentation, `.pur` import,
 cloud/account/DAM/updater/AI/plugin or rich-text branch was started.
 Stop after 1F; human review must precede the next major branch.
 
-B — REPEAT
+A — PASS
