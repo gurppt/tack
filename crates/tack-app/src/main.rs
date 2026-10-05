@@ -50,7 +50,7 @@ impl Options {
             }
             if arg == "--help" {
                 println!(
-                    "Product: tack-app create OUTPUT.tack --linked|--embedded IMAGE... | open FILE.tack | inspect FILE.tack | repair INPUT.tack OUTPUT.tack | query-scale [REPORT.json]\nBenchmark-only: tack-app [--manifest PATH] [--cache PATH] [--scenario NAME] [--seconds 12] [--output PATH] [--headless] [--workers 1|2|4] [--prefetch none|symmetric|directional] [--prepare-overview (benchmark only)]\nScenarios: {}\nNavigation: middle drag or Alt + left drag; wheel zoom. Close window to exit.",
+                    "Product: tack-app (new empty board) | new [UNUSED_PATH.tack] | FILE.tack | create OUTPUT.tack --linked|--embedded IMAGE... | open FILE.tack | inspect FILE.tack | repair INPUT.tack OUTPUT.tack | query-scale [REPORT.json]\nBenchmark-only: tack-app [--manifest PATH] [--cache PATH] [--scenario NAME] [--seconds 12] [--output PATH] [--headless] [--workers 1|2|4] [--prefetch none|symmetric|directional] [--prepare-overview (benchmark only)]\nScenarios: {}\nF10 menu; Ctrl+N new; Ctrl+O open; Ctrl+I import; Ctrl+V paste; Ctrl+S save; Ctrl+Shift+S Save As; Ctrl+Shift+R relink; Ctrl+comma preferences. Navigation: middle drag or Alt + left drag; wheel zoom.",
                     navigation::SCENARIOS.join(", ")
                 );
                 std::process::exit(0);
@@ -101,7 +101,7 @@ fn main() -> Result<(), AssetError> {
             "{}\n{}\n{}",
             include_str!("../../../assets/pixel-font/COPYRIGHT.txt"),
             include_str!("../../../assets/pixel-font/OFL-1.1.txt"),
-            include_str!("../../../assets/note-font/COPYRIGHT.txt")
+            include_str!("../../../assets/ui-font/LICENSE")
         );
         return Ok(());
     }
@@ -114,10 +114,22 @@ fn main() -> Result<(), AssetError> {
         .init();
     let started = Instant::now();
     let mut product_args = std::env::args_os().skip(1);
+    if product_args.len() == 0 {
+        return product_window::run_new(Vec::new(), started);
+    }
+    let first = std::env::args_os().nth(1);
+    if first.as_ref().is_some_and(|a| {
+        std::path::Path::new(a)
+            .extension()
+            .is_some_and(|e| e == "tack")
+    }) {
+        return product_window::run(std::env::args_os().skip(1).collect(), started);
+    }
     if let Some(command) = product_args.next()
         && let Some(command) = command.to_str()
         && [
             "create",
+            "new",
             "repair",
             "inspect",
             "open",

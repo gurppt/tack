@@ -78,7 +78,7 @@ def main():
             key('F2');command('xdotool','type','--clearmodifiers','Cancelled');key('Escape');record('native edit Escape preserves note',save()==text)
             key('F2');key('ctrl+a');command('xdotool','type','--clearmodifiers','Edited note');key('ctrl+Return');edited=save();record('native note edit persists',next(o for o in edited['objects'] if o['kind']==3)['text']=='Edited note')
             key('ctrl+z');record('note undo exact',save()==text);key('ctrl+y');record('note redo exact',save()==edited)
-            for k,kind,start,end in [('r',4,(80,235),(275,310)),('o',5,(80,340),(275,415)),('l',6,(80,450),(275,470)),('a',7,(80,505),(275,530))]:
+            for k,kind,start,end in [('r',4,(80,235),(275,310)),('l',6,(80,450),(275,470)),('a',7,(80,505),(275,530))]:
                 key(k);drag(start,end);record(f'native create kind {kind}',any(o['kind']==kind for o in save()['objects']))
             key('p');before=save();drag((80,580),(280,635),cancel=True);record('scribble Escape discards preview',save()==before)
             pointer(80,580);command('xdotool','mousedown','1')
@@ -88,7 +88,7 @@ def main():
             drag((120,260),(150,280));moved=save();record('annotation move changes transform',next(o for o in moved['objects'] if o['kind']==4)['center']!=rect['center']);key('ctrl+z');record('annotation move undo exact',save()==styled)
             drag((275,310),(305,335));resized=save();record('native annotation resize',next(o for o in resized['objects'] if o['kind']==4)['size']!=rect['size']);key('ctrl+z');record('resize undo exact',save()==styled)
             import os
-            dpi=float(os.environ.get('WINIT_X11_SCALE_FACTOR','1'))
+            dpi=max(1, int(float(os.environ.get('WINIT_X11_SCALE_FACTOR','1')) + .5))
             drag((177.5,235-26*dpi),(235,220));rotated=save();record('native annotation rotate',abs(next(o for o in rotated['objects'] if o['kind']==4)['rotation'])>0.01);key('ctrl+z');record('rotate undo exact',save()==styled)
             pointer(640,360);command('xdotool','click','1');key('ctrl+shift+f');framed=save();record('frame coexists with annotations',any(o['kind']=='frame' for o in framed['objects']))
             key('ctrl+a');key('ctrl+g');record('mixed grouping deferred with explicit error','image' in title().lower() and 'group' in title().lower());key('Escape')
@@ -111,7 +111,7 @@ def main():
             time.sleep(.6);command('xdotool','windowactivate','--sync',window);command('xdotool','windowraise',window);time.sleep(.2)
             key('v');pointer(640,360);command('xdotool','click','5');command('xdotool','click','5');low=capture('low-zoom');command('xdotool','click','4');command('xdotool','click','4');command('xdotool','click','4');high=capture('high-zoom');record('annotations remain visible across native zoom',low.tobytes()!=high.tobytes());command('xdotool','click','5')
             pointer(170,110);command('xdotool','click','1');key('ctrl+shift+period');key('ctrl+shift+e');capture('final')
-            final=save();record('schema3 retains all six kinds with frame/images',final['schema']==3 and all(any(o['kind']==k for o in final['objects']) for k in range(3,9)))
+            final=save();record('schema3 retains all five kinds with frame/images',final['schema']==3 and all(any(o['kind']==k for o in final['objects']) for k in (3,4,6,7,8)))
             pointer(20,700);command('xdotool','click','1');pointer(80,450);command('xdotool','click','1');key('Delete');deleted=save();record('native annotation delete',len(deleted['objects'])==len(final['objects'])-1);key('ctrl+z');record('native delete undo exact',save()==final)
             key('alt+F4');process.wait(timeout=6)
         finally:

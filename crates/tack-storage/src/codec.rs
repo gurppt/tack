@@ -302,7 +302,10 @@ pub(crate) fn decode_document(
     for index in 0..counts[2] {
         d.version()?;
         let kind = d.u16()?;
-        if kind != 1 && !(schema >= 2 && kind == 2) && !(schema == 3 && (3..=8).contains(&kind)) {
+        if kind != 1
+            && !(schema >= 2 && kind == 2)
+            && !(schema == 3 && matches!(kind, 3 | 4 | 6 | 7 | 8))
+        {
             return Err(StorageError::Unsupported("object kind"));
         }
         let id = ObjectId::new(d.id()?).map_err(invalid)?;

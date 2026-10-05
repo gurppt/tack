@@ -25,6 +25,7 @@ pub struct ImageInput {
     pub(crate) name_replace: bool,
     pub annotation: crate::annotation_tool::AnnotationInput,
     pub pending_source: Option<Action>,
+    pub pending_local: Option<Action>,
     pub(crate) state: InputState,
     cursor: [f64; 2],
     active_token: Option<HoldToken>,
@@ -45,6 +46,7 @@ impl ImageInput {
             name_replace: true,
             annotation: Default::default(),
             pending_source: None,
+            pending_local: None,
             state: InputState::default(),
             cursor: [0.; 2],
             active_token: None,
@@ -53,6 +55,17 @@ impl ImageInput {
             click: None,
             last_click: None,
         })
+    }
+    /// Save/close explicitly commit bounded text drafts; failure retains the draft.
+    pub fn commit_drafts(&mut self, editor: &mut DocumentEditor) -> Result<(), AssetError> {
+        if let Some(edit) = &self.annotation.edit {
+            let id = edit.id;
+            edit.as_ref().clone().finish(editor)?;
+            self.annotation.edit = None;
+            self.images.selection.select(Some(id), false);
+        }
+        self.finish_name_edit(editor, true)?;
+        Ok(())
     }
     pub fn cancel(&mut self) {
         self.annotation.creation = None;
@@ -312,6 +325,10 @@ impl ImageInput {
             return Ok(false);
         }
         if phase == ActionPhase::Invoke {
+            if action.is_local() {
+                self.pending_local = Some(action);
+                return Ok(false);
+            }
             if action == Action::Save {
                 return Ok(true);
             }
@@ -437,6 +454,12 @@ impl ImageInput {
         editor: &mut DocumentEditor,
         camera: &mut Camera,
     ) -> Result<bool, AssetError> {
+        let save_pressed = matches!(event, WindowEvent::KeyboardInput {event, ..} if event.state == winit::event::ElementState::Pressed
+            && self.keymap.matching(crate::input::PhysicalControl::Key(event.physical_key), self.state.modifiers(), crate::bindings::Trigger::Press).any(|b| b.action == Action::Save));
+        if save_pressed && (self.annotation.edit.is_some() || self.name_edit.is_some()) {
+            self.commit_drafts(editor)?;
+            return Ok(true);
+        }
         if self.annotation.edit.is_some() {
             self.note_event(event, editor, camera)?;
             return Ok(false);
@@ -457,11 +480,13 @@ impl ImageInput {
             }
             match event {
                 WindowEvent::Focused(false) => {
-                    self.name_edit = None;
+                    let draft = self.name_edit.take();
                     self.physical(PhysicalEvent::FocusLost, editor, camera)?;
+                    self.name_edit = draft;
                 }
                 WindowEvent::ScaleFactorChanged { scale_factor, .. } => {
                     self.gizmo.set_scale(*scale_factor);
+                    camera.set_ui_scale(*scale_factor);
                     self.snap.clear();
                 }
                 WindowEvent::KeyboardInput { event, .. }
@@ -509,6 +534,7 @@ impl ImageInput {
             WindowEvent::ScaleFactorChanged { scale_factor, .. } => {
                 self.cancel();
                 self.gizmo.set_scale(*scale_factor);
+                camera.set_ui_scale(*scale_factor);
             }
             _ => {}
         }

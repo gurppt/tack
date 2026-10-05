@@ -15,16 +15,18 @@ pub struct OverlayQuad {
 struct Vertex {
     position: [f32; 2],
     color: [f32; 4],
-    uv: [f32; 2],
     bits0: [u32; 4],
     bits1: [u32; 4],
     bitmap: u32,
+    origin: [f32; 2],
+    axes: [f32; 4],
 }
 pub(crate) struct Overlay {
     pipeline: wgpu::RenderPipeline,
     buffer: wgpu::Buffer,
     vertices: Vec<Vertex>,
     capacity: usize,
+    grid: crate::pixel_grid::PixelGrid,
 }
 impl Overlay {
     pub fn new(device: &wgpu::Device, format: wgpu::TextureFormat) -> Self {
@@ -32,9 +34,15 @@ impl Overlay {
             label: Some("selection overlay"),
             source: wgpu::ShaderSource::Wgsl(include_str!("overlay.wgsl").into()),
         });
+        let grid = crate::pixel_grid::PixelGrid::new(device);
+        let layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: Some("pixel overlay"),
+            bind_group_layouts: &[&grid.layout],
+            push_constant_ranges: &[],
+        });
         let pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("selection overlay"),
-            layout: None,
+            layout: Some(&layout),
             vertex: wgpu::VertexState {
                 module: &shader,
                 entry_point: Some("vertex"),
@@ -42,7 +50,7 @@ impl Overlay {
                 buffers: &[wgpu::VertexBufferLayout {
                     array_stride: std::mem::size_of::<Vertex>() as u64,
                     step_mode: wgpu::VertexStepMode::Vertex,
-                    attributes: &wgpu::vertex_attr_array![0=>Float32x2,1=>Float32x4,2=>Float32x2,3=>Uint32x4,4=>Uint32x4,5=>Uint32],
+                    attributes: &wgpu::vertex_attr_array![0=>Float32x2,1=>Float32x4,2=>Uint32x4,3=>Uint32x4,4=>Uint32,5=>Float32x2,6=>Float32x4],
                 }],
             },
             fragment: Some(wgpu::FragmentState {
@@ -71,6 +79,7 @@ impl Overlay {
             buffer,
             vertices: Vec::with_capacity(INITIAL_QUADS * 6),
             capacity: INITIAL_QUADS,
+            grid,
         }
     }
     pub fn prepare(
@@ -92,18 +101,45 @@ impl Overlay {
                 mapped_at_creation: false,
             });
         }
+        self.grid.prepare(queue, camera);
         self.vertices.clear();
         for q in quads {
+            let scale = camera.ui_scale();
+            let points = q
+                .points
+                .map(|p| camera.world_to_screen(p).map(|v| v / scale));
+            let origin = points[0].map(|v| v as f32);
+            let axes = [
+                (points[2][0] - points[0][0]) as f32,
+                (points[2][1] - points[0][1]) as f32,
+                (points[1][0] - points[0][0]) as f32,
+                (points[1][1] - points[0][1]) as f32,
+            ];
+            let lo: [f64; 2] = std::array::from_fn(|i| {
+                points
+                    .iter()
+                    .map(|p| p[i])
+                    .fold(f64::INFINITY, f64::min)
+                    .floor()
+            });
+            let hi: [f64; 2] = std::array::from_fn(|i| {
+                points
+                    .iter()
+                    .map(|p| p[i])
+                    .fold(f64::NEG_INFINITY, f64::max)
+                    .ceil()
+            });
+            let envelope = [lo, [lo[0], hi[1]], [hi[0], lo[1]], hi];
             for i in [0, 1, 2, 2, 1, 3] {
                 self.vertices.push(Vertex {
-                    position: camera.world_to_clip(
-                        camera.screen_to_world(camera.world_to_screen(q.points[i]).map(f64::round)),
-                    ),
+                    position: camera
+                        .world_to_clip(camera.screen_to_world(envelope[i].map(|v| v * scale))),
                     color: q.color,
-                    uv: [[0., 0.], [0., 1.], [1., 0.], [1., 1.]][i],
                     bits0: q.bitmap.map_or([0; 4], |b| [b[0], b[1], b[2], b[3]]),
                     bits1: q.bitmap.map_or([0; 4], |b| [b[4], b[5], b[6], b[7]]),
                     bitmap: u32::from(q.bitmap.is_some()),
+                    origin,
+                    axes,
                 });
             }
         }
@@ -115,6 +151,7 @@ impl Overlay {
     pub fn draw(&self, pass: &mut wgpu::RenderPass<'_>) {
         if !self.vertices.is_empty() {
             pass.set_pipeline(&self.pipeline);
+            pass.set_bind_group(0, &self.grid.bind_group, &[]);
             pass.set_vertex_buffer(0, self.buffer.slice(..));
             pass.draw(0..self.vertices.len() as u32, 0..1);
         }

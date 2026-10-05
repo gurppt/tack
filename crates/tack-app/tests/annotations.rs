@@ -27,13 +27,7 @@ fn creation_capture_cancel_pan_priority_and_one_exact_inverse() -> Result {
     let mut e = editor()?;
     let mut input = ImageInput::new()?;
     let mut camera = Camera::new([1280, 720]);
-    for tool in [
-        Tool::Rectangle,
-        Tool::Ellipse,
-        Tool::Line,
-        Tool::Arrow,
-        Tool::Scribble,
-    ] {
+    for tool in [Tool::Rectangle, Tool::Line, Tool::Arrow, Tool::Scribble] {
         input.dispatch(
             event(Action::SelectTool(tool), ActionPhase::Invoke),
             &mut e,
@@ -488,17 +482,5 @@ fn relative_source_uses_same_lexical_board_parent_as_display_pipeline() -> Resul
     let request = SourceRequest::new(&d, ObjectId::new(1)?, &board, SourceOperation::Open)?;
     assert_eq!(request.resolve()?, links.join("image.png").canonicalize()?);
     fs::remove_dir_all(root)?;
-    Ok(())
-}
-
-#[test]
-fn thick_high_aspect_ellipse_hits_closest_contour_not_radial_approximation() -> Result {
-    let style = AnnotationStyle::new(Color([255; 4]), None, 30., Opacity::OPAQUE)?;
-    let a = Annotation::new(AnnotationKind::Ellipse, style);
-    let t = Transform::new([0.; 2], [200., 20.], 0., [false; 2])?;
-    assert!(geometry::hit(&a, t, [20., 0.], 0.));
-    assert!((geometry::ellipse_distance([20., 0.], [100., 10.]) - 9.795897).abs() < 1e-5);
-    assert!(geometry::hit(&a, t, [0., 0.], 0.));
-    assert!(!geometry::hit(&a, t, [0., 26.], 0.));
     Ok(())
 }

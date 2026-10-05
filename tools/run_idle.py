@@ -92,6 +92,7 @@ def main():
                 if args.edit_note and 'Ctrl+Enter confirm' not in observed_title:
                     raise AssertionError('note editor did not become active')
                 begin=time.monotonic();initial=observe(process.pid);time.sleep(args.seconds);final=observe(process.pid);end=time.monotonic()
+                if args.edit_note:command('xdotool','key','Escape')
                 if args.no_wm:close_owned_window(window)
                 else:command('xdotool','key','alt+F4')
                 process.wait(timeout=5)

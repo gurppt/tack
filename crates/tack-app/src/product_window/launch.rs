@@ -1,12 +1,27 @@
 //! Startup/argument ownership, outside the native render/event path.
 use super::*;
 pub fn run(args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
-    let path = PathBuf::from(
-        args.first()
-            .ok_or("open FILE.tack [--seconds N] [--output REPORT] [--board-tour]")?,
-    );
+    run_mode(args, started, false)
+}
+pub fn run_new(args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
+    run_mode(args, started, true)
+}
+fn run_mode(args: Vec<OsString>, started: Instant, new: bool) -> Result<(), AssetError> {
+    let mut local = LocalState::new()?;
+    let untitled = new && args.is_empty();
+    let path = if untitled {
+        local.root.join("untitled-slot-0.tack")
+    } else {
+        PathBuf::from(
+            args.first()
+                .ok_or("open FILE.tack [--seconds N] [--output REPORT]")?,
+        )
+    };
+    local.untitled = untitled;
     let mut options = OpenOptions {
         path,
+        new,
+        untitled,
         seconds: None,
         output: None,
         tour: false,
@@ -61,21 +76,100 @@ pub fn run(args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
     let proxy = events.create_proxy();
     let read_proxy = proxy.clone();
     let input = options.path.clone();
-    std::thread::Builder::new()
-        .name("tack-document-read".into())
-        .spawn(move || {
-            let start = Instant::now();
-            let result = TackFile::open(input)
-                .map(|b| (b, start.elapsed().as_secs_f64() * 1000.))
-                .map_err(|e| Box::new(e) as AssetError);
-            let _ = read_proxy.send_event(Event::Loaded(Box::new(result)));
-        })?;
     let work = std::env::temp_dir().join(format!(
         "tack-product-open-{:032x}",
         tack_storage::new_document_id()?.value()
     ));
+    let read_work = work.clone();
+    let new_board = options.new;
+    let untitled = options.untitled;
+    let root = local.root.clone();
+    std::thread::Builder::new()
+        .name("tack-document-read".into())
+        .spawn(move || {
+            let start = Instant::now();
+            let result = (|| -> Result<LoadedBoard, AssetError> {
+                tack_storage::create_private_directory(&read_work, true)?;
+                if untitled {
+                    tack_storage::create_private_directory(&root, true)?;
+                }
+                if new_board && !untitled && std::fs::symlink_metadata(&input).is_ok() {
+                    return Err("new board filename already exists".into());
+                }
+                let lease = if untitled {
+                    let mut chosen = None;
+                    for slot in 1..=16 {
+                        let candidate = root.join(format!("untitled-slot-{slot}.tack"));
+                        // Reclaim only an owned, verified empty crash seed with no
+                        // recovery directory. Never infer discard from an empty base.
+                        if let Ok(metadata) = std::fs::symlink_metadata(&candidate) {
+                            // Reclamation owns this private leaf, never a symlink's
+                            // external target (ordinary Open deliberately allows aliases).
+                            if !metadata.is_file() || metadata.file_type().is_symlink() {
+                                continue;
+                            }
+                            if let Ok(owner) = tack_storage::BoardLease::acquire(&candidate)
+                                && !owner.recovery_directory().exists()
+                                && let Ok(seed) = owner.open()
+                                && seed.document.objects().next().is_none()
+                                && seed.document.sources().next().is_none()
+                                && owner.retire_empty_seed(seed.document.id()).is_ok()
+                            {
+                                chosen = Some(owner);
+                                break;
+                            }
+                            continue;
+                        }
+                        if let Ok(owner) = tack_storage::BoardLease::acquire_new(&candidate)
+                            && !owner.recovery_directory().exists()
+                        {
+                            chosen = Some(owner);
+                            break;
+                        }
+                    }
+                    Arc::new(chosen.ok_or(
+                        "16 retained Untitled boards; open Recent boards to recover/save them",
+                    )?)
+                } else {
+                    Arc::new(if new_board {
+                        tack_storage::BoardLease::acquire_new(&input)?
+                    } else {
+                        tack_storage::BoardLease::acquire(&input)?
+                    })
+                };
+                if new_board {
+                    lease.save(
+                        &tack_core::Document::new(
+                            tack_storage::new_document_id()?,
+                            tack_core::DocumentLimits::default(),
+                        ),
+                        Vec::new(),
+                    )?;
+                }
+                let board = lease.open()?;
+                let (recovery, warning) = match lease.recovery(board.document.id()) {
+                    Ok(candidate) => (candidate.is_some(), None),
+                    Err(e) => (
+                        lease.owns_recovery(board.document.id()).unwrap_or(false),
+                        Some(format!(
+                            "Recovery invalid; normal file intact. Discard explicitly: {e}"
+                        )),
+                    ),
+                };
+                Ok(LoadedBoard {
+                    board,
+                    path: lease.path().to_owned(),
+                    lease,
+                    metadata_ms: start.elapsed().as_secs_f64() * 1000.,
+                    recovery,
+                    warning,
+                })
+            })();
+            let _ = read_proxy.send_event(Event::Loaded(Box::new(result)));
+        })?;
     let mut app = App {
         options,
+        local: Box::new(local),
         proxy,
         source_active: false,
         annotations: None,
@@ -89,6 +183,7 @@ pub fn run(args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
         camera: Camera::new([1280, 720]),
         input: ImageInput::new()?,
         editor: None,
+        load_failed: false,
         save: ImageSave::default(),
         benchmark,
         draws: Vec::with_capacity(10000),
@@ -100,6 +195,8 @@ pub fn run(args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
         metadata_ms: 0.,
         native_startup_ms: 0.,
         first_content_ms: None,
+        first_frame_ms: None,
+        gpu_setup_ms: 0.,
         useful_ms: None,
         frames: Vec::new(),
         extent: [0.; 2],
@@ -113,6 +210,7 @@ pub fn run(args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
         wakeups: 0,
     };
     events.run_app(&mut app)?;
+    app.local.worker.cancel();
     if let Some(editor) = &mut app.editor {
         app.save.finish(editor);
     }
@@ -122,8 +220,15 @@ pub fn run(args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
         .error
         .take()
         .or_else(|| app.save.last_error.take().map(AssetError::from));
-    if app.editor.as_ref().is_some_and(|e| e.is_dirty()) {
-        eprintln!("Tack closed with unsaved edits; Ctrl+S saves the committed document.");
+    if app.editor.as_ref().is_some_and(|e| e.is_dirty()) && !app.local.close_after_discard {
+        eprintln!(
+            "Tack closed with unsaved edits. Only edits included in a completed recovery snapshot can be restored."
+        );
+    } else if !app.local.recovery_pending
+        && let Some((lease, id)) = app.local.seed.take()
+        && let Err(error) = lease.retire_empty_seed(id)
+    {
+        eprintln!("Untitled seed retained: {error}");
     }
     drop(app);
     let _ = std::fs::remove_dir_all(work);

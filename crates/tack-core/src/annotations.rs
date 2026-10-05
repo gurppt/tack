@@ -152,12 +152,11 @@ impl ScribbleObject {
         self.points.capacity() * std::mem::size_of::<[f64; 2]>()
     }
 }
-/// Only six implemented annotation kinds; no paths, layers, connectors or widget state.
+/// Only five implemented annotation kinds; no paths, layers, connectors or widget state.
 #[derive(Clone, Debug, PartialEq)]
 pub enum AnnotationKind {
     Text(TextObject),
     Rect,
-    Ellipse,
     Line(LineObject),
     Arrow(LineObject),
     Scribble(ScribbleObject),

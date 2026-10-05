@@ -12,7 +12,20 @@ from PIL import Image, ImageDraw
 
 
 def command(*args):
-    return subprocess.check_output(list(map(str,args)), text=True, timeout=4).strip()
+    # Opt-in isolated Xvfb protocol: no desktop WM or global close shortcut.
+    args=list(map(str,args))
+    if os.environ.get('TACK_NATIVE_NO_WM')=='1' and args[:2]==['xdotool','windowactivate']:
+        args[1]='windowfocus'
+    if os.environ.get('TACK_NATIVE_NO_WM')=='1' and args==['xdotool','key','alt+F4']:
+        from run_idle import close_owned_window
+        window=subprocess.check_output(['xdotool','getwindowfocus'],text=True,timeout=4).strip()
+        close_owned_window(window)
+        time.sleep(.2)
+        result=subprocess.run(['xdotool','getwindowname',window],text=True,capture_output=True,timeout=4)
+        if result.returncode==0 and 'unsaved' in result.stdout:
+            subprocess.run(['xdotool','key','Down','Return'],check=True,timeout=4)
+        return ''
+    return subprocess.check_output(args, text=True, timeout=4).strip()
 
 
 def main():
@@ -23,7 +36,7 @@ def main():
     args=parser.parse_args()
     root=args.output.resolve();root.mkdir(parents=True,exist_ok=False)
     binary=args.binary.resolve()
-    scale=float(os.environ.get('WINIT_X11_SCALE_FACTOR','1'))
+    scale=max(1, int(float(os.environ.get('WINIT_X11_SCALE_FACTOR','1')) + .5))
     for name,color in [('a',(210,75,40)),('b',(40,130,205))]:
         image=Image.new('RGB',(320,240),color);draw=ImageDraw.Draw(image)
         for x in range(0,320,40):draw.line((x,0,x,239),fill='black',width=2)

@@ -435,3 +435,49 @@ fn embedded_jpeg_uses_ranged_streaming_generator_after_original_deletion() {
     assert_eq!(assets.prepared[&f.asset].generator, 2);
     assert_eq!(assets.get(f.asset).unwrap().width, 128);
 }
+
+#[test]
+fn more_than_256_missing_sources_settle_and_removed_ids_do_not_republish() {
+    let f = Fixture::new(false);
+    let mut document = Document::new(new_document_id().unwrap(), DocumentLimits::default());
+    let mut ids = Vec::new();
+    for i in 1..=300 {
+        let s = SourceId::new(i).unwrap();
+        let a = AssetId::new(i).unwrap();
+        document
+            .apply(Command::AddSource(
+                Source::linked(s, format!("absent-{i}.png")).unwrap(),
+            ))
+            .unwrap();
+        document
+            .apply(Command::AddAsset(ImageAsset::new(a, s, [20, 20]).unwrap()))
+            .unwrap();
+        ids.push(a);
+    }
+    let path = f.root.join("many-missing.tack");
+    save(&path, &document, vec![]).unwrap();
+    let board = Arc::new(TackFile::open(&path).unwrap());
+    let mut supply = ProductAssets::new(board, &path, f.root.join("negative-cache")).unwrap();
+    let start = Instant::now();
+    while supply.stats().completed < 300 && start.elapsed() < Duration::from_secs(10) {
+        for id in &ids {
+            supply.request(*id);
+        }
+        supply.poll();
+        std::thread::sleep(Duration::from_millis(1));
+    }
+    assert_eq!(supply.stats().completed, 300);
+    for _ in 0..3 {
+        for id in &ids {
+            assert!(supply.failed(*id));
+            assert!(!supply.request(*id));
+        }
+        assert!(!supply.poll());
+    }
+    supply.sync_document(&Document::new(document.id(), DocumentLimits::default()));
+    assert!(supply.states.is_empty());
+    assert!(supply.prepared.is_empty());
+    for id in ids {
+        assert!(!supply.failed(id));
+    }
+}

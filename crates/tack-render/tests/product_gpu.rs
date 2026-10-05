@@ -66,6 +66,18 @@ fn pixels_scene(
     grid: Option<tack_render::GridView>,
     scene: Option<tack_render::AnnotationDraws<'_>>,
 ) -> Result<Vec<u8>, AssetError> {
+    pixels_scene_scale(gpu, d, key, overlay, grid, scene, 1.)
+}
+#[allow(clippy::too_many_arguments)]
+fn pixels_scene_scale(
+    gpu: &mut Gpu,
+    d: ImageRenderData,
+    key: ProductKey,
+    overlay: &[OverlayQuad],
+    grid: Option<tack_render::GridView>,
+    scene: Option<tack_render::AnnotationDraws<'_>>,
+    scale: f64,
+) -> Result<Vec<u8>, AssetError> {
     let target = gpu.device.create_texture(&wgpu::TextureDescriptor {
         label: Some("product readback"),
         size: wgpu::Extent3d {
@@ -82,6 +94,7 @@ fn pixels_scene(
     });
     let mut camera = Camera::new([64, 64]);
     camera.set_view([32., 32.], 1.)?;
+    camera.set_ui_scale(scale);
     gpu.begin_frame()?;
     let images = [DrawProductImage {
         data: d,
@@ -358,8 +371,8 @@ fn canvas_overlay_is_on_top_without_asset_or_document_changes() -> Result<(), As
 }
 
 #[test]
-#[ignore = "explicit native annotation shader, atlas and mixed-order pixel readback"]
-fn annotations_preserve_order_and_lazy_bounded_atlas() -> Result<(), AssetError> {
+#[ignore = "explicit native annotation shader, pixel coverage and mixed-order pixel readback"]
+fn annotations_preserve_order_and_bounded_bitmap_primitives() -> Result<(), AssetError> {
     use tack_render::{AnnotationDraws, AnnotationPrimitive, CanvasDraw};
     let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::from_env_or_default());
     let mut gpu = pollster::block_on(Gpu::new(
@@ -391,7 +404,7 @@ fn annotations_preserve_order_and_lazy_bounded_atlas() -> Result<(), AssetError>
         kind: 1,
         stroke: [0., 1., 0., 1.],
         fill: [0., 1., 0., 1.],
-        atlas_uv: [0.; 4],
+        mapping: [0.; 4],
         bitmap: [0; 8],
     };
     let on_top = pixels_scene(
@@ -425,8 +438,9 @@ fn annotations_preserve_order_and_lazy_bounded_atlas() -> Result<(), AssetError>
         }),
     )?;
     assert_eq!(pixel(&below, 32, 32), [255, 0, 0, 255]);
-    p.kind = 5;
-    p.atlas_uv = tack_render::note_glyph_uv('A').ok_or("glyph missing")?;
+    p.kind = 6;
+    p.mapping = [0., 0., 1., 1.];
+    p.bitmap = [u32::MAX; 8];
     p.fill = [0.; 4];
     let glyph = pixels_scene(
         &mut gpu,
@@ -443,7 +457,7 @@ fn annotations_preserve_order_and_lazy_bounded_atlas() -> Result<(), AssetError>
         }),
     )?;
     assert_ne!(glyph, below);
-    assert_eq!(gpu.annotation_bytes().1, 1024 * 1824);
+    assert_eq!(gpu.annotation_bytes().1, 0);
     assert!(
         pixels_scene(
             &mut gpu,
@@ -492,27 +506,6 @@ fn annotations_preserve_order_and_lazy_bounded_atlas() -> Result<(), AssetError>
         }),
     )?;
     assert_eq!(pixel(&alpha, 32, 32), pixel(&alpha, 13, 32));
-    p.kind = 2;
-    p.opacity = 1.;
-    p.width = 30.;
-    p.size = [200., 20.];
-    p.points = [[-84., 5.], [-84., 59.], [148., 5.], [148., 59.]];
-    p.fill = [0.; 4];
-    let ellipse = pixels_scene(
-        &mut gpu,
-        d,
-        key,
-        &[],
-        None,
-        Some(AnnotationDraws {
-            primitives: &[p],
-            order: &[
-                CanvasDraw::Image(0),
-                CanvasDraw::Annotations { start: 0, end: 1 },
-            ],
-        }),
-    )?;
-    assert_eq!(pixel(&ellipse, 52, 32), [0, 255, 0, 255]);
     let segment = AnnotationPrimitive {
         points: [[4., 26.], [4., 38.], [38., 26.], [38., 38.]],
         size: [22., 0.],
@@ -521,12 +514,12 @@ fn annotations_preserve_order_and_lazy_bounded_atlas() -> Result<(), AssetError>
         opacity: 0.5,
         stroke: [0., 1., 0., 0.5],
         fill: [0.; 4],
-        atlas_uv: [0.; 4],
+        mapping: [0.; 4],
         bitmap: [0; 8],
     };
     let mut joined = segment;
     joined.points = [[26., 26.], [26., 38.], [60., 26.], [60., 38.]];
-    joined.atlas_uv = [10., 32., 32., 32.];
+    joined.mapping = [10., 32., 32., 32.];
     joined.bitmap[0] = 1;
     let stroke = pixels_scene(
         &mut gpu,
@@ -543,7 +536,7 @@ fn annotations_preserve_order_and_lazy_bounded_atlas() -> Result<(), AssetError>
         }),
     )?;
     assert_eq!(pixel(&stroke, 20, 32), pixel(&stroke, 32, 32));
-    // Two sRGB framebuffer blends can quantize by one code value at the AA join.
+    // Two sRGB framebuffer blends can quantize by one code value at the stroke join.
     assert!(
         pixel(&stroke, 20, 32)
             .into_iter()
@@ -551,5 +544,110 @@ fn annotations_preserve_order_and_lazy_bounded_atlas() -> Result<(), AssetError>
             .all(|(a, b)| a.abs_diff(b) <= 1)
     );
     assert!(gpu.annotation_bytes().0 <= tack_render::MAX_ANNOTATION_PRIMITIVES * 128);
+    Ok(())
+}
+
+#[test]
+#[ignore = "explicit fractional-DPI bitmap and hard edge GPU readback"]
+fn integer_logical_pixels_preserve_all_bitmap_rows_without_aa() -> Result<(), AssetError> {
+    use tack_render::{AnnotationDraws, AnnotationPrimitive, CanvasDraw};
+    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::from_env_or_default());
+    let mut gpu = pollster::block_on(Gpu::new(
+        &instance,
+        None,
+        wgpu::TextureFormat::Rgba8UnormSrgb,
+        1024 * 1024,
+    ))?;
+    let d = data();
+    let key = ProductKey {
+        asset: d.asset_id,
+        revision: 1,
+    };
+    gpu.begin_frame()?;
+    gpu.upload_product(
+        key,
+        &Decoded {
+            width: 1,
+            height: 1,
+            rgba: vec![255, 0, 0, 255],
+        },
+    );
+    for scale in [1_f64, 1.5, 2.5] {
+        let integer: f64 = scale.round();
+        let lo = 4. * integer;
+        let hi = 20. * integer;
+        let p = AnnotationPrimitive {
+            points: [[lo, lo], [lo, hi], [hi, lo], [hi, hi]],
+            kind: 6,
+            size: [16. * integer; 2],
+            width: 1.,
+            opacity: 1.,
+            stroke: [0., 1., 0., 1.],
+            fill: [0.; 4],
+            mapping: [0., 0., 1., 1.],
+            bitmap: [0x0000ffff; 8],
+        };
+        let image = pixels_scene_scale(
+            &mut gpu,
+            d,
+            key,
+            &[],
+            None,
+            Some(AnnotationDraws {
+                primitives: &[p],
+                order: &[
+                    CanvasDraw::Image(0),
+                    CanvasDraw::Annotations { start: 0, end: 1 },
+                ],
+            }),
+            scale,
+        )?;
+        for row in 0..16 {
+            for dy in 0..integer as usize {
+                assert_eq!(
+                    pixel(
+                        &image,
+                        (lo + 2.) as usize,
+                        lo as usize + row * integer as usize + dy
+                    ),
+                    if row % 2 == 0 {
+                        [0, 255, 0, 255]
+                    } else {
+                        [255, 0, 0, 255]
+                    }
+                );
+            }
+        }
+        assert!(
+            image
+                .chunks_exact(4)
+                .all(|p| p == [0, 255, 0, 255] || p == [255, 0, 0, 255])
+        );
+        let overlay = OverlayQuad {
+            points: p.points,
+            color: p.stroke,
+            bitmap: Some(p.bitmap),
+        };
+        let image = pixels_scene_scale(&mut gpu, d, key, &[overlay], None, None, scale)?;
+        for row in 0..16 {
+            assert_eq!(
+                pixel(
+                    &image,
+                    (lo + 2.) as usize,
+                    lo as usize + row * integer as usize
+                ),
+                if row % 2 == 0 {
+                    [0, 255, 0, 255]
+                } else {
+                    [255, 0, 0, 255]
+                }
+            );
+        }
+        assert!(
+            image
+                .chunks_exact(4)
+                .all(|p| p == [0, 255, 0, 255] || p == [255, 0, 0, 255])
+        );
+    }
     Ok(())
 }

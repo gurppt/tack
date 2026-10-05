@@ -1,4 +1,4 @@
-//! Note glyph quads use smooth atlas sampling; UI labels retain the pixel path.
+//! Notes and UI share the existing bitmap font and strict pixel coverage.
 use crate::{
     annotation_scene::{AnnotationScene, primitive},
     image_geometry,
@@ -43,17 +43,8 @@ impl AnnotationScene {
             for c in text.chars() {
                 let step = advance(c, size);
                 if !c.is_whitespace() {
-                    let uv = tack_render::note_glyph_uv(c);
-                    let lo = if uv.is_some() {
-                        [x - size * 0.125, y - size * 0.25]
-                    } else {
-                        [x, y]
-                    };
-                    let extent = if uv.is_some() {
-                        [size, size * 1.5]
-                    } else {
-                        [size, size]
-                    };
+                    let lo = [x, y];
+                    let extent = [size, size];
                     let clipped_lo = [lo[0].max(0.), lo[1].max(0.)];
                     let clipped_hi = [
                         (lo[0] + extent[0]).min(box_size[0]),
@@ -74,23 +65,16 @@ impl AnnotationScene {
                                 }),
                             )
                         });
-                        let mut p = primitive(
-                            points,
-                            [size, size],
-                            if uv.is_some() { 5 } else { 6 },
-                            style,
-                        );
-                        let uv = uv.unwrap_or([0., 0., 1., 1.]).map(f64::from);
-                        p.atlas_uv = [
+                        let mut p = primitive(points, [size, size], 6, style);
+                        let uv = [0., 0., 1., 1.];
+                        p.mapping = [
                             uv[0] + (clipped_lo[0] - lo[0]) / extent[0] * uv[2],
                             uv[1] + (clipped_lo[1] - lo[1]) / extent[1] * uv[3],
                             (clipped_hi[0] - clipped_lo[0]) / extent[0] * uv[2],
                             (clipped_hi[1] - clipped_lo[1]) / extent[1] * uv[3],
                         ]
                         .map(|v| v as f32);
-                        if p.kind == 6 {
-                            p.bitmap = pixel_font::glyph(c).0;
-                        }
+                        p.bitmap = pixel_font::glyph(c).0;
                         if !self.push(p) {
                             return false;
                         }

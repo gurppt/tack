@@ -1,33 +1,18 @@
 //! Lazy, bounded instanced primitives in the existing canvas pass.
 use tack_assets::AssetError;
 use tack_core::Camera;
-use wgpu::util::DeviceExt;
 pub const MAX_ANNOTATION_PRIMITIVES: usize = 32768;
-pub const NOTE_ATLAS_SIZE: [u32; 2] = [1024, 1824];
-static NOTE_ATLAS: &[u8] = include_bytes!("../../../assets/note-font/atlas.png");
-static NOTE_SLOTS: &[u8] = include_bytes!("../../../assets/note-font/slots.bin");
-/// Deterministic subset metrics. Missing scalars use the existing app bitmap fallback.
-pub fn note_glyph_uv(character: char) -> Option<[f32; 4]> {
-    let p = (character as usize).checked_mul(2)?;
-    let bytes = NOTE_SLOTS.get(p..p + 2)?;
-    let slot = u16::from_le_bytes([bytes[0], bytes[1]]);
-    (slot != u16::MAX).then(|| {
-        let x = f32::from(slot % 32) * 32.;
-        let y = f32::from(slot / 32) * 48.;
-        [x / 1024., y / 1824., 32. / 1024., 48. / 1824.]
-    })
-}
 #[derive(Clone, Copy, Debug)]
 pub struct AnnotationPrimitive {
     pub points: [[f64; 2]; 4],
-    /// 1 rectangle, 2 ellipse, 3 capsule, 4 triangle, 5 SDF glyph, 6 bitmap fallback.
+    /// 1 rectangle, 3 square-capped segment, 4 triangle, 6 bitmap glyph, 7 solid box.
     pub kind: u32,
     pub size: [f64; 2],
     pub width: f64,
     pub opacity: f32,
     pub stroke: [f32; 4],
     pub fill: [f32; 4],
-    pub atlas_uv: [f32; 4],
+    pub mapping: [f32; 4],
     pub bitmap: [u32; 8],
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -52,7 +37,7 @@ struct Instance {
     kind: u32,
     stroke: [f32; 4],
     fill: [f32; 4],
-    atlas_uv: [f32; 4],
+    mapping: [f32; 4],
     bits0: [u32; 4],
     bits1: [u32; 4],
 }
@@ -61,40 +46,18 @@ pub(crate) struct Annotations {
     buffer: wgpu::Buffer,
     instances: Vec<Instance>,
     capacity: usize,
-    font: Option<wgpu::BindGroup>,
-    empty_font: wgpu::BindGroup,
-    layout: wgpu::BindGroupLayout,
+    grid: crate::pixel_grid::PixelGrid,
 }
 impl Annotations {
-    pub fn new(device: &wgpu::Device, queue: &wgpu::Queue, format: wgpu::TextureFormat) -> Self {
+    pub fn new(device: &wgpu::Device, _queue: &wgpu::Queue, format: wgpu::TextureFormat) -> Self {
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("annotation shapes and notes"),
             source: wgpu::ShaderSource::Wgsl(include_str!("annotations.wgsl").into()),
         });
-        let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("note atlas"),
-            entries: &[
-                wgpu::BindGroupLayoutEntry {
-                    binding: 0,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Texture {
-                        sample_type: wgpu::TextureSampleType::Float { filterable: true },
-                        view_dimension: wgpu::TextureViewDimension::D2,
-                        multisampled: false,
-                    },
-                    count: None,
-                },
-                wgpu::BindGroupLayoutEntry {
-                    binding: 1,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
-                    count: None,
-                },
-            ],
-        });
+        let grid = crate::pixel_grid::PixelGrid::new(device);
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("annotations"),
-            bind_group_layouts: &[&layout],
+            bind_group_layouts: &[&grid.layout],
             push_constant_ranges: &[],
         });
         let pipeline=device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -109,65 +72,13 @@ impl Annotations {
             usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
-        let empty_font = Self::atlas_bind_group(device, queue, &layout, [1, 1], &[0]);
         Self {
             pipeline,
             buffer,
             instances: Vec::with_capacity(capacity),
             capacity,
-            font: None,
-            empty_font,
-            layout,
+            grid,
         }
-    }
-    fn atlas_bind_group(
-        device: &wgpu::Device,
-        queue: &wgpu::Queue,
-        layout: &wgpu::BindGroupLayout,
-        size: [u32; 2],
-        bytes: &[u8],
-    ) -> wgpu::BindGroup {
-        let texture = device.create_texture_with_data(
-            queue,
-            &wgpu::TextureDescriptor {
-                label: Some("lazy note distance atlas"),
-                size: wgpu::Extent3d {
-                    width: size[0],
-                    height: size[1],
-                    depth_or_array_layers: 1,
-                },
-                mip_level_count: 1,
-                sample_count: 1,
-                dimension: wgpu::TextureDimension::D2,
-                format: wgpu::TextureFormat::R8Unorm,
-                usage: wgpu::TextureUsages::TEXTURE_BINDING,
-                view_formats: &[],
-            },
-            wgpu::util::TextureDataOrder::LayerMajor,
-            bytes,
-        );
-        let sampler = device.create_sampler(&wgpu::SamplerDescriptor {
-            label: Some("smooth note glyphs"),
-            mag_filter: wgpu::FilterMode::Linear,
-            min_filter: wgpu::FilterMode::Linear,
-            ..Default::default()
-        });
-        device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("note atlas"),
-            layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: wgpu::BindingResource::TextureView(
-                        &texture.create_view(&Default::default()),
-                    ),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: wgpu::BindingResource::Sampler(&sampler),
-                },
-            ],
-        })
     }
     pub fn prepare(
         &mut self,
@@ -179,21 +90,7 @@ impl Annotations {
         if primitives.len() > MAX_ANNOTATION_PRIMITIVES {
             return Err("annotation primitive limit".into());
         }
-        if self.font.is_none() && primitives.iter().any(|p| p.kind == 5) {
-            // Explicit first-use bounded decode of trusted embedded derivative, no I/O.
-            let atlas = image::load_from_memory_with_format(NOTE_ATLAS, image::ImageFormat::Png)?
-                .into_luma8();
-            if [atlas.width(), atlas.height()] != NOTE_ATLAS_SIZE {
-                return Err("note atlas dimensions".into());
-            }
-            self.font = Some(Self::atlas_bind_group(
-                device,
-                queue,
-                &self.layout,
-                NOTE_ATLAS_SIZE,
-                atlas.as_raw(),
-            ));
-        }
+        self.grid.prepare(queue, camera);
         if primitives.len() > self.capacity {
             self.capacity = primitives
                 .len()
@@ -215,13 +112,16 @@ impl Annotations {
                 p2: points[2],
                 p3: points[3],
                 size: p.size.map(|v| (v * camera.zoom()) as f32),
-                width: (p.width * camera.zoom()).max(0.75) as f32,
+                width: ((p.width * camera.zoom() / camera.ui_scale())
+                    .round()
+                    .max(1.)
+                    * camera.ui_scale()) as f32,
                 kind: p.kind,
                 stroke: p.stroke,
                 fill: p.fill,
-                atlas_uv: p.atlas_uv,
+                mapping: p.mapping,
                 bits0: [
-                    if matches!(p.kind, 1 | 2) {
+                    if p.kind == 1 {
                         p.opacity.to_bits()
                     } else {
                         p.bitmap[0]
@@ -242,18 +142,11 @@ impl Annotations {
         if start < end && end <= self.instances.len() {
             pass.set_pipeline(&self.pipeline);
             pass.set_vertex_buffer(0, self.buffer.slice(..));
-            pass.set_bind_group(0, self.font.as_ref().unwrap_or(&self.empty_font), &[]);
+            pass.set_bind_group(0, &self.grid.bind_group, &[]);
             pass.draw(0..6, start as u32..end as u32);
         }
     }
     pub fn bytes(&self) -> (usize, usize) {
-        (
-            self.capacity * std::mem::size_of::<Instance>(),
-            if self.font.is_some() {
-                NOTE_ATLAS_SIZE[0] as usize * NOTE_ATLAS_SIZE[1] as usize
-            } else {
-                0
-            },
-        )
+        (self.capacity * std::mem::size_of::<Instance>(), 0)
     }
 }

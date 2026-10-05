@@ -1,0 +1,1117 @@
+{
+  "binary_sha256": "92e50f202a196fe919dacc1ac2031143b12f70f3392fd3ad84fcc68c18001a66",
+  "harness_sha256": "5273e68a9844838466a1b4ab521f74dfa6349de919c984d8aedcb3a24e60480d",
+  "startup_idle": [
+    {
+      "name": "empty",
+      "rss_initial_bytes": 351494144,
+      "rss_final_bytes": 351494144,
+      "threads": 41,
+      "tasks": [
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-0",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-1",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-2",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-3",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-4",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-5",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-6",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-7",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-8",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-9",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-10",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-11",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-12",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-13",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-14",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-15",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-ap:disk$0",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 2
+        },
+        {
+          "name": "[vkcf] Analysis",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "[vkrt] Analysis",
+          "cpu_ticks": 0,
+          "voluntary_switches": 50
+        },
+        {
+          "name": "[vkps] Update",
+          "cpu_ticks": 1,
+          "voluntary_switches": 20
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 1,
+          "voluntary_switches": 499
+        },
+        {
+          "name": "tack-product-ov",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-product-ov",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        }
+      ],
+      "cpu_ticks": 2,
+      "cpu_percent_one_core": 0.4,
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "native_startup_ms": 523.227496,
+      "metadata_load_ms": 5.057133,
+      "first_frame_ms": 539.197128,
+      "first_recognizable_ms": null,
+      "ordinary_view_80_percent_ms": null,
+      "gpu_setup_ms": 498.400392,
+      "source_bytes_before_detail": 0,
+      "redraw_count": 2,
+      "wait_count": 18,
+      "idle_redraws": 0,
+      "idle_gpu_submissions": 0,
+      "idle_title_property_updates": 0,
+      "local": {
+        "discarded_asset_results": 0,
+        "last_storage_worker_ms": 0.0,
+        "operations": 1,
+        "recoveries": 0,
+        "recovery_bytes": 0,
+        "recovery_generation": null,
+        "ui_scale": 1.0
+      },
+      "title": "Tack \u2014 empty.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer",
+      "report_sha256": "67cc8d39dc6b7b6353e32c4c3336ff12d4792bd5e14514a0ff6da47681fd55e5",
+      "renderer_resident_payload_bytes": 0,
+      "annotation_buffers_bytes": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "small",
+      "rss_initial_bytes": 352075776,
+      "rss_final_bytes": 352075776,
+      "threads": 41,
+      "tasks": [
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-0",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-1",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-2",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-3",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-4",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-5",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-6",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-7",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-8",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-9",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-10",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-11",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-12",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-13",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-14",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-15",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-ap:disk$0",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 2
+        },
+        {
+          "name": "[vkcf] Analysis",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "[vkrt] Analysis",
+          "cpu_ticks": 0,
+          "voluntary_switches": 50
+        },
+        {
+          "name": "[vkps] Update",
+          "cpu_ticks": 1,
+          "voluntary_switches": 20
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 499
+        },
+        {
+          "name": "tack-product-ov",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-product-ov",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        }
+      ],
+      "cpu_ticks": 1,
+      "cpu_percent_one_core": 0.2,
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "native_startup_ms": 459.21753,
+      "metadata_load_ms": 0.273051,
+      "first_frame_ms": 475.10567199999997,
+      "first_recognizable_ms": 513.0209,
+      "ordinary_view_80_percent_ms": 513.0209,
+      "gpu_setup_ms": 433.81199399999997,
+      "source_bytes_before_detail": 0,
+      "redraw_count": 3,
+      "wait_count": 15,
+      "idle_redraws": 0,
+      "idle_gpu_submissions": 0,
+      "idle_title_property_updates": 0,
+      "local": {
+        "discarded_asset_results": 0,
+        "last_storage_worker_ms": 0.0,
+        "operations": 1,
+        "recoveries": 0,
+        "recovery_bytes": 0,
+        "recovery_generation": null,
+        "ui_scale": 1.0
+      },
+      "title": "Tack \u2014 small.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer",
+      "report_sha256": "909506ee226d4b608608dd03b99bb34e766db8f8bb01f6f56a36a694d8275990",
+      "renderer_resident_payload_bytes": 119808,
+      "annotation_buffers_bytes": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "prepared-1k",
+      "rss_initial_bytes": 354390016,
+      "rss_final_bytes": 354390016,
+      "threads": 41,
+      "tasks": [
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-0",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-1",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-2",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-3",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-4",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-5",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-6",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-7",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-8",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-9",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-10",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-11",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-12",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-13",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-14",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-15",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-ap:disk$0",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 2
+        },
+        {
+          "name": "[vkcf] Analysis",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "[vkrt] Analysis",
+          "cpu_ticks": 0,
+          "voluntary_switches": 50
+        },
+        {
+          "name": "[vkps] Update",
+          "cpu_ticks": 1,
+          "voluntary_switches": 20
+        },
+        {
+          "name": "tack-app",
+          "cpu_ticks": 0,
+          "voluntary_switches": 498
+        },
+        {
+          "name": "tack-product-ov",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-product-ov",
+          "cpu_ticks": 0,
+          "voluntary_switches": 0
+        }
+      ],
+      "cpu_ticks": 1,
+      "cpu_percent_one_core": 0.2,
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "native_startup_ms": 463.274651,
+      "metadata_load_ms": 3.128788,
+      "first_frame_ms": 479.721334,
+      "first_recognizable_ms": 517.502562,
+      "ordinary_view_80_percent_ms": 517.502562,
+      "gpu_setup_ms": 437.31003400000003,
+      "source_bytes_before_detail": 0,
+      "redraw_count": 3,
+      "wait_count": 12,
+      "idle_redraws": 0,
+      "idle_gpu_submissions": 0,
+      "idle_title_property_updates": 0,
+      "local": {
+        "discarded_asset_results": 0,
+        "last_storage_worker_ms": 0.0,
+        "operations": 1,
+        "recoveries": 0,
+        "recovery_bytes": 0,
+        "recovery_generation": null,
+        "ui_scale": 1.0
+      },
+      "title": "Tack \u2014 linked.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer",
+      "report_sha256": "97332d14d0343651495b6ac7546367fa48d95eab4b57ba36a67eee6d626892a0",
+      "renderer_resident_payload_bytes": 196608,
+      "annotation_buffers_bytes": [
+        0,
+        0
+      ]
+    }
+  ],
+  "imports": [
+    {
+      "name": "one",
+      "requested_files": 1,
+      "admitted_images": 1,
+      "encoded_bytes_requested": 233,
+      "import_wall_ms": 126.05491699650884,
+      "peak_rss_bytes": 352321536,
+      "io_delta": {
+        "rchar": 4379,
+        "wchar": 22123339,
+        "syscr": 50,
+        "syscw": 33,
+        "read_bytes": 0,
+        "write_bytes": 12288,
+        "cancelled_write_bytes": 0
+      },
+      "progress_titles": [
+        "Tack \u2014 import-one.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer",
+        "Tack \u2014 import-one.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 1/1 \u00b7 0 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-one.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      ],
+      "file_bytes": 1720,
+      "local": {
+        "discarded_asset_results": 0,
+        "last_storage_worker_ms": 7.92984,
+        "operations": 2,
+        "recoveries": 0,
+        "recovery_bytes": 0,
+        "recovery_generation": null,
+        "ui_scale": 1.0
+      },
+      "errors": 0,
+      "overview_generated": 1,
+      "report_sha256": "6cc8902a334535e368fef21883c4e6fe9285c0886772cebe30a6a1a3d39ac07a"
+    },
+    {
+      "name": "many",
+      "requested_files": 64,
+      "admitted_images": 64,
+      "encoded_bytes_requested": 26329,
+      "import_wall_ms": 2412.4601449875627,
+      "peak_rss_bytes": 354009088,
+      "io_delta": {
+        "rchar": 153030,
+        "wchar": 254480314,
+        "syscr": 619,
+        "syscw": 496,
+        "read_bytes": 0,
+        "write_bytes": 393216,
+        "cancelled_write_bytes": 0
+      },
+      "progress_titles": [
+        "Tack \u2014 import-many.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 1/64 \u00b7 0 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 3/64 \u00b7 0 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 4/64 \u00b7 1 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 6/64 \u00b7 1 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 7/64 \u00b7 2 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 9/64 \u00b7 3 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 10/64 \u00b7 3 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 12/64 \u00b7 4 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 13/64 \u00b7 4 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 15/64 \u00b7 5 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 16/64 \u00b7 5 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 18/64 \u00b7 6 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 19/64 \u00b7 6 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 21/64 \u00b7 7 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 22/64 \u00b7 8 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 24/64 \u00b7 8 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 25/64 \u00b7 9 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 27/64 \u00b7 10 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 28/64 \u00b7 10 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 30/64 \u00b7 11 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 31/64 \u00b7 11 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 33/64 \u00b7 12 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 34/64 \u00b7 12 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 36/64 \u00b7 13 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 37/64 \u00b7 13 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 39/64 \u00b7 14 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 40/64 \u00b7 15 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 42/64 \u00b7 16 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 43/64 \u00b7 16 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 45/64 \u00b7 17 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 46/64 \u00b7 17 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 48/64 \u00b7 18 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 49/64 \u00b7 19 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 51/64 \u00b7 19 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 52/64 \u00b7 20 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 53/64 \u00b7 20 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 55/64 \u00b7 21 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 56/64 \u00b7 22 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 58/64 \u00b7 22 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 59/64 \u00b7 23 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 61/64 \u00b7 24 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 62/64 \u00b7 24 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-many.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      ],
+      "file_bytes": 55119,
+      "local": {
+        "discarded_asset_results": 0,
+        "last_storage_worker_ms": 8.603533,
+        "operations": 2,
+        "recoveries": 0,
+        "recovery_bytes": 0,
+        "recovery_generation": null,
+        "ui_scale": 1.0
+      },
+      "errors": 0,
+      "overview_generated": 12,
+      "report_sha256": "8f908a9ed424c6f568f13b66e9341f85d1098509fa57d847ac14e8f333f3d594"
+    },
+    {
+      "name": "large",
+      "requested_files": 3,
+      "admitted_images": 3,
+      "encoded_bytes_requested": 27375679,
+      "import_wall_ms": 232.9648040176835,
+      "peak_rss_bytes": 362561536,
+      "io_delta": {
+        "rchar": 82321096,
+        "wchar": 88051297,
+        "syscr": 3836,
+        "syscw": 466,
+        "read_bytes": 0,
+        "write_bytes": 54886400,
+        "cancelled_write_bytes": 0
+      },
+      "progress_titles": [
+        "Tack \u2014 import-large.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer",
+        "Tack \u2014 import-large.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import pending \u00b7 Escape cancels remaining files",
+        "Tack \u2014 import-large.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import 1/3 \u00b7 8910 KiB copied \u00b7 Escape cancels",
+        "Tack \u2014 import-large.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      ],
+      "file_bytes": 27436182,
+      "local": {
+        "discarded_asset_results": 0,
+        "last_storage_worker_ms": 78.420893,
+        "operations": 2,
+        "recoveries": 0,
+        "recovery_bytes": 0,
+        "recovery_generation": null,
+        "ui_scale": 1.0
+      },
+      "errors": 0,
+      "overview_generated": 3,
+      "report_sha256": "0258e3cdd478ffd5cc3cd139d04e1c6db209ccd1836fcab65000ebc8d536b4a2"
+    },
+    {
+      "name": "cancel",
+      "requested_files": 120,
+      "admitted_images": 4,
+      "encoded_bytes_requested": 1095027160,
+      "import_wall_ms": 264.7616660105996,
+      "peak_rss_bytes": 362651648,
+      "io_delta": {
+        "rchar": 82337617,
+        "wchar": 84365764,
+        "syscr": 3837,
+        "syscw": 471,
+        "read_bytes": 0,
+        "write_bytes": 54886400,
+        "cancelled_write_bytes": 0
+      },
+      "progress_titles": [
+        "Tack \u2014 import-cancel.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import cancelled; 4 admitted items retained"
+      ],
+      "file_bytes": 27436317,
+      "local": {
+        "discarded_asset_results": 0,
+        "last_storage_worker_ms": 83.591377,
+        "operations": 2,
+        "recoveries": 0,
+        "recovery_bytes": 0,
+        "recovery_generation": null,
+        "ui_scale": 1.0
+      },
+      "errors": 0,
+      "overview_generated": 3,
+      "report_sha256": "84c78b78c867fa76365a5f1aeb216dfbd13638bef733c63c357c4015ecb6e996"
+    }
+  ],
+  "autosave": [
+    {
+      "name": "small",
+      "debounce_to_publication_ms": 4965.362340997672,
+      "recovery_disk_bytes": 12318,
+      "write_bytes": 20480,
+      "rss_before_bytes": 352362496,
+      "rss_after_bytes": 352489472,
+      "local": {
+        "discarded_asset_results": 0,
+        "last_storage_worker_ms": 14.415558,
+        "operations": 2,
+        "recoveries": 1,
+        "recovery_bytes": 12294,
+        "recovery_generation": 1,
+        "ui_scale": 1.0
+      },
+      "editing": {
+        "dirty": true,
+        "generation": 1,
+        "redo_entries": 0,
+        "save_completed": 0,
+        "selected": 8,
+        "undo_entries": 1
+      },
+      "frames": 24,
+      "callback": {
+        "samples": 24,
+        "p50_ms": 37.713257,
+        "p99_ms": 43.312552999999994,
+        "max_ms": 44.561786
+      },
+      "normal_hash_unchanged": true,
+      "edit_during_save": "generation acknowledgement covered by deterministic worker integration test; native pan checked after publication",
+      "report_sha256": "eb5e37133a1a3f1d7374a6ae0dc3a71356607793164031d53f070764879f9389"
+    },
+    {
+      "name": "prepared-1k",
+      "debounce_to_publication_ms": 5069.009291997645,
+      "recovery_disk_bytes": 47213092,
+      "write_bytes": 47222784,
+      "rss_before_bytes": 354275328,
+      "rss_after_bytes": 355864576,
+      "local": {
+        "discarded_asset_results": 0,
+        "last_storage_worker_ms": 156.781247,
+        "operations": 2,
+        "recoveries": 1,
+        "recovery_bytes": 47213068,
+        "recovery_generation": 1,
+        "ui_scale": 1.0
+      },
+      "editing": {
+        "dirty": true,
+        "generation": 1,
+        "redo_entries": 0,
+        "save_completed": 0,
+        "selected": 1000,
+        "undo_entries": 1
+      },
+      "frames": 23,
+      "callback": {
+        "samples": 23,
+        "p50_ms": 37.522487,
+        "p99_ms": 41.380608,
+        "max_ms": 46.617740999999995
+      },
+      "normal_hash_unchanged": true,
+      "edit_during_save": "generation acknowledgement covered by deterministic worker integration test; native pan checked after publication",
+      "report_sha256": "14bc7a1f43047d46b993a09efe919866d944643fdc394ac620b0577e7bd4f6be"
+    }
+  ],
+  "measurement": "serial native X11; 5s idle intervals; /proc ticks/RSS/I/O, native submission receipts; no cold kernel-cache, allocator count or per-process VRAM attribution",
+  "multi_instance": {
+    "binary_sha256": "92e50f202a196fe919dacc1ac2031143b12f70f3392fd3ad84fcc68c18001a66",
+    "harness_sha256": "c12a34d75826c166eeaebd41291048ac8bf808d6440821d38f459a911c5ace1e",
+    "board_sha256": "5f1be0450b9260e5222a7b2e88cbd15b153f45ea7b1f4211ba2cc8e853db557b",
+    "rows": [
+      {
+        "name": "mixed",
+        "pid": 329581,
+        "rss_bytes": 352366592,
+        "threads": 41,
+        "cpu_ticks_5s": 1,
+        "cpu_percent_one_core": 0.2,
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "renderer_payload_bytes": 222208,
+        "annotation_buffers_bytes": [
+          0,
+          0
+        ],
+        "report_sha256": "764f99438dfbd894ec5d378fa31330d7edefc54d9fb3d1709d4f77124a033289"
+      },
+      {
+        "name": "empty",
+        "pid": 329641,
+        "rss_bytes": 351715328,
+        "threads": 41,
+        "cpu_ticks_5s": 1,
+        "cpu_percent_one_core": 0.2,
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "renderer_payload_bytes": 0,
+        "annotation_buffers_bytes": [
+          0,
+          0
+        ],
+        "report_sha256": "f4eaa0fb3cb7bab9ee1a5ed20f0a64f4ee9d0d15bb6f732f0b7043f16d82e9a2"
+      }
+    ],
+    "graphics_memory": {
+      "available": true,
+      "rows": [
+        {
+          "pid": "329581",
+          "type": "C+G",
+          "used_gpu_memory": "24 MiB"
+        },
+        {
+          "pid": "329641",
+          "type": "C+G",
+          "used_gpu_memory": "24 MiB"
+        }
+      ],
+      "scope": "NVIDIA graphics-process snapshot after idle; includes driver allocations, not only renderer payloads"
+    },
+    "scope": "two independent settled native processes; 5s observation; no total-machine memory subtraction"
+  },
+  "native_production_multi": [
+    {
+      "rss_bytes": 353083392,
+      "threads": 41,
+      "cpu_ticks_5s": 3,
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      }
+    },
+    {
+      "rss_bytes": 351424512,
+      "threads": 41,
+      "cpu_ticks_5s": 2,
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      }
+    }
+  ]
+}

@@ -24,3 +24,16 @@ pub mod annotation_tool;
 pub mod note_layout;
 mod product_bindings;
 pub mod source_actions;
+
+pub mod recovery_schedule;
+
+pub mod preferences;
+
+pub mod local_import;
+pub mod local_relink;
+
+pub mod native_files;
+
+pub mod local_worker;
+
+pub mod local_ui;

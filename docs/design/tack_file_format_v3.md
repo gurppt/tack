@@ -30,7 +30,7 @@ are intrinsic. Stroke remains world width when the object box is resized.
 | --- | --- |
 | 3 Text | f64 font size (4..256), u8 alignment (0 left, 1 center, 2 right), u32 UTF-8 byte length (0..16384), exact bytes |
 | 4 Rectangle | none |
-| 5 Ellipse | none |
+| 5 | unsupported; never reinterpreted |
 | 6 Line | four f64 for two normalized x/y endpoints |
 | 7 Arrow | same endpoints, one bounded end head derived at render/hit time |
 | 8 Scribble | u32 point count (2..4096), count pairs of normalized f64 x/y |
@@ -51,3 +51,7 @@ Malformed/future authority is refused before editing or repair/replacement, with
 input bytes unchanged. The integration tests cover six-kind exact round trips,
 old schema 1/2, frames/groups, unknown versions/kinds, invalid lengths/styles/text
 and non-finite geometry. Source/original/overview storage is unchanged.
+
+Phase 1F removes the prototype oval object. Tag 5 is rejected by the ordinary
+unknown-kind check; there is no legacy decoder or migration. Other tags retain
+their values, so current schema-3 documents without that kind remain readable.

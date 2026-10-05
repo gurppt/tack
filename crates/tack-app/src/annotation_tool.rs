@@ -86,7 +86,6 @@ impl Creation {
         };
         Ok(match self.tool {
             Tool::Rectangle => AnnotationKind::Rect,
-            Tool::Ellipse => AnnotationKind::Ellipse,
             Tool::Line => AnnotationKind::Line(LineObject::new([
                 normalize(self.start),
                 normalize(self.end),
@@ -105,6 +104,7 @@ impl Creation {
         })
     }
 }
+#[derive(Clone)]
 pub struct NoteEdit {
     pub id: ObjectId,
     pub value: String,

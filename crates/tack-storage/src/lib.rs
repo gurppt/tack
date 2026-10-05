@@ -1,7 +1,10 @@
 //! Explicit bounded snapshot storage. All functions are worker/startup operations.
 mod annotation_codec;
 mod codec;
+mod ownership;
 mod reader;
+mod recovery;
+pub use ownership::{BoardLease, lock_sidecar};
 mod save;
 
 pub use reader::{BlobRange, OverviewEntry, RangeReader, TackFile};

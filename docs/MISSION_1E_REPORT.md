@@ -1,5 +1,8 @@
 # Mission 1E — Annotation and reference utilities
 
+Historical phase evidence. Phase 1F removes prototype oval annotations and the
+smooth note atlas; current behavior is described in the 1F design/report.
+
 Date: 2026-10-04. Entry: Phase 1D **A — PASS**, main/origin at
 `3071e2377dfee6974033c7942635bc7fa8516012`. Required charters, phase reports,
 backlog/audit and interaction/spatial/format documents were read; no conflict.
@@ -70,7 +73,6 @@ run GPU scenarios serially on an idle desktop. Example with the locally retained
 ```bash
 cargo build --release --locked -p tack-app
 python3 tools/run_annotations.py --prepared-board benchmark-results/phase1d-product-final/linked.tack --output benchmark-results/phase1e-reproduce
-python3 tools/run_ellipse_probe.py --binary benchmark-results/phase1e-reproduce/tack-app --fixtures benchmark-results/phase1e-reproduce/metadata --output benchmark-results/phase1e-ellipse-reproduce
 python3 tools/run_native_annotation_checks.py --binary benchmark-results/phase1e-reproduce/tack-app --output benchmark-results/phase1e-native-reproduce
 ```
 

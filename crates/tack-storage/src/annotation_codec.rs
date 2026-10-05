@@ -16,7 +16,6 @@ pub(crate) fn encode(out: &mut Vec<u8>, o: &DocumentObject, a: &Annotation) {
     let kind: u16 = match a.kind() {
         AnnotationKind::Text(_) => 3,
         AnnotationKind::Rect => 4,
-        AnnotationKind::Ellipse => 5,
         AnnotationKind::Line(_) => 6,
         AnnotationKind::Arrow(_) => 7,
         AnnotationKind::Scribble(_) => 8,
@@ -111,7 +110,6 @@ pub(crate) fn decode(d: &mut Decoder<'_>, id: ObjectId, kind: u16) -> Result<Doc
             AnnotationKind::Text(TextObject::new(text, size, align).map_err(invalid)?)
         }
         4 => AnnotationKind::Rect,
-        5 => AnnotationKind::Ellipse,
         6 | 7 => {
             let l =
                 LineObject::new([[d.f64()?, d.f64()?], [d.f64()?, d.f64()?]]).map_err(invalid)?;

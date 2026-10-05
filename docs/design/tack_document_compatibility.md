@@ -153,7 +153,7 @@ The schema is selected from the actual durable content, not the application vers
 
 # Phase 1E extension
 
-Schema 3 adds plain text, rectangle, ellipse, line, arrow and scribble; see
+Schema 3 adds plain text, rectangle, line, arrow and scribble; see
 [annotation wire format](tack_file_format_v3.md). Current readers support schemas
 1/2/3 and refuse >3 or unknown authoritative records without editing the input.
 The previous paragraph's >2 limit describes the shipped Phase 1D reader only.

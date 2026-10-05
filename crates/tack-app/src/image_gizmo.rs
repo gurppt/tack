@@ -33,6 +33,7 @@ pub enum GizmoHit {
 pub struct ImageGizmo {
     pub style: GizmoStyle,
     pub scale: f64,
+    hit_scale: f64,
     pub quads: Vec<OverlayQuad>,
 }
 impl Default for ImageGizmo {
@@ -40,6 +41,7 @@ impl Default for ImageGizmo {
         Self {
             style: GizmoStyle::default(),
             scale: 1.,
+            hit_scale: 1.,
             quads: Vec::with_capacity(128),
         }
     }
@@ -47,7 +49,8 @@ impl Default for ImageGizmo {
 impl ImageGizmo {
     pub fn set_scale(&mut self, scale: f64) {
         if scale.is_finite() && scale > 0. {
-            self.scale = scale;
+            self.scale = scale.round().clamp(1., 8.);
+            self.hit_scale = scale;
         }
     }
     pub fn handle(&self, frame: Transform, camera: &Camera, index: usize) -> [f64; 2] {
@@ -75,7 +78,7 @@ impl ImageGizmo {
         crop: bool,
         multiple: bool,
     ) -> Option<GizmoHit> {
-        let radius = self.style.hit_radius * self.scale;
+        let radius = self.style.hit_radius * self.hit_scale;
         let mut best = None;
         let mut distance = radius;
         for i in 0..if crop { 8 } else { 9 } {

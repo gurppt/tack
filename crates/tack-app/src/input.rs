@@ -10,17 +10,17 @@ use winit::{
 };
 
 pub const MAX_HELD_INPUTS: usize = 32;
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum PointerButton {
     Mouse(MouseButton),
     Stylus(u16),
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum WheelAxis {
     Horizontal,
     Vertical,
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum PhysicalControl {
     Key(PhysicalKey),
     Pointer(PointerButton),
@@ -35,6 +35,12 @@ impl Modifiers {
     pub const CONTROL: Self = Self(2);
     pub const SHIFT: Self = Self(4);
     pub const SUPER: Self = Self(8);
+    pub fn mask(self) -> u8 {
+        self.0
+    }
+    pub fn checked_mask(mask: u8) -> Option<Self> {
+        (mask < 16).then_some(Self(mask))
+    }
     pub const fn union(self, other: Self) -> Self {
         Self(self.0 | other.0)
     }

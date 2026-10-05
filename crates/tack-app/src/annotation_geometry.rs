@@ -52,10 +52,6 @@ pub fn hit(a: &Annotation, t: Transform, p: [f64; 2], tolerance: f64) -> bool {
                     || lp[0] >= half[0] - width
                     || lp[1] >= half[1] - width)
         }
-        AnnotationKind::Ellipse => {
-            let inside = (lp[0] / half[0]).hypot(lp[1] / half[1]) <= 1.;
-            (a.style().fill().is_some() && inside) || ellipse_distance(lp, half) <= width
-        }
         AnnotationKind::Line(l) | AnnotationKind::Arrow(l) => {
             let [start, end] = l.points().map(|p| point(t, p));
             segment_distance(p, start, end) <= width
@@ -118,58 +114,5 @@ pub fn intersects(a: &Annotation, t: Transform, r: WorldRect) -> bool {
             let q = crate::image_geometry::corners(t);
             (0..4).any(|i| segment_rect(q[i], q[(i + 1) % 4], r, radius))
         }
-        AnnotationKind::Ellipse => {
-            let p = |i: usize| {
-                let angle = i as f64 * std::f64::consts::TAU / 64.;
-                world(
-                    t,
-                    [
-                        angle.cos() * t.size()[0] / 2.,
-                        angle.sin() * t.size()[1] / 2.,
-                    ],
-                )
-            };
-            (0..64).any(|i| segment_rect(p(i), p(i + 1), r, radius))
-                || (a.style().fill().is_some()
-                    && (hit(a, t, [r.x, r.y], 0.)
-                        || (t.center()[0] >= r.x
-                            && t.center()[0] <= r.x + r.width
-                            && t.center()[1] >= r.y
-                            && t.center()[1] <= r.y + r.height)))
-        }
     }
-}
-
-/// Closest boundary point from the ellipse Lagrange multiplier, bounded bisection.
-/// Major-axis special case avoids the interior singular root; distance is unsigned.
-pub fn ellipse_distance(mut p: [f64; 2], mut radii: [f64; 2]) -> f64 {
-    if radii[0] < radii[1] {
-        p.swap(0, 1);
-        radii.swap(0, 1);
-    }
-    let scale = radii[0];
-    let b = radii[1] / scale;
-    let x = p[0].abs() / scale;
-    let y = p[1].abs() / scale;
-    if b > 0.999999 {
-        return (x.hypot(y) - 1.).abs() * scale;
-    }
-    if y <= 1e-7 {
-        let q = (x / (1. - b * b)).min(1.);
-        return (x - q).hypot(y - b * (1. - q * q).max(0.).sqrt()) * scale;
-    }
-    let inside = x * x + y * y / (b * b) <= 1.;
-    let mut lo = if inside { b * (y - b) } else { 0. };
-    let mut hi = if inside { 0. } else { x + b * y };
-    for _ in 0..48 {
-        let mid = (lo + hi) / 2.;
-        let f = (x / (mid + 1.)).powi(2) + (b * y / (mid + b * b)).powi(2);
-        if f > 1. {
-            lo = mid;
-        } else {
-            hi = mid;
-        }
-    }
-    let q = (lo + hi) / 2.;
-    (x - x / (q + 1.)).hypot(y - b * b * y / (q + b * b)) * scale
 }

@@ -199,6 +199,27 @@ impl TackFile {
             file,
         })
     }
+    /// Explicit restore/export validation on a worker, with a fixed streaming buffer.
+    pub fn verify_originals(&self) -> Result<()> {
+        let mut buffer = [0; 128 * 1024];
+        for (id, entry) in &self.originals {
+            let mut reader = self.original_reader(*id)?;
+            let mut crc = crc32fast::Hasher::new();
+            let mut count = 0;
+            loop {
+                let n = reader.read(&mut buffer)?;
+                if n == 0 {
+                    break;
+                }
+                crc.update(&buffer[..n]);
+                count += n as u64;
+            }
+            if count != entry.range.len || crc.finalize() != entry.range.crc32 {
+                return Err(StorageError::Corrupt("recovery original checksum"));
+            }
+        }
+        Ok(())
+    }
     pub fn original_reader(&self, id: SourceId) -> Result<RangeReader> {
         let e = self
             .originals

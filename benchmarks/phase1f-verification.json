@@ -1,0 +1,273 @@
+{
+  "starting_head": "759fee0ac8ace8558556571498c84a6270b44760",
+  "binary_sha256": "92e50f202a196fe919dacc1ac2031143b12f70f3392fd3ad84fcc68c18001a66",
+  "source_snapshot_sha256": "44e89897d6fd5d875dc96e2c84540683953f36ac423969f681f1de912ba945c7",
+  "shipping_files_match_snapshot": true,
+  "local_checks": {
+    "command": "PATH=/tmp/tack-tools/bin:$PATH bash tools/check.sh",
+    "exit_code": 0,
+    "rust_test_passes_including_doc_tests": 124,
+    "python_tests": 8,
+    "gates": [
+      "fmt",
+      "all-targets/all-features check locked",
+      "clippy -D warnings",
+      "workspace all-feature tests locked",
+      "docs",
+      "Python tools",
+      "cargo-deny advisories/bans/licenses/sources"
+    ]
+  },
+  "gpu": {
+    "product_gpu_ignored_hardware": 5,
+    "product_gpu_regular": 2,
+    "gpu_smoke": 1,
+    "passed": true
+  },
+  "binary_sizes_bytes": {
+    "unstripped": 113568696,
+    "1f_strip_debug": 20814072,
+    "1f_fully_stripped": 17588432,
+    "1e_strip_debug": 20591112,
+    "1e_fully_stripped": 17460688,
+    "delta_strip_debug": 222960,
+    "delta_fully_stripped": 127744
+  },
+  "rust_package_versions_added": 0,
+  "font_tests": {
+    "packed_primary_glyphs": 1001,
+    "packed_primary_bytes": 37037,
+    "no_full_unicode_heap_or_texture_preload": true
+  },
+  "logs": {
+    "/tmp/tack-1f-quality-last.log": {
+      "sha256": "e175ede54bd8e15df13ac16f92532da59d777cfeaf3516a6ba86b2ab6a962cba",
+      "bytes": 65005
+    },
+    "/tmp/tack-1f-python-shipping.log": {
+      "sha256": "1327f170732ee47f216ae8aa32ed702ca689d7d7ecc0a8c9e1ed4592ceb31670",
+      "bytes": 106
+    },
+    "/tmp/tack-1f-release-last.log": {
+      "sha256": "0638c3b1e565f0cc091e4efc9c4df4d4e2df1651f9278b2e15d33efd20ff3c34",
+      "bytes": 143
+    },
+    "/tmp/tack-1f-gpu-shipping.log": {
+      "sha256": "7a59d81b2d88609ea2a9f705739f31afcaad2a3868910846fcbfa520bd105e93",
+      "bytes": 1303
+    }
+  },
+  "serial_suite_receipts": [
+    {
+      "name": "local-native-shipping2",
+      "returncode": 0,
+      "wall_seconds": 36.33865208300995,
+      "command": [
+        "python3",
+        "tools/run_local_production.py",
+        "--binary",
+        "benchmark-results/phase1f-shipping-final/tack-app",
+        "--output",
+        "benchmark-results/phase1f-verified-local-native-shipping2"
+      ]
+    },
+    {
+      "name": "recovery-native-shipping6",
+      "returncode": 0,
+      "wall_seconds": 31.578974881995237,
+      "command": [
+        "python3",
+        "tools/run_native_recovery_checks.py",
+        "--binary",
+        "benchmark-results/phase1f-shipping-final/tack-app",
+        "--output",
+        "benchmark-results/phase1f-verified-recovery-native-shipping6"
+      ]
+    },
+    {
+      "name": "local-resources-final",
+      "returncode": 0,
+      "wall_seconds": 54.8312211750017,
+      "command": [
+        "python3",
+        "tools/run_local_resources.py",
+        "--prepared-board",
+        "benchmark-results/phase1e-product-measured/linked.tack",
+        "--binary",
+        "benchmark-results/phase1f-shipping-final/tack-app",
+        "--output",
+        "benchmark-results/phase1f-verified-local-resources-final"
+      ]
+    },
+    {
+      "name": "annotations-final",
+      "returncode": 0,
+      "wall_seconds": 58.08859493400087,
+      "command": [
+        "python3",
+        "tools/run_annotations.py",
+        "--prepared-board",
+        "benchmark-results/phase1e-product-measured/linked.tack",
+        "--seconds",
+        "6",
+        "--binary",
+        "benchmark-results/phase1f-shipping-final/tack-app",
+        "--output",
+        "benchmark-results/phase1f-verified-annotations-final"
+      ]
+    },
+    {
+      "name": "spatial-final",
+      "returncode": 0,
+      "wall_seconds": 51.02443647902692,
+      "command": [
+        "python3",
+        "tools/run_spatial.py",
+        "--seconds",
+        "6",
+        "--binary",
+        "benchmark-results/phase1f-shipping-final/tack-app",
+        "--output",
+        "benchmark-results/phase1f-verified-spatial-final"
+      ]
+    },
+    {
+      "name": "image-final",
+      "returncode": 0,
+      "wall_seconds": 45.158202129008714,
+      "command": [
+        "python3",
+        "tools/run_image_interaction.py",
+        "--board",
+        "benchmark-results/phase1e-product-measured/linked.tack",
+        "--seconds",
+        "6",
+        "--binary",
+        "benchmark-results/phase1f-shipping-final/tack-app",
+        "--output",
+        "benchmark-results/phase1f-verified-image-final"
+      ]
+    },
+    {
+      "name": "product-final",
+      "returncode": 0,
+      "wall_seconds": 82.23605358498753,
+      "command": [
+        "python3",
+        "tools/run_product_persistence.py",
+        "--binary",
+        "benchmark-results/phase1f-shipping-final/tack-app",
+        "--output",
+        "benchmark-results/phase1f-verified-product-final"
+      ]
+    },
+    {
+      "name": "native-annotations-final",
+      "returncode": 0,
+      "wall_seconds": 17.399890780012356,
+      "command": [
+        "python3",
+        "tools/run_native_annotation_checks.py",
+        "--binary",
+        "benchmark-results/phase1f-shipping-final/tack-app",
+        "--output",
+        "benchmark-results/phase1f-verified-native-annotations-final"
+      ]
+    },
+    {
+      "name": "native-annotations-dpi15",
+      "returncode": 0,
+      "wall_seconds": 17.449070653005037,
+      "command": [
+        "python3",
+        "tools/run_native_annotation_checks.py",
+        "--binary",
+        "benchmark-results/phase1f-shipping-final/tack-app",
+        "--output",
+        "benchmark-results/phase1f-verified-native-annotations-dpi15"
+      ]
+    },
+    {
+      "name": "native-annotations-dpi2",
+      "returncode": 0,
+      "wall_seconds": 17.398635054007173,
+      "command": [
+        "python3",
+        "tools/run_native_annotation_checks.py",
+        "--binary",
+        "benchmark-results/phase1f-shipping-final/tack-app",
+        "--output",
+        "benchmark-results/phase1f-verified-native-annotations-dpi2"
+      ]
+    },
+    {
+      "name": "native-spatial-final",
+      "returncode": 0,
+      "wall_seconds": 15.044183074991452,
+      "command": [
+        "python3",
+        "tools/run_native_spatial_checks.py",
+        "--binary",
+        "benchmark-results/phase1f-shipping-final/tack-app",
+        "--output",
+        "benchmark-results/phase1f-verified-native-spatial-final"
+      ]
+    },
+    {
+      "name": "native-image-final",
+      "returncode": 0,
+      "wall_seconds": 25.063812981010415,
+      "command": [
+        "python3",
+        "tools/run_native_image_checks.py",
+        "--binary",
+        "benchmark-results/phase1f-shipping-final/tack-app",
+        "--output",
+        "benchmark-results/phase1f-verified-native-image-final"
+      ]
+    },
+    {
+      "name": "native-zoom-final",
+      "returncode": 0,
+      "wall_seconds": 13.442438286001561,
+      "command": [
+        "python3",
+        "tools/run_native_zoom_checks.py",
+        "--board",
+        "benchmark-results/phase1f-verified-native-image-final/board.tack",
+        "--binary",
+        "benchmark-results/phase1f-shipping-final/tack-app",
+        "--output",
+        "benchmark-results/phase1f-verified-native-zoom-final"
+      ]
+    },
+    {
+      "name": "navigation-final",
+      "returncode": 0,
+      "wall_seconds": 27.767527574003907,
+      "command": [
+        "python3",
+        "tools/run_benchmarks.py",
+        "--scenarios",
+        "pan-normal",
+        "zoom-traverse",
+        "pressure",
+        "board-tour",
+        "--seconds",
+        "6",
+        "--binary",
+        "benchmark-results/phase1f-shipping-final/tack-app",
+        "--output",
+        "benchmark-results/phase1f-verified-navigation-final"
+      ]
+    }
+  ],
+  "independent_verifier": "/root/phase1f_verifier; read-only independent of implementation; findings fixed and affected evidence rerun",
+  "method_limits": [
+    "Xvfb driver/llvmpipe RSS and threads included",
+    "no native Windows or live multi-monitor DPI proof",
+    "no cold kernel cache",
+    "exact allocator/network/per-process GPU timing counts unavailable",
+    "no power-loss guarantee"
+  ]
+}

@@ -30,19 +30,19 @@ pub(crate) fn primitive(
         kind,
         width: style.width(),
         opacity: style.opacity().value() as f32,
-        stroke: style.stroke().rgba(if matches!(kind, 1 | 2) {
+        stroke: style.stroke().rgba(if kind == 1 {
             Opacity::OPAQUE
         } else {
             style.opacity()
         }),
         fill: style.fill().map_or([0.; 4], |c| {
-            c.rgba(if matches!(kind, 1 | 2) {
+            c.rgba(if kind == 1 {
                 Opacity::OPAQUE
             } else {
                 style.opacity()
             })
         }),
-        atlas_uv: [0.; 4],
+        mapping: [0.; 4],
         bitmap: [0; 8],
     }
 }
@@ -54,16 +54,14 @@ impl AnnotationScene {
         self.primitives.push(p);
         true
     }
-    fn shape(
-        &mut self,
-        a: &Annotation,
-        t: Transform,
-        camera: &Camera,
-        style: AnnotationStyle,
-    ) -> bool {
+    fn shape(&mut self, t: Transform, camera: &Camera, style: AnnotationStyle) -> bool {
         let size = t.size();
-        let width = style.width().max(0.75 / camera.zoom());
-        let margin = width / 2. + 1. / camera.zoom();
+        let width = (style.width() * camera.zoom() / camera.ui_scale())
+            .round()
+            .max(1.)
+            * camera.ui_scale()
+            / camera.zoom();
+        let margin = width / 2. + camera.ui_scale() / camera.zoom();
         let points = [[-1., -1.], [-1., 1.], [1., -1.], [1., 1.]].map(|d| {
             image_geometry::world(
                 t,
@@ -73,16 +71,7 @@ impl AnnotationScene {
                 ],
             )
         });
-        self.push(primitive(
-            points,
-            size,
-            if matches!(a.kind(), AnnotationKind::Rect) {
-                1
-            } else {
-                2
-            },
-            style,
-        ))
+        self.push(primitive(points, size, 1, style))
     }
     pub fn segment(
         &mut self,
@@ -92,8 +81,12 @@ impl AnnotationScene {
         camera: &Camera,
     ) -> bool {
         let length = (end[0] - start[0]).hypot(end[1] - start[1]);
-        let width = style.width().max(0.75 / camera.zoom());
-        let margin = width / 2. + 1. / camera.zoom();
+        let width = (style.width() * camera.zoom() / camera.ui_scale())
+            .round()
+            .max(1.)
+            * camera.ui_scale()
+            / camera.zoom();
+        let margin = width / 2. + camera.ui_scale() / camera.zoom();
         let v = if length > 0. {
             [(end[0] - start[0]) / length, (end[1] - start[1]) / length]
         } else {
@@ -126,7 +119,7 @@ impl AnnotationScene {
         {
             let a = camera.world_to_screen(previous);
             let b = camera.world_to_screen(start);
-            p.atlas_uv = [a[0] as f32, a[1] as f32, b[0] as f32, b[1] as f32];
+            p.mapping = [a[0] as f32, a[1] as f32, b[0] as f32, b[1] as f32];
             p.bitmap[0] = 1;
         }
         true
@@ -150,7 +143,7 @@ impl AnnotationScene {
         );
         let a = camera.world_to_screen(start);
         let b = camera.world_to_screen(end);
-        p.atlas_uv = [a[0] as f32, a[1] as f32, b[0] as f32, b[1] as f32];
+        p.mapping = [a[0] as f32, a[1] as f32, b[0] as f32, b[1] as f32];
         p.bitmap[0] = 1;
         self.push(p)
     }
@@ -163,7 +156,7 @@ impl AnnotationScene {
         style: AnnotationStyle,
     ) -> bool {
         match a.kind() {
-            AnnotationKind::Rect | AnnotationKind::Ellipse => self.shape(a, t, camera, style),
+            AnnotationKind::Rect => self.shape(t, camera, style),
             AnnotationKind::Line(l) => {
                 let [start, end] = l.points().map(|p| geometry::point(t, p));
                 self.segment(start, end, style, camera)

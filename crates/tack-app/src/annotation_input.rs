@@ -256,11 +256,17 @@ impl ImageInput {
         }
         match event {
             WindowEvent::Focused(false) | WindowEvent::Occluded(true) => {
-                self.annotation.edit = None;
+                let draft = self.annotation.edit.take();
                 self.physical(PhysicalEvent::FocusLost, editor, camera)?;
+                self.annotation.edit = draft;
+                if let Some(edit) = &mut self.annotation.edit {
+                    edit.composing = false;
+                }
             }
             WindowEvent::ScaleFactorChanged { scale_factor, .. } => {
-                self.annotation.edit = None;
+                if let Some(edit) = &mut self.annotation.edit {
+                    edit.composing = false;
+                }
                 self.gizmo.set_scale(*scale_factor);
                 self.reset_modal_inputs();
             }
@@ -269,12 +275,25 @@ impl ImageInput {
                     .state
                     .modifiers()
                     .contains(crate::input::Modifiers::CONTROL);
+                if self
+                    .keymap
+                    .matching(
+                        crate::input::PhysicalControl::Key(event.physical_key),
+                        self.state.modifiers(),
+                        crate::bindings::Trigger::Press,
+                    )
+                    .any(|b| b.action == Action::Paste)
+                {
+                    self.pending_local = Some(Action::Paste);
+                    return Ok(());
+                }
                 match event.physical_key {
                     PhysicalKey::Code(KeyCode::Escape) => self.annotation.edit = None,
                     PhysicalKey::Code(KeyCode::Enter) if ctrl => {
-                        if let Some(edit) = self.annotation.edit.take() {
+                        if let Some(edit) = self.annotation.edit.clone() {
                             let id = edit.id;
                             edit.finish(editor)?;
+                            self.annotation.edit = None;
                             self.images.selection.select(Some(id), false);
                         }
                         self.reset_modal_inputs();

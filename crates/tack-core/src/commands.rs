@@ -15,6 +15,7 @@ pub enum Command {
     SetSource(Source),
     AddAsset(ImageAsset),
     RemoveAsset(AssetId),
+    SetAsset(ImageAsset),
     AddObject {
         object: DocumentObject,
         index: usize,
@@ -117,10 +118,30 @@ impl Command {
         };
         std::mem::size_of::<Self>() + extra
     }
-    fn image_edit(&self) -> bool {
+    pub(crate) fn source_revision(&self) -> u64 {
+        match self {
+            Self::SetSource(s) | Self::AddSource(s) => s.revision(),
+            Self::Batch(edits) => edits
+                .iter()
+                .filter_map(|e| match e {
+                    Self::SetSource(s) | Self::AddSource(s) => Some(s.revision()),
+                    _ => None,
+                })
+                .max()
+                .unwrap_or(0),
+            _ => 0,
+        }
+    }
+    fn flat_edit(&self) -> bool {
         matches!(
             self,
-            Self::AddObject { .. }
+            Self::AddSource(_)
+                | Self::RemoveSource(_)
+                | Self::SetSource(_)
+                | Self::AddAsset(_)
+                | Self::RemoveAsset(_)
+                | Self::SetAsset(_)
+                | Self::AddObject { .. }
                 | Self::RemoveObject(_)
                 | Self::SetTransform { .. }
                 | Self::SetCrop { .. }
@@ -142,6 +163,16 @@ impl Document {
         command: &Command,
         high_water: u64,
     ) -> Result<(), CommandError> {
+        if let Command::Batch(edits) = command {
+            let mut water = high_water;
+            for edit in edits {
+                if !edit.flat_edit() {
+                    return Err(CommandError::LimitReached("flat metadata batch"));
+                }
+                self.validate_source_revision(edit, water)?;
+                water = water.max(edit.source_revision());
+            }
+        }
         if let Command::SetSource(source) = command {
             let previous = self
                 .sources
@@ -162,8 +193,8 @@ impl Document {
         use Command::*;
         let inverse = match command {
             Batch(edits) => {
-                if edits.len() > 200_000 || edits.iter().any(|e| !e.image_edit()) {
-                    return Err(CommandError::LimitReached("flat image batch"));
+                if edits.len() > 200_000 || edits.iter().any(|e| !e.flat_edit()) {
+                    return Err(CommandError::LimitReached("flat metadata batch"));
                 }
                 let mut inverses = Vec::with_capacity(edits.len());
                 for edit in edits {
@@ -234,6 +265,20 @@ impl Document {
                 }
                 self.assets.insert(id, asset);
                 Some(RemoveAsset(id))
+            }
+            SetAsset(asset) => {
+                let id = asset.id();
+                let previous = self.assets.get(&id).ok_or(CommandError::MissingAsset(id))?;
+                if !self.sources.contains_key(&asset.source_id()) {
+                    return Err(CommandError::MissingSource(asset.source_id()));
+                }
+                if previous == &asset {
+                    None
+                } else {
+                    let previous = *previous;
+                    self.assets.insert(id, asset);
+                    Some(SetAsset(previous))
+                }
             }
             RemoveAsset(id) => {
                 if !self.assets.contains_key(&id) {

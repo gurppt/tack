@@ -16,7 +16,6 @@ fn annotation_schema_roundtrip_refuses_malformed_authority_without_mutation() ->
             TextAlignment::Center,
         )?),
         AnnotationKind::Rect,
-        AnnotationKind::Ellipse,
         AnnotationKind::Line(LineObject::new([[0., 0.5], [1., 0.5]])?),
         AnnotationKind::Arrow(LineObject::new([[1., 0.], [0., 1.]])?),
         AnnotationKind::Scribble(ScribbleObject::new(vec![[0., 0.], [0.3, 0.8], [1., 1.]])?),

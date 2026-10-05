@@ -9,7 +9,6 @@ pub enum Tool {
     RotateView,
     Text,
     Rectangle,
-    Ellipse,
     Line,
     Arrow,
     Scribble,
@@ -18,12 +17,7 @@ impl Tool {
     pub fn is_annotation(self) -> bool {
         matches!(
             self,
-            Self::Text
-                | Self::Rectangle
-                | Self::Ellipse
-                | Self::Line
-                | Self::Arrow
-                | Self::Scribble
+            Self::Text | Self::Rectangle | Self::Line | Self::Arrow | Self::Scribble
         )
     }
     pub fn label(self) -> &'static str {
@@ -33,7 +27,6 @@ impl Tool {
             Self::RotateView => "Rotate view",
             Self::Text => "Text",
             Self::Rectangle => "Rectangle",
-            Self::Ellipse => "Ellipse",
             Self::Line => "Line",
             Self::Arrow => "Arrow",
             Self::Scribble => "Scribble",
@@ -81,10 +74,22 @@ pub enum Action {
     OpenSource,
     RevealSource,
     CopySourcePath,
+    ApplicationMenu,
+    NewBoard,
+    OpenBoard,
+    ImportImages,
+    SaveAs,
+    Paste,
+    RelinkSource,
+    Preferences,
+    KeymapEditor,
+    RecentBoards,
+    ImportKeymap,
+    ExportKeymap,
 }
 impl Action {
     /// Enumerable action catalog, including currently unassigned actions.
-    pub const ALL: [Self; 71] = [
+    pub const ALL: [Self; 81] = [
         Self::SelectTool(Tool::Pointer),
         Self::SelectTool(Tool::Pan),
         Self::SelectTool(Tool::RotateView),
@@ -134,13 +139,11 @@ impl Action {
         Self::PreviousFrame,
         Self::SelectTool(Tool::Text),
         Self::SelectTool(Tool::Rectangle),
-        Self::SelectTool(Tool::Ellipse),
         Self::SelectTool(Tool::Line),
         Self::SelectTool(Tool::Arrow),
         Self::SelectTool(Tool::Scribble),
         Self::TemporaryTool(Tool::Text),
         Self::TemporaryTool(Tool::Rectangle),
-        Self::TemporaryTool(Tool::Ellipse),
         Self::TemporaryTool(Tool::Line),
         Self::TemporaryTool(Tool::Arrow),
         Self::TemporaryTool(Tool::Scribble),
@@ -156,7 +159,65 @@ impl Action {
         Self::OpenSource,
         Self::RevealSource,
         Self::CopySourcePath,
+        Self::ApplicationMenu,
+        Self::NewBoard,
+        Self::OpenBoard,
+        Self::ImportImages,
+        Self::SaveAs,
+        Self::Paste,
+        Self::RelinkSource,
+        Self::Preferences,
+        Self::KeymapEditor,
+        Self::RecentBoards,
+        Self::ImportKeymap,
+        Self::ExportKeymap,
     ];
+    /// Stable readable semantic names; never a positional catalog index.
+    pub fn id(self) -> String {
+        format!("{self:?}")
+    }
+    pub fn from_id(id: &str) -> Option<Self> {
+        Self::ALL.into_iter().find(|a| a.id() == id)
+    }
+    pub fn is_local(self) -> bool {
+        matches!(
+            self,
+            Self::ApplicationMenu
+                | Self::NewBoard
+                | Self::OpenBoard
+                | Self::ImportImages
+                | Self::SaveAs
+                | Self::Paste
+                | Self::RelinkSource
+                | Self::Preferences
+                | Self::KeymapEditor
+                | Self::RecentBoards
+                | Self::ImportKeymap
+                | Self::ExportKeymap
+        )
+    }
+    pub fn category(self) -> &'static str {
+        match self {
+            Self::SelectTool(_) | Self::TemporaryTool(_) | Self::AnnotationStyle(_) => {
+                "Tools and annotations"
+            }
+            Self::PanView | Self::ZoomView | Self::CenterPointer => "Navigation",
+            Self::OpenSource | Self::RevealSource | Self::CopySourcePath => "Sources",
+            _ if self.is_local() || self == Self::Save => "Local files and preferences",
+            Self::Layout(_)
+            | Self::GroupSelection
+            | Self::UngroupSelection
+            | Self::CreateFrame
+            | Self::RenameFrame
+            | Self::FocusFrame
+            | Self::NextFrame
+            | Self::PreviousFrame
+            | Self::ToggleGrid
+            | Self::ToggleSnapping
+            | Self::SnapDisable => "Spatial organization",
+            _ => "Selection and editing",
+        }
+    }
     pub fn captured_hold(self) -> bool {
         matches!(
             self,
@@ -237,6 +298,18 @@ impl Action {
             Self::OpenSource => "Open linked image source",
             Self::RevealSource => "Reveal linked image source",
             Self::CopySourcePath => "Copy linked source path",
+            Self::ApplicationMenu => "Local menu",
+            Self::NewBoard => "New board",
+            Self::OpenBoard => "Open board",
+            Self::ImportImages => "Import images",
+            Self::SaveAs => "Save As",
+            Self::Paste => "Paste",
+            Self::RelinkSource => "Relink selected source",
+            Self::Preferences => "Preferences",
+            Self::KeymapEditor => "Edit keymap",
+            Self::RecentBoards => "Recent boards",
+            Self::ImportKeymap => "Import keymap",
+            Self::ExportKeymap => "Export keymap",
         }
     }
 }

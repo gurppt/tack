@@ -5,7 +5,7 @@ use tack_render::{MAX_OVERLAY_QUADS, OverlayQuad};
 const FRAME_COLOR: [f32; 4] = [0.40, 0.48, 0.53, 1.];
 const GUIDE_COLOR: [f32; 4] = [0.95, 0.70, 0.30, 1.];
 impl ImageGizmo {
-    fn pixel_rect(
+    pub fn pixel_rect(
         &mut self,
         camera: &Camera,
         lo: [f64; 2],
@@ -17,16 +17,50 @@ impl ImageGizmo {
             return;
         }
         self.quads.push(OverlayQuad {
-            points: [lo, [lo[0], hi[1]], [hi[0], lo[1]], hi]
-                .map(|p| camera.screen_to_world(p.map(f64::round))),
+            points: [lo, [lo[0], hi[1]], [hi[0], lo[1]], hi].map(|p| {
+                camera
+                    .screen_to_world(p.map(|v| (v / camera.ui_scale()).round() * camera.ui_scale()))
+            }),
             color,
             bitmap,
         });
     }
+    pub fn ui_text(
+        &mut self,
+        camera: &Camera,
+        at: [f64; 2],
+        width: f64,
+        text: &str,
+        color: [f32; 4],
+        budget: &mut usize,
+    ) {
+        let scale = camera.ui_scale();
+        let mut x = (at[0] / scale).round() * scale;
+        let y = (at[1] / scale).round() * scale;
+        let right = x + width * scale;
+        for c in text.chars() {
+            let (bits, advance) = pixel_font::glyph(c);
+            if *budget == 0
+                || x + advance as f64 * scale > right
+                || self.quads.len() >= MAX_OVERLAY_QUADS
+            {
+                break;
+            }
+            self.pixel_rect(
+                camera,
+                [x, y],
+                [x + 16. * scale, y + 16. * scale],
+                color,
+                Some(bits),
+            );
+            x += advance as f64 * scale;
+            *budget -= 1;
+        }
+    }
     pub(crate) fn label(&mut self, camera: &Camera, at: [f64; 2], text: &str, budget: &mut usize) {
-        let mut x = at[0].round();
+        let mut x = (at[0] / self.scale).round() * self.scale;
         let right = x + 160. * self.scale;
-        let y = at[1].round();
+        let y = (at[1] / self.scale).round() * self.scale;
         self.pixel_rect(
             camera,
             [x - 2. * self.scale, y],

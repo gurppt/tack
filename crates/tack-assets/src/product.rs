@@ -4,7 +4,7 @@ use crate::{
     representation::{self, CountRead},
 };
 use std::{
-    collections::{BTreeMap, HashMap, HashSet},
+    collections::{BTreeMap, HashMap},
     fs::File,
     io::Write,
     path::{Path, PathBuf},
@@ -14,7 +14,20 @@ use std::{
     },
     thread,
 };
-use tack_core::{AssetId, ByteCache, SourceId, SourceLocation};
+use tack_core::{AssetId, ByteCache, Document, ImageAsset, Source, SourceId, SourceLocation};
+use tack_storage::{Payload, RangeReader};
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+struct Key {
+    asset: AssetId,
+    revision: u64,
+}
+#[derive(Clone)]
+struct Job {
+    board: Arc<TackFile>,
+    asset: ImageAsset,
+    source: Source,
+    original: Option<Payload>,
+}
 use tack_storage::TackFile;
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum SourceState {
@@ -43,12 +56,14 @@ pub struct ProductAssetStats {
     pub repair_cache_hits: usize,
     pub repair_cache_bytes: u64,
     pub errors: usize,
+    pub discarded: usize,
     pub container_bytes: u64,
     pub source_bytes: u64,
     pub derived_bytes: u64,
     pub cpu_bytes: usize,
 }
 struct Outcome {
+    key: Key,
     asset: AssetId,
     source: Option<SourceId>,
     state: SourceState,
@@ -61,19 +76,20 @@ struct Outcome {
     repair_cache_hit: bool,
 }
 struct Worker {
-    sender: SyncSender<AssetId>,
+    sender: SyncSender<Job>,
     receiver: Receiver<Outcome>,
     handle: thread::JoinHandle<()>,
 }
 pub struct ProductAssets {
     board: Arc<TackFile>,
     workers: Vec<Worker>,
-    pending: HashMap<AssetId, usize>,
-    failed: HashSet<AssetId>,
-    cache: ByteCache<AssetId, Arc<Decoded>>,
+    pending: HashMap<Key, usize>,
+    failed: HashMap<AssetId, u64>,
+    cache: ByteCache<Key, Arc<Decoded>>,
     pub states: BTreeMap<SourceId, SourceState>,
     pub prepared: BTreeMap<AssetId, PreparedOverview>,
     stats: ProductAssetStats,
+    current: HashMap<AssetId, u64>,
 }
 impl ProductAssets {
     pub fn new(
@@ -112,17 +128,16 @@ impl ProductAssets {
         let base = board_path.parent().unwrap_or(Path::new(".")).to_path_buf();
         let mut workers = Vec::new();
         for _ in 0..2 {
-            let (tx, rx) = mpsc::sync_channel::<AssetId>(8);
+            let (tx, rx) = mpsc::sync_channel::<Job>(8);
             let (done_tx, done_rx) = mpsc::sync_channel(8);
-            let b = Arc::clone(&board);
             let base = base.clone();
             let dir = repair_dir.clone();
             let disk = Arc::clone(&disk);
             let handle = thread::Builder::new()
                 .name("tack-product-overview".into())
                 .spawn(move || {
-                    while let Ok(id) = rx.recv() {
-                        let outcome = load(&b, &base, &dir, &disk, id);
+                    while let Ok(job) = rx.recv() {
+                        let outcome = load(job, &base, &dir, &disk);
                         if done_tx.send(outcome).is_err() {
                             break;
                         }
@@ -138,22 +153,75 @@ impl ProductAssets {
             board,
             workers,
             pending: HashMap::new(),
-            failed: HashSet::new(),
+            failed: HashMap::new(),
             cache: ByteCache::new(cpu_bytes),
             states: BTreeMap::new(),
             prepared: BTreeMap::new(),
             stats: ProductAssetStats::default(),
+            current: HashMap::new(),
         })
     }
+    /// Run after committed document edits, never scan the board on every redraw.
+    pub fn sync_document(&mut self, doc: &Document) {
+        let mut changed_sources = Vec::new();
+        self.current.retain(|id, revision| {
+            if let Some(source) = doc.asset(*id).and_then(|a| doc.source(a.source_id())) {
+                if *revision != source.revision() {
+                    changed_sources.push(source.id());
+                }
+                *revision = source.revision();
+                true
+            } else {
+                false
+            }
+        });
+        self.failed
+            .retain(|id, rev| self.current.get(id) == Some(rev));
+        self.states.retain(|id, _| doc.source(*id).is_some());
+        for source in changed_sources {
+            self.states.remove(&source);
+        }
+        self.prepared
+            .retain(|id, overview| self.current.get(id) == Some(&overview.revision));
+    }
+    pub fn set_board(&mut self, board: Arc<TackFile>) {
+        self.board = board;
+    }
     pub fn request(&mut self, id: AssetId) -> bool {
-        if self.cache.contains(id)
-            || self.pending.contains_key(&id)
-            || self.failed.contains(&id)
+        let board = Arc::clone(&self.board);
+        self.request_current(id, &board.document, None)
+    }
+    /// Clone only the admitted source/asset descriptor, never the whole document.
+    pub fn request_current(
+        &mut self,
+        id: AssetId,
+        doc: &Document,
+        original: Option<&Payload>,
+    ) -> bool {
+        let Some(asset) = doc.asset(id) else {
+            return false;
+        };
+        let Some(source) = doc.source(asset.source_id()) else {
+            return false;
+        };
+        let key = Key {
+            asset: id,
+            revision: source.revision(),
+        };
+        self.observe_current(id, key.revision, source.id());
+        if self.cache.contains(key)
+            || self.pending.contains_key(&key)
+            || self.failed.get(&id) == Some(&key.revision)
             || self.pending.len() >= 16
-            || self.board.document.asset(id).is_none()
         {
             return false;
         }
+        let job = Job {
+            board: Arc::clone(&self.board),
+            asset: *asset,
+            source: source.clone(),
+            original: original.cloned(),
+        };
         let worker = self
             .workers
             .iter()
@@ -165,11 +233,11 @@ impl ProductAssets {
                     .count()
                     < 8
             })
-            .find(|(_, w)| w.sender.try_send(id).is_ok());
+            .find(|(_, w)| w.sender.try_send(job.clone()).is_ok());
         let Some((index, _)) = worker else {
             return false;
         };
-        self.pending.insert(id, index);
+        self.pending.insert(key, index);
         self.stats.pending = self.pending.len();
         self.stats.peak_pending = self.stats.peak_pending.max(self.stats.pending);
         true
@@ -179,20 +247,24 @@ impl ProductAssets {
         for w in &self.workers {
             while let Ok(o) = w.receiver.try_recv() {
                 changed = true;
-                self.pending.remove(&o.asset);
+                self.pending.remove(&o.key);
                 self.stats.completed += 1;
                 self.stats.container_bytes += o.container_bytes;
                 self.stats.source_bytes += o.source_bytes;
+                self.stats.derived_bytes += o.derived_bytes;
+                self.stats.repair_cache_bytes += o.repair_cache_bytes;
+                if self.current.get(&o.asset) != Some(&o.key.revision) {
+                    self.stats.discarded += 1;
+                    continue;
+                }
                 if let Some(source) = o.source {
                     self.states.insert(source, o.state);
                 }
-                self.stats.repair_cache_bytes += o.repair_cache_bytes;
                 if o.repair_cache_hit {
                     self.stats.repair_cache_hits += 1;
                 }
                 if let Some(p) = o.prepared {
                     self.stats.regenerated += usize::from(!o.repair_cache_hit);
-                    self.stats.derived_bytes += o.derived_bytes;
                     self.prepared.insert(o.asset, p);
                 } else if o.result.is_ok() {
                     self.stats.reused += 1;
@@ -200,11 +272,11 @@ impl ProductAssets {
                 match o.result {
                     Ok(image) => {
                         let bytes = image.rgba.len();
-                        self.cache.insert(o.asset, Arc::new(image), bytes);
+                        self.cache.insert(o.key, Arc::new(image), bytes);
                     }
                     Err(_) => {
                         self.stats.errors += 1;
-                        self.failed.insert(o.asset);
+                        self.failed.insert(o.key.asset, o.key.revision);
                     }
                 }
             }
@@ -214,24 +286,46 @@ impl ProductAssets {
         changed
     }
     pub fn get(&mut self, id: AssetId) -> Option<&Arc<Decoded>> {
-        self.cache.get(id)
+        let revision = self.current.get(&id).copied()?;
+        self.get_current(id, revision)
+    }
+    /// Observe metadata even when an old GPU image is already resident (e.g. undo).
+    pub fn observe_current(&mut self, id: AssetId, revision: u64, source: SourceId) {
+        if self
+            .current
+            .insert(id, revision)
+            .is_some_and(|old| old != revision)
+        {
+            self.failed.remove(&id);
+            self.states.remove(&source);
+            self.prepared.remove(&id);
+        }
+    }
+    pub fn get_current(&mut self, id: AssetId, revision: u64) -> Option<&Arc<Decoded>> {
+        self.current.insert(id, revision);
+        self.cache.get(Key {
+            asset: id,
+            revision,
+        })
     }
     pub fn stats(&self) -> ProductAssetStats {
         self.stats
     }
     pub fn failed(&self, id: AssetId) -> bool {
-        self.failed.contains(&id)
+        self.current
+            .get(&id)
+            .is_some_and(|revision| self.failed.get(&id) == Some(revision))
     }
 }
-fn load(
-    board: &TackFile,
-    base: &Path,
-    dir: &Path,
-    disk: &Mutex<crate::decode::DiskCache>,
-    id: AssetId,
-) -> Outcome {
-    let source = board.document.asset(id).map(|a| a.source_id());
+fn load(job: Job, base: &Path, dir: &Path, disk: &Mutex<crate::decode::DiskCache>) -> Outcome {
+    let board = &job.board;
+    let id = job.asset.id();
+    let source = Some(job.source.id());
     let mut outcome = Outcome {
+        key: Key {
+            asset: id,
+            revision: job.source.revision(),
+        },
         asset: id,
         source,
         state: SourceState::Missing,
@@ -245,10 +339,7 @@ fn load(
     };
     let result = (|| -> Result<Decoded, AssetError> {
         let source = source.ok_or("missing asset metadata")?;
-        let s = board
-            .document
-            .source(source)
-            .ok_or("missing source metadata")?;
+        let s = &job.source;
         let path = match s.location() {
             SourceLocation::Embedded => {
                 outcome.state = SourceState::Embedded;
@@ -282,7 +373,13 @@ fn load(
                 }
             },
         };
-        if let Some(e) = board.overviews.get(&id) {
+        if let Some(e) = board.overviews.get(&id)
+            && e.revision == s.revision()
+            && board
+                .document
+                .asset(id)
+                .is_some_and(|a| a.source_id() == source)
+        {
             outcome.container_bytes += e.range.len;
             if let Ok(image) = board.overview_bytes(id).and_then(|bytes| {
                 representation::decode_png(&bytes, Some([e.width, e.height]))
@@ -338,7 +435,15 @@ fn load(
             (pixels, generator)
         } else if outcome.state == SourceState::Embedded {
             let mut reader = CountRead {
-                inner: board.original_reader(source)?,
+                inner: match &job.original {
+                    Some(Payload::Stored { file, range }) => {
+                        RangeReader::new(Arc::clone(file), *range)
+                    }
+                    Some(Payload::File(_)) => {
+                        return Err("embedded import requires a pinned original".into());
+                    }
+                    None => board.original_reader(source)?,
+                },
                 count: 0,
             };
             let result = representation::derive_stream(&mut reader);

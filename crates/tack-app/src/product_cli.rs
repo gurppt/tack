@@ -40,6 +40,7 @@ pub fn run(command: &str, args: Vec<OsString>, started: Instant) -> Result<(), A
         "repair" => repair(args, started),
         "inspect" => inspect(args),
         "open" => crate::product_window::run(args, started),
+        "new" => crate::product_window::run_new(args, started),
         "query-scale" => query_scale(args),
         "annotation-scale" => crate::annotation_cli::run(args),
         "spatial-scale" => crate::spatial_cli::run(args),
@@ -164,8 +165,8 @@ fn create(args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
         prepare_all(Arc::clone(&board), &seed, work.0.join("overview"))?;
     let inputs = save_inputs(&board, &assets);
     let save_started = Instant::now();
-    require_new_target(&target)?;
-    storage::save(&target, editor.document(), inputs)?;
+    let owner = storage::BoardLease::acquire_new(&target)?;
+    owner.save(editor.document(), inputs)?;
     let save_ms = save_started.elapsed().as_secs_f64() * 1000.;
     editor.mark_saved();
     let stats = assets.stats();
@@ -259,8 +260,18 @@ fn repair(args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
     let target = PathBuf::from(args.get(1).ok_or("repair output")?);
     let output = args.get(2).map(PathBuf::from);
     crate::report_output::preflight(output.as_deref(), Some(&target))?;
+    require_repair_target(&input, &target)?;
+    let owner = if fs::symlink_metadata(&target).is_ok() {
+        storage::BoardLease::acquire(&target)?
+    } else {
+        storage::BoardLease::acquire_new(&target)?
+    };
     let work = Workspace::new()?;
-    let board = Arc::new(TackFile::open(&input)?);
+    let board = Arc::new(if owner.path() == input.canonicalize()? {
+        owner.open()?
+    } else {
+        TackFile::open(&input)?
+    });
     if board
         .document
         .sources()
@@ -285,7 +296,7 @@ fn repair(args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
         prepare_all(Arc::clone(&board), &input, work.0.join("overview"))?;
     let save_start = Instant::now();
     require_repair_target(&input, &target)?;
-    storage::save(&target, &board.document, save_inputs(&board, &assets))?;
+    owner.save(&board.document, save_inputs(&board, &assets))?;
     let stats = assets.stats();
     emit(
         output.as_deref(),

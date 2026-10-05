@@ -1,9 +1,11 @@
 # Tack
 
 Native, local-first reference board. This repository currently contains
-**Phase 1D: grid, snapping, arrangement, groups and named frames**. The executable
-provides a minimal product CLI alongside the existing renderer benchmarks.
-See [the current report](docs/MISSION_1D_REPORT.md),
+**Phase 1F: local production workflows and recovery**. The executable opens
+an empty local board by default; renderer benchmarks remain explicit commands.
+See [the current report](docs/MISSION_1F_REPORT.md),
+[Phase 1E](docs/MISSION_1E_REPORT.md),
+[Phase 1D](docs/MISSION_1D_REPORT.md),
 [Phase 1C](docs/MISSION_1C_REPORT.md),
 [Phase 1B](docs/MISSION_1B_REPORT.md),
 [Phase 1A](docs/MISSION_1A_REPORT.md),
@@ -50,8 +52,8 @@ Pan with middle-button drag or Alt + left-button drag; zoom with the wheel.
 The prototype uses a native window and progressive image loading. X11 uses
 window-manager decorations; Wayland requires compositor decorations (no bundled
 client titlebar).
-Product creation/open commands and manipulation shortcuts are below. An ordinary launch without a product subcommand
-still runs the benchmark prototype.
+An ordinary launch creates an Untitled local board. Product workflows and
+manipulation shortcuts are below. Benchmarks require explicit scenario arguments.
 
 Run the original five scripted scenarios on your desktop GPU:
 
@@ -139,12 +141,12 @@ cargo test -p tack-render --test product_gpu --locked -- --include-ignored
 ```
 
 Repair preserves authority and regenerates damaged/missing previews only. It
-refuses a different parent directory if relative links exist; a future explicit
-Save As/relink operation must preserve their bindings. See [format v1](docs/design/tack_file_format_v1.md)
+refuses a different parent directory if relative links exist. The native Save As
+workflow rebases supported relative links to preserve their bindings. See [format v1](docs/design/tack_file_format_v1.md)
 for compatibility, streaming, save/recovery guarantees and limitations.
 
 The code license/contribution model is pending; dependency license checks are
-separate. Human review of Phase 1D's report is the stop gate before Phase 1E.
+separate. Human review of Phase 1F's report is the stop gate before any further branch.
 
 Diagnostic `--output` / repair report destinations must be new files. Existing
 files and document aliases are refused to protect saved work and source images.
@@ -152,8 +154,7 @@ files and document aliases are refused to protect saved work and source images.
 `repair` accepts a new destination or the original canonical input path. It
 refuses a distinct existing destination, including another `.tack` document.
 
-Open a `.tack` board to manipulate its images (the ordinary prototype launch
-without `open` remains a navigation benchmark). Selection and camera are local;
+Open a `.tack` board to manipulate its images. Selection and camera are local;
 image edits are undoable document state.
 
 | Input | Product action |
@@ -178,8 +179,9 @@ image edits are undoable document state.
 | Ctrl + S | Save committed edits on a worker |
 
 One gesture makes one undo step; crop is non-destructive and single-image only.
-The title reports selection, dirty/save status and missing links. Close does not
-autosave; use Ctrl + S. Window-manager shortcuts can intercept Alt combinations.
+The title reports selection, dirty/save status and missing links. Close prompts
+to Save, Discard or Cancel when dirty; recovery snapshots never replace normal
+Save. Window-manager shortcuts can intercept Alt combinations.
 
 ```bash
 python3 tools/run_image_interaction.py --board /path/to/generated.tack --output benchmark-results/my-interactions
@@ -231,8 +233,8 @@ python3 tools/run_idle.py --board benchmark-results/my-spatial-native/board.tack
 
 ## Phase 1E annotations and sources
 
-Open a local board, choose `T` text (`Ctrl+N` also selects this tool), `R` rectangle,
-`O` ellipse, `L` line, `A` arrow or `P` scribble, then drag. Text also accepts a
+Open a local board, choose `T` text, `R` rectangle,
+`L` line, `A` arrow or `P` scribble, then drag. Text also accepts a
 click for a default box. Type plain text; Enter adds a line, Ctrl+Enter commits,
 Escape/focus loss cancels. `V` returns to selection. F2 or double-click edits a
 selected note; Ctrl+A replaces its text, Backspace removes one Unicode scalar.
@@ -255,8 +257,8 @@ missing, foreign, executable or unsupported source files give explicit errors.
 Only JPEG/PNG regular files are opened; no shell command is built from a path.
 Each request runs off the UI thread; at most one is active, no idle source worker.
 
-Notes use a lazy compact smooth font subset with the existing Unicode fallback;
-UI labels remain pixel-native. See [font decision](docs/design/text_rendering_decision.md)
+Notes and UI use existing Spleen bitmap cells with the lazy Unifont fallback;
+all Tack-owned primitives have hard pixel edges. See [font decision](docs/design/ui_font_decision.md)
 and [annotation integration](docs/design/annotation_objects.md). Advanced shaping,
 bidi and rich text are deferred. Display is capped at 32768 annotation primitives;
 selected/edited/transient objects receive priority, whole omitted objects trigger
@@ -267,3 +269,48 @@ Reproduction: `tools/run_annotations.py`, `tools/run_native_annotation_checks.py
 and the existing image/spatial/persistence/idle harnesses. `annotation-scale`
 generates owned fixture documents; `open --annotation-benchmark` forces redraw
 only for timed instrumentation, never for ordinary editing/idle.
+
+## Local files, recovery and preferences (1F)
+
+```bash
+target/release/tack-app                    # new Untitled board
+target/release/tack-app new /tmp/new.tack  # new, unused filename
+target/release/tack-app /path/board.tack   # existing board
+```
+
+| Input | Local workflow |
+| --- | --- |
+| F10 | All actions menu; Up/Down/Enter or click |
+| Ctrl+N / Ctrl+O | New independent window / Open picker |
+| Ctrl+I / image drop | Import one or many JPEG/PNG images |
+| Ctrl+V | Paste image, local file paths/URIs, or text into an active note |
+| Ctrl+S / Ctrl+Shift+S | Save / Save As to an unused filename |
+| Ctrl+Shift+R | Relink the selected image's shared source |
+| Ctrl+comma | Preferences, recent/keymap actions via F10 |
+
+Embedded import is the default; Preferences switches linked/embedded and sampling,
+grid default, UI scale, handles and picking radius. Linux pickers use optional
+`zenity`; clipboard uses optional `xclip` (X11) or `wl-paste` (Wayland). Windows
+uses its fixed native text/reference/file helper; image paste is not claimed there.
+Escape cancels remaining import work; already admitted images stay undoable.
+
+Dirty close offers Save, Discard or Cancel. Recovery snapshots are separate from
+normal files: five-second debounce, at most thirty seconds under continuous edits.
+After a crash, reopen the board (Untitled slots are in Recent) and choose Restore
+or Discard. Restore leaves the normal file unchanged until Ctrl+S. Only completed
+snapshots survive; keep regular saves. Failed save/recovery retains a visible
+error. Same-file concurrent editing is refused; different boards are independent.
+The small `.tack-lock` sidecar can remain after close and is not a stale lock to
+remove. SaveAs refuses existing destinations, including unknown newer files.
+
+In Keymap, type to search, Enter then a key/click/wheel to add a binding; conflicts
+are refused. Delete unassigns an action. F6 chooses press/release; F5 resets the
+action, Shift+F5 its category, Ctrl+F5 all defaults. Import/export uses readable
+JSON. Invalid profiles/keymaps are retained unchanged. Local profiles live under
+`$XDG_STATE_HOME/tack` or `~/.local/state/tack`, and `%LOCALAPPDATA%/tack` on Windows;
+`TACK_PROFILE_DIR` selects a separate profile. There is no automatic reopen-last.
+
+See the [local production contract](docs/design/local_production_hardening.md)
+for bounds, retained originals/history disk costs and exact recovery guarantees.
+No telemetry or automatic persistent log; startup/errors go to stderr, with
+optional `RUST_LOG` verbosity. Phase 1F stops before server/collaboration/media.

@@ -28,11 +28,12 @@ SHA-256 provenance and reproduction instructions are in
 `tack-app --font-license` displays the embedded copyright and OFL notice.
 No system font engine or new Rust dependency was added.
 
-## Tack Note Mono
+## Spleen bitmap primary
 
-Bundled signed-distance atlas derives from Liberation Mono Regular 2.1.5 under
-SIL Open Font License 1.1, renamed Tack Note Mono. Upstream Google/Red Hat notices,
-reserved names, full OFL, pinned original and derivative SHA-256 provenance are in
-[assets/note-font](../assets/note-font/README.md). The original TTF is only a
-reproduction asset. The binary includes the compact atlas/slot map and prints the
-additional copyright notice through `tack-app --font-license`.
+Bundled Spleen 8×16 bitmap cells are the unmodified glyph pixels of Spleen 2.2.0,
+pinned to upstream commit `57f9219328c9f5873085320fe8bc8f7dd34b8791`, under
+BSD-2-Clause. The upstream notice/license, BDF, packed derivative SHA-256 and
+reproduction script are recorded in [assets/ui-font](../assets/ui-font/provenance.json)
+and [font decision](design/ui_font_decision.md). `tack-app --font-license`
+prints both bundled font notices. The earlier Liberation/SDF note atlas has been
+removed; no Mac/Amiga font with unresolved redistribution rights is bundled.

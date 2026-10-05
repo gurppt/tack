@@ -458,6 +458,16 @@ fn native_name_ime_is_utf8_bounded_and_f2_reusable_after_modal_release() -> R {
     let before = e.document().clone();
     input.handle(&WindowEvent::Focused(false), &mut e, &mut camera)?;
     assert_eq!(e.document(), &before);
+    assert_eq!(
+        input
+            .name_edit
+            .as_ref()
+            .ok_or("retained draft")?
+            .value
+            .len(),
+        256
+    );
+    input.finish_name_edit(&mut e, false)?;
     assert!(input.name_edit.is_none());
     Ok(())
 }

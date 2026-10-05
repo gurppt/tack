@@ -8,11 +8,11 @@ pub use gpu::{
 pub use timing::GpuSample;
 
 mod overlay;
+mod pixel_grid;
 pub use overlay::{MAX_OVERLAY_QUADS, OverlayQuad};
 mod grid;
 pub use grid::GridView;
 mod annotations;
 pub use annotations::{
-    AnnotationDraws, AnnotationPrimitive, CanvasDraw, MAX_ANNOTATION_PRIMITIVES, NOTE_ATLAS_SIZE,
-    note_glyph_uv,
+    AnnotationDraws, AnnotationPrimitive, CanvasDraw, MAX_ANNOTATION_PRIMITIVES,
 };

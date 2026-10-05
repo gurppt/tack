@@ -52,15 +52,30 @@ pub struct Camera {
     center: [f64; 2],
     zoom: f64,
     screen: [u32; 2],
+    ui_scale: f64,
 }
 
 impl Camera {
     pub fn new(screen: [u32; 2]) -> Self {
         Self {
             center: [0.0; 2],
+            ui_scale: 1.,
             zoom: 1.0,
             screen: screen.map(|s| s.max(1)),
         }
+    }
+
+    /// Integer physical presentation of logical pixels, including fractional DPI.
+    pub fn set_ui_scale(&mut self, scale: f64) {
+        if scale.is_finite() && scale > 0. {
+            self.ui_scale = scale.round().clamp(1., 8.);
+        }
+    }
+    pub fn ui_scale(&self) -> f64 {
+        self.ui_scale
+    }
+    pub fn screen_size(&self) -> [u32; 2] {
+        self.screen
     }
 
     pub fn resize(&mut self, screen: [u32; 2]) {

@@ -1,0 +1,1282 @@
+{
+  "local-native-shipping2": {
+    "raw_directory": "benchmark-results/phase1f-verified-local-native-shipping2",
+    "checks": [
+      {
+        "name": "native new board is empty",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "native picker embedded import, save",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "real XDND multi-file drop",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "native clipboard PNG paste",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "native linked default preference",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "native clipboard file URI paste",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "native clipboard UTF8 text into note",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "oversized clipboard preserves saved authority",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "pending multi-import preserves note draft and resumes after commit",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "native keymap search and second keyboard binding",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "native reset action restores defaults",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "readable native keymap export",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "native resize/unmap/restore preserves authority",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "native SaveAs retains document ID and geometry",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "same-file second native editor refused",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "distinct native boards idle independently",
+        "observed": true,
+        "detail": [
+          {
+            "rss_bytes": 353083392,
+            "threads": 41,
+            "cpu_ticks_5s": 3,
+            "io_delta": {
+              "rchar": 0,
+              "wchar": 0,
+              "syscr": 0,
+              "syscw": 0,
+              "read_bytes": 0,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          },
+          {
+            "rss_bytes": 351424512,
+            "threads": 41,
+            "cpu_ticks_5s": 2,
+            "io_delta": {
+              "rchar": 0,
+              "wchar": 0,
+              "syscr": 0,
+              "syscw": 0,
+              "read_bytes": 0,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          }
+        ]
+      },
+      {
+        "name": "recovery leaves authoritative normal file byte-identical",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "native crash restore includes new note and normal Save",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "close/reopen retains saved recovered document",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "Untitled cleanup skips symlink to external empty board",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "clean Untitled retires own seed only",
+        "observed": true,
+        "detail": null
+      }
+    ],
+    "provenance": {
+      "binary_sha256": "92e50f202a196fe919dacc1ac2031143b12f70f3392fd3ad84fcc68c18001a66",
+      "harness_sha256": "0271acec627e81ba170192baf08d6e935891ce2036111a48fb6d4e596809b72f",
+      "drop_harness_sha256": "7f2a6b01ed3f2f28d8c7fb49cb6c5ae2196ae3136a409903134f1f05e8412f8c",
+      "display": ":92",
+      "checks": 21,
+      "input": "owned generated files; real X11 keys/pointer, zenity, xclip and XDND; no artist feel or Windows runtime claim"
+    }
+  },
+  "recovery-native-shipping6": {
+    "raw_directory": "benchmark-results/phase1f-verified-recovery-native-shipping6",
+    "checks": [
+      {
+        "name": "shared native import uses one source/asset and two objects",
+        "observed": true
+      },
+      {
+        "name": "missing shared source keeps last-known preview visible",
+        "observed": true
+      },
+      {
+        "name": "native shared relink preserves IDs/layout and advances revision",
+        "observed": true
+      },
+      {
+        "name": "native relink undo restores source revision with exact geometry",
+        "observed": true
+      },
+      {
+        "name": "native relink redo retains fresh source revision",
+        "observed": true
+      },
+      {
+        "name": "failed normal save refuses newer external bytes and exposes failure",
+        "observed": true
+      },
+      {
+        "name": "dismissed Save error keeps the real document editable",
+        "observed": true
+      },
+      {
+        "name": "failed Save retains committed dirty generation until explicit discard",
+        "observed": true
+      },
+      {
+        "name": "explicit close discard still preserves external authoritative replacement",
+        "observed": true
+      },
+      {
+        "name": "dirty close Cancel keeps the window and work",
+        "observed": true
+      },
+      {
+        "name": "corrupt recovery leaves normal save exact",
+        "observed": true
+      },
+      {
+        "name": "native corrupt recovery discard affects only owned artifacts",
+        "observed": true
+      },
+      {
+        "name": "native future open exposes an error and preserves authority",
+        "observed": true
+      },
+      {
+        "name": "failed-open event loop sleeps without recovery spin or file writes",
+        "observed": true
+      },
+      {
+        "name": "native future Dismiss closes error-only window without authoring or changing bytes",
+        "observed": true
+      },
+      {
+        "name": "native truncated open exposes an error and preserves authority",
+        "observed": true
+      },
+      {
+        "name": "native truncated Dismiss closes error-only window without authoring or changing bytes",
+        "observed": true
+      },
+      {
+        "name": "native locked open exposes an error and preserves authority",
+        "observed": true
+      },
+      {
+        "name": "native locked Dismiss closes error-only window without authoring or changing bytes",
+        "observed": true
+      }
+    ],
+    "provenance": {
+      "binary_sha256": "92e50f202a196fe919dacc1ac2031143b12f70f3392fd3ad84fcc68c18001a66",
+      "harness_sha256": "ecb4348f728b36f6b2bfca327bcbf74dc52130e59bddc93be0ae333df103f2be",
+      "checks": 19,
+      "scope": "isolated real X11 input and owned files; no Windows/power-loss claim"
+    }
+  },
+  "native-annotations-final": {
+    "raw_directory": "benchmark-results/phase1f-verified-native-annotations-final",
+    "checks": [
+      {
+        "name": "native text creation, multiline and atomic commit",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "native edit Escape preserves note",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "native note edit persists",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "note undo exact",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "note redo exact",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "native create kind 4",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Rectangle"
+      },
+      {
+        "name": "native create kind 6",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Line"
+      },
+      {
+        "name": "native create kind 7",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Arrow"
+      },
+      {
+        "name": "scribble Escape discards preview",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Scribble"
+      },
+      {
+        "name": "native scribble commits bounded vector",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Scribble"
+      },
+      {
+        "name": "semantic color fill width opacity styling",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "annotation move changes transform",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "annotation move undo exact",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "native annotation resize",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "resize undo exact",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "native annotation rotate",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "rotate undo exact",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "frame coexists with annotations",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Frame \u00b7 Pointer"
+      },
+      {
+        "name": "mixed grouping deferred with explicit error",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 8 selected \u00b7 0 missing / 0 changed sources \u00b7 Frame \u00b7 groups support images only; deselect annotations before grouping \u00b7 Pointer"
+      },
+      {
+        "name": "mixed marquee selects images and annotations",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 7 selected \u00b7 0 missing / 0 changed sources \u00b7 Frame \u00b7 Pointer"
+      },
+      {
+        "name": "annotations remain visible across native zoom",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "schema3 retains all five kinds with frame/images",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "native annotation delete",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "native delete undo exact",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "save/reopen keeps authored authority exact",
+        "observed": true,
+        "title": "closed"
+      }
+    ],
+    "provenance": {
+      "binary_sha256": "92e50f202a196fe919dacc1ac2031143b12f70f3392fd3ad84fcc68c18001a66",
+      "harness_sha256": "b9b2b1ce0f7d89d3e34a0c2a2d8bad49301e5fb9c8c74911f170199a32b5e2a4",
+      "board_sha256": "d607a78b3efeb6b0c66185bc0fb5c9f064c97935425e4f8aaa783d48cdb5bd94",
+      "checks": 25,
+      "dpi_env": null,
+      "native": "X11 automated physical mouse/key input and owned captures; no artist/tablet feel claim"
+    }
+  },
+  "native-annotations-dpi15": {
+    "raw_directory": "benchmark-results/phase1f-verified-native-annotations-dpi15",
+    "checks": [
+      {
+        "name": "native text creation, multiline and atomic commit",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "native edit Escape preserves note",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "native note edit persists",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "note undo exact",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "note redo exact",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "native create kind 4",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Rectangle"
+      },
+      {
+        "name": "native create kind 6",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Line"
+      },
+      {
+        "name": "native create kind 7",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Arrow"
+      },
+      {
+        "name": "scribble Escape discards preview",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Scribble"
+      },
+      {
+        "name": "native scribble commits bounded vector",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Scribble"
+      },
+      {
+        "name": "semantic color fill width opacity styling",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "annotation move changes transform",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "annotation move undo exact",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "native annotation resize",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "resize undo exact",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "native annotation rotate",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "rotate undo exact",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "frame coexists with annotations",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Frame \u00b7 Pointer"
+      },
+      {
+        "name": "mixed grouping deferred with explicit error",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 8 selected \u00b7 0 missing / 0 changed sources \u00b7 Frame \u00b7 groups support images only; deselect annotations before grouping \u00b7 Pointer"
+      },
+      {
+        "name": "mixed marquee selects images and annotations",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 7 selected \u00b7 0 missing / 0 changed sources \u00b7 Frame \u00b7 Pointer"
+      },
+      {
+        "name": "annotations remain visible across native zoom",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "schema3 retains all five kinds with frame/images",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "native annotation delete",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "native delete undo exact",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "save/reopen keeps authored authority exact",
+        "observed": true,
+        "title": "closed"
+      }
+    ],
+    "provenance": {
+      "binary_sha256": "92e50f202a196fe919dacc1ac2031143b12f70f3392fd3ad84fcc68c18001a66",
+      "harness_sha256": "b9b2b1ce0f7d89d3e34a0c2a2d8bad49301e5fb9c8c74911f170199a32b5e2a4",
+      "board_sha256": "6489d61e762c0cfce45c252fbf6a0d10194cc23d894e707a000d2bfb2400fde2",
+      "checks": 25,
+      "dpi_env": "1.5",
+      "native": "X11 automated physical mouse/key input and owned captures; no artist/tablet feel claim"
+    }
+  },
+  "native-annotations-dpi2": {
+    "raw_directory": "benchmark-results/phase1f-verified-native-annotations-dpi2",
+    "checks": [
+      {
+        "name": "native text creation, multiline and atomic commit",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "native edit Escape preserves note",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "native note edit persists",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "note undo exact",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "note redo exact",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Text"
+      },
+      {
+        "name": "native create kind 4",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Rectangle"
+      },
+      {
+        "name": "native create kind 6",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Line"
+      },
+      {
+        "name": "native create kind 7",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Arrow"
+      },
+      {
+        "name": "scribble Escape discards preview",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Scribble"
+      },
+      {
+        "name": "native scribble commits bounded vector",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Scribble"
+      },
+      {
+        "name": "semantic color fill width opacity styling",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "annotation move changes transform",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "annotation move undo exact",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "native annotation resize",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "resize undo exact",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "native annotation rotate",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "rotate undo exact",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "frame coexists with annotations",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Frame \u00b7 Pointer"
+      },
+      {
+        "name": "mixed grouping deferred with explicit error",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 8 selected \u00b7 0 missing / 0 changed sources \u00b7 Frame \u00b7 groups support images only; deselect annotations before grouping \u00b7 Pointer"
+      },
+      {
+        "name": "mixed marquee selects images and annotations",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 7 selected \u00b7 0 missing / 0 changed sources \u00b7 Frame \u00b7 Pointer"
+      },
+      {
+        "name": "annotations remain visible across native zoom",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "schema3 retains all five kinds with frame/images",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "native annotation delete",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "native delete undo exact",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "save/reopen keeps authored authority exact",
+        "observed": true,
+        "title": "closed"
+      }
+    ],
+    "provenance": {
+      "binary_sha256": "92e50f202a196fe919dacc1ac2031143b12f70f3392fd3ad84fcc68c18001a66",
+      "harness_sha256": "b9b2b1ce0f7d89d3e34a0c2a2d8bad49301e5fb9c8c74911f170199a32b5e2a4",
+      "board_sha256": "b8fe39e9c2f468fa702b74b5e959d758c96678146114aa7ad6773d6a4b814d40",
+      "checks": 25,
+      "dpi_env": "2",
+      "native": "X11 automated physical mouse/key input and owned captures; no artist/tablet feel claim"
+    }
+  },
+  "native-spatial-final": {
+    "raw_directory": "benchmark-results/phase1f-verified-native-spatial-final",
+    "checks": [
+      {
+        "name": "grid toggle adds dots without changing history",
+        "observed": true
+      },
+      {
+        "name": "grid remains visible across zoom",
+        "observed": true
+      },
+      {
+        "name": "X changes active snapped preview",
+        "observed": true
+      },
+      {
+        "name": "release restores same stable snap",
+        "observed": true
+      },
+      {
+        "name": "Escape has no committed snap edit",
+        "observed": true
+      },
+      {
+        "name": "group saves membership",
+        "observed": true
+      },
+      {
+        "name": "member selects entire group",
+        "observed": true
+      },
+      {
+        "name": "group members move by equal delta",
+        "observed": true
+      },
+      {
+        "name": "group gesture undo exact",
+        "observed": true
+      },
+      {
+        "name": "ungroup preserves transforms",
+        "observed": true
+      },
+      {
+        "name": "alignment fixture selects one ungrouped member",
+        "observed": true
+      },
+      {
+        "name": "alignment fixture has distinct world top edges",
+        "observed": true
+      },
+      {
+        "name": "top alignment shares world edge",
+        "observed": true
+      },
+      {
+        "name": "alignment undo exact",
+        "observed": true
+      },
+      {
+        "name": "vertical distribution changes layout",
+        "observed": true
+      },
+      {
+        "name": "distribution undo exact",
+        "observed": true
+      },
+      {
+        "name": "create named frame uses schema 2",
+        "observed": true
+      },
+      {
+        "name": "F2 name saved exact",
+        "observed": true
+      },
+      {
+        "name": "frame focus shows label",
+        "observed": true
+      },
+      {
+        "name": "frame edge resize preserves images",
+        "observed": true
+      },
+      {
+        "name": "frame move leaves contained images fixed",
+        "observed": true
+      },
+      {
+        "name": "frame navigation preserves selection",
+        "observed": true
+      },
+      {
+        "name": "delete frame preserves images",
+        "observed": true
+      },
+      {
+        "name": "undo frame delete exact",
+        "observed": true
+      }
+    ],
+    "provenance": {
+      "binary_sha256": "92e50f202a196fe919dacc1ac2031143b12f70f3392fd3ad84fcc68c18001a66",
+      "harness_sha256": "3e5cc7a0e68b2dabb0533071bfa4f0f9c870dd65e326a3c3816cfdef905cbf52",
+      "missing_link": false,
+      "scale": "desktop",
+      "checks": [
+        {
+          "name": "grid toggle adds dots without changing history",
+          "observed": true
+        },
+        {
+          "name": "grid remains visible across zoom",
+          "observed": true
+        },
+        {
+          "name": "X changes active snapped preview",
+          "observed": true
+        },
+        {
+          "name": "release restores same stable snap",
+          "observed": true
+        },
+        {
+          "name": "Escape has no committed snap edit",
+          "observed": true
+        },
+        {
+          "name": "group saves membership",
+          "observed": true
+        },
+        {
+          "name": "member selects entire group",
+          "observed": true
+        },
+        {
+          "name": "group members move by equal delta",
+          "observed": true
+        },
+        {
+          "name": "group gesture undo exact",
+          "observed": true
+        },
+        {
+          "name": "ungroup preserves transforms",
+          "observed": true
+        },
+        {
+          "name": "alignment fixture selects one ungrouped member",
+          "observed": true
+        },
+        {
+          "name": "alignment fixture has distinct world top edges",
+          "observed": true
+        },
+        {
+          "name": "top alignment shares world edge",
+          "observed": true
+        },
+        {
+          "name": "alignment undo exact",
+          "observed": true
+        },
+        {
+          "name": "vertical distribution changes layout",
+          "observed": true
+        },
+        {
+          "name": "distribution undo exact",
+          "observed": true
+        },
+        {
+          "name": "create named frame uses schema 2",
+          "observed": true
+        },
+        {
+          "name": "F2 name saved exact",
+          "observed": true
+        },
+        {
+          "name": "frame focus shows label",
+          "observed": true
+        },
+        {
+          "name": "frame edge resize preserves images",
+          "observed": true
+        },
+        {
+          "name": "frame move leaves contained images fixed",
+          "observed": true
+        },
+        {
+          "name": "frame navigation preserves selection",
+          "observed": true
+        },
+        {
+          "name": "delete frame preserves images",
+          "observed": true
+        },
+        {
+          "name": "undo frame delete exact",
+          "observed": true
+        }
+      ],
+      "returncode": 0
+    }
+  },
+  "native-image-final": {
+    "raw_directory": "benchmark-results/phase1f-verified-native-image-final",
+    "checks": [
+      {
+        "name": "marquee selects both",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 2 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "empty click clears",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "single selection",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "move commits",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 modified \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "resize expands without ratio drift",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 modified \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "rotation handle changes geometry",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 modified \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "crop mode",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 modified \u00b7 crop \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "crop removes right pixels",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 modified \u00b7 crop \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "Escape restores visible geometry",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 modified \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "Shift adds second image",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 modified \u00b7 transform \u00b7 2 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "Shift toggles second image off",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 modified \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "middle pans over selection",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 modified \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "wheel zoom changes coverage",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 modified \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "select all",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 modified \u00b7 transform \u00b7 2 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "delete clears selection",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 modified \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "save acknowledges committed generation",
+        "observed": true,
+        "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      }
+    ],
+    "provenance": {
+      "binary_sha256": "92e50f202a196fe919dacc1ac2031143b12f70f3392fd3ad84fcc68c18001a66",
+      "harness_sha256": "4d49f751b5f13f57b482b2f53bbdc80d177c957985abb0cce8e81a703a4dd529",
+      "requested_scale": 1,
+      "missing_link": false
+    }
+  },
+  "native-zoom-final": {
+    "raw_directory": "benchmark-results/phase1f-verified-native-zoom-final",
+    "checks": [
+      {
+        "name": "low zoom image remains targetable",
+        "observed": true
+      },
+      {
+        "name": "low zoom corner handle resizes",
+        "observed": true
+      },
+      {
+        "name": "low zoom resize undo restores geometry",
+        "observed": true
+      },
+      {
+        "name": "low zoom drag Escape restores geometry",
+        "observed": true
+      },
+      {
+        "name": "high zoom image fills viewport",
+        "observed": true
+      },
+      {
+        "name": "high zoom drag visibly tracks pointer",
+        "observed": true
+      },
+      {
+        "name": "high zoom undo restores interior pixels",
+        "observed": true
+      },
+      {
+        "name": "high zoom Escape restores interior pixels",
+        "observed": true
+      }
+    ],
+    "provenance": {
+      "binary_sha256": "92e50f202a196fe919dacc1ac2031143b12f70f3392fd3ad84fcc68c18001a66",
+      "board_sha256": "bbe1ae10da4b841f6abd957e43e4753cc99c7b800b5718c1435aff49721212fa",
+      "harness_sha256": "3ea7efe01a5bf33b2a3aca335fbc86bb7fe9a5354ee3be13efa480f93da9b455",
+      "shared_harness_sha256": "4d49f751b5f13f57b482b2f53bbdc80d177c957985abb0cce8e81a703a4dd529",
+      "returncode": 0,
+      "checks": [
+        {
+          "name": "low zoom image remains targetable",
+          "observed": true
+        },
+        {
+          "name": "low zoom corner handle resizes",
+          "observed": true
+        },
+        {
+          "name": "low zoom resize undo restores geometry",
+          "observed": true
+        },
+        {
+          "name": "low zoom drag Escape restores geometry",
+          "observed": true
+        },
+        {
+          "name": "high zoom image fills viewport",
+          "observed": true
+        },
+        {
+          "name": "high zoom drag visibly tracks pointer",
+          "observed": true
+        },
+        {
+          "name": "high zoom undo restores interior pixels",
+          "observed": true
+        },
+        {
+          "name": "high zoom Escape restores interior pixels",
+          "observed": true
+        }
+      ]
+    }
+  },
+  "failed_open_idle": {
+    "cpu_ticks": 16,
+    "main_cpu_ticks": 0,
+    "main_voluntary_switches": 0,
+    "scope": "6s after shortcuts/drop; driver CPU remains included in total, main-thread spin asserted separately",
+    "io_delta": {
+      "rchar": 0,
+      "wchar": 0,
+      "syscr": 0,
+      "syscw": 0,
+      "read_bytes": 0,
+      "write_bytes": 0,
+      "cancelled_write_bytes": 0
+    },
+    "threads": [
+      {
+        "name": "tack-app",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-0",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-1",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-2",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-3",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-4",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-5",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-6",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-7",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-8",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-9",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-10",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-11",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-12",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-13",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-14",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-15",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-app",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-app",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-app",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-app",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-app",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-app",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-app",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-app",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-app",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-app",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-app",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-app",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-app",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-app",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-app",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-app",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-ap:disk$0",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-app",
+        "cpu_ticks": 0,
+        "voluntary_switches": 3
+      },
+      {
+        "name": "[vkcf] Analysis",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "[vkrt] Analysis",
+        "cpu_ticks": 0,
+        "voluntary_switches": 60
+      },
+      {
+        "name": "[vkps] Update",
+        "cpu_ticks": 15,
+        "voluntary_switches": 117
+      },
+      {
+        "name": "tack-app",
+        "cpu_ticks": 1,
+        "voluntary_switches": 599
+      }
+    ]
+  },
+  "ellipse_cleanup": {
+    "removed_owned_prototype_fixtures": [
+      {
+        "path": "benchmark-results/phase1e-ellipse-measured/ellipse-10000.tack",
+        "bytes": 1070100
+      },
+      {
+        "path": "benchmark-results/phase1e-ellipse-measured/ellipse-full.tack",
+        "bytes": 207
+      },
+      {
+        "path": "benchmark-results/phase1e-ellipse-measured/ellipse-1000.tack",
+        "bytes": 107100
+      },
+      {
+        "path": "benchmark-results/phase1e-native-attempt5/board.tack",
+        "bytes": 3005
+      },
+      {
+        "path": "benchmark-results/phase1e-native-attempt1/board.tack",
+        "bytes": 2930
+      },
+      {
+        "path": "benchmark-results/phase1e-native-dpi2/board.tack",
+        "bytes": 2997
+      },
+      {
+        "path": "benchmark-results/phase1e-native-attempt2/board.tack",
+        "bytes": 3005
+      },
+      {
+        "path": "benchmark-results/phase1e-native-attempt3/board.tack",
+        "bytes": 3005
+      },
+      {
+        "path": "benchmark-results/phase1e-native-attempt4/board.tack",
+        "bytes": 3005
+      },
+      {
+        "path": "benchmark-results/phase1e-native-final/board.tack",
+        "bytes": 2999
+      }
+    ],
+    "unparsed_left_intact": []
+  }
+}

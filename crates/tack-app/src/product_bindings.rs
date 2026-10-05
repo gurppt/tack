@@ -17,6 +17,14 @@ pub fn product_keymap() -> Result<Keymap, BindingError> {
     let alt = Modifiers::ALT;
     use crate::{actions::Tool, annotation_tool::StyleAction};
     for (code, mods, action) in [
+        (KeyCode::F10, Modifiers::NONE, Action::ApplicationMenu),
+        (KeyCode::KeyN, ctrl, Action::NewBoard),
+        (KeyCode::KeyO, ctrl, Action::OpenBoard),
+        (KeyCode::KeyI, ctrl, Action::ImportImages),
+        (KeyCode::KeyS, ctrl.union(shift), Action::SaveAs),
+        (KeyCode::KeyV, ctrl, Action::Paste),
+        (KeyCode::KeyR, ctrl.union(shift), Action::RelinkSource),
+        (KeyCode::Comma, ctrl, Action::Preferences),
         (
             KeyCode::KeyV,
             Modifiers::NONE,
@@ -33,11 +41,6 @@ pub fn product_keymap() -> Result<Keymap, BindingError> {
             Action::SelectTool(Tool::Rectangle),
         ),
         (
-            KeyCode::KeyO,
-            Modifiers::NONE,
-            Action::SelectTool(Tool::Ellipse),
-        ),
-        (
             KeyCode::KeyL,
             Modifiers::NONE,
             Action::SelectTool(Tool::Line),
@@ -52,7 +55,6 @@ pub fn product_keymap() -> Result<Keymap, BindingError> {
             Modifiers::NONE,
             Action::SelectTool(Tool::Scribble),
         ),
-        (KeyCode::KeyN, ctrl, Action::SelectTool(Tool::Text)),
         (
             KeyCode::KeyC,
             Modifiers::NONE,

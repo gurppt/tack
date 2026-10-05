@@ -1,15 +1,14 @@
 //! Scalar-safe deterministic plain-note wrapping, without allocation or font I/O.
 use crate::pixel_font;
 pub fn advance(c: char, size: f64) -> f64 {
-    if c == '\t' {
-        return size * 0.6015625 * 4.;
-    }
-    if tack_render::note_glyph_uv(c).is_some() {
-        size * 0.6015625
+    let width = if c == '\t' {
+        pixel_font::glyph(' ').1 * 4
     } else {
-        pixel_font::glyph(c).1 as f64 / 16. * size
-    }
+        pixel_font::glyph(c).1
+    };
+    width as f64 / 16. * size
 }
+
 pub struct NoteLines<'a> {
     text: &'a str,
     width: f64,

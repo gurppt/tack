@@ -28,8 +28,38 @@ impl DocumentEditor {
             source_revision_high_water,
         }
     }
+    /// Startup restore is dirty authority, not an ordinary command or a saved generation.
+    pub fn recovered(document: Document, capacity: usize) -> Self {
+        let mut editor = Self::new(document, capacity);
+        editor.dirty = true;
+        editor.generation = 1;
+        editor
+    }
     pub fn document(&self) -> &Document {
         &self.document
+    }
+    /// Original handles are needed by live authority or an embedded source redo/inverse.
+    pub fn required_originals(&self) -> Vec<(crate::SourceId, u64)> {
+        let mut result: Vec<_> = self
+            .document
+            .sources()
+            .filter(|s| matches!(s.location(), crate::SourceLocation::Embedded))
+            .map(|s| (s.id(), s.revision()))
+            .collect();
+        for command in self.undo.iter().chain(&self.redo) {
+            let edits = match command {
+                Command::Batch(edits) => edits.as_slice(),
+                other => std::slice::from_ref(other),
+            };
+            for edit in edits {
+                if let Command::AddSource(source) | Command::SetSource(source) = edit
+                    && matches!(source.location(), crate::SourceLocation::Embedded)
+                {
+                    result.push((source.id(), source.revision()));
+                }
+            }
+        }
+        result
     }
     pub fn undo_len(&self) -> usize {
         self.undo.len()
@@ -93,12 +123,9 @@ impl DocumentEditor {
         }
         self.document
             .validate_source_revision(&command, self.source_revision_high_water)?;
-        let next_high_water = match &command {
-            Command::SetSource(s) | Command::AddSource(s) => {
-                self.source_revision_high_water.max(s.revision())
-            }
-            _ => self.source_revision_high_water,
-        };
+        let next_high_water = self
+            .source_revision_high_water
+            .max(command.source_revision());
         let Some(inverse) = self.document.apply_reversible(command)? else {
             return Ok(false);
         };

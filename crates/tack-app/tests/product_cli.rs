@@ -28,7 +28,8 @@ fn relative_link_repair_preserves_binding_or_refuses_save_as() {
         .unwrap();
     assert!(!result.status.success());
     assert!(
-        String::from_utf8_lossy(&result.stderr).contains("relative links require same-directory")
+        String::from_utf8_lossy(&result.stderr)
+            .contains("repair output already exists and differs from input")
     );
     assert_eq!(fs::read(&output).unwrap(), b"prior target");
     let same = root.join("same.tack");

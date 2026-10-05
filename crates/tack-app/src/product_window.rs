@@ -17,8 +17,12 @@ use winit::{
     event_loop::{ActiveEventLoop, ControlFlow, EventLoop},
     window::{Window, WindowId},
 };
+mod local;
+use local::{LoadedBoard, LocalState};
 struct OpenOptions {
     path: PathBuf,
+    new: bool,
+    untitled: bool,
     seconds: Option<f64>,
     output: Option<PathBuf>,
     tour: bool,
@@ -26,11 +30,13 @@ struct OpenOptions {
     annotation_benchmark: bool,
 }
 enum Event {
-    Loaded(Box<Result<(TackFile, f64), AssetError>>),
+    Loaded(Box<Result<LoadedBoard, AssetError>>),
+    LocalReady,
     SourceDone(Result<(), String>),
 }
 struct App {
     options: OpenOptions,
+    local: Box<LocalState>,
     proxy: winit::event_loop::EventLoopProxy<Event>,
     source_active: bool,
     annotations: Option<Box<tack_app::annotation_scene::AnnotationScene>>,
@@ -44,6 +50,7 @@ struct App {
     camera: Camera,
     input: ImageInput,
     editor: Option<DocumentEditor>,
+    load_failed: bool,
     save: ImageSave,
     benchmark: Option<ImageBenchmark>,
     draws: Vec<DrawProductImage>,
@@ -55,6 +62,8 @@ struct App {
     metadata_ms: f64,
     native_startup_ms: f64,
     first_content_ms: Option<f64>,
+    first_frame_ms: Option<f64>,
+    gpu_setup_ms: f64,
     useful_ms: Option<f64>,
     frames: Vec<serde_json::Value>,
     extent: [f64; 2],
@@ -76,6 +85,7 @@ impl App {
                     .with_inner_size(winit::dpi::PhysicalSize::new(1280, 720)),
             )?,
         );
+        let gpu_started = Instant::now();
         let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::from_env_or_default());
         let surface = instance.create_surface(Arc::clone(&window))?;
         let gpu = pollster::block_on(Gpu::new(
@@ -95,7 +105,9 @@ impl App {
             view_formats: vec![],
         };
         surface.configure(&gpu.device, &config);
+        self.gpu_setup_ms = gpu_started.elapsed().as_secs_f64() * 1000.;
         self.input.gizmo.set_scale(window.scale_factor());
+        self.camera.set_ui_scale(window.scale_factor());
         window.set_ime_allowed(true);
         self.window = Some(window);
         self.gpu = Some(gpu);
@@ -206,11 +218,16 @@ impl App {
                     asset: data.asset_id,
                     revision: source.revision(),
                 };
+                assets.observe_current(data.asset_id, source.revision(), source.id());
                 if !gpu.contains_product(key) {
-                    if let Some(image) = assets.get(data.asset_id) {
+                    if let Some(image) = assets.get_current(data.asset_id, source.revision()) {
                         gpu.upload_product(key, image);
                     } else {
-                        assets.request(data.asset_id);
+                        assets.request_current(
+                            data.asset_id,
+                            document,
+                            self.local.originals.get(&(source.id(), source.revision())),
+                        );
                     }
                 }
                 let key = gpu.contains_product(key).then_some(key);
@@ -228,6 +245,18 @@ impl App {
         }
         if let Some(editor) = &self.editor {
             self.input.build_overlay(editor, &self.camera);
+        }
+        if let Some(ui) = &mut self.local.ui {
+            self.input
+                .gizmo
+                .quads
+                .truncate(tack_render::MAX_OVERLAY_QUADS - 1024);
+            ui.draw(
+                &mut self.input.gizmo,
+                &self.camera,
+                &self.input.keymap,
+                &self.local.profile,
+            );
         }
         let grid = self.input.grid_visible.then(|| tack_render::GridView {
             spacing: tack_app::spatial_snap::grid_spacing(
@@ -283,6 +312,7 @@ impl App {
         }
         let cpu_ms = cpu_start.elapsed().as_secs_f64() * 1000.;
         let elapsed_ms = self.started.elapsed().as_secs_f64() * 1000.;
+        self.first_frame_ms.get_or_insert(elapsed_ms);
         if recognizable > 0 && self.first_content_ms.is_none() {
             self.first_content_ms = Some(elapsed_ms);
         }
@@ -392,7 +422,7 @@ impl App {
             .and_then(|g| g.timing_samples())
             .map(|s| s.iter().map(|s| json!({"pass_ms":s.pass_ms})).collect())
             .unwrap_or_default();
-        let report = json!({"annotation_resources":gpu.map(|g|g.annotation_bytes()),"annotations":self.editor.as_ref().map(|e|e.document().annotation_count()).unwrap_or(0),"spatial":{"grid":self.input.grid_visible,"snapping":self.input.snap.enabled,"frames":self.editor.as_ref().map(|e|e.document().objects().filter(|o|matches!(o.kind(),tack_core::ObjectKind::Frame(_))).count()).unwrap_or(0),"groups":self.editor.as_ref().map(|e|e.document().groups().count()).unwrap_or(0)},"redraw_count":self.redraws,"wait_count":self.wakeups,"operation":"open","editing":self.editor.as_ref().map(|e|json!({"dirty":e.is_dirty(),"generation":e.generation(),"undo_entries":e.undo_len(),"redo_entries":e.redo_len(),"selected":self.input.images.selection.len(),"save_completed":self.save.completed})),"interaction":self.benchmark.as_ref().map(|b|json!({"scenario":b.name(),"input_ms":b.samples,"snap_query_ms":b.snap_queries,"commits":b.commits,"cancels":b.cancels,"invariants":b.invariants})),"native_startup_ms":self.native_startup_ms,"camera_clamped":self.camera_clamped,"navigation_end_pending":self.navigation_end_pending,"drain_ms":self.drain_ms,"state_counts_scope":"requested sources only","recognizable_clock":"CPU submission before present","metadata_load_ms":self.metadata_ms,"metadata_bytes":self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"first_recognizable_ms":self.first_content_ms,"ordinary_view_80_percent_ms":self.useful_ms,"source_bytes_before_detail":stats.source_bytes,"container_bytes":stats.container_bytes+self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"overview_reused":stats.reused,"overview_regenerated":stats.regenerated,"errors":stats.errors,"source_missing":counts(SourceState::Missing),"source_changed":counts(SourceState::Changed),"source_foreign":counts(SourceState::Foreign),"peak_pending":stats.peak_pending,"cpu_payload_bytes":stats.cpu_bytes,"adapter":gpu.map(|g|g.adapter_info.name.clone()),"backend":gpu.map(|g|format!("{:?}",g.adapter_info.backend)),"frames":self.frames,"gpu_samples":samples,"detail":"overview-only vertical slice; no detail request issued"});
+        let report = json!({"load_failed":self.load_failed,"local":{"operations":self.local.worker.operations,"recoveries":self.save.recoveries,"recovery_generation":self.save.recovery_generation,"recovery_bytes":self.save.recovery_bytes,"last_storage_worker_ms":self.save.last_worker_ms,"ui_scale":self.camera.ui_scale(),"discarded_asset_results":stats.discarded},"first_frame_ms":self.first_frame_ms,"gpu_setup_ms":self.gpu_setup_ms,"annotation_resources":gpu.map(|g|g.annotation_bytes()),"annotations":self.editor.as_ref().map(|e|e.document().annotation_count()).unwrap_or(0),"spatial":{"grid":self.input.grid_visible,"snapping":self.input.snap.enabled,"frames":self.editor.as_ref().map(|e|e.document().objects().filter(|o|matches!(o.kind(),tack_core::ObjectKind::Frame(_))).count()).unwrap_or(0),"groups":self.editor.as_ref().map(|e|e.document().groups().count()).unwrap_or(0)},"redraw_count":self.redraws,"wait_count":self.wakeups,"operation":"open","editing":self.editor.as_ref().map(|e|json!({"dirty":e.is_dirty(),"generation":e.generation(),"undo_entries":e.undo_len(),"redo_entries":e.redo_len(),"selected":self.input.images.selection.len(),"save_completed":self.save.completed})),"interaction":self.benchmark.as_ref().map(|b|json!({"scenario":b.name(),"input_ms":b.samples,"snap_query_ms":b.snap_queries,"commits":b.commits,"cancels":b.cancels,"invariants":b.invariants})),"native_startup_ms":self.native_startup_ms,"camera_clamped":self.camera_clamped,"navigation_end_pending":self.navigation_end_pending,"drain_ms":self.drain_ms,"state_counts_scope":"requested sources only","recognizable_clock":"CPU submission before present","metadata_load_ms":self.metadata_ms,"metadata_bytes":self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"first_recognizable_ms":self.first_content_ms,"ordinary_view_80_percent_ms":self.useful_ms,"source_bytes_before_detail":stats.source_bytes,"container_bytes":stats.container_bytes+self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"overview_reused":stats.reused,"overview_regenerated":stats.regenerated,"errors":stats.errors,"source_missing":counts(SourceState::Missing),"source_changed":counts(SourceState::Changed),"source_foreign":counts(SourceState::Foreign),"peak_pending":stats.peak_pending,"cpu_payload_bytes":stats.cpu_bytes,"adapter":gpu.map(|g|g.adapter_info.name.clone()),"backend":gpu.map(|g|format!("{:?}",g.adapter_info.backend)),"frames":self.frames,"gpu_samples":samples,"detail":"overview-only vertical slice; no detail request issued"});
         crate::report_output::write_new(path, &serde_json::to_vec_pretty(&report)?)?;
         Ok(())
     }
@@ -409,11 +439,55 @@ impl ApplicationHandler<Event> for App {
     fn user_event(&mut self, e: &ActiveEventLoop, event: Event) {
         match event {
             Event::Loaded(result) => {
-                if let Err(error) = (*result).and_then(|(b, ms)| self.loaded(b, ms)) {
-                    self.error = Some(error);
-                    e.exit();
+                let result = (*result).and_then(|loaded| {
+                    if self.local.untitled {
+                        self.options.path = loaded.path;
+                    }
+                    if self.options.path.parent() == Some(self.local.root.as_path())
+                        && self
+                            .options
+                            .path
+                            .file_name()
+                            .is_some_and(|n| n.to_string_lossy().starts_with("untitled-slot-"))
+                    {
+                        self.local.untitled = true;
+                        self.local.seed =
+                            Some((Arc::clone(&loaded.lease), loaded.board.document.id()));
+                    }
+                    self.local.lease = Some(loaded.lease);
+                    self.loaded(loaded.board, loaded.metadata_ms)?;
+                    self.apply_preferences()?;
+                    self.input.grid_visible = self.local.profile.grid;
+                    if !self.local.untitled {
+                        self.local.profile.remember(&self.options.path)?;
+                        self.local.profile_pending = true;
+                    }
+                    if loaded.recovery {
+                        self.local.recovery_pending = true;
+                        self.panel(tack_app::local_ui::Panel::Recovery);
+                    }
+                    if let Some(warning) = loaded.warning {
+                        self.local_error(warning);
+                    }
+                    Ok(())
+                });
+                if let Err(error) = result {
+                    if self.options.seconds.is_some() {
+                        self.error = Some(error);
+                        e.exit();
+                    } else {
+                        self.fail_load();
+                        self.editor = tack_storage::new_document_id().ok().map(|id| {
+                            DocumentEditor::new(
+                                tack_core::Document::new(id, tack_core::DocumentLimits::default()),
+                                200,
+                            )
+                        });
+                        self.local_error(error.to_string());
+                    }
                 }
             }
+            Event::LocalReady => self.poll_local(),
             Event::SourceDone(result) => {
                 self.source_active = false;
                 self.interaction_error = result.err();
@@ -423,14 +497,64 @@ impl ApplicationHandler<Event> for App {
     }
     fn window_event(&mut self, e: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
         if matches!(event, WindowEvent::CloseRequested) {
+            if self.load_failed {
+                e.exit();
+                return;
+            }
+            if let Some(editor) = &mut self.editor
+                && let Err(error) = self.input.commit_drafts(editor)
+            {
+                self.local_error(error.to_string());
+                return;
+            }
             self.input.cancel();
-            e.exit();
+            self.local.worker.cancel();
+            if self.editor.as_ref().is_some_and(|editor| editor.is_dirty())
+                && self.options.seconds.is_none()
+            {
+                self.panel(tack_app::local_ui::Panel::Close);
+            } else {
+                e.exit();
+            }
+            return;
+        }
+        if matches!(&event, WindowEvent::KeyboardInput { event, .. }
+            if event.state == winit::event::ElementState::Pressed
+            && event.physical_key == winit::keyboard::PhysicalKey::Code(winit::keyboard::KeyCode::Escape))
+            && self.local.ui.is_none()
+        {
+            self.local.worker.cancel();
+            self.local.queued = None;
+        }
+        if let WindowEvent::DroppedFile(path) = &event {
+            if self.load_failed {
+                return;
+            }
+            if self.local.recovery_pending {
+                self.local_error("Choose recovery restore/discard before importing");
+            } else if self.local.drops.len() < tack_app::local_import::MAX_IMPORT_FILES {
+                self.local.drops.push(path.clone());
+                self.local.drop_deadline = Some(Instant::now() + Duration::from_millis(50));
+            } else {
+                self.local_error("Drop exceeds 4096-image limit");
+            }
             return;
         }
         let result = if matches!(event, WindowEvent::RedrawRequested) {
             self.redraw()
         } else {
-            if !self.options.tour
+            let ui = self.local_ui_event(&event);
+            let consumed = match ui {
+                Ok(consumed) => consumed,
+                Err(error) => {
+                    self.local_error(error.to_string());
+                    true
+                }
+            };
+            if !consumed
+                && !self.load_failed
+                && !self.local.saving_as
+                && !self.options.tour
                 && self.benchmark.is_none()
                 && let Some(editor) = &mut self.editor
             {
@@ -447,21 +571,24 @@ impl ApplicationHandler<Event> for App {
                 }
                 match self.input.handle(&event, editor, &mut self.camera) {
                     Ok(requested) => {
-                        if requested
-                            && let (Some(board), Some(assets)) = (&self.board, &self.assets)
-                            && let Err(error) = self.save.start(
-                                self.options.path.clone(),
-                                Arc::clone(board),
-                                editor,
-                                &assets.prepared,
-                            )
-                        {
-                            self.save.last_error = Some(error.to_string());
+                        if requested {
+                            self.local.manual = true;
                         }
                     }
                     Err(error) => self.interaction_error = Some(error.to_string()),
                 }
                 self.dirty = true;
+            }
+            if self.local.manual && self.local.untitled {
+                self.local.manual = false;
+                if let Err(error) = self.local_action(tack_app::actions::Action::SaveAs) {
+                    self.local_error(error.to_string());
+                }
+            }
+            if let Some(action) = self.input.pending_local.take()
+                && let Err(error) = self.local_action(action)
+            {
+                self.local_error(error.to_string());
             }
             if let Some(action) = self.input.pending_source.take() {
                 self.start_source(action);
@@ -481,6 +608,13 @@ impl ApplicationHandler<Event> for App {
                     }
                 }
                 WindowEvent::Occluded(b) => self.occluded = b,
+                WindowEvent::ScaleFactorChanged { .. } => {
+                    if let Err(error) = self.apply_preferences() {
+                        self.local_error(error.to_string());
+                    }
+                    // ImageInput already handles the native scale event and
+                    // cancels gestures while preserving modal text drafts.
+                }
                 _ => {}
             }
             Ok(())
@@ -492,8 +626,11 @@ impl ApplicationHandler<Event> for App {
     }
     fn about_to_wait(&mut self, e: &ActiveEventLoop) {
         self.wakeups += 1;
-        if let Some(editor) = &mut self.editor {
-            self.dirty |= self.save.poll(editor);
+        self.poll_local();
+        self.poll_storage();
+        if self.local.close_ready {
+            e.exit();
+            return;
         }
         if self
             .options
@@ -562,7 +699,16 @@ impl ApplicationHandler<Event> for App {
                     })
                 });
             let title = format!(
-                "Tack — {state} · {mode} · {} selected · {missing} missing / {changed} changed sources{}{}{}",
+                "Tack — {} · {state} · {mode} · {} selected · {missing} missing / {changed} changed sources{}{}{}",
+                if self.local.untitled {
+                    "Untitled".into()
+                } else {
+                    self.options
+                        .path
+                        .file_name()
+                        .map(|n| n.to_string_lossy().into_owned())
+                        .unwrap_or_default()
+                },
                 self.input.images.selection.len(),
                 frame_name.map(|n| format!(" · {n}")).unwrap_or_default(),
                 if self.input.name_edit.is_some() {
@@ -604,6 +750,11 @@ impl ApplicationHandler<Event> for App {
                     ""
                 }
             );
+            let title = if self.local.import_status.is_empty() {
+                title
+            } else {
+                format!("{title} · {}", self.local.import_status)
+            };
             if self.title != title {
                 window.set_title(&title);
                 self.title = title;
@@ -634,19 +785,27 @@ impl ApplicationHandler<Event> for App {
             }
             self.next_frame = Instant::now() + Duration::from_millis(16);
         }
-        e.set_control_flow(
-            if active
-                || pending
-                || completing
-                || self.save.active()
-                || self.options.seconds.is_some()
-            {
-                ControlFlow::WaitUntil(Instant::now() + Duration::from_millis(16))
-            } else {
-                ControlFlow::Wait
-            },
-        );
+        let periodic =
+            active || pending || completing || self.save.active() || self.options.seconds.is_some();
+        let deadline = self
+            .local
+            .drop_deadline
+            .into_iter()
+            .chain(
+                self.local
+                    .recovery
+                    .deadline()
+                    .filter(|_| !self.local.recovery_pending),
+            )
+            .min();
+        e.set_control_flow(if periodic {
+            ControlFlow::WaitUntil(Instant::now() + Duration::from_millis(16))
+        } else if let Some(deadline) = deadline {
+            ControlFlow::WaitUntil(deadline)
+        } else {
+            ControlFlow::Wait
+        });
     }
 }
 mod launch;
-pub use launch::run;
+pub use launch::{run, run_new};

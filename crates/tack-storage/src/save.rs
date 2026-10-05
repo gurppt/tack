@@ -8,6 +8,7 @@ use std::{
 };
 use tack_core::{AssetId, Document, SourceId, SourceLocation};
 
+#[derive(Clone)]
 pub enum Payload {
     File(PathBuf),
     Stored { file: Arc<File>, range: BlobRange },
@@ -138,6 +139,27 @@ pub fn save(path: impl AsRef<Path>, doc: &Document, inputs: Vec<BlobInput>) -> R
     save_with_hook(path, doc, inputs, |_| Ok(()))
 }
 pub fn save_with_hook(
+    path: impl AsRef<Path>,
+    doc: &Document,
+    inputs: Vec<BlobInput>,
+    mut hook: impl FnMut(SaveStage) -> Result<()>,
+) -> Result<()> {
+    let lease = crate::BoardLease::acquire(path.as_ref())?;
+    let expected = lease
+        .expected
+        .lock()
+        .map_err(|_| StorageError::Invalid("board ownership poisoned"))?;
+    publish(path.as_ref(), doc, inputs, |stage| {
+        hook(stage)?;
+        if stage == SaveStage::FileSynced
+            && crate::ownership::FileStamp::read(path.as_ref())? != *expected
+        {
+            return Err(StorageError::Invalid("board changed outside Tack"));
+        }
+        Ok(())
+    })
+}
+pub(crate) fn publish(
     path: impl AsRef<Path>,
     doc: &Document,
     mut inputs: Vec<BlobInput>,
