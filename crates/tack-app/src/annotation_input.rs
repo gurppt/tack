@@ -53,6 +53,47 @@ fn next_style(s: AnnotationStyle, action: StyleAction) -> Result<AnnotationStyle
     AnnotationStyle::new(color, fill, width, opacity)
 }
 impl ImageInput {
+    /// Canvas text paste uses the same note admission/history as typed notes.
+    pub fn paste_text_note(
+        &mut self,
+        text: String,
+        editor: &mut DocumentEditor,
+        camera: &Camera,
+    ) -> Result<(), AssetError> {
+        if text.is_empty()
+            || text.len() > MAX_TEXT_BYTES
+            || text
+                .chars()
+                .any(|c| c.is_control() && c != '\n' && c != '\t')
+        {
+            return Err("Clipboard note text is empty, invalid or exceeds 16 KiB".into());
+        }
+        self.commit_drafts(editor)?;
+        let id = tack_storage::new_object_id()?;
+        let p = camera.screen_to_world(self.cursor());
+        let size = [320., 160.].map(|v| v * camera.ui_scale() / camera.zoom());
+        NoteEdit {
+            id,
+            value: text,
+            size: (NOTE_DEFAULT_SIZE * camera.ui_scale() / camera.zoom()).clamp(4., 256.),
+            alignment: TextAlignment::Left,
+            transform: Transform::new(
+                [p[0] + size[0] / 2., p[1] + size[1] / 2.],
+                size,
+                0.,
+                [false; 2],
+            )?,
+            style: self.annotation.style,
+            generation: editor.generation(),
+            is_new: true,
+            replace: false,
+            composing: false,
+        }
+        .finish(editor)?;
+        self.images.selection.select(Some(id), false);
+        Ok(())
+    }
+
     pub(crate) fn annotation_action(
         &mut self,
         event: ActionEvent,

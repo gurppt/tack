@@ -15,6 +15,8 @@ use winit::{
 pub enum Panel {
     Menu,
     Preferences,
+    Scale,
+    Theme,
     Keymap,
     Recent,
     Close,
@@ -78,7 +80,9 @@ impl LocalUi {
     fn count(&self, profile: &Preferences) -> usize {
         match self.panel {
             Panel::Menu | Panel::Keymap => self.actions().len(),
-            Panel::Preferences => 10,
+            Panel::Preferences => 11,
+            Panel::Scale => 5,
+            Panel::Theme => 3,
             Panel::Recent => profile.recent.len(),
             Panel::Close => 3,
             Panel::Recovery => 2,
@@ -221,6 +225,13 @@ impl LocalUi {
         }
         let count = self.count(profile);
         match event.physical_key {
+            PhysicalKey::Code(KeyCode::Escape)
+                if matches!(self.panel, Panel::Scale | Panel::Theme) =>
+            {
+                self.selected = if self.panel == Panel::Scale { 3 } else { 4 };
+                self.panel = Panel::Preferences;
+                None
+            }
             PhysicalKey::Code(KeyCode::Escape) => Some(UiResult::Dismiss),
             PhysicalKey::Code(KeyCode::ArrowDown) => {
                 if count > 0 {
@@ -344,6 +355,17 @@ impl LocalUi {
                 UiResult::DiscardRecovery
             }),
             Panel::Error => Some(UiResult::Dismiss),
+            Panel::Scale | Panel::Theme => {
+                let scale = self.panel == Panel::Scale;
+                if scale {
+                    profile.ui_scale = self.selected as u8;
+                } else {
+                    profile.theme = crate::ui_theme::Theme::ALL[self.selected];
+                }
+                self.panel = Panel::Preferences;
+                self.selected = if scale { 3 } else { 4 };
+                Some(UiResult::PreferencesChanged)
+            }
             Panel::Preferences => {
                 match self.selected {
                     0 => profile.grid = !profile.grid,
@@ -356,24 +378,36 @@ impl LocalUi {
                         .into()
                     }
                     2 => profile.embedded_import = !profile.embedded_import,
-                    3 => profile.ui_scale = (profile.ui_scale + 1) % 5,
+                    3 => {
+                        self.panel = Panel::Scale;
+                        self.selected = usize::from(profile.ui_scale.min(4));
+                        return None;
+                    }
                     4 => {
+                        self.panel = Panel::Theme;
+                        self.selected = crate::ui_theme::Theme::ALL
+                            .iter()
+                            .position(|t| *t == profile.theme)
+                            .unwrap_or(1);
+                        return None;
+                    }
+                    5 => {
                         profile.handle_size = if profile.handle_size >= 21 {
                             3
                         } else {
                             profile.handle_size + 2
                         }
                     }
-                    5 => {
+                    6 => {
                         profile.hit_radius = if profile.hit_radius >= 31 {
                             5
                         } else {
                             profile.hit_radius + 2
                         }
                     }
-                    6 => return Some(UiResult::Action(Action::KeymapEditor)),
-                    7 => return Some(UiResult::Action(Action::ImportKeymap)),
-                    8 => return Some(UiResult::Action(Action::ExportKeymap)),
+                    7 => return Some(UiResult::Action(Action::KeymapEditor)),
+                    8 => return Some(UiResult::Action(Action::ImportKeymap)),
+                    9 => return Some(UiResult::Action(Action::ExportKeymap)),
                     _ => return Some(UiResult::Dismiss),
                 }
                 Some(UiResult::PreferencesChanged)
@@ -387,6 +421,7 @@ impl LocalUi {
         keymap: &Keymap,
         profile: &Preferences,
     ) {
+        let palette = profile.theme.palette();
         let scale = camera.ui_scale();
         let mut budget = 900;
         let screen = camera.screen_size();
@@ -412,12 +447,14 @@ impl LocalUi {
             camera,
             [12. * scale, 12. * scale],
             [(12. + width) * scale, (12. + height) * scale],
-            [0.018, 0.023, 0.028, 1.],
+            palette.menu_bg,
             None,
         );
         let heading = match self.panel {
             Panel::Menu => "Tack - local files",
-            Panel::Preferences => "Preferences - Enter changes a value",
+            Panel::Preferences => "Preferences",
+            Panel::Scale => "UI Scale - choose directly",
+            Panel::Theme => "Background - choose directly",
             Panel::Keymap => "Keymap - type to search",
             Panel::Recent => "Recent boards - open in another window",
             Panel::Close => "Unsaved work - save before closing?",
@@ -429,7 +466,7 @@ impl LocalUi {
             [24. * scale, if height < 100. { 14. } else { 22. } * scale],
             width - 24.,
             heading,
-            [0.9, 0.9, 0.88, 1.],
+            palette.accent_primary,
             &mut budget,
         );
         let rows: Vec<String> = match self.panel {
@@ -465,7 +502,15 @@ impl LocalUi {
                         "Linked"
                     }
                 ),
-                format!("UI scale: {} (0 = system)", profile.ui_scale),
+                format!(
+                    "UI scale: {} >",
+                    if profile.ui_scale == 0 {
+                        "Auto/System".into()
+                    } else {
+                        format!("{}x", profile.ui_scale)
+                    }
+                ),
+                format!("Background: {} >", profile.theme.label()),
                 format!("Handle size: {}", profile.handle_size),
                 format!("Hit radius: {}", profile.hit_radius),
                 "Edit keymap".into(),
@@ -473,6 +518,14 @@ impl LocalUi {
                 "Export preferences/keymap".into(),
                 "Close".into(),
             ],
+            Panel::Scale => ["Auto/System", "1x", "2x", "3x", "4x"]
+                .into_iter()
+                .map(String::from)
+                .collect(),
+            Panel::Theme => crate::ui_theme::Theme::ALL
+                .into_iter()
+                .map(|t| t.label().into())
+                .collect(),
             Panel::Recent => profile
                 .recent
                 .iter()
@@ -505,7 +558,7 @@ impl LocalUi {
                     camera,
                     [20. * scale, y * scale],
                     [(width + 4.) * scale, (y + 20.) * scale],
-                    [0.10, 0.16, 0.20, 1.],
+                    palette.selection,
                     None,
                 );
             }
@@ -514,7 +567,7 @@ impl LocalUi {
                 [24. * scale, (y + 2.) * scale],
                 width - 24.,
                 row,
-                [0.78, 0.82, 0.83, 1.],
+                palette.text_primary,
                 &mut budget,
             );
         }
@@ -531,7 +584,7 @@ impl LocalUi {
                 [24. * scale, (height - 66.) * scale],
                 width - 24.,
                 hint,
-                [0.58, 0.64, 0.68, 1.],
+                palette.text_secondary,
                 &mut budget,
             );
         }
@@ -545,7 +598,7 @@ impl LocalUi {
                     self.search,
                     if self.release { "Release" } else { "Press" }
                 ),
-                [0.72, 0.74, 0.70, 1.],
+                palette.text_secondary,
                 &mut budget,
             );
         }
@@ -555,9 +608,41 @@ impl LocalUi {
                 [24. * scale, (height - 8.) * scale],
                 width - 24.,
                 &self.message,
-                [0.96, 0.69, 0.32, 1.],
+                palette.accent_attention,
                 &mut budget,
             );
         }
+    }
+}
+
+#[cfg(test)]
+mod choice_tests {
+    use super::*;
+    #[test]
+    fn scale_and_theme_are_direct_reversible_choices() -> Result<(), tack_assets::AssetError> {
+        let mut profile = Preferences::defaults()?;
+        let mut keymap = profile.keymap()?;
+        let mut ui = LocalUi::new(Panel::Preferences);
+        for scale in [2, 1, 4, 0] {
+            ui.selected = 3;
+            assert!(ui.activate(&mut keymap, &mut profile).is_none());
+            assert_eq!(ui.panel, Panel::Scale);
+            ui.selected = scale;
+            assert!(matches!(
+                ui.activate(&mut keymap, &mut profile),
+                Some(UiResult::PreferencesChanged)
+            ));
+            assert_eq!(profile.ui_scale, scale as u8);
+            assert_eq!(ui.panel, Panel::Preferences);
+        }
+        for (index, theme) in crate::ui_theme::Theme::ALL.into_iter().enumerate() {
+            ui.selected = 4;
+            ui.activate(&mut keymap, &mut profile);
+            assert_eq!(ui.panel, Panel::Theme);
+            ui.selected = index;
+            ui.activate(&mut keymap, &mut profile);
+            assert_eq!(profile.theme, theme);
+        }
+        Ok(())
     }
 }

@@ -42,6 +42,7 @@ pub(super) struct LocalState {
     pub seed_remembered: bool,
     pub importing: bool,
     pub import_status: String,
+    pub import_rejected: usize,
     pub close_after_save: bool,
     pub close_after_discard: bool,
     pub close_ready: bool,
@@ -97,6 +98,7 @@ impl LocalState {
             seed_remembered: false,
             importing: false,
             import_status: String::new(),
+            import_rejected: 0,
             close_after_save: false,
             close_after_discard: false,
             close_ready: false,
@@ -184,6 +186,11 @@ impl App {
     }
     pub(super) fn apply_preferences(&mut self) -> Result<(), AssetError> {
         self.input.keymap = self.local.profile.keymap()?;
+        let palette = self.local.profile.theme.palette();
+        self.input.gizmo.palette = palette;
+        self.input.gizmo.style.selection = palette.accent_primary;
+        self.input.gizmo.style.active = palette.accent_secondary;
+        self.input.gizmo.style.crop = palette.accent_attention;
         self.input.gizmo.style.handle_size = f64::from(self.local.profile.handle_size);
         self.input.gizmo.style.hit_radius = f64::from(self.local.profile.hit_radius);
         let scale = if self.local.profile.ui_scale > 0 {
@@ -201,7 +208,17 @@ impl App {
         paths: Vec<PathBuf>,
         force_embedded: bool,
     ) -> Result<(), AssetError> {
+        if self.local.importing {
+            return Err(
+                "An image import is active; wait or cancel it before importing again".into(),
+            );
+        }
+        let temporary = (force_embedded
+            && paths.len() == 1
+            && paths[0].parent() == Some(self.work.join("helpers").as_path()))
+        .then(|| paths[0].clone());
         let request = ImportRequest {
+            temporary,
             paths,
             embedded: force_embedded || self.local.profile.embedded_import,
             position: self.camera.screen_to_world(self.input.cursor()),
@@ -214,6 +231,7 @@ impl App {
             spool: self.local.spool.clone(),
         };
         self.operation(Operation::Import(request))?;
+        self.local.import_rejected = 0;
         self.local.importing = true;
         self.local.import_status = "Import pending · Escape cancels remaining files".into();
         Ok(())
@@ -424,7 +442,8 @@ impl App {
                 )
             }
             LocalUpdate::Imported(ImportUpdate::Failed { path, message }) => {
-                self.interaction_error = Some(format!("Import {}: {message}", path.display()))
+                let _ = (path, message);
+                self.local.import_rejected += 1;
             }
             LocalUpdate::Imported(ImportUpdate::Finished {
                 cancelled,
@@ -437,7 +456,15 @@ impl App {
                 }
                 self.local.importing = false;
                 self.local.import_status = if cancelled {
-                    format!("Import cancelled; {admitted} admitted items retained")
+                    format!(
+                        "Import cancelled; {admitted} admitted items retained, {} rejected",
+                        self.local.import_rejected
+                    )
+                } else if self.local.import_rejected > 0 {
+                    format!(
+                        "Import: {admitted} admitted, {} rejected (unsupported, remote or unreadable files)",
+                        self.local.import_rejected
+                    )
                 } else {
                     String::new()
                 };
@@ -460,8 +487,14 @@ impl App {
                 self.local.ui = None;
                 self.local.recovery.restored(1);
             }
-            LocalUpdate::Clipboard { ticket, result } => match result.map_err(AssetError::from)? {
+            LocalUpdate::Clipboard { ticket, result, .. } => match result
+                .map_err(AssetError::from)?
+            {
                 Clipboard::Image(path) => self.import_paths(vec![path], true)?,
+                Clipboard::Files { paths, rejected } => {
+                    self.import_paths(paths, false)?;
+                    self.local.import_rejected = rejected;
+                }
                 Clipboard::Text(text) => {
                     if let Some((id, value)) = ticket {
                         let edit = self
@@ -481,7 +514,11 @@ impl App {
                         }
                         edit.insert(&text);
                     } else {
-                        self.import_paths(tack_app::native_files::reference_paths(&text)?, false)?;
+                        self.input.paste_text_note(
+                            text,
+                            self.editor.as_mut().ok_or("document unavailable")?,
+                            &self.camera,
+                        )?;
                     }
                 }
             },

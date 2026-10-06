@@ -18,6 +18,8 @@ pub const MAX_IMPORT_BYTES: u64 = 2 * 1024 * 1024 * 1024;
 pub const MAX_SESSION_IMPORT_BYTES: u64 = 4 * 1024 * 1024 * 1024;
 
 pub struct ImportRequest {
+    /// Owned clipboard staging only; removed by the worker after original admission.
+    pub temporary: Option<PathBuf>,
     pub paths: Vec<PathBuf>,
     pub embedded: bool,
     pub position: [f64; 2],

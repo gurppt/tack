@@ -154,6 +154,7 @@ pub struct Gpu {
     overlay: crate::overlay::Overlay,
     annotations: Option<Box<crate::annotations::Annotations>>,
     grid: Option<crate::grid::Grid>,
+    background: crate::Background,
     layout: wgpu::BindGroupLayout,
     sampler: wgpu::Sampler,
     nearest_sampler: wgpu::Sampler,
@@ -178,6 +179,10 @@ pub struct Gpu {
 }
 
 impl Gpu {
+    pub fn set_background(&mut self, background: crate::Background) {
+        self.background = background;
+    }
+
     /// GPU initialization belongs to startup, outside frame timing.
     pub async fn new(
         instance: &wgpu::Instance,
@@ -312,6 +317,7 @@ impl Gpu {
             overlay,
             annotations: None,
             grid: None,
+            background: crate::Background::default(),
             pipeline,
             layout,
             sampler,
@@ -565,12 +571,10 @@ impl Gpu {
                 annotations.prepare(&self.device, &self.queue, camera, scene.primitives)?;
             }
         }
-        if let Some(view) = grid {
-            let dots = self
-                .grid
-                .get_or_insert_with(|| crate::grid::Grid::new(&self.device, self.format));
-            dots.prepare(&self.queue, camera, view);
-        }
+        let background = self
+            .grid
+            .get_or_insert_with(|| crate::grid::Grid::new(&self.device, self.format));
+        background.prepare(&self.queue, camera, grid, self.background);
         if images.len() > MAX_OBJECTS {
             return Err("too many visible objects".into());
         }
@@ -613,9 +617,7 @@ impl Gpu {
                     .and_then(|index| self.timings.as_ref().map(|t| t.writes(index))),
                 occlusion_query_set: None,
             });
-            if grid.is_some()
-                && let Some(dots) = &self.grid
-            {
+            if let Some(dots) = &self.grid {
                 dots.draw(&mut pass);
             }
             pass.set_pipeline(&self.pipeline);

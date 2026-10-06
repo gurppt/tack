@@ -231,13 +231,16 @@ fn main() -> R {
                         .iter()
                         .position(|i| i.command == MenuCommand::Submenu(group))
                         .ok_or("submenu absent")?;
-                    for _ in 0..=index {
+                    for _ in 0..menu.root_items()[..=index]
+                        .iter()
+                        .filter(|i| i.command != MenuCommand::Heading)
+                        .count()
+                    {
                         menu.key(winit::keyboard::KeyCode::ArrowDown, &map, &camera);
                     }
                     menu.key(winit::keyboard::KeyCode::ArrowRight, &map, &camera);
                 }
                 let mut gizmo = ImageGizmo::default();
-                context_menu::draw_app_button(&mut gizmo, &camera, false);
                 let start = Instant::now();
                 menu.draw(&mut gizmo, &camera);
                 let draw_us = start.elapsed().as_secs_f64() * 1e6;
@@ -264,12 +267,10 @@ fn main() -> R {
             }
         }
     }
-    let camera = Camera::new([800, 600]);
     let mut gizmo = ImageGizmo::default();
     let start = Instant::now();
     for _ in 0..10000 {
         gizmo.quads.clear();
-        context_menu::draw_app_button(&mut gizmo, &camera, false);
         std::hint::black_box(&gizmo.quads);
     }
     let closed_redraw_mean_us = start.elapsed().as_secs_f64() * 1e6 / 10000.;

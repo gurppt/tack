@@ -18,6 +18,22 @@ impl GridView {
         ]
     }
 }
+/// Screen-space local presentation; independent of board geometry/storage.
+#[derive(Clone, Copy, Debug)]
+pub struct Background {
+    pub start: [f32; 4],
+    pub end: [f32; 4],
+    pub grid: [f32; 4],
+}
+impl Default for Background {
+    fn default() -> Self {
+        Self {
+            start: [0.035, 0.04, 0.05, 1.],
+            end: [0.041, 0.046, 0.056, 1.],
+            grid: [0.095, 0.12, 0.15, 1.],
+        }
+    }
+}
 pub(crate) struct Grid {
     pipeline: wgpu::RenderPipeline,
     buffer: wgpu::Buffer,
@@ -56,7 +72,7 @@ impl Grid {
         });
         let buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("grid parameters"),
-            contents: &[0; 16],
+            contents: &[0; 80],
             usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
         });
         let binding = device.create_bind_group(&wgpu::BindGroupDescriptor {
@@ -73,12 +89,27 @@ impl Grid {
             binding,
         }
     }
-    pub fn prepare(&self, queue: &wgpu::Queue, camera: &Camera, view: GridView) {
-        queue.write_buffer(
-            &self.buffer,
-            0,
-            bytemuck::cast_slice(&view.parameters(camera)),
-        );
+    pub fn prepare(
+        &self,
+        queue: &wgpu::Queue,
+        camera: &Camera,
+        view: Option<GridView>,
+        background: Background,
+    ) {
+        let size = camera.screen_size();
+        let parameters = [
+            view.map_or([0., 0., 1., 1.], |v| v.parameters(camera)),
+            background.start,
+            background.end,
+            background.grid,
+            [
+                size[0] as f32,
+                size[1] as f32,
+                if view.is_some() { 1. } else { 0. },
+                0.,
+            ],
+        ];
+        queue.write_buffer(&self.buffer, 0, bytemuck::cast_slice(&parameters));
     }
     pub fn draw(&self, pass: &mut wgpu::RenderPass<'_>) {
         pass.set_pipeline(&self.pipeline);

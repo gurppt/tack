@@ -597,7 +597,7 @@ fn crowded_frames_keep_overlay_and_glyph_bounds_and_guide_priority() -> R {
             .iter()
             .rev()
             .take(2)
-            .all(|q| q.color == [0.95, 0.70, 0.30, 1.])
+            .all(|q| q.color == input.gizmo.palette.guide)
     );
     Ok(())
 }

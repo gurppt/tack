@@ -1,13 +1,10 @@
 //! Optional native helpers, fixed executable/arguments and bounded disk output.
 //! Called only from local workers. No helper stays resident while unused.
-#[cfg(target_os = "linux")]
-use std::fs::File;
 use std::{
-    io::Read,
     path::{Path, PathBuf},
-    process::{Command, Stdio},
-    sync::atomic::{AtomicBool, Ordering},
-    time::{Duration, Instant},
+    process::Command,
+    sync::atomic::AtomicBool,
+    time::Duration,
 };
 use tack_assets::AssetError;
 #[derive(Clone, Copy, Debug)]
@@ -19,6 +16,19 @@ pub enum Picker {
     ImportKeymap,
     ExportKeymap,
 }
+#[cfg(not(target_os = "linux"))]
+use std::{io::Read, process::Stdio, sync::atomic::Ordering, time::Instant};
+#[cfg(target_os = "linux")]
+fn capture(
+    command: Command,
+    _work: &Path,
+    cancel: &AtomicBool,
+    limit: u64,
+    timeout: Duration,
+) -> Result<Vec<u8>, AssetError> {
+    crate::clipboard::capture(command, cancel, limit, timeout)
+}
+#[cfg(not(target_os = "linux"))]
 fn capture(
     mut command: Command,
     work: &Path,
@@ -174,18 +184,9 @@ $d.Dispose()
 /// Text/reference retrieval is bounded before Rust allocation; no shell interpolation.
 pub fn clipboard_text(work: &Path, cancel: &AtomicBool) -> Result<String, AssetError> {
     #[cfg(target_os = "linux")]
-    let command = {
-        let mut command = if std::env::var_os("WAYLAND_DISPLAY").is_some() {
-            Command::new("wl-paste")
-        } else {
-            Command::new("xclip")
-        };
-        if std::env::var_os("WAYLAND_DISPLAY").is_some() {
-            command.args(["--no-newline", "--type", "text/plain"]);
-        } else {
-            command.args(["-selection", "clipboard", "-out", "-target", "UTF8_STRING"]);
-        }
-        command
+    return match crate::clipboard::read(work, cancel, true)? {
+        crate::clipboard::Clipboard::Text(text) => Ok(text),
+        _ => Err("No clipboard text available".into()),
     };
     #[cfg(windows)]
     let command = {
@@ -198,7 +199,7 @@ pub fn clipboard_text(work: &Path, cancel: &AtomicBool) -> Result<String, AssetE
         let _ = (work, cancel);
         return Err("clipboard helper unavailable on this platform".into());
     }
-    #[cfg(any(target_os = "linux", windows))]
+    #[cfg(windows)]
     {
         Ok(String::from_utf8(capture(
             command,
@@ -279,68 +280,4 @@ pub fn reference_paths(text: &str) -> Result<Vec<PathBuf>, AssetError> {
         return Err("clipboard contains no local image paths".into());
     }
     Ok(paths)
-}
-
-/// Optional PNG clipboard import on Linux. Encoded size is capped before allocation;
-/// the existing header parser validates dimensions before any pixel decoding.
-pub fn clipboard_image(work: &Path, cancel: &AtomicBool) -> Result<Option<PathBuf>, AssetError> {
-    #[cfg(target_os = "linux")]
-    {
-        let wayland = std::env::var_os("WAYLAND_DISPLAY").is_some();
-        let mut types = Command::new(if wayland { "wl-paste" } else { "xclip" });
-        if wayland {
-            types.arg("--list-types");
-        } else {
-            types.args(["-selection", "clipboard", "-out", "-target", "TARGETS"]);
-        }
-        let types = match capture(types, work, cancel, 4096, Duration::from_secs(10)) {
-            Ok(b) => b,
-            Err(_) => return Ok(None),
-        };
-        if !std::str::from_utf8(&types)?
-            .lines()
-            .any(|s| s.trim() == "image/png")
-        {
-            return Ok(None);
-        }
-        let mut command = Command::new(if wayland { "wl-paste" } else { "xclip" });
-        if wayland {
-            command.args(["--no-newline", "--type", "image/png"]);
-        } else {
-            command.args(["-selection", "clipboard", "-out", "-target", "image/png"]);
-        }
-        let bytes = capture(
-            command,
-            work,
-            cancel,
-            crate::local_import::MAX_ENCODED_IMAGE,
-            Duration::from_secs(10),
-        )?;
-        tack_storage::create_private_directory(work, true)?;
-        let path = work.join("clipboard.png");
-        match std::fs::symlink_metadata(&path) {
-            Ok(m) if m.is_file() => std::fs::remove_file(&path)?,
-            Ok(_) => return Err("unsafe clipboard staging file".into()),
-            Err(e) if e.kind() == std::io::ErrorKind::NotFound => {}
-            Err(e) => return Err(e.into()),
-        }
-        let mut options = File::options();
-        options.write(true).create_new(true);
-        use std::{io::Write, os::unix::fs::OpenOptionsExt};
-        options.mode(0o600);
-        let mut file = options.open(&path)?;
-        file.write_all(&bytes)?;
-        drop(file);
-        drop(bytes);
-        if let Err(e) = tack_assets::image_metadata(&path) {
-            let _ = std::fs::remove_file(&path);
-            return Err(e);
-        }
-        Ok(Some(path))
-    }
-    #[cfg(not(target_os = "linux"))]
-    {
-        let _ = (work, cancel);
-        Ok(None)
-    }
 }

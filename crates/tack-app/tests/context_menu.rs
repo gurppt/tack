@@ -76,10 +76,25 @@ fn context_resolution_and_real_available_commands_are_specific() -> R {
         assert_eq!(c.kind, kind);
         let rows = context_menu::items(c, None, &map);
         let contains = |a| rows.iter().any(|i| i.command == MenuCommand::Action(a));
+        let mut app_context = c;
+        app_context.kind = ContextKind::Application;
+        let app_rows = context_menu::items(app_context, None, &map);
+        assert_eq!(
+            rows[..app_rows.len()]
+                .iter()
+                .map(|i| (i.label, i.command, i.enabled))
+                .collect::<Vec<_>>(),
+            app_rows
+                .iter()
+                .map(|i| (i.label, i.command, i.enabled))
+                .collect::<Vec<_>>()
+        );
+        assert_eq!(rows[app_rows.len()].command, MenuCommand::Heading);
         if kind == ContextKind::Canvas {
-            assert_eq!(rows.len(), 5);
+            assert_eq!(rows.len(), 13);
             assert!(contains(Action::ImportImages));
-            assert!(!contains(Action::Preferences));
+            assert!(contains(Action::Preferences));
+            assert!(contains(Action::KeymapEditor));
             assert!(!contains(Action::Save));
         }
         if kind == ContextKind::Image {
@@ -150,7 +165,11 @@ fn menu_edges_submenus_scroll_dismiss_and_never_delete_on_right_arrow() -> R {
                     let root = context_menu::items(c, None, &map);
                     for index in 0..root.len() {
                         let mut menu = ContextMenu::new(c, anchor, &camera, &map);
-                        for _ in 0..=index {
+                        for _ in 0..root[..=index]
+                            .iter()
+                            .filter(|i| i.command != MenuCommand::Heading)
+                            .count()
+                        {
                             menu.key(KeyCode::ArrowDown, &map, &camera);
                         }
                         let outcome = menu.key(KeyCode::ArrowRight, &map, &camera);
@@ -178,7 +197,11 @@ fn menu_edges_submenus_scroll_dismiss_and_never_delete_on_right_arrow() -> R {
         .iter()
         .position(|i| i.command == MenuCommand::Action(Action::DeleteSelection))
         .ok_or("expected menu entry or object")?;
-    for _ in 0..=delete {
+    for _ in 0..menu.root_items()[..=delete]
+        .iter()
+        .filter(|i| i.command != MenuCommand::Heading)
+        .count()
+    {
         menu.key(KeyCode::ArrowDown, &map, &camera);
     }
     assert_eq!(
@@ -485,6 +508,48 @@ fn compact_modal_rectangles_fit_small_displays_without_minimum_size_overflow() -
                     }
                 }
             }
+        }
+    }
+    Ok(())
+}
+
+#[test]
+fn compact_submenus_leave_parent_preferences_reachable_by_pointer() -> R {
+    let editor = fixture()?;
+    let map = tack_app::image_input::product_keymap()?;
+    for scale in [1., 2.] {
+        let mut camera = Camera::new([800, 600]);
+        camera.set_ui_scale(scale);
+        for anchor in [[0., 0.], [200., 200.], [799., 599.]] {
+            let mut menu = ContextMenu::new(context(&editor, &[1])?, anchor, &camera, &map);
+            menu.key(KeyCode::ArrowDown, &map, &camera);
+            menu.key(KeyCode::ArrowRight, &map, &camera);
+            let rectangles = menu.rectangles();
+            assert_eq!(rectangles.len(), 2);
+            let (root, child) = (rectangles[0], rectangles[1]);
+            assert!(
+                root.x + root.width <= child.x || child.x + child.width <= root.x,
+                "overlapping columns {scale} {anchor:?}"
+            );
+            let index = menu
+                .root_items()
+                .iter()
+                .position(|i| i.command == MenuCommand::Action(Action::Preferences))
+                .ok_or("preferences")?;
+            menu.move_pointer(
+                [
+                    (root.x + 18) as f64 * scale,
+                    (root.y + 2 + index as i32 * 18 + 2) as f64 * scale,
+                ],
+                &map,
+                &camera,
+            );
+            let mut gizmo = tack_app::image_gizmo::ImageGizmo::default();
+            menu.draw(&mut gizmo, &camera);
+            assert_eq!(
+                menu.click(&map, &camera),
+                MenuResult::Action(Action::Preferences)
+            );
         }
     }
     Ok(())

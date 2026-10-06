@@ -187,6 +187,7 @@ pub enum Group {
 pub enum Command {
     Action(Action),
     Submenu(Group),
+    Heading,
 }
 #[derive(Clone, Debug)]
 pub struct Item {
@@ -273,7 +274,42 @@ fn group(label: &'static str, g: Group, enabled: bool) -> Item {
         shortcut: String::new(),
     }
 }
-pub fn items(context: Context, submenu: Option<Group>, keymap: &Keymap) -> Vec<Item> {
+/// One shared application catalog, prefixed to every contextual root.
+pub fn items(context: Context, group: Option<Group>, keymap: &Keymap) -> Vec<Item> {
+    if group.is_some() || context.kind == ContextKind::Application {
+        return context_items(context, group, keymap);
+    }
+    let mut root = context_items(
+        Context {
+            kind: ContextKind::Application,
+            ..context
+        },
+        None,
+        keymap,
+    );
+    let label = match context.kind {
+        ContextKind::Canvas => "Canvas",
+        ContextKind::Image => "Image",
+        ContextKind::Multiple => "Selection",
+        ContextKind::Note => "Note",
+        ContextKind::Frame => "Frame",
+        ContextKind::Annotation => "Annotation",
+        ContextKind::Application => "Tack",
+    };
+    root.push(heading(label));
+    root.extend(context_items(context, None, keymap));
+    root
+}
+fn heading(label: &'static str) -> Item {
+    Item {
+        label,
+        command: Command::Heading,
+        enabled: false,
+        checked: false,
+        shortcut: String::new(),
+    }
+}
+fn context_items(context: Context, submenu: Option<Group>, keymap: &Keymap) -> Vec<Item> {
     use Action::*;
     let a = |label, command| action(label, command, context, keymap);
     if let Some(g) = submenu {
@@ -407,11 +443,13 @@ pub fn items(context: Context, submenu: Option<Group>, keymap: &Keymap) -> Vec<I
     }
     if context.kind == ContextKind::Application {
         return vec![
+            heading("Tack"),
             group("File", Group::File, true),
             group("Edit", Group::Edit, true),
             group("View", Group::View, true),
             group("Tools", Group::Tools, true),
             a("Preferences...", Preferences),
+            a("Keymap...", KeymapEditor),
         ];
     }
     if context.kind == ContextKind::Canvas {
@@ -503,7 +541,7 @@ impl List {
             .max()
             .unwrap_or(100)
             .clamp(100, 320)
-            .min((screen[0] - 8).max(24));
+            .min(((screen[0] - 8) / 2).max(24));
         let count = self
             .items
             .len()
@@ -545,8 +583,20 @@ impl List {
             }
             Some(i) => (i as i32 + delta).rem_euclid(self.items.len() as i32) as usize,
         });
+        if self
+            .selected
+            .is_some_and(|i| self.items[i].command == Command::Heading)
+        {
+            self.step(delta);
+        }
     }
-    fn draw(&self, gizmo: &mut ImageGizmo, camera: &Camera, budget: &mut usize) {
+    fn draw(
+        &self,
+        gizmo: &mut ImageGizmo,
+        camera: &Camera,
+        budget: &mut usize,
+        palette: crate::ui_theme::Palette,
+    ) {
         let s = camera.ui_scale();
         let r = self.rect;
         let point = |x: i32, y: i32| [x as f64 * s, y as f64 * s];
@@ -554,14 +604,14 @@ impl List {
             camera,
             point(r.x, r.y),
             point(r.x + r.width, r.y + r.height),
-            [0.45, 0.49, 0.50, 1.],
+            palette.menu_border,
             None,
         );
         gizmo.pixel_rect(
             camera,
             point(r.x + 1, r.y + 1),
             point(r.x + r.width - 1, r.y + r.height - 1),
-            [0.035, 0.045, 0.05, 1.],
+            palette.menu_bg,
             None,
         );
         for (i, item) in self
@@ -577,15 +627,38 @@ impl List {
                     camera,
                     point(r.x + 2, y),
                     point(r.x + r.width - 2, y + ROW),
-                    [0.12, 0.23, 0.28, 1.],
+                    palette.selection,
                     None,
                 );
             }
-            let color = if item.enabled {
-                [0.87, 0.88, 0.85, 1.]
-            } else {
-                [0.40, 0.44, 0.45, 1.]
-            };
+            if item.command == Command::Heading {
+                if i > 0 {
+                    gizmo.pixel_rect(
+                        camera,
+                        point(r.x + 4, y),
+                        point(r.x + r.width - 4, y + 1),
+                        palette.menu_border,
+                        None,
+                    );
+                }
+                gizmo.ui_text(
+                    camera,
+                    point(r.x + 8, y + 2),
+                    f64::from(r.width - 20),
+                    item.label,
+                    palette.accent_primary,
+                    budget,
+                );
+                continue;
+            }
+            let color =
+                if item.enabled && matches!(item.command, Command::Action(Action::SelectTool(_))) {
+                    palette.accent_secondary
+                } else if item.enabled {
+                    palette.text_primary
+                } else {
+                    palette.text_disabled
+                };
             let suffix = if matches!(item.command, Command::Submenu(_)) {
                 ">"
             } else {
@@ -616,7 +689,11 @@ impl List {
                     point(r.x + r.width - 8 - shortcut_width, y + 1),
                     f64::from(shortcut_width),
                     suffix,
-                    color,
+                    if item.enabled {
+                        palette.accent_attention
+                    } else {
+                        palette.text_disabled
+                    },
                     budget,
                 );
             }
@@ -627,7 +704,7 @@ impl List {
                 point(r.x + r.width - 16, r.y),
                 8.,
                 "^",
-                [0.9, 0.7, 0.3, 1.],
+                palette.accent_attention,
                 budget,
             );
         }
@@ -637,7 +714,7 @@ impl List {
                 point(r.x + r.width - 16, r.y + r.height - 16),
                 8.,
                 "v",
-                [0.9, 0.7, 0.3, 1.],
+                palette.accent_attention,
                 budget,
             );
         }
@@ -660,6 +737,7 @@ pub struct ContextMenu {
     child_group: Option<Group>,
     child_focus: bool,
     modifiers: Modifiers,
+    pub theme: crate::ui_theme::Theme,
 }
 impl ContextMenu {
     pub fn new(context: Context, anchor: [f64; 2], camera: &Camera, keymap: &Keymap) -> Self {
@@ -674,6 +752,7 @@ impl ContextMenu {
             child_group: None,
             child_focus: false,
             modifiers: Modifiers::NONE,
+            theme: crate::ui_theme::Theme::default(),
         };
         m.relayout(camera);
         m
@@ -729,7 +808,15 @@ impl ContextMenu {
                     * ROW;
             child.layout([r.x + r.width, y], screen);
             if r.x + r.width + child.rect.width + 2 > screen[0] {
-                child.layout([r.x - child.rect.width, y], screen);
+                if r.x >= child.rect.width + 2 {
+                    child.layout([r.x - child.rect.width, y], screen);
+                } else {
+                    // Neither side fits at this anchor: move the bounded pair
+                    // together, preserving a fully accessible parent column.
+                    self.root.rect.x = 2;
+                    self.anchor[0] = 2. * self.scale;
+                    child.layout([2 + r.width, y], screen);
+                }
             }
         }
     }
@@ -761,6 +848,7 @@ impl ContextMenu {
             return Result::None;
         }
         match item.command {
+            Command::Heading => Result::None,
             Command::Action(action) => Result::Action(action),
             Command::Submenu(g) => {
                 self.open_child(g, keymap, camera);
@@ -921,41 +1009,10 @@ impl ContextMenu {
     pub fn draw(&mut self, gizmo: &mut ImageGizmo, camera: &Camera) {
         self.relayout(camera);
         let mut budget = 900;
-        self.root.draw(gizmo, camera, &mut budget);
+        self.root
+            .draw(gizmo, camera, &mut budget, self.theme.palette());
         if let Some(c) = &self.child {
-            c.draw(gizmo, camera, &mut budget);
+            c.draw(gizmo, camera, &mut budget, self.theme.palette());
         }
     }
-}
-pub fn app_button_hit(pointer: [f64; 2], camera: &Camera) -> bool {
-    let s = camera.ui_scale();
-    Rect {
-        x: 4,
-        y: 4,
-        width: 44,
-        height: 18,
-    }
-    .contains(pointer.map(|v| (v / s).floor() as i32))
-}
-pub fn draw_app_button(gizmo: &mut ImageGizmo, camera: &Camera, open: bool) {
-    let s = camera.ui_scale();
-    gizmo.pixel_rect(
-        camera,
-        [4. * s, 4. * s],
-        [48. * s, 22. * s],
-        if open {
-            [0.12, 0.23, 0.28, 1.]
-        } else {
-            [0.035, 0.045, 0.05, 1.]
-        },
-        None,
-    );
-    gizmo.ui_text(
-        camera,
-        [8. * s, 5. * s],
-        36.,
-        "Tack",
-        [0.87, 0.88, 0.85, 1.],
-        &mut 4,
-    );
 }

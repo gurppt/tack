@@ -437,17 +437,15 @@ impl App {
         if let Some(editor) = &self.editor {
             self.input.build_overlay(editor, &self.camera);
         }
-        // Keep the application entry and popup reachable even on a saturated
-        // canvas overlay; reserve their bounded budget before drawing either.
-        self.input.gizmo.quads.truncate(
-            tack_render::MAX_OVERLAY_QUADS - if self.context.is_some() { 1024 } else { 8 },
-        );
-        tack_app::context_menu::draw_app_button(
-            &mut self.input.gizmo,
-            &self.camera,
-            self.context.is_some(),
-        );
+        // Reserve the bounded popup budget only while a popup is open.
+        if self.context.is_some() {
+            self.input
+                .gizmo
+                .quads
+                .truncate(tack_render::MAX_OVERLAY_QUADS - 1024);
+        }
         if let Some(menu) = &mut self.context {
+            menu.theme = self.local.profile.theme;
             menu.draw(&mut self.input.gizmo, &self.camera);
         }
         if let Some(ui) = &mut self.local.ui {
@@ -462,6 +460,12 @@ impl App {
                 &self.local.profile,
             );
         }
+        let palette = self.local.profile.theme.palette();
+        gpu.set_background(tack_render::Background {
+            start: palette.background_a,
+            end: palette.background_b,
+            grid: palette.grid,
+        });
         let grid = self.input.grid_visible.then(|| tack_render::GridView {
             spacing: tack_app::spatial_snap::grid_spacing(
                 self.camera.zoom(),
@@ -480,6 +484,7 @@ impl App {
             render_start.duration_since(cpu_start).as_secs_f64() * 1000. - query_ms - supply_ms;
         if annotated {
             let scene = self.annotations.get_or_insert_with(Box::default);
+            scene.palette = palette;
             if let Some(editor) = &self.editor {
                 scene.build(
                     editor.document(),

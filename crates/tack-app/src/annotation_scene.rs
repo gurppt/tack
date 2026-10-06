@@ -11,6 +11,7 @@ use tack_render::{AnnotationPrimitive, CanvasDraw, DrawProductImage, MAX_ANNOTAT
 #[derive(Default)]
 pub struct AnnotationScene {
     pub primitives: Vec<AnnotationPrimitive>,
+    pub palette: crate::ui_theme::Palette,
     pub order: Vec<CanvasDraw>,
     ranges: Vec<(ObjectId, usize, usize)>,
     pub omitted: usize,
@@ -47,6 +48,42 @@ pub(crate) fn primitive(
     }
 }
 impl AnnotationScene {
+    fn presentation_style(&self, style: AnnotationStyle) -> AnnotationStyle {
+        if style.fill().is_some() {
+            return style;
+        }
+        let luminance = |c: [f32; 4]| c[0] * 0.2126 + c[1] * 0.7152 + c[2] * 0.0722;
+        let text = luminance(style.stroke().rgba(Opacity::OPAQUE));
+        let background = luminance(self.palette.background_a);
+        let contrast = (text.max(background) + 0.05) / (text.min(background) + 0.05);
+        if contrast >= 3. {
+            return style;
+        }
+        // A flat contrast backing is presentation only; authored colors remain intact.
+        let backing = if text > 0.18 {
+            Color([6, 8, 10, 255])
+        } else {
+            Color([220, 224, 228, 255])
+        };
+        AnnotationStyle::new(
+            style.stroke(),
+            Some(backing),
+            style.width(),
+            style.opacity(),
+        )
+        .unwrap_or(style)
+    }
+    fn editor_style(&self, style: AnnotationStyle) -> AnnotationStyle {
+        let color = |c: [f32; 4]| Color(c.map(|v| (v.clamp(0., 1.) * 255.).round() as u8));
+        AnnotationStyle::new(
+            color(self.palette.text_primary),
+            Some(color(self.palette.menu_bg)),
+            style.width(),
+            Opacity::OPAQUE,
+        )
+        .unwrap_or(style)
+    }
+
     pub(crate) fn push(&mut self, p: AnnotationPrimitive) -> bool {
         if self.primitives.len() == MAX_ANNOTATION_PRIMITIVES {
             return false;
@@ -177,7 +214,11 @@ impl AnnotationScene {
             AnnotationKind::Text(text) => {
                 let start = std::time::Instant::now();
                 let result = self.note(
-                    style,
+                    if edit.is_some() {
+                        self.editor_style(style)
+                    } else {
+                        self.presentation_style(style)
+                    },
                     t,
                     edit.map_or(text.value(), |e| e.value.as_str()),
                     edit.map_or(text.font_size(), |e| e.size),
@@ -220,7 +261,13 @@ impl AnnotationScene {
         }
         if let Some(e) = &input.edit
             && e.is_new
-            && !self.note(e.style, e.transform, &e.value, e.size, e.alignment)
+            && !self.note(
+                self.editor_style(e.style),
+                e.transform,
+                &e.value,
+                e.size,
+                e.alignment,
+            )
         {
             self.primitives.truncate(first);
             self.omitted += 1;

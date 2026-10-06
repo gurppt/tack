@@ -1,4 +1,5 @@
 //! One explicit local operation with one bounded result slot; no idle thread/timer.
+pub use crate::clipboard::Clipboard;
 use crate::{
     actions::Action,
     local_import::{ImportRequest, ImportUpdate},
@@ -17,10 +18,6 @@ use std::{
 };
 use tack_assets::AssetError;
 use tack_core::{ObjectId, Source};
-pub enum Clipboard {
-    Text(String),
-    Image(PathBuf),
-}
 pub enum LocalUpdate {
     Picked(Action, Result<Vec<PathBuf>, String>),
     Imported(ImportUpdate),
@@ -30,6 +27,7 @@ pub enum LocalUpdate {
     Clipboard {
         ticket: Option<(ObjectId, String)>,
         result: Result<Clipboard, String>,
+        received: mpsc::SyncSender<()>,
     },
     Profile(Result<u32, String>),
     Keymap(Action, Result<Option<Preferences>, String>),
@@ -134,7 +132,12 @@ impl LocalWorker {
                             ));
                         }
                         Operation::Import(request) => {
-                            request.run(&stop, |u| emit(LocalUpdate::Imported(u)))?;
+                            let temporary = request.temporary.clone();
+                            let result = request.run(&stop, |u| emit(LocalUpdate::Imported(u)));
+                            if let Some(path) = temporary {
+                                let _ = std::fs::remove_file(path);
+                            }
+                            result?;
                         }
                         Operation::Relink(source, path) => {
                             emit(LocalUpdate::Relinked(
@@ -142,18 +145,28 @@ impl LocalWorker {
                             ));
                         }
                         Operation::Clipboard { work, ticket } => {
-                            let result = (|| -> Result<Clipboard, AssetError> {
-                                if ticket.is_none()
-                                    && let Some(path) = native_files::clipboard_image(&work, &stop)?
-                                {
-                                    return Ok(Clipboard::Image(path));
-                                }
-                                Ok(Clipboard::Text(native_files::clipboard_text(&work, &stop)?))
-                            })();
-                            emit(LocalUpdate::Clipboard {
+                            let result = crate::clipboard::read(&work, &stop, ticket.is_some());
+                            let staged = match &result {
+                                Ok(Clipboard::Image(path)) => Some(path.clone()),
+                                _ => None,
+                            };
+                            let (received, ack) = mpsc::sync_channel(1);
+                            let published = emit(LocalUpdate::Clipboard {
                                 ticket,
                                 result: result.map_err(|e| e.to_string()),
+                                received,
                             });
+                            while published && !stop.load(Ordering::Relaxed) {
+                                match ack.recv_timeout(std::time::Duration::from_millis(20)) {
+                                    Err(mpsc::RecvTimeoutError::Timeout) => continue,
+                                    _ => break,
+                                }
+                            }
+                            if (!published || stop.load(Ordering::Relaxed))
+                                && let Some(path) = staged
+                            {
+                                let _ = std::fs::remove_file(path);
+                            }
                         }
                         Operation::Profile {
                             root,
@@ -233,6 +246,12 @@ impl LocalWorker {
             for _ in 0..4 {
                 match active.receiver.try_recv() {
                     Ok(update) => {
+                        if let LocalUpdate::Clipboard { received, .. } = &update {
+                            let _ = received.try_send(());
+                            if active.cancel.load(Ordering::Relaxed) {
+                                continue;
+                            }
+                        }
                         let done = matches!(update, LocalUpdate::Done(_));
                         updates.push(update);
                         if done {

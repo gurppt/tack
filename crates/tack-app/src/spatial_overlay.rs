@@ -2,8 +2,6 @@
 use crate::{image_gizmo::ImageGizmo, image_input::ImageInput, pixel_font};
 use tack_core::{Camera, DocumentEditor, ObjectKind};
 use tack_render::{MAX_OVERLAY_QUADS, OverlayQuad};
-const FRAME_COLOR: [f32; 4] = [0.40, 0.48, 0.53, 1.];
-const GUIDE_COLOR: [f32; 4] = [0.95, 0.70, 0.30, 1.];
 impl ImageGizmo {
     pub fn pixel_rect(
         &mut self,
@@ -65,7 +63,7 @@ impl ImageGizmo {
             camera,
             [x - 2. * self.scale, y],
             [right, y + 18. * self.scale],
-            [0.018, 0.023, 0.028, 1.],
+            self.palette.menu_bg,
             None,
         );
         for c in text.chars() {
@@ -80,7 +78,7 @@ impl ImageGizmo {
                 camera,
                 [x, y],
                 [x + 16. * self.scale, y + 16. * self.scale],
-                FRAME_COLOR,
+                self.palette.text_secondary,
                 Some(bits),
             );
             x += width as f64 * self.scale;
@@ -122,7 +120,7 @@ impl ImageInput {
                 if self.images.selection.contains(o.id()) {
                     self.gizmo.style.selection
                 } else {
-                    FRAME_COLOR
+                    self.gizmo.palette.text_secondary
                 },
             );
             let b = t.bounds();
@@ -160,8 +158,12 @@ impl ImageInput {
                         [viewport.x + viewport.width, s.target],
                     )
                 };
-                self.gizmo
-                    .line(a, b, self.gizmo.scale / camera.zoom(), GUIDE_COLOR);
+                self.gizmo.line(
+                    a,
+                    b,
+                    self.gizmo.scale / camera.zoom(),
+                    self.gizmo.palette.guide,
+                );
             }
         }
     }

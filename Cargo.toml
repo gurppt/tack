@@ -36,5 +36,8 @@ unwrap_used = "deny"
 expect_used = "deny"
 panic = "deny"
 
+[profile.dev]
+debug = 1
+
 [profile.release]
 debug = 1

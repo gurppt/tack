@@ -11,7 +11,7 @@ mod overlay;
 mod pixel_grid;
 pub use overlay::{MAX_OVERLAY_QUADS, OverlayQuad};
 mod grid;
-pub use grid::GridView;
+pub use grid::{Background, GridView};
 mod annotations;
 pub use annotations::{
     AnnotationDraws, AnnotationPrimitive, CanvasDraw, MAX_ANNOTATION_PRIMITIVES,

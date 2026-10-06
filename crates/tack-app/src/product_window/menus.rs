@@ -1,7 +1,7 @@
 //! Thin native routing: every menu command uses ImageInput's semantic dispatcher.
 use super::*;
 use tack_app::{
-    actions::{Action, ActionEvent, ActionPhase},
+    actions::{ActionEvent, ActionPhase},
     context_menu::{self, Context, ContextMenu},
 };
 use winit::event::{ElementState, MouseButton};
@@ -91,31 +91,6 @@ impl App {
             self.dirty = true;
             return Ok(true);
         }
-        if self.context.is_none()
-            && matches!(
-                event,
-                WindowEvent::MouseInput {
-                    state: ElementState::Pressed,
-                    button: MouseButton::Left,
-                    ..
-                }
-            )
-            && context_menu::app_button_hit(self.pointer, &self.camera)
-        {
-            // Same semantic command as F10; the app owns the local menu side effect.
-            if let Some(editor) = &mut self.editor {
-                self.input.dispatch(
-                    ActionEvent {
-                        action: Action::ApplicationMenu,
-                        phase: ActionPhase::Invoke,
-                    },
-                    editor,
-                    &mut self.camera,
-                )?;
-            }
-            self.dirty = true;
-            return Ok(true);
-        }
         let Some(menu) = &mut self.context else {
             return Ok(false);
         };
@@ -170,8 +145,6 @@ impl App {
     pub(super) fn update_cursor(&mut self) {
         let icon = if self.context.is_some() || self.local.ui.is_some() {
             winit::window::CursorIcon::Default
-        } else if context_menu::app_button_hit(self.pointer, &self.camera) {
-            winit::window::CursorIcon::Pointer
         } else {
             self.editor
                 .as_ref()

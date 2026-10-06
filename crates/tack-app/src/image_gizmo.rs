@@ -32,6 +32,7 @@ pub enum GizmoHit {
 }
 pub struct ImageGizmo {
     pub style: GizmoStyle,
+    pub palette: crate::ui_theme::Palette,
     pub scale: f64,
     hit_scale: f64,
     pub quads: Vec<OverlayQuad>,
@@ -40,6 +41,7 @@ impl Default for ImageGizmo {
     fn default() -> Self {
         Self {
             style: GizmoStyle::default(),
+            palette: crate::ui_theme::Theme::default().palette(),
             scale: 1.,
             hit_scale: 1.,
             quads: Vec::with_capacity(128),

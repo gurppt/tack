@@ -103,6 +103,8 @@ pub struct Preferences {
     pub embedded_import: bool,
     /// Zero follows native DPI; positive values are integer logical presentation.
     pub ui_scale: u8,
+    #[serde(default)]
+    pub theme: crate::ui_theme::Theme,
     pub handle_size: u8,
     pub hit_radius: u8,
     pub keymap: Vec<BindingRecord>,
@@ -116,6 +118,7 @@ impl Preferences {
             sampling: "Smooth".into(),
             embedded_import: true,
             ui_scale: 0,
+            theme: crate::ui_theme::Theme::default(),
             handle_size: 7,
             hit_radius: 9,
             keymap: crate::image_input::product_keymap()?
