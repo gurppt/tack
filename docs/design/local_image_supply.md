@@ -103,6 +103,26 @@ query/supply/render. Do not add these inclusive fields to their components.
 Worker `decode_ms` measures total load (I/O, decode, encode, cache), not codec-only.
 The historical `source_bytes_before_detail` field now includes all linked-source
 reads, including refinement; use that scope when comparing prior missions.
+Likewise, historical `overview_reused` counts successful display results without
+a new PreparedOverview, including refinements; it is not an overview-only count.
 `--present-immediate` is a diagnostic AutoNoVsync comparison, not monitor latency.
 Ordinary product windows disable timestamp/readback profiling and have no
 persistent profiling framework. No telemetry or network client was added.
+
+## Updated 1G source fairness and physical-window measurements
+
+Preview urgency and representation need both use the longest projected edge,
+including portrait images. The bounded view queue admits at most two jobs per
+SourceId; dispatch admits only one active codec per SourceId. A repeated source
+therefore cannot occupy both workers or fill all requests before other visible
+sources. The queue still has the same global 16/4 caps and one result slot per
+worker. Remaining wanted aliases enter on subsequent demand updates. This can
+serialize thumbnail/refinement work on a single source and is measured explicitly;
+there is no extra fairness thread, global cache or scheduler structure.
+
+Developer `open/new FILE --window-size WIDTHxHEIGHT` starts at a bounded physical
+size (320x240..8192x8192). Actual OS-granted size drives surface and camera; each
+optional report/frame records it. Ordinary launch remains 1280x720. Native
+800x600, 1024x768 and 1600x900 receipts distinguish viewport size from Xvfb's
+1600x1000 desktop and from UI integer scale. No benchmark timer or dimensions
+reporting is added to an ordinary untimed launch.

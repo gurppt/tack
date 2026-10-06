@@ -1,0 +1,49 @@
+{
+  "storage": {
+    "initial_board_bytes": 34229666,
+    "objects": 5000,
+    "old_handle_released_after_explicit_drop": true,
+    "original_bytes": 33554432,
+    "originals_verified_after_undo": true,
+    "recovery_worker_ms": 112.682023,
+    "release_scope": "explicit harness drop, not proof of production history compaction",
+    "relinked_board_bytes": 675361,
+    "retained_old_container_allocation": {
+      "allocated_bytes": 34234368,
+      "inode": 8034101,
+      "links": 0
+    },
+    "retained_old_container_bytes": 34229666,
+    "scope": "storage isolation; 5000 objects, one shared 32 MiB synthetic blob; no codec/photo timing",
+    "undo_saved_board_bytes": 34229753,
+    "whole_board_recovery_bytes": 34229985
+  },
+  "display_cache": {
+    "binary_sha256": "13b294987327090b38c563001965b902c1a860529f30688ebd64d87d071a4a71",
+    "rows": [
+      {
+        "name": "default",
+        "peak_derived_disk_bytes_observed": 7463279,
+        "remaining_bytes_after_close": 0,
+        "cap_bytes": 536870912,
+        "sampling_ms": 50,
+        "report_sha256": "8232622fbd3c9318fea32c9925fec0201cdebf23f7371092bfee798639afeba6"
+      },
+      {
+        "name": "potato",
+        "peak_derived_disk_bytes_observed": 5087841,
+        "remaining_bytes_after_close": 0,
+        "cap_bytes": 8388608,
+        "sampling_ms": 50,
+        "report_sha256": "2f39f97587b53a0a3a88485eeae211247b35b8ffee7a1cfdd79576ecdab23ca1"
+      }
+    ],
+    "scope": "50ms external observations of owned per-session TMPDIR during 17s camera stress; sampled peak not hard instantaneous proof"
+  },
+  "scope_notes": [
+    "recovery_worker_ms is synchronous harness storage-operation duration, not UI autosave-worker latency",
+    "whole_board_recovery_bytes is one snapshot file size, not total two-slot directory or cumulative I/O",
+    "old_handle release is explicit harness drop, not production compaction",
+    "sampled derived disk peaks exclude unseen between-sample transients; worker budget tests enforce caps"
+  ]
+}

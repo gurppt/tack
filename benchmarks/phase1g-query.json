@@ -1,0 +1,1895 @@
+{
+  "before": {
+    "binary_sha256": "32c9b5e8d6858f6bb75b9af4714b83e6005fa0ee4b25fd76767388f96937ea60",
+    "harness_sha256": "b35cf2d57570c11a9c01988e76e17423584f1873103ea8600925c4d8b906ed0e",
+    "runs": [
+      {
+        "name": "1k",
+        "board_sha256": "1a7b99bb16618083d9e41325776781abc073b666f46293de72be4f319b8f7e7e",
+        "report_sha256": "de7d2ca478ef6bfe2cd9c5f80b4c7483ea6819327355f5b08d4b93741d6affff",
+        "peak_rss_bytes": 386318336,
+        "distribution_ms": {
+          "query_ms": {
+            "p50": 0.17021,
+            "p99": 0.209941,
+            "max": 0.25426000000000004
+          },
+          "scene_ms": {
+            "p50": 0.003929999999999996,
+            "p99": 0.007940000000000003,
+            "max": 0.019510000000000027
+          },
+          "supply_ms": {
+            "p50": 0.02841,
+            "p99": 1.494524,
+            "max": 4.316491
+          },
+          "encode_ms": {
+            "p50": 0.15983999999999998,
+            "p99": 0.239771,
+            "max": 0.321101
+          },
+          "submit_ms": {
+            "p50": 0.06314,
+            "p99": 0.122051,
+            "max": 0.13819099999999998
+          },
+          "poll_ms": {
+            "p50": 0.00049,
+            "p99": 0.0011400000000000002,
+            "max": 0.00598
+          },
+          "acquire_ms": {
+            "p50": 0.02118,
+            "p99": 0.03344,
+            "max": 0.04745
+          },
+          "present_ms": {
+            "p50": 37.619318,
+            "p99": 44.247805,
+            "max": 50.913933
+          },
+          "callback_ms": {
+            "p50": 38.093089,
+            "p99": 45.390588,
+            "max": 51.406124
+          }
+        },
+        "episodes": [
+          {
+            "epoch": 0,
+            "entered_ms": 439.348976,
+            "useful_delay_ms": 158.38758300000006,
+            "quality_delay_ms": 515.3339139999999
+          },
+          {
+            "epoch": 1,
+            "entered_ms": 3035.345667,
+            "useful_delay_ms": 37.33743800000002,
+            "quality_delay_ms": 224.98403700000017
+          },
+          {
+            "epoch": 2,
+            "entered_ms": 5030.763012,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 160.7135989999997
+          },
+          {
+            "epoch": 3,
+            "entered_ms": 7015.671759,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 250.07878299999993
+          },
+          {
+            "epoch": 4,
+            "entered_ms": 9022.206621000001,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 5,
+            "entered_ms": 11026.317208,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 6,
+            "entered_ms": 13034.629287,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 7,
+            "entered_ms": 15024.758108,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          }
+        ],
+        "first_useful_ms": 597.736559,
+        "max_visible": 9,
+        "max_detailed": 9,
+        "peak_gpu_payload": 51691520,
+        "peak_cpu_payload": 50790400,
+        "peak_pending": 16,
+        "peak_queued": 14,
+        "cpu_evictions": 2,
+        "discarded": 0,
+        "reprioritized": 1,
+        "source_bytes": 325351,
+        "container_bytes": 543683,
+        "metadata_ms": 2.4240369999999998,
+        "gpu_ms_p99": 1.387136
+      },
+      {
+        "name": "5k",
+        "board_sha256": "783d65beaaef085657ecabea0058b8426df29ed5ba9403c34f89c467a366a12c",
+        "report_sha256": "479179d8d8116004b4aa4d070fb467da1dd75ad173afdc280bdbc4574e913904",
+        "peak_rss_bytes": 390909952,
+        "distribution_ms": {
+          "query_ms": {
+            "p50": 0.854842,
+            "p99": 1.026293,
+            "max": 1.100803
+          },
+          "scene_ms": {
+            "p50": 0.002269999999999911,
+            "p99": 0.009190000000000087,
+            "max": 0.014049999999999889
+          },
+          "supply_ms": {
+            "p50": 0.02707,
+            "p99": 1.349793,
+            "max": 4.274141
+          },
+          "encode_ms": {
+            "p50": 0.09448000000000001,
+            "p99": 0.22089,
+            "max": 0.28937
+          },
+          "submit_ms": {
+            "p50": 0.046220000000000004,
+            "p99": 0.112711,
+            "max": 0.12408100000000001
+          },
+          "poll_ms": {
+            "p50": 0.00039999999999999996,
+            "p99": 0.00076,
+            "max": 0.00551
+          },
+          "acquire_ms": {
+            "p50": 0.01927,
+            "p99": 0.03149,
+            "max": 0.03684
+          },
+          "present_ms": {
+            "p50": 37.301688,
+            "p99": 44.665366999999996,
+            "max": 60.781949000000004
+          },
+          "callback_ms": {
+            "p50": 38.38088,
+            "p99": 49.084908,
+            "max": 66.085093
+          }
+        },
+        "episodes": [
+          {
+            "epoch": 0,
+            "entered_ms": 418.414112,
+            "useful_delay_ms": 149.95302099999998,
+            "quality_delay_ms": 497.74022799999995
+          },
+          {
+            "epoch": 1,
+            "entered_ms": 3027.326557,
+            "useful_delay_ms": 150.0135009999999,
+            "quality_delay_ms": 495.0335210000003
+          },
+          {
+            "epoch": 2,
+            "entered_ms": 5002.235588,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 161.06561000000056
+          },
+          {
+            "epoch": 3,
+            "entered_ms": 7000.5859,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 4,
+            "entered_ms": 9011.518616,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 5,
+            "entered_ms": 11014.621851,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 6,
+            "entered_ms": 13016.727973000001,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 7,
+            "entered_ms": 15022.328904,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          }
+        ],
+        "first_useful_ms": 568.367133,
+        "max_visible": 9,
+        "max_detailed": 9,
+        "peak_gpu_payload": 54476800,
+        "peak_cpu_payload": 51118080,
+        "peak_pending": 16,
+        "peak_queued": 14,
+        "cpu_evictions": 6,
+        "discarded": 0,
+        "reprioritized": 1,
+        "source_bytes": 397743,
+        "container_bytes": 1211969,
+        "metadata_ms": 9.521365000000001,
+        "gpu_ms_p99": 0.660896
+      },
+      {
+        "name": "50k",
+        "board_sha256": "3b23e5805a3f416438c69694987a625d4a40765df01bbeaa7a82e90125fe9914",
+        "report_sha256": "28105c02cb9c32b503229be89421ab2d4fc4029a72b71ed56b83e986cc10e1c4",
+        "peak_rss_bytes": 415809536,
+        "distribution_ms": {
+          "query_ms": {
+            "p50": 10.016746,
+            "p99": 11.397729,
+            "max": 12.561833
+          },
+          "scene_ms": {
+            "p50": 0.002419999999999898,
+            "p99": 0.005739999999999468,
+            "max": 0.010380000000000895
+          },
+          "supply_ms": {
+            "p50": 0.02858,
+            "p99": 1.363723,
+            "max": 3.79454
+          },
+          "encode_ms": {
+            "p50": 0.09629,
+            "p99": 0.185921,
+            "max": 0.301141
+          },
+          "submit_ms": {
+            "p50": 0.03995,
+            "p99": 0.09354,
+            "max": 0.122371
+          },
+          "poll_ms": {
+            "p50": 0.00047999999999999996,
+            "p99": 0.00131,
+            "max": 0.007819999999999999
+          },
+          "acquire_ms": {
+            "p50": 0.02178,
+            "p99": 0.03029,
+            "max": 0.03662
+          },
+          "present_ms": {
+            "p50": 37.202017,
+            "p99": 46.764981999999996,
+            "max": 48.024735
+          },
+          "callback_ms": {
+            "p50": 47.457324,
+            "p99": 58.160101,
+            "max": 59.524365
+          }
+        },
+        "episodes": [
+          {
+            "epoch": 0,
+            "entered_ms": 534.997245,
+            "useful_delay_ms": 188.6681719999999,
+            "quality_delay_ms": 620.0795269999999
+          },
+          {
+            "epoch": 1,
+            "entered_ms": 3042.756776,
+            "useful_delay_ms": 182.96917699999995,
+            "quality_delay_ms": 604.3442559999999
+          },
+          {
+            "epoch": 2,
+            "entered_ms": 5000.045411,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 3,
+            "entered_ms": 7001.921783,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 4,
+            "entered_ms": 9020.320728,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 5,
+            "entered_ms": 11023.453843000001,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 6,
+            "entered_ms": 13001.744303000001,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 7,
+            "entered_ms": 15000.203015000001,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          }
+        ],
+        "first_useful_ms": 723.6654169999999,
+        "max_visible": 9,
+        "max_detailed": 9,
+        "peak_gpu_payload": 54476800,
+        "peak_cpu_payload": 51118080,
+        "peak_pending": 16,
+        "peak_queued": 14,
+        "cpu_evictions": 6,
+        "discarded": 0,
+        "reprioritized": 1,
+        "source_bytes": 397825,
+        "container_bytes": 7285911,
+        "metadata_ms": 61.842341000000005,
+        "gpu_ms_p99": 1.27776
+      },
+      {
+        "name": "10k-shapes",
+        "board_sha256": "65670bb1b50a24a316783fb2a714a1c533baac9720aa6207a232c3bc12028954",
+        "report_sha256": "328e87e4bfd15a4b427c7fccfb836a9d4c5cadcfe01e9071c8785979c2f8e250",
+        "peak_rss_bytes": 326414336,
+        "distribution_ms": {
+          "query_ms": {
+            "p50": 1.551605,
+            "p99": 1.800964,
+            "max": 1.931175
+          },
+          "scene_ms": {
+            "p50": 0.0021299999999997107,
+            "p99": 0.0028399999999996917,
+            "max": 0.004009999999999832
+          },
+          "supply_ms": {
+            "p50": 0.0038299999999999996,
+            "p99": 0.00577,
+            "max": 0.009000000000000001
+          },
+          "encode_ms": {
+            "p50": 0.09333999999999999,
+            "p99": 0.12381999999999999,
+            "max": 2.169556
+          },
+          "submit_ms": {
+            "p50": 0.039409999999999994,
+            "p99": 0.057229999999999996,
+            "max": 0.06745
+          },
+          "poll_ms": {
+            "p50": 0.00044,
+            "p99": 0.00084,
+            "max": 0.00847
+          },
+          "acquire_ms": {
+            "p50": 0.02152,
+            "p99": 0.02914,
+            "max": 0.04974
+          },
+          "present_ms": {
+            "p50": 37.086687,
+            "p99": 43.427533,
+            "max": 48.675437
+          },
+          "callback_ms": {
+            "p50": 40.587917000000004,
+            "p99": 46.968042000000004,
+            "max": 52.231436
+          }
+        },
+        "episodes": [
+          {
+            "epoch": 0,
+            "entered_ms": 426.804064,
+            "useful_delay_ms": null,
+            "quality_delay_ms": null
+          },
+          {
+            "epoch": 1,
+            "entered_ms": 3003.368445,
+            "useful_delay_ms": null,
+            "quality_delay_ms": null
+          },
+          {
+            "epoch": 2,
+            "entered_ms": 5019.172363,
+            "useful_delay_ms": null,
+            "quality_delay_ms": null
+          },
+          {
+            "epoch": 3,
+            "entered_ms": 7005.536004,
+            "useful_delay_ms": null,
+            "quality_delay_ms": null
+          },
+          {
+            "epoch": 4,
+            "entered_ms": 9022.186544,
+            "useful_delay_ms": null,
+            "quality_delay_ms": null
+          },
+          {
+            "epoch": 5,
+            "entered_ms": 11032.142466,
+            "useful_delay_ms": null,
+            "quality_delay_ms": null
+          },
+          {
+            "epoch": 6,
+            "entered_ms": 13026.728099,
+            "useful_delay_ms": null,
+            "quality_delay_ms": null
+          },
+          {
+            "epoch": 7,
+            "entered_ms": 15007.360385,
+            "useful_delay_ms": null,
+            "quality_delay_ms": null
+          }
+        ],
+        "first_useful_ms": null,
+        "max_visible": 0,
+        "max_detailed": 0,
+        "peak_gpu_payload": 0,
+        "peak_cpu_payload": 0,
+        "peak_pending": 0,
+        "peak_queued": 0,
+        "cpu_evictions": 0,
+        "discarded": 0,
+        "reprioritized": 0,
+        "source_bytes": 0,
+        "container_bytes": 1070100,
+        "metadata_ms": 13.416395,
+        "gpu_ms_p99": 0.116032
+      },
+      {
+        "name": "mixed",
+        "board_sha256": "fe75380cb3eee5e74187fbcfcf7d92f056a71ca6a98ef5a26e2387c76625336d",
+        "report_sha256": "476fb6fe5575d7a0345e17ac441ac264933120832356fb5229e0ed65e25e36ef",
+        "peak_rss_bytes": 407879680,
+        "distribution_ms": {
+          "query_ms": {
+            "p50": 0.19320099999999998,
+            "p99": 0.22763,
+            "max": 0.32476
+          },
+          "scene_ms": {
+            "p50": 0.011759999999999965,
+            "p99": 0.04171999999999987,
+            "max": 0.051820999999999895
+          },
+          "supply_ms": {
+            "p50": 0.07997,
+            "p99": 4.003141,
+            "max": 10.985589000000001
+          },
+          "encode_ms": {
+            "p50": 0.17996,
+            "p99": 0.325521,
+            "max": 1.9390049999999999
+          },
+          "submit_ms": {
+            "p50": 0.057501,
+            "p99": 0.11873,
+            "max": 0.131911
+          },
+          "poll_ms": {
+            "p50": 0.00045,
+            "p99": 0.0011,
+            "max": 0.00646
+          },
+          "acquire_ms": {
+            "p50": 0.02169,
+            "p99": 0.0317,
+            "max": 0.045901
+          },
+          "present_ms": {
+            "p50": 37.590688,
+            "p99": 46.259991,
+            "max": 69.02753
+          },
+          "callback_ms": {
+            "p50": 38.29496,
+            "p99": 49.476419,
+            "max": 80.51695000000001
+          }
+        },
+        "episodes": [
+          {
+            "epoch": 0,
+            "entered_ms": 416.960067,
+            "useful_delay_ms": 370.250856,
+            "quality_delay_ms": 1343.374804
+          },
+          {
+            "epoch": 1,
+            "entered_ms": 3005.3033290000003,
+            "useful_delay_ms": 146.49972199999957,
+            "quality_delay_ms": 946.2700679999994
+          },
+          {
+            "epoch": 2,
+            "entered_ms": 5006.736679000001,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 542.7693859999999
+          },
+          {
+            "epoch": 3,
+            "entered_ms": 7035.653501,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 264.0903390000003
+          },
+          {
+            "epoch": 4,
+            "entered_ms": 9019.397736,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 732.1563789999982
+          },
+          {
+            "epoch": 5,
+            "entered_ms": 11032.755777,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 726.8208560000003
+          },
+          {
+            "epoch": 6,
+            "entered_ms": 13022.417507,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 140.02645499999926
+          },
+          {
+            "epoch": 7,
+            "entered_ms": 15011.187885,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 90.74820600000203
+          }
+        ],
+        "first_useful_ms": 787.210923,
+        "max_visible": 30,
+        "max_detailed": 30,
+        "peak_gpu_payload": 68648960,
+        "peak_cpu_payload": 52387840,
+        "peak_pending": 16,
+        "peak_queued": 15,
+        "cpu_evictions": 89,
+        "discarded": 3,
+        "reprioritized": 14,
+        "source_bytes": 904021,
+        "container_bytes": 1212798,
+        "metadata_ms": 2.3896759999999997,
+        "gpu_ms_p99": 1.36656
+      },
+      {
+        "name": "sparse",
+        "board_sha256": "7c98b867efde7f338a6786d068fcb617a03b21c45a1818631e4fb0a46031f62e",
+        "report_sha256": "d9474364009454c09f9c02c501ed5e2f688cf22e7fa61e873f2a77909eaa7438",
+        "peak_rss_bytes": 365527040,
+        "distribution_ms": {
+          "query_ms": {
+            "p50": 0.867672,
+            "p99": 0.980153,
+            "max": 1.236113
+          },
+          "scene_ms": {
+            "p50": 0.001969999999999944,
+            "p99": 0.004570000000000039,
+            "max": 0.010919999999999985
+          },
+          "supply_ms": {
+            "p50": 0.01893,
+            "p99": 0.22003999999999999,
+            "max": 3.89549
+          },
+          "encode_ms": {
+            "p50": 0.091711,
+            "p99": 0.17887,
+            "max": 0.29098999999999997
+          },
+          "submit_ms": {
+            "p50": 0.04226,
+            "p99": 0.098631,
+            "max": 0.10895
+          },
+          "poll_ms": {
+            "p50": 0.00039999999999999996,
+            "p99": 0.0007199999999999999,
+            "max": 0.0061
+          },
+          "acquire_ms": {
+            "p50": 0.021330000000000002,
+            "p99": 0.03204,
+            "max": 0.05945
+          },
+          "present_ms": {
+            "p50": 37.437907,
+            "p99": 41.506978,
+            "max": 61.63495
+          },
+          "callback_ms": {
+            "p50": 38.517041,
+            "p99": 42.618121,
+            "max": 64.10803700000001
+          }
+        },
+        "episodes": [
+          {
+            "epoch": 0,
+            "entered_ms": 416.947118,
+            "useful_delay_ms": 113.08195400000005,
+            "quality_delay_ms": 342.1338620000001
+          },
+          {
+            "epoch": 1,
+            "entered_ms": 3022.783945,
+            "useful_delay_ms": 111.62722099999974,
+            "quality_delay_ms": 339.0848040000001
+          },
+          {
+            "epoch": 2,
+            "entered_ms": 5016.213494,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 162.9540050000005
+          },
+          {
+            "epoch": 3,
+            "entered_ms": 7030.488878,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 130.5738709999996
+          },
+          {
+            "epoch": 4,
+            "entered_ms": 9015.770326,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 5,
+            "entered_ms": 11009.454636999999,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 6,
+            "entered_ms": 13018.094996,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 7,
+            "entered_ms": 15010.472053000001,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          }
+        ],
+        "first_useful_ms": 530.029072,
+        "max_visible": 6,
+        "max_detailed": 6,
+        "peak_gpu_payload": 29327360,
+        "peak_cpu_payload": 29491200,
+        "peak_pending": 14,
+        "peak_queued": 12,
+        "cpu_evictions": 0,
+        "discarded": 0,
+        "reprioritized": 0,
+        "source_bytes": 253015,
+        "container_bytes": 953187,
+        "metadata_ms": 7.854241,
+        "gpu_ms_p99": 0.516096
+      },
+      {
+        "name": "potato-5k",
+        "board_sha256": "783d65beaaef085657ecabea0058b8426df29ed5ba9403c34f89c467a366a12c",
+        "report_sha256": "9e6fb01d05634b647337bc5108bbfe67685efe3e46ce3a4c0c6b637457e431aa",
+        "peak_rss_bytes": 337768448,
+        "distribution_ms": {
+          "query_ms": {
+            "p50": 0.858832,
+            "p99": 0.961993,
+            "max": 1.022342
+          },
+          "scene_ms": {
+            "p50": 0.0021900000000001016,
+            "p99": 0.005100000000000042,
+            "max": 0.010400999999999994
+          },
+          "supply_ms": {
+            "p50": 0.02646,
+            "p99": 0.258881,
+            "max": 1.3795540000000002
+          },
+          "encode_ms": {
+            "p50": 0.09299,
+            "p99": 0.17299,
+            "max": 0.285711
+          },
+          "submit_ms": {
+            "p50": 0.04616,
+            "p99": 0.09689,
+            "max": 0.12532
+          },
+          "poll_ms": {
+            "p50": 0.00049,
+            "p99": 0.00092,
+            "max": 0.006261
+          },
+          "acquire_ms": {
+            "p50": 0.021310000000000003,
+            "p99": 0.028861,
+            "max": 0.048940000000000004
+          },
+          "present_ms": {
+            "p50": 37.354677,
+            "p99": 44.012665,
+            "max": 47.730073999999995
+          },
+          "callback_ms": {
+            "p50": 38.42872,
+            "p99": 45.093408000000004,
+            "max": 48.792807
+          }
+        },
+        "episodes": [
+          {
+            "epoch": 0,
+            "entered_ms": 410.99283199999996,
+            "useful_delay_ms": 300.73140400000005,
+            "quality_delay_ms": 643.9348190000001
+          },
+          {
+            "epoch": 1,
+            "entered_ms": 3018.990585,
+            "useful_delay_ms": 295.2292889999999,
+            "quality_delay_ms": 635.9598080000001
+          },
+          {
+            "epoch": 2,
+            "entered_ms": 5026.458891,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 40.20433400000002
+          },
+          {
+            "epoch": 3,
+            "entered_ms": 7012.729192,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 4,
+            "entered_ms": 9016.384238,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 159.7132760000004
+          },
+          {
+            "epoch": 5,
+            "entered_ms": 11027.317513,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 156.5791989999998
+          },
+          {
+            "epoch": 6,
+            "entered_ms": 13005.255542,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 40.685756000000765
+          },
+          {
+            "epoch": 7,
+            "entered_ms": 15023.352326,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          }
+        ],
+        "first_useful_ms": 711.724236,
+        "max_visible": 9,
+        "max_detailed": 8,
+        "peak_gpu_payload": 8601600,
+        "peak_cpu_payload": 7208960,
+        "peak_pending": 4,
+        "peak_queued": 3,
+        "cpu_evictions": 18,
+        "discarded": 0,
+        "reprioritized": 1,
+        "source_bytes": 289327,
+        "container_bytes": 1211969,
+        "metadata_ms": 10.372917000000001,
+        "gpu_ms_p99": 0.527968
+      },
+      {
+        "name": "sparse-immediate",
+        "board_sha256": "7c98b867efde7f338a6786d068fcb617a03b21c45a1818631e4fb0a46031f62e",
+        "report_sha256": "9a579dd54a95ba84ec99b8679d563aa2b110e6170896f33265d0195ebbe88fcc",
+        "peak_rss_bytes": 365633536,
+        "distribution_ms": {
+          "query_ms": {
+            "p50": 0.8595020000000001,
+            "p99": 0.9900519999999999,
+            "max": 1.025752
+          },
+          "scene_ms": {
+            "p50": 0.002040000000000028,
+            "p99": 0.0055100000000000565,
+            "max": 0.010890000000000042
+          },
+          "supply_ms": {
+            "p50": 0.01892,
+            "p99": 0.32058,
+            "max": 3.7617599999999998
+          },
+          "encode_ms": {
+            "p50": 0.09323,
+            "p99": 0.18924100000000002,
+            "max": 0.28029
+          },
+          "submit_ms": {
+            "p50": 0.042620000000000005,
+            "p99": 0.09257,
+            "max": 0.11845
+          },
+          "poll_ms": {
+            "p50": 0.00044,
+            "p99": 0.0009,
+            "max": 0.00596
+          },
+          "acquire_ms": {
+            "p50": 0.01969,
+            "p99": 0.028730000000000002,
+            "max": 0.04702
+          },
+          "present_ms": {
+            "p50": 37.154917000000005,
+            "p99": 44.806117,
+            "max": 52.344267
+          },
+          "callback_ms": {
+            "p50": 38.2252,
+            "p99": 47.217803,
+            "max": 53.485369999999996
+          }
+        },
+        "episodes": [
+          {
+            "epoch": 0,
+            "entered_ms": 412.69034700000003,
+            "useful_delay_ms": 113.32798499999996,
+            "quality_delay_ms": 342.09745200000003
+          },
+          {
+            "epoch": 1,
+            "entered_ms": 3011.965537,
+            "useful_delay_ms": 111.66072099999974,
+            "quality_delay_ms": 338.9278939999999
+          },
+          {
+            "epoch": 2,
+            "entered_ms": 5031.995956000001,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 162.04225199999928
+          },
+          {
+            "epoch": 3,
+            "entered_ms": 7036.084763,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 119.98167300000023
+          },
+          {
+            "epoch": 4,
+            "entered_ms": 9000.604417,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 5,
+            "entered_ms": 11016.677976,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 6,
+            "entered_ms": 13000.452,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 7,
+            "entered_ms": 15023.382517,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          }
+        ],
+        "first_useful_ms": 526.018332,
+        "max_visible": 6,
+        "max_detailed": 6,
+        "peak_gpu_payload": 29327360,
+        "peak_cpu_payload": 29491200,
+        "peak_pending": 14,
+        "peak_queued": 12,
+        "cpu_evictions": 0,
+        "discarded": 0,
+        "reprioritized": 0,
+        "source_bytes": 253015,
+        "container_bytes": 953187,
+        "metadata_ms": 10.613667,
+        "gpu_ms_p99": 1.250912
+      }
+    ],
+    "scope": "generated shared-source fixtures, warm OS caches, isolated X11; epochs censored if unfinished; no human/monitor latency claim"
+  },
+  "after": {
+    "binary_sha256": "d075f3c479373226e9fc692f10dbf5d71ea1c0e89eebec96d14b3f4a17933eea",
+    "harness_sha256": "b35cf2d57570c11a9c01988e76e17423584f1873103ea8600925c4d8b906ed0e",
+    "runs": [
+      {
+        "name": "1k",
+        "board_sha256": "1a7b99bb16618083d9e41325776781abc073b666f46293de72be4f319b8f7e7e",
+        "report_sha256": "1e28d1de630640e8686a5154125ec5b621f10d538cb95bc67bc28c505ff7e1f7",
+        "peak_rss_bytes": 388890624,
+        "distribution_ms": {
+          "query_ms": {
+            "p50": 0.18375999999999998,
+            "p99": 0.22442,
+            "max": 0.37490100000000004
+          },
+          "scene_ms": {
+            "p50": 0.004270000000000017,
+            "p99": 0.009469999999999978,
+            "max": 0.011659999999999997
+          },
+          "supply_ms": {
+            "p50": 0.03806,
+            "p99": 1.5386149999999998,
+            "max": 4.1884310000000005
+          },
+          "encode_ms": {
+            "p50": 0.16099,
+            "p99": 0.252081,
+            "max": 0.29751099999999997
+          },
+          "submit_ms": {
+            "p50": 0.06234,
+            "p99": 0.121271,
+            "max": 0.14546
+          },
+          "poll_ms": {
+            "p50": 0.00053,
+            "p99": 0.00101,
+            "max": 0.00577
+          },
+          "acquire_ms": {
+            "p50": 0.01988,
+            "p99": 0.02863,
+            "max": 0.057479999999999996
+          },
+          "present_ms": {
+            "p50": 37.339997,
+            "p99": 46.523671,
+            "max": 63.989737000000005
+          },
+          "callback_ms": {
+            "p50": 37.842757999999996,
+            "p99": 48.926407,
+            "max": 66.239453
+          }
+        },
+        "episodes": [
+          {
+            "epoch": 0,
+            "entered_ms": 471.55028999999996,
+            "useful_delay_ms": 148.62107799999995,
+            "quality_delay_ms": 486.95415999999994
+          },
+          {
+            "epoch": 1,
+            "entered_ms": 3002.794693,
+            "useful_delay_ms": 36.31686400000035,
+            "quality_delay_ms": 225.27731700000004
+          },
+          {
+            "epoch": 2,
+            "entered_ms": 5025.834449000001,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 120.38831499999924
+          },
+          {
+            "epoch": 3,
+            "entered_ms": 7027.14714,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 251.91099699999995
+          },
+          {
+            "epoch": 4,
+            "entered_ms": 9017.937361999999,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 5,
+            "entered_ms": 11010.48522,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 6,
+            "entered_ms": 13015.68695,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 7,
+            "entered_ms": 15034.115054999998,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          }
+        ],
+        "first_useful_ms": 620.1713679999999,
+        "max_visible": 9,
+        "max_detailed": 9,
+        "peak_gpu_payload": 51691520,
+        "peak_cpu_payload": 50790400,
+        "peak_pending": 16,
+        "peak_queued": 14,
+        "cpu_evictions": 2,
+        "discarded": 0,
+        "reprioritized": 1,
+        "source_bytes": 325351,
+        "container_bytes": 543683,
+        "metadata_ms": 2.217716,
+        "gpu_ms_p99": 1.273536
+      },
+      {
+        "name": "5k",
+        "board_sha256": "783d65beaaef085657ecabea0058b8426df29ed5ba9403c34f89c467a366a12c",
+        "report_sha256": "43aff0f94cc5e6dadf9be420ce828d5de04bc9c48d7e34d83f4e88453d6dda47",
+        "peak_rss_bytes": 391245824,
+        "distribution_ms": {
+          "query_ms": {
+            "p50": 0.046661,
+            "p99": 0.07682,
+            "max": 0.561381
+          },
+          "scene_ms": {
+            "p50": 0.004120000000000006,
+            "p99": 0.009579999999999977,
+            "max": 0.013110000000000004
+          },
+          "supply_ms": {
+            "p50": 0.03916,
+            "p99": 1.570344,
+            "max": 4.882432
+          },
+          "encode_ms": {
+            "p50": 0.15609099999999998,
+            "p99": 0.24326,
+            "max": 0.29383000000000004
+          },
+          "submit_ms": {
+            "p50": 0.0591,
+            "p99": 0.13514,
+            "max": 0.15912
+          },
+          "poll_ms": {
+            "p50": 0.0005700000000000001,
+            "p99": 0.0012300000000000002,
+            "max": 0.00589
+          },
+          "acquire_ms": {
+            "p50": 0.01978,
+            "p99": 0.03268,
+            "max": 0.05265
+          },
+          "present_ms": {
+            "p50": 37.492807000000006,
+            "p99": 44.935447,
+            "max": 47.890725
+          },
+          "callback_ms": {
+            "p50": 37.845419,
+            "p99": 46.247321,
+            "max": 49.418149
+          }
+        },
+        "episodes": [
+          {
+            "epoch": 0,
+            "entered_ms": 453.22684200000003,
+            "useful_delay_ms": 148.80085800000006,
+            "quality_delay_ms": 488.2990839999999
+          },
+          {
+            "epoch": 1,
+            "entered_ms": 3010.713843,
+            "useful_delay_ms": 145.95372100000031,
+            "quality_delay_ms": 483.2246500000001
+          },
+          {
+            "epoch": 2,
+            "entered_ms": 5008.795815,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 159.7696759999999
+          },
+          {
+            "epoch": 3,
+            "entered_ms": 7026.037316,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 250.86857500000042
+          },
+          {
+            "epoch": 4,
+            "entered_ms": 9009.131439,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 5,
+            "entered_ms": 11018.752070999999,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 6,
+            "entered_ms": 13010.439016,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 7,
+            "entered_ms": 15035.329197,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          }
+        ],
+        "first_useful_ms": 602.0277000000001,
+        "max_visible": 9,
+        "max_detailed": 9,
+        "peak_gpu_payload": 54476800,
+        "peak_cpu_payload": 51118080,
+        "peak_pending": 16,
+        "peak_queued": 14,
+        "cpu_evictions": 6,
+        "discarded": 0,
+        "reprioritized": 1,
+        "source_bytes": 397743,
+        "container_bytes": 1211969,
+        "metadata_ms": 9.088123,
+        "gpu_ms_p99": 1.298432
+      },
+      {
+        "name": "50k",
+        "board_sha256": "3b23e5805a3f416438c69694987a625d4a40765df01bbeaa7a82e90125fe9914",
+        "report_sha256": "498258698ad865324725c20b1034bd43d269c8d8e1bf8f851aa9e7e4e8f03120",
+        "peak_rss_bytes": 419049472,
+        "distribution_ms": {
+          "query_ms": {
+            "p50": 0.369371,
+            "p99": 0.43356100000000003,
+            "max": 10.256327
+          },
+          "scene_ms": {
+            "p50": 0.0043799999999999395,
+            "p99": 0.008400000000000074,
+            "max": 0.01177000000000002
+          },
+          "supply_ms": {
+            "p50": 0.04337,
+            "p99": 1.5053340000000002,
+            "max": 4.286351
+          },
+          "encode_ms": {
+            "p50": 0.174331,
+            "p99": 0.275461,
+            "max": 0.334721
+          },
+          "submit_ms": {
+            "p50": 0.06424099999999999,
+            "p99": 0.12751,
+            "max": 0.16821
+          },
+          "poll_ms": {
+            "p50": 0.00038,
+            "p99": 0.00081,
+            "max": 0.0076
+          },
+          "acquire_ms": {
+            "p50": 0.01986,
+            "p99": 0.02968,
+            "max": 0.038430000000000006
+          },
+          "present_ms": {
+            "p50": 37.215567,
+            "p99": 46.15513,
+            "max": 72.482989
+          },
+          "callback_ms": {
+            "p50": 37.935998999999995,
+            "p99": 48.420216,
+            "max": 74.869085
+          }
+        },
+        "episodes": [
+          {
+            "epoch": 0,
+            "entered_ms": 477.833746,
+            "useful_delay_ms": 149.30841899999996,
+            "quality_delay_ms": 489.63605699999994
+          },
+          {
+            "epoch": 1,
+            "entered_ms": 3016.4265370000003,
+            "useful_delay_ms": 147.34523499999978,
+            "quality_delay_ms": 488.96434599999975
+          },
+          {
+            "epoch": 2,
+            "entered_ms": 5031.137713,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 158.47166300000026
+          },
+          {
+            "epoch": 3,
+            "entered_ms": 7006.767736,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 268.8033410000007
+          },
+          {
+            "epoch": 4,
+            "entered_ms": 9005.904470000001,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 5,
+            "entered_ms": 11004.476453000001,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 6,
+            "entered_ms": 13011.539728000002,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 7,
+            "entered_ms": 15033.171000999999,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          }
+        ],
+        "first_useful_ms": 627.142165,
+        "max_visible": 9,
+        "max_detailed": 9,
+        "peak_gpu_payload": 54476800,
+        "peak_cpu_payload": 51118080,
+        "peak_pending": 16,
+        "peak_queued": 14,
+        "cpu_evictions": 6,
+        "discarded": 0,
+        "reprioritized": 1,
+        "source_bytes": 397825,
+        "container_bytes": 7285911,
+        "metadata_ms": 72.524699,
+        "gpu_ms_p99": 1.436032
+      },
+      {
+        "name": "10k-shapes",
+        "board_sha256": "65670bb1b50a24a316783fb2a714a1c533baac9720aa6207a232c3bc12028954",
+        "report_sha256": "ad0dd4bd93d669fe786f8f946264d0ef4313dee80d085cb4b0fe1503e7675c0e",
+        "peak_rss_bytes": 326516736,
+        "distribution_ms": {
+          "query_ms": {
+            "p50": 1.540254,
+            "p99": 1.654884,
+            "max": 2.001915
+          },
+          "scene_ms": {
+            "p50": 0.002120000000000017,
+            "p99": 0.0030700000000001455,
+            "max": 0.007739999999999854
+          },
+          "supply_ms": {
+            "p50": 0.00373,
+            "p99": 0.00502,
+            "max": 0.03774
+          },
+          "encode_ms": {
+            "p50": 0.09323,
+            "p99": 0.14493,
+            "max": 2.117955
+          },
+          "submit_ms": {
+            "p50": 0.04055,
+            "p99": 0.063581,
+            "max": 0.08485000000000001
+          },
+          "poll_ms": {
+            "p50": 0.00041,
+            "p99": 0.00084,
+            "max": 0.00764
+          },
+          "acquire_ms": {
+            "p50": 0.01897,
+            "p99": 0.02683,
+            "max": 0.03401
+          },
+          "present_ms": {
+            "p50": 36.940066,
+            "p99": 43.823124,
+            "max": 48.819548
+          },
+          "callback_ms": {
+            "p50": 40.448366,
+            "p99": 47.278383,
+            "max": 52.277067
+          }
+        },
+        "episodes": [
+          {
+            "epoch": 0,
+            "entered_ms": 440.771289,
+            "useful_delay_ms": null,
+            "quality_delay_ms": null
+          },
+          {
+            "epoch": 1,
+            "entered_ms": 3004.8531070000004,
+            "useful_delay_ms": null,
+            "quality_delay_ms": null
+          },
+          {
+            "epoch": 2,
+            "entered_ms": 5004.644484,
+            "useful_delay_ms": null,
+            "quality_delay_ms": null
+          },
+          {
+            "epoch": 3,
+            "entered_ms": 7007.560528,
+            "useful_delay_ms": null,
+            "quality_delay_ms": null
+          },
+          {
+            "epoch": 4,
+            "entered_ms": 9024.97527,
+            "useful_delay_ms": null,
+            "quality_delay_ms": null
+          },
+          {
+            "epoch": 5,
+            "entered_ms": 11025.686808999999,
+            "useful_delay_ms": null,
+            "quality_delay_ms": null
+          },
+          {
+            "epoch": 6,
+            "entered_ms": 13002.511435,
+            "useful_delay_ms": null,
+            "quality_delay_ms": null
+          },
+          {
+            "epoch": 7,
+            "entered_ms": 15029.886103,
+            "useful_delay_ms": null,
+            "quality_delay_ms": null
+          }
+        ],
+        "first_useful_ms": null,
+        "max_visible": 0,
+        "max_detailed": 0,
+        "peak_gpu_payload": 0,
+        "peak_cpu_payload": 0,
+        "peak_pending": 0,
+        "peak_queued": 0,
+        "cpu_evictions": 0,
+        "discarded": 0,
+        "reprioritized": 0,
+        "source_bytes": 0,
+        "container_bytes": 1070100,
+        "metadata_ms": 9.305145000000001,
+        "gpu_ms_p99": 0.12544
+      },
+      {
+        "name": "mixed",
+        "board_sha256": "fe75380cb3eee5e74187fbcfcf7d92f056a71ca6a98ef5a26e2387c76625336d",
+        "report_sha256": "88e5811ae489a085c8ad05a9b17a71862a16049f81c6d526e243be14d6a81f7d",
+        "peak_rss_bytes": 410841088,
+        "distribution_ms": {
+          "query_ms": {
+            "p50": 0.13777,
+            "p99": 0.248601,
+            "max": 0.292471
+          },
+          "scene_ms": {
+            "p50": 0.010959999999999987,
+            "p99": 0.042689999999999895,
+            "max": 0.051990999999999954
+          },
+          "supply_ms": {
+            "p50": 0.058871,
+            "p99": 3.9584700000000006,
+            "max": 6.911588
+          },
+          "encode_ms": {
+            "p50": 0.17218,
+            "p99": 0.385641,
+            "max": 1.902155
+          },
+          "submit_ms": {
+            "p50": 0.05695,
+            "p99": 0.14432999999999999,
+            "max": 0.218471
+          },
+          "poll_ms": {
+            "p50": 0.00047999999999999996,
+            "p99": 0.00088,
+            "max": 0.0058000000000000005
+          },
+          "acquire_ms": {
+            "p50": 0.0131,
+            "p99": 0.031120000000000002,
+            "max": 0.03895
+          },
+          "present_ms": {
+            "p50": 37.605878000000004,
+            "p99": 46.951493,
+            "max": 72.270739
+          },
+          "callback_ms": {
+            "p50": 38.27595,
+            "p99": 50.150851,
+            "max": 79.602748
+          }
+        },
+        "episodes": [
+          {
+            "epoch": 0,
+            "entered_ms": 438.127953,
+            "useful_delay_ms": 371.13030799999996,
+            "quality_delay_ms": 1435.7050949999998
+          },
+          {
+            "epoch": 1,
+            "entered_ms": 3016.177228,
+            "useful_delay_ms": 147.95543599999974,
+            "quality_delay_ms": 943.28658
+          },
+          {
+            "epoch": 2,
+            "entered_ms": 5006.254909,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 511.0116820000003
+          },
+          {
+            "epoch": 3,
+            "entered_ms": 7032.509534,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 247.56212500000038
+          },
+          {
+            "epoch": 4,
+            "entered_ms": 9009.755821,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 751.3562299999994
+          },
+          {
+            "epoch": 5,
+            "entered_ms": 11008.639465,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 765.8325379999987
+          },
+          {
+            "epoch": 6,
+            "entered_ms": 13015.143289,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 143.64940500000012
+          },
+          {
+            "epoch": 7,
+            "entered_ms": 15019.536097,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 95.35928899999999
+          },
+          {
+            "epoch": 8,
+            "entered_ms": 17000.388334,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          }
+        ],
+        "first_useful_ms": 809.258261,
+        "max_visible": 30,
+        "max_detailed": 30,
+        "peak_gpu_payload": 68648960,
+        "peak_cpu_payload": 52387840,
+        "peak_pending": 16,
+        "peak_queued": 15,
+        "cpu_evictions": 89,
+        "discarded": 3,
+        "reprioritized": 15,
+        "source_bytes": 904021,
+        "container_bytes": 1196284,
+        "metadata_ms": 2.337516,
+        "gpu_ms_p99": 0.7056
+      },
+      {
+        "name": "sparse",
+        "board_sha256": "7c98b867efde7f338a6786d068fcb617a03b21c45a1818631e4fb0a46031f62e",
+        "report_sha256": "32ef64d29ce7ba338a0531ff70752768424fb330253a1a457a740b8b2233670d",
+        "peak_rss_bytes": 368459776,
+        "distribution_ms": {
+          "query_ms": {
+            "p50": 0.042851,
+            "p99": 0.06748,
+            "max": 0.539471
+          },
+          "scene_ms": {
+            "p50": 0.004019999999999989,
+            "p99": 0.008179999999999965,
+            "max": 0.008989999999999942
+          },
+          "supply_ms": {
+            "p50": 0.02075,
+            "p99": 0.463291,
+            "max": 4.06206
+          },
+          "encode_ms": {
+            "p50": 0.15249,
+            "p99": 0.24623100000000003,
+            "max": 0.28724099999999997
+          },
+          "submit_ms": {
+            "p50": 0.0574,
+            "p99": 0.12676,
+            "max": 0.18486
+          },
+          "poll_ms": {
+            "p50": 0.00049,
+            "p99": 0.00132,
+            "max": 0.00619
+          },
+          "acquire_ms": {
+            "p50": 0.02069,
+            "p99": 0.03242,
+            "max": 0.03829
+          },
+          "present_ms": {
+            "p50": 37.002416000000004,
+            "p99": 42.795570999999995,
+            "max": 51.182023
+          },
+          "callback_ms": {
+            "p50": 37.371297,
+            "p99": 43.130393000000005,
+            "max": 51.540624
+          }
+        },
+        "episodes": [
+          {
+            "epoch": 0,
+            "entered_ms": 538.163674,
+            "useful_delay_ms": 112.70473400000003,
+            "quality_delay_ms": 340.274988
+          },
+          {
+            "epoch": 1,
+            "entered_ms": 3001.85172,
+            "useful_delay_ms": 108.83941400000003,
+            "quality_delay_ms": 334.06892199999993
+          },
+          {
+            "epoch": 2,
+            "entered_ms": 5024.083415,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 121.30754700000034
+          },
+          {
+            "epoch": 3,
+            "entered_ms": 7039.629153,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 117.7770670000009
+          },
+          {
+            "epoch": 4,
+            "entered_ms": 9024.868171,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 5,
+            "entered_ms": 11033.247969,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 6,
+            "entered_ms": 13027.26802,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 7,
+            "entered_ms": 15003.990656,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          }
+        ],
+        "first_useful_ms": 650.868408,
+        "max_visible": 6,
+        "max_detailed": 6,
+        "peak_gpu_payload": 29327360,
+        "peak_cpu_payload": 29491200,
+        "peak_pending": 14,
+        "peak_queued": 12,
+        "cpu_evictions": 0,
+        "discarded": 0,
+        "reprioritized": 0,
+        "source_bytes": 253015,
+        "container_bytes": 953187,
+        "metadata_ms": 10.420917,
+        "gpu_ms_p99": 0.536064
+      },
+      {
+        "name": "potato-5k",
+        "board_sha256": "783d65beaaef085657ecabea0058b8426df29ed5ba9403c34f89c467a366a12c",
+        "report_sha256": "736242ef3285bc1953db62a653af0a60c33aa5b99442ae9002f751c2b32037d1",
+        "peak_rss_bytes": 339574784,
+        "distribution_ms": {
+          "query_ms": {
+            "p50": 0.05011,
+            "p99": 0.0782,
+            "max": 0.667372
+          },
+          "scene_ms": {
+            "p50": 0.004269999999999989,
+            "p99": 0.009589999999999987,
+            "max": 0.17192000000000007
+          },
+          "supply_ms": {
+            "p50": 0.04023,
+            "p99": 0.409501,
+            "max": 1.599753
+          },
+          "encode_ms": {
+            "p50": 0.16242,
+            "p99": 0.27043100000000003,
+            "max": 0.32235
+          },
+          "submit_ms": {
+            "p50": 0.062240000000000004,
+            "p99": 0.27742100000000003,
+            "max": 0.31656
+          },
+          "poll_ms": {
+            "p50": 0.00052,
+            "p99": 0.00149,
+            "max": 0.00614
+          },
+          "acquire_ms": {
+            "p50": 0.02282,
+            "p99": 0.03166,
+            "max": 0.03819
+          },
+          "present_ms": {
+            "p50": 37.071837,
+            "p99": 43.618784,
+            "max": 48.855767
+          },
+          "callback_ms": {
+            "p50": 37.468377,
+            "p99": 44.043545,
+            "max": 49.166599
+          }
+        },
+        "episodes": [
+          {
+            "epoch": 0,
+            "entered_ms": 432.065587,
+            "useful_delay_ms": 297.55362599999995,
+            "quality_delay_ms": 641.740673
+          },
+          {
+            "epoch": 1,
+            "entered_ms": 3024.5289190000003,
+            "useful_delay_ms": 293.98979699999927,
+            "quality_delay_ms": 627.6613269999998
+          },
+          {
+            "epoch": 2,
+            "entered_ms": 5015.681622,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 76.55060999999932
+          },
+          {
+            "epoch": 3,
+            "entered_ms": 7027.45809,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 4,
+            "entered_ms": 9017.961922,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 159.5567859999992
+          },
+          {
+            "epoch": 5,
+            "entered_ms": 11017.602147,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 152.83422900000005
+          },
+          {
+            "epoch": 6,
+            "entered_ms": 13036.869405,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 37.727648000000045
+          },
+          {
+            "epoch": 7,
+            "entered_ms": 15034.052164,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          }
+        ],
+        "first_useful_ms": 729.619213,
+        "max_visible": 9,
+        "max_detailed": 8,
+        "peak_gpu_payload": 8601600,
+        "peak_cpu_payload": 7208960,
+        "peak_pending": 4,
+        "peak_queued": 3,
+        "cpu_evictions": 18,
+        "discarded": 1,
+        "reprioritized": 0,
+        "source_bytes": 289327,
+        "container_bytes": 1211969,
+        "metadata_ms": 9.763066,
+        "gpu_ms_p99": 0.45296
+      },
+      {
+        "name": "sparse-immediate",
+        "board_sha256": "7c98b867efde7f338a6786d068fcb617a03b21c45a1818631e4fb0a46031f62e",
+        "report_sha256": "df1bec126a756452965638fadea527e6ddecb4b5d403b6c8bd74144f2d8254b4",
+        "peak_rss_bytes": 368029696,
+        "distribution_ms": {
+          "query_ms": {
+            "p50": 0.04244,
+            "p99": 0.05917,
+            "max": 0.559521
+          },
+          "scene_ms": {
+            "p50": 0.003970000000000001,
+            "p99": 0.007730000000000015,
+            "max": 0.010570999999999987
+          },
+          "supply_ms": {
+            "p50": 0.02607,
+            "p99": 0.391411,
+            "max": 3.9198009999999996
+          },
+          "encode_ms": {
+            "p50": 0.15254099999999998,
+            "p99": 0.23404,
+            "max": 0.31157999999999997
+          },
+          "submit_ms": {
+            "p50": 0.05592,
+            "p99": 0.11762,
+            "max": 0.14439
+          },
+          "poll_ms": {
+            "p50": 0.00045,
+            "p99": 0.00109,
+            "max": 0.00774
+          },
+          "acquire_ms": {
+            "p50": 0.01942,
+            "p99": 0.03041,
+            "max": 0.03521
+          },
+          "present_ms": {
+            "p50": 37.017745999999995,
+            "p99": 45.636509,
+            "max": 51.507294
+          },
+          "callback_ms": {
+            "p50": 37.375927000000004,
+            "p99": 47.334794,
+            "max": 51.838195
+          }
+        },
+        "episodes": [
+          {
+            "epoch": 0,
+            "entered_ms": 426.333643,
+            "useful_delay_ms": 110.62149799999992,
+            "quality_delay_ms": 334.021241
+          },
+          {
+            "epoch": 1,
+            "entered_ms": 3003.052823,
+            "useful_delay_ms": 110.51001899999983,
+            "quality_delay_ms": 333.32502999999997
+          },
+          {
+            "epoch": 2,
+            "entered_ms": 5027.552844,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 120.94624599999952
+          },
+          {
+            "epoch": 3,
+            "entered_ms": 7039.320101,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 120.01894400000037
+          },
+          {
+            "epoch": 4,
+            "entered_ms": 9036.056260000001,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 5,
+            "entered_ms": 11019.719154,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 6,
+            "entered_ms": 13020.732613,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          },
+          {
+            "epoch": 7,
+            "entered_ms": 15017.887343,
+            "useful_delay_ms": 0.0,
+            "quality_delay_ms": 0.0
+          }
+        ],
+        "first_useful_ms": 536.9551409999999,
+        "max_visible": 6,
+        "max_detailed": 6,
+        "peak_gpu_payload": 29327360,
+        "peak_cpu_payload": 29491200,
+        "peak_pending": 14,
+        "peak_queued": 12,
+        "cpu_evictions": 0,
+        "discarded": 0,
+        "reprioritized": 0,
+        "source_bytes": 253015,
+        "container_bytes": 953187,
+        "metadata_ms": 8.360662,
+        "gpu_ms_p99": 1.229152
+      }
+    ],
+    "scope": "generated shared-source fixtures, warm OS caches, isolated X11; epochs censored if unfinished; no human/monitor latency claim"
+  },
+  "scope": "same physical boards, sequential 17s X11 traces; memo stable-pan gains, O(nlogn) rebuild after committed edits; warm OS cache, no confidence interval"
+}

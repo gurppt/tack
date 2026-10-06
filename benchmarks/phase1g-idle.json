@@ -1,0 +1,657 @@
+{
+  "shipping": {
+    "binary_sha256": "13b294987327090b38c563001965b902c1a860529f30688ebd64d87d071a4a71",
+    "rows": [
+      {
+        "name": "empty",
+        "settle_seconds": 1.5716616899881046,
+        "tasks_delta": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 3
+          },
+          {
+            "name": "[vkcf] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "[vkrt] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 50
+          },
+          {
+            "name": "[vkps] Update",
+            "ticks": 1,
+            "voluntary_switches": 20
+          },
+          {
+            "name": "tack",
+            "ticks": 1,
+            "voluntary_switches": 498
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "rss_bytes": 315060224,
+        "threads": 8,
+        "cpu_ticks_5s": 2,
+        "main_ticks": 0,
+        "main_switches": 0,
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "property_updates": 0,
+        "redraws_late": 0,
+        "report_sha256": "9414d61e9860e917ff9a3d0986963794422c17c55360be6f17e780b7f0ceeda6",
+        "payload_peak": 0,
+        "frame_count": 2
+      },
+      {
+        "name": "small",
+        "settle_seconds": 2.6339591320138425,
+        "tasks_delta": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 2
+          },
+          {
+            "name": "[vkcf] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "[vkrt] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 50
+          },
+          {
+            "name": "[vkps] Update",
+            "ticks": 1,
+            "voluntary_switches": 20
+          },
+          {
+            "name": "tack",
+            "ticks": 1,
+            "voluntary_switches": 498
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "rss_bytes": 349343744,
+        "threads": 8,
+        "cpu_ticks_5s": 2,
+        "main_ticks": 0,
+        "main_switches": 0,
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "property_updates": 0,
+        "redraws_late": 0,
+        "report_sha256": "94e108e2810e3c45ccff2ab7b13e699c4ba2d28c03938bb71396244adce4d3bd",
+        "payload_peak": 21053440,
+        "frame_count": 8
+      },
+      {
+        "name": "1k",
+        "settle_seconds": 2.5706489269796293,
+        "tasks_delta": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 2
+          },
+          {
+            "name": "[vkcf] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "[vkrt] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 50
+          },
+          {
+            "name": "[vkps] Update",
+            "ticks": 9,
+            "voluntary_switches": 98
+          },
+          {
+            "name": "tack",
+            "ticks": 1,
+            "voluntary_switches": 498
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "rss_bytes": 371261440,
+        "threads": 8,
+        "cpu_ticks_5s": 10,
+        "main_ticks": 0,
+        "main_switches": 0,
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "property_updates": 0,
+        "redraws_late": 0,
+        "report_sha256": "646ba2a4398592b3325d4a551a03b548a9d30db7174f82aadb12f87025928996",
+        "payload_peak": 42106880,
+        "frame_count": 16
+      },
+      {
+        "name": "5k",
+        "settle_seconds": 2.629562663001707,
+        "tasks_delta": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 2
+          },
+          {
+            "name": "[vkcf] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "[vkrt] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 50
+          },
+          {
+            "name": "[vkps] Update",
+            "ticks": 8,
+            "voluntary_switches": 99
+          },
+          {
+            "name": "tack",
+            "ticks": 1,
+            "voluntary_switches": 496
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "rss_bytes": 373555200,
+        "threads": 8,
+        "cpu_ticks_5s": 9,
+        "main_ticks": 0,
+        "main_switches": 0,
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "property_updates": 0,
+        "redraws_late": 0,
+        "report_sha256": "5be4f4eda075aef55e305788b0fb4141466a5357ed177102b29dc3e2c5b69d43",
+        "payload_peak": 42106880,
+        "frame_count": 16
+      },
+      {
+        "name": "dense-potato",
+        "settle_seconds": 4.584118725993903,
+        "tasks_delta": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 2
+          },
+          {
+            "name": "[vkcf] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "[vkrt] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 50
+          },
+          {
+            "name": "[vkps] Update",
+            "ticks": 1,
+            "voluntary_switches": 20
+          },
+          {
+            "name": "tack",
+            "ticks": 2,
+            "voluntary_switches": 498
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "rss_bytes": 323338240,
+        "threads": 7,
+        "cpu_ticks_5s": 3,
+        "main_ticks": 0,
+        "main_switches": 0,
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "property_updates": 0,
+        "redraws_late": 0,
+        "report_sha256": "56b3a7e8c03958589f2f89da6259b108f83badcbfbdf30e37796eb4cdff809a4",
+        "payload_peak": 40960,
+        "frame_count": 65
+      },
+      {
+        "name": "overloaded-potato",
+        "settle_seconds": 6.589774453022983,
+        "tasks_delta": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 2
+          },
+          {
+            "name": "[vkcf] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "[vkrt] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 50
+          },
+          {
+            "name": "[vkps] Update",
+            "ticks": 1,
+            "voluntary_switches": 20
+          },
+          {
+            "name": "tack",
+            "ticks": 2,
+            "voluntary_switches": 498
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "rss_bytes": 334340096,
+        "threads": 7,
+        "cpu_ticks_5s": 3,
+        "main_ticks": 0,
+        "main_switches": 0,
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "property_updates": 0,
+        "redraws_late": 0,
+        "report_sha256": "6e34f417e75c933eb8e1649db5a28a1628b1887b8accdc2db07776914f0bc245",
+        "payload_peak": 5283840,
+        "frame_count": 73
+      }
+    ],
+    "scope": "six untimed native windows; 5s external observation after verified quiet main-thread and I/O over one second; raw per-task deltas retained"
+  },
+  "matched_1f": {
+    "binary_sha256": "0c84424ad55e4ccd3ff1fdb79747044794a8a4c1d0d0464f54ce715d35b5fcc5",
+    "rows": [
+      {
+        "name": "empty",
+        "settle_seconds": 1.5643290940206498,
+        "tasks_delta": [
+          {
+            "name": "tack-app",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-app",
+            "ticks": 0,
+            "voluntary_switches": 3
+          },
+          {
+            "name": "[vkcf] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "[vkrt] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 50
+          },
+          {
+            "name": "[vkps] Update",
+            "ticks": 1,
+            "voluntary_switches": 20
+          },
+          {
+            "name": "tack-app",
+            "ticks": 0,
+            "voluntary_switches": 499
+          },
+          {
+            "name": "tack-product-ov",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-ov",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "rss_bytes": 314740736,
+        "threads": 8,
+        "cpu_ticks_5s": 1,
+        "main_ticks": 0,
+        "main_switches": 0,
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "property_updates": 0,
+        "redraws_late": 0,
+        "report_sha256": "e9859c8eba19317dc73f2253f41f856a78bfdd0b570fa1ebb203e045090ddb94",
+        "payload_peak": 0,
+        "frame_count": 2
+      },
+      {
+        "name": "small",
+        "settle_seconds": 1.570531740988372,
+        "tasks_delta": [
+          {
+            "name": "tack-app",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-app",
+            "ticks": 0,
+            "voluntary_switches": 3
+          },
+          {
+            "name": "[vkcf] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "[vkrt] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 50
+          },
+          {
+            "name": "[vkps] Update",
+            "ticks": 1,
+            "voluntary_switches": 20
+          },
+          {
+            "name": "tack-app",
+            "ticks": 0,
+            "voluntary_switches": 498
+          },
+          {
+            "name": "tack-product-ov",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-ov",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "rss_bytes": 315170816,
+        "threads": 8,
+        "cpu_ticks_5s": 1,
+        "main_ticks": 0,
+        "main_switches": 0,
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "property_updates": 0,
+        "redraws_late": 0,
+        "report_sha256": "73017be55ebbafc9fc5cee28e4f49643efcfd4ebcc86c8c0870059790a99dde6",
+        "payload_peak": 81920,
+        "frame_count": 3
+      },
+      {
+        "name": "1k",
+        "settle_seconds": 1.6194054030056577,
+        "tasks_delta": [
+          {
+            "name": "tack-app",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-app",
+            "ticks": 0,
+            "voluntary_switches": 3
+          },
+          {
+            "name": "[vkcf] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "[vkrt] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 50
+          },
+          {
+            "name": "[vkps] Update",
+            "ticks": 1,
+            "voluntary_switches": 20
+          },
+          {
+            "name": "tack-app",
+            "ticks": 1,
+            "voluntary_switches": 498
+          },
+          {
+            "name": "tack-product-ov",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-ov",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "rss_bytes": 315744256,
+        "threads": 8,
+        "cpu_ticks_5s": 2,
+        "main_ticks": 0,
+        "main_switches": 0,
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "property_updates": 0,
+        "redraws_late": 0,
+        "report_sha256": "eaf9fd7e5020fc1ddc5035c5ccc93210a162b78b0686c8bba54ca58a9225774c",
+        "payload_peak": 163840,
+        "frame_count": 3
+      },
+      {
+        "name": "5k",
+        "settle_seconds": 1.563791021995712,
+        "tasks_delta": [
+          {
+            "name": "tack-app",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-app",
+            "ticks": 0,
+            "voluntary_switches": 3
+          },
+          {
+            "name": "[vkcf] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "[vkrt] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 50
+          },
+          {
+            "name": "[vkps] Update",
+            "ticks": 0,
+            "voluntary_switches": 20
+          },
+          {
+            "name": "tack-app",
+            "ticks": 1,
+            "voluntary_switches": 499
+          },
+          {
+            "name": "tack-product-ov",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-ov",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "rss_bytes": 317915136,
+        "threads": 8,
+        "cpu_ticks_5s": 1,
+        "main_ticks": 0,
+        "main_switches": 0,
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "property_updates": 0,
+        "redraws_late": 0,
+        "report_sha256": "df4f8f6b15cc05f1660784a326bfd1c15379b32c05c56456359658681504bb50",
+        "payload_peak": 163840,
+        "frame_count": 3
+      }
+    ],
+    "scope": "six untimed native windows; 5s external observation after verified quiet main-thread and I/O over one second; raw per-task deltas retained"
+  },
+  "clock_ticks_per_second": "100",
+  "baseline_scope": "four ordinary views only; legacy helper scope string says six but rows count four",
+  "failure_scope": "initial fixed 4s probe failed before overloaded supply finished; final helper waits externally for one-second main/I/O quiet, with 30s timeout"
+}

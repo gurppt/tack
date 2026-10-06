@@ -1,0 +1,159 @@
+# Current feature inventory — Mission 1H
+
+Code audit of the local prototype on 2026-10-05, based on `Action::ALL`,
+`product_bindings`, `ImageInput`, annotation/spatial input, local file workers,
+storage/recovery and tests. This inventories shipped and reachable code, not a roadmap.
+Native/human validation of the 1H UI is pending; “implemented” describes the code
+and deterministic coverage, not a completed usability acceptance test.
+
+Every semantic catalog entry is listed below (89 actions). Shortcuts are the
+**default physical-key bindings** exported by `context_ui`; the actual menu
+reads the active user keymap. An em dash means no default press shortcut.
+All actions can be inspected/remapped in Tack → Edit → Keymap. This exposure
+does not make experimental tool modes fully operational.
+
+`Board` means the committed result is saved in `.tack`; `profile` means local
+preferences; `session` means transient state only. “Undo after commit” excludes
+selection, tool choice, camera and text drafts. Menu paths are one submenu deep.
+
+| Feature / semantic action | Status | Object type | Invocation / default shortcut | Other UI | Context menu | Undoable? | Persisted? | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Pointer tool (`SelectTool(Pointer)`) | implemented | selection | V | Tack → Tools | No | No | session | Direct canvas selection/manipulation. |
+| Pan tool (`SelectTool(Pan)`) | experimental | tool state | — | keymap catalog only | No | No | session | Generic Interaction state exists; native pointer pipeline does not implement a complete dedicated pan/rotate-view tool. |
+| Rotate view tool (`SelectTool(RotateView)`) | experimental | tool state | — | keymap catalog only | No | No | session | Generic Interaction state exists; native pointer pipeline does not implement a complete dedicated pan/rotate-view tool. |
+| Temporary pointer tool (`TemporaryTool(Pointer)`) | experimental | tool state | — | keymap hold binding only | No | No | session | Generic held-tool restoration tested; no default binding or menu; complete native tool combinations not validated. |
+| Temporary pan tool (`TemporaryTool(Pan)`) | experimental | tool state | — | keymap catalog only | No | No | session | Generic Interaction state exists; native pointer pipeline does not implement a complete dedicated pan/rotate-view tool. |
+| Temporary rotate view tool (`TemporaryTool(RotateView)`) | experimental | tool state | — | keymap catalog only | No | No | session | Generic Interaction state exists; native pointer pipeline does not implement a complete dedicated pan/rotate-view tool. |
+| Undo (`Undo`) | implemented | document | Ctrl+Z | Tack → Edit | all object menus | history operation | Board result; history session | Text drafts have no local undo buffer; Ctrl+Z is consumed while editing. |
+| Redo (`Redo`) | implemented | document | Ctrl+Shift+Z | Tack → Edit | all object menus | history operation | Board result; history session | Ctrl+Y is an additional Redo alias. |
+| Pan view (`PanView`) | implemented | camera | Middle drag / Alt+Shift+left drag | canvas gesture / handles | No | No | session | Alt+left pans away from handles. |
+| Zoom view (`ZoomView`) | implemented | camera | wheel | canvas gesture / handles | No | No | session | Cursor-centred zoom; no document command. |
+| Select and manipulate image (`ImagePointer`) | implemented | all object kinds | left click / drag; resize handles | canvas gesture / handles | No | Yes after drag | Board result | Click selects; empty drag is marquee; move/resize share gesture history. |
+| Toggle image selection (`ToggleSelection`) | implemented | selection | Shift+left click / marquee | canvas gesture / handles | No | Yes if manipulating | Board result; selection session | Group members selected as an image group. |
+| Rotate image (`RotateImage`) | implemented | images / annotations | Ctrl+left drag; Ctrl+Shift constrains | canvas gesture / handles | No | Yes after drag | Board | Rotation handle is another route; frames remain axis aligned. |
+| Scale image (`ScaleImage`) | implemented | selection | Ctrl+Alt+left drag | canvas gesture / handles | No | Yes after drag | Board | Uniform scaling; frames keep their core limits. |
+| Adjust image opacity (`AdjustOpacity`) | implemented | images | Ctrl+Alt+Shift+left drag | canvas gesture / handles | No | Yes after drag | Board | Continuous alpha preview is a single transaction. |
+| Pan or resize handle about center (`CenterPointer`) | implemented | camera / selection | Alt+left drag | canvas gesture / handles | No | Yes for centred handle resize | Board result; camera session | Pans away from a handle; resize around centre on a handle. |
+| Cancel interaction (`CancelInteraction`) | implemented | interaction | Esc (any modifiers) | canvas / draft | No | No | session | Cancels preview/draft; while a popup is active Escape dismisses that popup. |
+| Crop gizmo (`CropMode`) | implemented | one image | Ctrl+Shift+Alt+C | crop handles | image | Yes after crop drag | Board crop; mode session | Toggles crop gizmo; the crop drag, not the mode toggle, is undoable. |
+| Select all (`SelectAll`) | implemented | all object kinds | Ctrl+A | Tack → Edit | canvas | No | session | Selection only; no document mutation. |
+| Delete selection (`DeleteSelection`) | implemented | all object kinds | Del | Tack → Edit | all object menus | Yes | Board | Atomic batch; removes corresponding group membership. |
+| Flip horizontal (`FlipHorizontal`) | implemented | images | Shift+Alt+H | keyboard / keymap | image | Yes | Board | Works on image selections through the shared dispatcher. |
+| Flip vertical (`FlipVertical`) | implemented | images | Shift+Alt+V | keyboard / keymap | image | Yes | Board | Works on image selections through the shared dispatcher. |
+| Bring forward (`Order(Forward)`) | implemented | all object kinds | — | keyboard / keymap | all object menus → Order | Yes | Board | New UI adapter over existing SetZOrder; selected relative order retained. Frame chrome stacks above image content. |
+| Bring to front (`Order(Front)`) | implemented | all object kinds | — | keyboard / keymap | all object menus → Order | Yes | Board | New UI adapter over existing SetZOrder; selected relative order retained. Frame chrome stacks above image content. |
+| Send backward (`Order(Backward)`) | implemented | all object kinds | — | keyboard / keymap | all object menus → Order | Yes | Board | New UI adapter over existing SetZOrder; selected relative order retained. Frame chrome stacks above image content. |
+| Send to back (`Order(Back)`) | implemented | all object kinds | — | keyboard / keymap | all object menus → Order | Yes | Board | New UI adapter over existing SetZOrder; selected relative order retained. Frame chrome stacks above image content. |
+| Opacity 100% (`Opacity(Full)`) | implemented | images | — | keyboard / keymap | image → Opacity | Yes | Board | New UI preset adapter over existing SetOpacity; no second history. |
+| Opacity 75% (`Opacity(ThreeQuarters)`) | implemented | images | — | keyboard / keymap | image → Opacity | Yes | Board | New UI preset adapter over existing SetOpacity; no second history. |
+| Opacity 50% (`Opacity(Half)`) | implemented | images | — | keyboard / keymap | image → Opacity | Yes | Board | New UI preset adapter over existing SetOpacity; no second history. |
+| Opacity 25% (`Opacity(Quarter)`) | implemented | images | — | keyboard / keymap | image → Opacity | Yes | Board | New UI preset adapter over existing SetOpacity; no second history. |
+| Default sampling (`Filtering(Default)`) | implemented | images | — | keyboard / keymap | image → Sampling | Yes | Board | Default follows current default sampling; Smooth and Nearest remain independent of representation LOD. |
+| Smooth sampling (`Filtering(Smooth)`) | implemented | images | — | keyboard / keymap | image → Sampling | Yes | Board | Default follows current default sampling; Smooth and Nearest remain independent of representation LOD. |
+| Nearest sampling (`Filtering(Nearest)`) | implemented | images | — | keyboard / keymap | image → Sampling | Yes | Board | Default follows current default sampling; Smooth and Nearest remain independent of representation LOD. |
+| Cycle image sampling (`CycleFiltering`) | implemented | images | Alt+T | keyboard / keymap | Sampling choices instead of cycle | Yes | Board | Default → Smooth → Nearest; same existing filtering command. |
+| Save (`Save`) | implemented | board | Ctrl+S | Tack → File | No | No | file | Atomic asynchronous save; untitled goes through Save As. |
+| Toggle dotted grid (`ToggleGrid`) | implemented | view | G | Tack → View / Preferences default | No | No | session | Session toggle; persistent initial value is changed in Preferences. |
+| Toggle snapping (`ToggleSnapping`) | implemented | view | Shift+G | Tack → View | No | No | session | Bounded axis/grid snapping and guides; no document edit by itself. |
+| Temporarily disable snapping (`SnapDisable`) | implemented | snapping | hold X | canvas gesture / handles | No | No | session | Temporarily suppresses current snapping. |
+| Align left (`Layout(Left)`) | implemented | independent selection units | Ctrl+Left | keyboard / keymap | multiple → Align | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
+| Align horizontal center (`Layout(HorizontalCenter)`) | implemented | independent selection units | Ctrl+Shift+Left | keyboard / keymap | multiple → Align | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
+| Align right (`Layout(Right)`) | implemented | independent selection units | Ctrl+Right | keyboard / keymap | multiple → Align | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
+| Align top (`Layout(Top)`) | implemented | independent selection units | Ctrl+Up | keyboard / keymap | multiple → Align | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
+| Align vertical center (`Layout(VerticalCenter)`) | implemented | independent selection units | Ctrl+Shift+Up | keyboard / keymap | multiple → Align | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
+| Align bottom (`Layout(Bottom)`) | implemented | independent selection units | Ctrl+Down | keyboard / keymap | multiple → Align | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
+| Distribute horizontally (`Layout(DistributeHorizontal)`) | implemented | independent selection units | Ctrl+Shift+Alt+Up | keyboard / keymap | multiple → Align | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
+| Distribute vertically (`Layout(DistributeVertical)`) | implemented | independent selection units | Ctrl+Shift+Alt+Down | keyboard / keymap | multiple → Align | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
+| Pack horizontally (`Layout(PackHorizontal)`) | implemented | independent selection units | Ctrl+P | keyboard / keymap | multiple → Align | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
+| Pack vertically (`Layout(PackVertical)`) | implemented | independent selection units | Ctrl+Shift+P | keyboard / keymap | multiple → Align | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
+| Group selection (`GroupSelection`) | implemented | image groups | Ctrl+G | keyboard / keymap | image / multiple | Yes | Board | Groups are images only; mixed selections cannot group. Ungroup removes touched image groups. |
+| Ungroup selection (`UngroupSelection`) | implemented | image groups | Ctrl+Shift+G | keyboard / keymap | image / multiple | Yes | Board | Groups are images only; mixed selections cannot group. Ungroup removes touched image groups. |
+| Create frame (`CreateFrame`) | implemented | frame | Ctrl+Shift+F | Tack → Tools | canvas | Yes | Board | Selection bounds +32 or 60% viewport; frame is a labelled spatial region, not membership/container. |
+| Rename frame (`RenameFrame`) | implemented | frame / note | F2 | inline text editor | frame → Rename / note → Edit | Yes after commit | Board | F2 and double click edit existing text; frame Enter / note Ctrl+Enter commit; Escape discards. |
+| Focus selected frame (`FocusFrame`) | implemented | frame / camera | Space | Tack → View | frame → Focus | No | session | Camera/selection navigation; unavailable if no applicable frame. |
+| Focus next frame (`NextFrame`) | implemented | frame / camera | PgDn | Tack → View | No | No | session | Camera/selection navigation; unavailable if no applicable frame. |
+| Focus previous frame (`PreviousFrame`) | implemented | frame / camera | PgUp | Tack → View | No | No | session | Camera/selection navigation; unavailable if no applicable frame. |
+| Text (`SelectTool(Text)`) | implemented | note | T | Tack → Tools | canvas → New note | No | session | Click/drag, release, then type and Ctrl+Enter. |
+| Rectangle (`SelectTool(Rectangle)`) | implemented | annotation | R | Tack → Tools | No | No | session | Click/drag with selected tool; release commits once. |
+| Line (`SelectTool(Line)`) | implemented | annotation | L | Tack → Tools | No | No | session | Click/drag with selected tool; release commits once. |
+| Arrow (`SelectTool(Arrow)`) | implemented | annotation | A | Tack → Tools | No | No | session | Click/drag with selected tool; release commits once. |
+| Scribble (`SelectTool(Scribble)`) | implemented | annotation | P | Tack → Tools | No | No | session | Click/drag with selected tool; release commits once. |
+| Text (`TemporaryTool(Text)`) | experimental | tool state | — | keymap hold binding only | No | No | session | Generic held-tool restoration tested; no default binding or menu; complete native tool combinations not validated. |
+| Rectangle (`TemporaryTool(Rectangle)`) | experimental | tool state | — | keymap hold binding only | No | No | session | Generic held-tool restoration tested; no default binding or menu; complete native tool combinations not validated. |
+| Line (`TemporaryTool(Line)`) | experimental | tool state | — | keymap hold binding only | No | No | session | Generic held-tool restoration tested; no default binding or menu; complete native tool combinations not validated. |
+| Arrow (`TemporaryTool(Arrow)`) | experimental | tool state | — | keymap hold binding only | No | No | session | Generic held-tool restoration tested; no default binding or menu; complete native tool combinations not validated. |
+| Scribble (`TemporaryTool(Scribble)`) | experimental | tool state | — | keymap hold binding only | No | No | session | Generic held-tool restoration tested; no default binding or menu; complete native tool combinations not validated. |
+| Cycle annotation color (`AnnotationStyle(Color)`) | implemented | notes / annotations | C | keyboard / keymap | note or annotation → Text / Style | Yes when applied to committed objects | Board result; creation default session | Bounded palette/style cycles; defaults also affect later creation. |
+| Toggle annotation fill (`AnnotationStyle(Fill)`) | implemented | rectangle | F | keyboard / keymap | annotation → Style | Yes when applied to committed objects | Board result; creation default session | Fill disabled for line/arrow/freehand; those render strokes only. |
+| Increase stroke width (`AnnotationStyle(Wider)`) | implemented | notes / annotations | ] | keyboard / keymap | note or annotation → Text / Style | Yes when applied to committed objects | Board result; creation default session | Bounded palette/style cycles; defaults also affect later creation. |
+| Decrease stroke width (`AnnotationStyle(Narrower)`) | implemented | notes / annotations | [ | keyboard / keymap | note or annotation → Text / Style | Yes when applied to committed objects | Board result; creation default session | Bounded palette/style cycles; defaults also affect later creation. |
+| Increase note size (`AnnotationStyle(LargerText)`) | implemented | notes | Ctrl+Shift+. | keyboard / keymap | note → Text | Yes when applied to committed objects | Board result; creation default session | Bounded palette/style cycles; defaults also affect later creation. |
+| Decrease note size (`AnnotationStyle(SmallerText)`) | implemented | notes | Ctrl+Shift+, | keyboard / keymap | note → Text | Yes when applied to committed objects | Board result; creation default session | Bounded palette/style cycles; defaults also affect later creation. |
+| Increase annotation opacity (`AnnotationStyle(OpacityUp)`) | implemented | notes / annotations | Shift+] | keyboard / keymap | note or annotation → Text / Style | Yes when applied to committed objects | Board result; creation default session | Bounded palette/style cycles; defaults also affect later creation. |
+| Decrease annotation opacity (`AnnotationStyle(OpacityDown)`) | implemented | notes / annotations | Shift+[ | keyboard / keymap | note or annotation → Text / Style | Yes when applied to committed objects | Board result; creation default session | Bounded palette/style cycles; defaults also affect later creation. |
+| Cycle note alignment (`AnnotationStyle(AlignText)`) | implemented | notes | Ctrl+Shift+E | keyboard / keymap | note → Text | Yes when applied to committed objects | Board result; creation default session | Bounded palette/style cycles; defaults also affect later creation. |
+| Open linked image source (`OpenSource`) | implemented | one native linked image | Ctrl+Shift+O | platform helper | image → Source | No | session | Explicit local OS helper; unavailable for embedded/foreign paths. Native path passed as a single argument. |
+| Reveal linked image source (`RevealSource`) | implemented | one native linked image | Ctrl+Alt+O | platform helper | image → Source | No | session | Explicit local OS helper; unavailable for embedded/foreign paths. Native path passed as a single argument. |
+| Copy linked source path (`CopySourcePath`) | implemented | one native linked image | Ctrl+Shift+C | platform helper | image → Source | No | session | Explicit local OS helper; unavailable for embedded/foreign paths. Native path passed as a single argument. |
+| Local menu (`ApplicationMenu`) | implemented | window | F10 or tiny Tack button | Tack button | application root | No | session | No permanent menu bar. |
+| New board (`NewBoard`) | implemented | board | Ctrl+N | Tack → File | No | No | new file/session | Starts a separate local window. |
+| Open board (`OpenBoard`) | implemented | board | Ctrl+O | Tack → File | No | No | file | Native picker; separate window; no current-board replacement. |
+| Import images (`ImportImages`) | implemented | images | Ctrl+I | Tack → File | canvas | Yes, per admitted image | Board | PNG/JPEG; native picker, bounded asynchronous import. |
+| Save As (`SaveAs`) | implemented | board | Ctrl+Shift+S | Tack → File | No | No | file | Native picker; new document identity; preserves original authority. |
+| Paste (`Paste`) | implemented | clipboard | Ctrl+V | Tack → Edit | canvas | Yes after admission/commit | Board | PNG, plain text or file URI list; note draft paste does not commit immediately. |
+| Relink selected source (`RelinkSource`) | implemented | image source | Ctrl+Shift+R | native picker | image | Yes | Board | Can replace embedded, missing or changed source; shared-source revision semantics preserved. |
+| Preferences (`Preferences`) | implemented | profile | Ctrl+, | Tack root | No | No | profile | Compact temporary panel. |
+| Edit keymap (`KeymapEditor`) | implemented | keymap | — | Tack → Edit / Preferences | No | No | profile | Search, remap, unassign and reset; no permanently visible control. |
+| Recent boards (`RecentBoards`) | implemented | board paths | — | Tack → File | No | No | profile | Bounded 16 paths; selecting opens another window. |
+| Import keymap (`ImportKeymap`) | implemented | profile | — | Preferences | No | No | profile | Validated JSON; unsupported/corrupt files rejected. |
+| Export keymap (`ExportKeymap`) | implemented | profile | — | Preferences | No | No | profile | Exports preferences and keymap together. |
+
+## Features outside the semantic action catalog
+
+| Feature | Status | Type / invocation / shortcut | UI and context exposure | Undoable? | Persisted? | Limits / notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| Resize corners/edges | implemented | selection; left drag handles, Shift constrain, Alt centred | canvas handles / platform cursors | one release = one Undo | Board | Pixel geometry shared with hit testing; no per-motion command. |
+| Rotate handle | implemented | images / annotations; left drag offset handle | canvas handle / crosshair | one release = one Undo | Board | Axis-aligned frames have no rotation handle. |
+| Marquee selection | implemented | empty-canvas left drag; Shift adds | outline | No | session | Includes annotations and groups under current hit rules. |
+| Double-click text | implemented | existing frame or note; double left click | inline editor; Edit/Rename context equivalent | after commit | Board | Bounded plain text, no rich text / local text history. |
+| Note input / IME | partial | text editor, typing / IME / paste; Ctrl+A, Backspace, Delete; Ctrl+Enter; Escape | inline draft | document Undo after commit | Board | Bounded 16 KiB; whole-text replacement/deletion model; no arbitrary rich editor/caret navigation/local Ctrl+Z buffer. |
+| Clipboard PNG | implemented | Ctrl+V, canvas Paste, Tack Edit Paste | native clipboard worker | admitted image | Board | Pasted image is embedded regardless of default import mode. |
+| Clipboard text | implemented | Ctrl+V, canvas Paste | creates plain note, or paste into active draft | after admission/commit | Board | Active text editing retains document undo focus rules. |
+| Clipboard file URI list | implemented | Ctrl+V, canvas Paste | bounded local import | per admitted image | Board | Native local file URIs only; not arbitrary remote downloads. |
+| Drag/drop image files | implemented | OS drop into canvas | native window | per admitted image | Board | Bounded batch/debounce; Escape cancels remaining admission. |
+| Linked / embedded import | implemented | Preferences → Import; picker/drop; CLI create | temporary preferences | import undo | Board and profile default | Original authority and shared sources preserved. |
+| Default sampling | implemented | Preferences → Image sampling | temporary preferences | No for default; image override Yes | profile / image override Board | Renderer samples Default independently from stored representation. |
+| UI scale / handle size / hit radius | implemented | Preferences, Enter cycle | compact temporary panel | No | profile | Integer 1–4 or system-rounded 1–8; large scale on a small screen necessarily truncates labels. |
+| Keymap search/capture | implemented | Tack → Edit → Keymap; type, Enter, F6; Delete; F5 / Shift+F5 / Ctrl+F5 | temporary panel | No | profile | Press/release/hold/wheel, bounded capture/conflict validation, action/category/all resets. Menu labels follow actual configured press bindings. |
+| Close confirmation | implemented | OS close button / window manager | Save / Discard / Cancel panel | No | normal Save if selected | No new Quit action; closing stays in the existing native lifecycle. |
+| Recovery restore/discard | implemented | open board with newer valid recovery | bounded modal; choice required before import | restored document starts dirty | recovery/normal file authority | Normal save remains distinct; document history itself is not serialized. |
+| Read-only board lock conflict | implemented | second writer to same board | errors/status; Save As | No | lock file / new identity if Save As | Separate board windows work independently; no collaboration. |
+| Failed import/relink/save status | implemented | native operations | title/errors/temporary panel | successful admission only | committed Board only | Drafts remain on failed save; bounded worker/cancellation model retained. |
+| Image supply / missing-source fallback | implemented | open/pan/zoom/relink | canvas imagery/status | source edits Yes; display supply No | original/preview Board; details disposable | 1G bounded projected asynchronous 128/512/2048 supply; see 1G report for limits. |
+| Save and reopen | implemented | File menu / Ctrl+S / Ctrl+Shift+S / Ctrl+O / recent list | tiny application entry + native pickers | Save itself No | .tack | Commands serialize committed geometry/crop/style/order/groups; selection/tools/history are transient. |
+| Context resolution / dismissal | implemented | right click object/blank; Esc, outside click, activation | six specific context kinds | No; command Yes where listed | session | Preserves selected multi-selection/group; clicks outside dismiss without starting a drag. No timers/animations. |
+| Menu keyboard navigation | implemented | Up/Down, Left/Right, Enter, Escape, wheel | popup only | No; command Yes | session | One child submenu, no timed hover; disabled rows remain visible. |
+| Contextual cursor feedback | implemented | hover/move/handle/crop/text | native platform cursor | No | session | No cursor asset cache or animation. |
+| Multiple local windows | implemented | New/Open create another window | File menu | per document | separate .tack | Resource budgets are per instance; no shared-board synchronization. |
+| Developer CLI and benchmark modes | experimental | explicit create/inspect/supply/preparation/benchmark commands and flags | CLI only, absent from authoring menus | depends on CLI operation | generated files/receipts | Explicit diagnostics; not a new authoring feature or a legacy-hardware performance guarantee. |
+
+## Deliberately absent operations
+
+Duplicate, add-selection-to-frame membership, ellipse, rich text, layer panel,
+collaboration and online services are not implemented authoring features. There
+is no context item pretending to perform them. The new eight catalog entries
+are compact ordering/opacity adapters to existing core commands, not a second
+command or history architecture.
+
+Mixed selections expose only supported grouping/alignment/order/delete paths.
+Image-specific sampling/opacity menus are intentionally limited to the single
+image menu; the corresponding keyboard/custom actions retain their existing
+multi-image semantics. Canvas New note selects the existing Text tool and labels
+its click/drag workflow; it does not silently insert a note at an invented size.
+
+Frame order controls frame chrome/hit order amongst frames. Frame borders remain
+an overlay above image/annotation content, as before; ordering does not turn
+frames into filled layers or change frame membership.
+
+The repository's broader “128 MB / Pentium III” direction is a UI design target.
+This inventory makes no claim that current wgpu/native process RSS satisfies it.

@@ -1,0 +1,103 @@
+{
+  "starting_head": "12547fcce63f9e90a5822dd5660e03c1d72d942d",
+  "validated_code_commit": "fae987c1f9006881b846b3ac171c6f10faa5a686",
+  "binary_sha256": "13b294987327090b38c563001965b902c1a860529f30688ebd64d87d071a4a71",
+  "source_snapshot_sha256": "023c88bb5698d273fcff8ac3555661795ca9b87b36eda8a8562095097ab7254a",
+  "build_stamp": "STATUS: CURRENT\ncommit: fae987c1f9006881b846b3ac171c6f10faa5a686\nprofile: release\nbuilt_utc: 2026-10-05T20:39:56Z\nbinary: ./bin/tack\nworktree_dirty: true\nsha256: 13b294987327090b38c563001965b902c1a860529f30688ebd64d87d071a4a71\ncheckpoint: phase 1G \u2014 final local handoff; CI/Git access pending\n",
+  "local_checks": {
+    "command": "PATH=/tmp/tack-tools/bin:$PATH bash tools/check.sh",
+    "rust_test_passes_including_doc_tests": 133,
+    "python_tests": 9,
+    "status": "success"
+  },
+  "gpu": {
+    "product_gpu_including_ignored_hardware": 7,
+    "gpu_smoke_hardware": 1,
+    "passed": true
+  },
+  "binary_sizes_bytes": {
+    "full": 114109328,
+    "strip_debug": 20913712,
+    "fully_stripped": 17685840,
+    "matched_1f_full": 113568768,
+    "matched_1f_strip_debug": 20814152,
+    "matched_1f_fully_stripped": 17588432
+  },
+  "dependencies_added": 0,
+  "cargo_manifest_lock_changed": false,
+  "logs": {
+    "/tmp/tack-1g-quality-complete.log": {
+      "bytes": 65608,
+      "sha256": "2e30597a7bb4e40ec3505a896d11e88d8b81491e616ca25384fc1545a835fc6d"
+    },
+    "/tmp/tack-1g-product-gpu.log": {
+      "bytes": 913,
+      "sha256": "634b43b466caf5225f4e93e5e37db105c8abc72115b01e472741079d6e49ab3e"
+    },
+    "/tmp/tack-1g-gpu-smoke.log": {
+      "bytes": 390,
+      "sha256": "abcfc10c170633077c79560de78f9a0cf8ca3da9d5abffbff05733d4a5f8c043"
+    },
+    "/tmp/tack-1g-disk-cost-final.log": {
+      "bytes": 840,
+      "sha256": "b900ae7ae6aba09ec878a01f7221024874ba94ef5da6ccc84aebf81eed324add"
+    }
+  },
+  "independent_verifier": {
+    "status": "completed \u2014 B local complete, no unresolved concrete correctness issue",
+    "agent": "/root/phase1g_verifier",
+    "implemented_phase": false,
+    "report": "docs/VERIFICATION_1G.md",
+    "verified_source_files": 182,
+    "verified_raw_artifacts": 778,
+    "verified_rust_passes": 133
+  },
+  "human_linux": "pending checklist",
+  "human_windows": "not performed; actual configured Linux and Windows CI gates required",
+  "stop": "no phase2; human review next",
+  "status": "B \u2014 final CI confirmation and report commit/push pending execution-profile access",
+  "gate_blockers": [
+    "latest fae987c CI final status unconfirmed; a1ef665 verified green",
+    "current sandbox .git mount read-only and restricted terminal network"
+  ],
+  "resumed_gate_failures": {
+    "git_stage": "fatal: Unable to create .git/index.lock: Read-only file system",
+    "ci_fetch": "socket.gaierror: Name or service not known",
+    "browser_fallback": "run page cache miss; API unavailable"
+  },
+  "last_verified_green_ci": {
+    "sha": "a1ef66504d9278b7addba658250bb95349cb0585",
+    "runs": [
+      {
+        "id": 37279146426,
+        "name": "Quality",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/gurppt/tack/actions/runs/37279146426",
+        "jobs": [
+          {
+            "name": "dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "current_step": null,
+            "steps": []
+          },
+          {
+            "name": "rust (ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "current_step": null,
+            "steps": []
+          },
+          {
+            "name": "rust (windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "current_step": null,
+            "steps": []
+          }
+        ]
+      }
+    ]
+  }
+}

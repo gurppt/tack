@@ -1,9 +1,16 @@
 # Tack
 
 Native, local-first reference board. This repository currently contains
-**Phase 1F: local production workflows and recovery**. The executable opens
+**Mission 1H contextual pixel UI + updated 1G native performance validation**. The executable opens
 an empty local board by default; renderer benchmarks remain explicit commands.
-See [the current report](docs/MISSION_1F_REPORT.md),
+Right-click an object or blank canvas; the tiny Tack entry (or F10) opens
+application commands. Undo: Ctrl+Z; Redo: Ctrl+Shift+Z.
+See [the current performance report](docs/MISSION_1G_REPORT.md),
+[the contextual UI report](docs/MISSION_1H_REPORT.md),
+[the feature inventory](docs/FEATURE_INVENTORY.md),
+[the human test checklist](docs/HUMAN_TEST_1H.md),
+[the supply design](docs/design/local_image_supply.md),
+[Phase 1F](docs/MISSION_1F_REPORT.md),
 [Phase 1E](docs/MISSION_1E_REPORT.md),
 [Phase 1D](docs/MISSION_1D_REPORT.md),
 [Phase 1C](docs/MISSION_1C_REPORT.md),
@@ -25,6 +32,12 @@ python3 tools/generate_corpus.py benchmark-data/mission0
 python3 tools/prepare_turbojpeg.py
 cargo run --release --locked -p tack-app
 ```
+
+The current Linux client is also available directly as `./bin/tack`.
+Rebuild it with `bash tools/build-test-bin.sh`; `bin/BUILD.txt` records its
+commit, timestamp, dirty state and checksum. A successful build replaces the
+binary atomically. This directory is local and ignored by Git.
+Phase 1G stops for human review before collaboration work.
 
 The native thumbnail build needs Python 3.12+, CMake, a C compiler and NASM
 on PATH. It verifies the official libjpeg-turbo 3.2.0 archive and installs a

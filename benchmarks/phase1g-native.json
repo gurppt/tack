@@ -1,0 +1,376 @@
+{
+  "production": [
+    {
+      "name": "native new board is empty",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "native picker embedded import, save",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "real XDND multi-file drop",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "native clipboard PNG paste",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "native linked default preference",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "native clipboard file URI paste",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "native clipboard UTF8 text into note",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "oversized clipboard preserves saved authority",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "pending multi-import preserves note draft and resumes after commit",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "native keymap search and second keyboard binding",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "native reset action restores defaults",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "readable native keymap export",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "native resize/unmap/restore preserves authority",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "native SaveAs retains document ID and geometry",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "same-file second native editor refused",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "distinct native boards idle independently",
+      "observed": true,
+      "detail": [
+        {
+          "rss_bytes": 321277952,
+          "threads": 8,
+          "cpu_ticks_5s": 3,
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          }
+        },
+        {
+          "rss_bytes": 315023360,
+          "threads": 8,
+          "cpu_ticks_5s": 2,
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "recovery leaves authoritative normal file byte-identical",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "native crash restore includes new note and normal Save",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "close/reopen retains saved recovered document",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "Untitled cleanup skips symlink to external empty board",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "clean Untitled retires own seed only",
+      "observed": true,
+      "detail": null
+    }
+  ],
+  "recovery": [
+    {
+      "name": "shared native import uses one source/asset and two objects",
+      "observed": true
+    },
+    {
+      "name": "missing shared source keeps last-known preview visible",
+      "observed": true
+    },
+    {
+      "name": "native shared relink preserves IDs/layout and advances revision",
+      "observed": true
+    },
+    {
+      "name": "native relink undo restores source revision with exact geometry",
+      "observed": true
+    },
+    {
+      "name": "native relink redo retains fresh source revision",
+      "observed": true
+    },
+    {
+      "name": "failed normal save refuses newer external bytes and exposes failure",
+      "observed": true
+    },
+    {
+      "name": "dismissed Save error keeps the real document editable",
+      "observed": true
+    },
+    {
+      "name": "failed Save retains committed dirty generation until explicit discard",
+      "observed": true
+    },
+    {
+      "name": "explicit close discard still preserves external authoritative replacement",
+      "observed": true
+    },
+    {
+      "name": "dirty close Cancel keeps the window and work",
+      "observed": true
+    },
+    {
+      "name": "corrupt recovery leaves normal save exact",
+      "observed": true
+    },
+    {
+      "name": "native corrupt recovery discard affects only owned artifacts",
+      "observed": true
+    },
+    {
+      "name": "native future open exposes an error and preserves authority",
+      "observed": true
+    },
+    {
+      "name": "failed-open event loop sleeps without recovery spin or file writes",
+      "observed": true
+    },
+    {
+      "name": "native future Dismiss closes error-only window without authoring or changing bytes",
+      "observed": true
+    },
+    {
+      "name": "native truncated open exposes an error and preserves authority",
+      "observed": true
+    },
+    {
+      "name": "native truncated Dismiss closes error-only window without authoring or changing bytes",
+      "observed": true
+    },
+    {
+      "name": "native locked open exposes an error and preserves authority",
+      "observed": true
+    },
+    {
+      "name": "native locked Dismiss closes error-only window without authoring or changing bytes",
+      "observed": true
+    }
+  ],
+  "two_heavy": {
+    "binary_sha256": "13b294987327090b38c563001965b902c1a860529f30688ebd64d87d071a4a71",
+    "rows": [
+      {
+        "name": "large",
+        "rss_bytes": 377376768,
+        "initial_rss_bytes": 373522432,
+        "threads": 8,
+        "idle_ticks_5s": 2,
+        "idle_io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "main_thread_ticks": 0,
+        "native_report_sha256": "3a460a043c9815262d3077c40ca92a22291dbb3dba339b3efef5cb8acd22b337",
+        "recoveries": 1,
+        "recovery_bytes": 1738233,
+        "save_completed": 1,
+        "dirty": false
+      },
+      {
+        "name": "heavy",
+        "rss_bytes": 372531200,
+        "initial_rss_bytes": 371208192,
+        "threads": 8,
+        "idle_ticks_5s": 2,
+        "idle_io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "main_thread_ticks": 0,
+        "native_report_sha256": "4fc05d60b4f11f252f61d4d2d0b15389e89adc573fcf44da1f6a8d7cb1a00efa",
+        "recoveries": 1,
+        "recovery_bytes": 1198233,
+        "save_completed": 1,
+        "dirty": false
+      }
+    ],
+    "recovery_observations": [
+      {
+        "name": "large",
+        "dirty_title": "Tack \u2014 large.tack \u00b7 modified \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer",
+        "all_recovery_files_bytes": 2936514
+      },
+      {
+        "name": "heavy",
+        "dirty_title": "Tack \u2014 heavy.tack \u00b7 modified \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer",
+        "all_recovery_files_bytes": 2936514
+      }
+    ],
+    "graphics_memory": {
+      "available": true,
+      "rows": [
+        {
+          "pid": "389434",
+          "type": "C+G",
+          "used_gpu_memory": "88 MiB"
+        },
+        {
+          "pid": "389461",
+          "type": "C+G",
+          "used_gpu_memory": "88 MiB"
+        }
+      ],
+      "scope": "NVIDIA graphics-process snapshot after idle; includes driver allocations, not only renderer payloads"
+    },
+    "whole_process_rss_bytes": 749907968,
+    "scope": "two processes, shared immutable source files, separate authority/worker/cache; alternating input; 5s final idle; total OS memory not attributed"
+  },
+  "large_small": {
+    "binary_sha256": "13b294987327090b38c563001965b902c1a860529f30688ebd64d87d071a4a71",
+    "rows": [
+      {
+        "name": "large",
+        "rss_bytes": 377462784,
+        "initial_rss_bytes": 373293056,
+        "threads": 8,
+        "idle_ticks_5s": 2,
+        "idle_io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "main_thread_ticks": 0,
+        "native_report_sha256": "46582af120cacc2fd9c8102da32c9cfa5d022336e67c14f0f9545bcf6a1f2056",
+        "recoveries": 1,
+        "recovery_bytes": 1738233,
+        "save_completed": 1,
+        "dirty": false
+      },
+      {
+        "name": "heavy",
+        "rss_bytes": 349949952,
+        "initial_rss_bytes": 349286400,
+        "threads": 8,
+        "idle_ticks_5s": 2,
+        "idle_io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "main_thread_ticks": 0,
+        "native_report_sha256": "6bc63a88444d426c575d7f3943d2cc9d88bc18ee690a9782385a354b54035ca5",
+        "recoveries": 1,
+        "recovery_bytes": 57418,
+        "save_completed": 1,
+        "dirty": false
+      }
+    ],
+    "recovery_observations": [
+      {
+        "name": "large",
+        "dirty_title": "Tack \u2014 large.tack \u00b7 modified \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer",
+        "all_recovery_files_bytes": 1795699
+      },
+      {
+        "name": "heavy",
+        "dirty_title": "Tack \u2014 heavy.tack \u00b7 modified \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer",
+        "all_recovery_files_bytes": 1795699
+      }
+    ],
+    "graphics_memory": {
+      "available": true,
+      "rows": [
+        {
+          "pid": "389624",
+          "type": "C+G",
+          "used_gpu_memory": "88 MiB"
+        },
+        {
+          "pid": "389651",
+          "type": "C+G",
+          "used_gpu_memory": "56 MiB"
+        }
+      ],
+      "scope": "NVIDIA graphics-process snapshot after idle; includes driver allocations, not only renderer payloads"
+    },
+    "whole_process_rss_bytes": 727412736,
+    "scope": "two processes, shared immutable source files, separate authority/worker/cache; alternating input; 5s final idle; total OS memory not attributed"
+  },
+  "binary_sha256": "13b294987327090b38c563001965b902c1a860529f30688ebd64d87d071a4a71",
+  "scope": "native X11 automation, not human validation; runtime frozen hash, one owned display, no user desktop inputs"
+}

@@ -1,0 +1,37 @@
+{
+  "sha": "fae987c1f9006881b846b3ac171c6f10faa5a686",
+  "runs": [
+    {
+      "id": 37280707711,
+      "name": "Quality",
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/gurppt/tack/actions/runs/37280707711",
+      "jobs": [
+        {
+          "name": "rust (windows-latest)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current_step": "Run cargo clippy --workspace --all-targets --all-features --locked -- -D warnings",
+          "steps": []
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "current_step": null,
+          "steps": []
+        },
+        {
+          "name": "rust (ubuntu-latest)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current_step": "Run cargo test --workspace --all-features --locked",
+          "steps": []
+        }
+      ]
+    }
+  ],
+  "observation_scope": "last successful terminal API observation before resumed network restriction; NOT final status",
+  "resumed_fetch": "DNS/network unavailable; public browser page/API unavailable too"
+}

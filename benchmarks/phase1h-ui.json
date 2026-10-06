@@ -1,0 +1,1990 @@
+{
+  "adapter": "llvmpipe (LLVM 20.1.2, 256 bits)",
+  "backend": "Vulkan",
+  "cases": [
+    {
+      "construction_us": 3.95,
+      "draw_build_us": 8.52,
+      "file": "canvas-800x600-1x.ppm",
+      "kind": "canvas",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 520,
+      "quads": 99,
+      "rectangles": [
+        [
+          586,
+          504,
+          212,
+          94
+        ]
+      ],
+      "scale": 1.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 6.381,
+      "draw_build_us": 29.490000000000002,
+      "file": "image-800x600-1x.ppm",
+      "kind": "image",
+      "overlay_capacity_bytes": 30720,
+      "owned_menu_bytes": 1456,
+      "quads": 218,
+      "rectangles": [
+        [
+          554,
+          360,
+          244,
+          238
+        ],
+        [
+          454,
+          416,
+          100,
+          58
+        ]
+      ],
+      "scale": 1.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 3.59,
+      "draw_build_us": 8.0,
+      "file": "multiple-800x600-1x.ppm",
+      "kind": "multiple",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 672,
+      "quads": 97,
+      "rectangles": [
+        [
+          610,
+          468,
+          188,
+          130
+        ]
+      ],
+      "scale": 1.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 3.27,
+      "draw_build_us": 5.699999999999999,
+      "file": "note-800x600-1x.ppm",
+      "kind": "note",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 656,
+      "quads": 70,
+      "rectangles": [
+        [
+          634,
+          486,
+          164,
+          112
+        ]
+      ],
+      "scale": 1.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 3.1999999999999997,
+      "draw_build_us": 5.640000000000001,
+      "file": "frame-800x600-1x.ppm",
+      "kind": "frame",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 664,
+      "quads": 72,
+      "rectangles": [
+        [
+          634,
+          486,
+          164,
+          112
+        ]
+      ],
+      "scale": 1.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 2.33,
+      "draw_build_us": 4.02,
+      "file": "annotation-800x600-1x.ppm",
+      "kind": "annotation",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 648,
+      "quads": 54,
+      "rectangles": [
+        [
+          634,
+          504,
+          164,
+          94
+        ]
+      ],
+      "scale": 1.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 4.48,
+      "draw_build_us": 24.361,
+      "file": "application-800x600-1x.ppm",
+      "kind": "application",
+      "overlay_capacity_bytes": 30720,
+      "owned_menu_bytes": 816,
+      "quads": 147,
+      "rectangles": [
+        [
+          4,
+          24,
+          196,
+          94
+        ],
+        [
+          200,
+          26,
+          212,
+          112
+        ]
+      ],
+      "scale": 1.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 4.79,
+      "draw_build_us": 8.54,
+      "file": "canvas-800x600-2x.ppm",
+      "kind": "canvas",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 520,
+      "quads": 99,
+      "rectangles": [
+        [
+          186,
+          204,
+          212,
+          94
+        ]
+      ],
+      "scale": 2.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 5.92,
+      "draw_build_us": 22.0,
+      "file": "image-800x600-2x.ppm",
+      "kind": "image",
+      "overlay_capacity_bytes": 30720,
+      "owned_menu_bytes": 1456,
+      "quads": 218,
+      "rectangles": [
+        [
+          154,
+          60,
+          244,
+          238
+        ],
+        [
+          54,
+          116,
+          100,
+          58
+        ]
+      ],
+      "scale": 2.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 4.02,
+      "draw_build_us": 8.06,
+      "file": "multiple-800x600-2x.ppm",
+      "kind": "multiple",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 672,
+      "quads": 97,
+      "rectangles": [
+        [
+          210,
+          168,
+          188,
+          130
+        ]
+      ],
+      "scale": 2.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 4.13,
+      "draw_build_us": 6.88,
+      "file": "note-800x600-2x.ppm",
+      "kind": "note",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 656,
+      "quads": 70,
+      "rectangles": [
+        [
+          234,
+          186,
+          164,
+          112
+        ]
+      ],
+      "scale": 2.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 4.65,
+      "draw_build_us": 7.3100000000000005,
+      "file": "frame-800x600-2x.ppm",
+      "kind": "frame",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 664,
+      "quads": 72,
+      "rectangles": [
+        [
+          234,
+          186,
+          164,
+          112
+        ]
+      ],
+      "scale": 2.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 3.55,
+      "draw_build_us": 4.71,
+      "file": "annotation-800x600-2x.ppm",
+      "kind": "annotation",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 648,
+      "quads": 54,
+      "rectangles": [
+        [
+          234,
+          204,
+          164,
+          94
+        ]
+      ],
+      "scale": 2.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 2.69,
+      "draw_build_us": 14.34,
+      "file": "application-800x600-2x.ppm",
+      "kind": "application",
+      "overlay_capacity_bytes": 30720,
+      "owned_menu_bytes": 816,
+      "quads": 147,
+      "rectangles": [
+        [
+          4,
+          24,
+          196,
+          94
+        ],
+        [
+          2,
+          26,
+          212,
+          112
+        ]
+      ],
+      "scale": 2.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 4.66,
+      "draw_build_us": 8.559999999999999,
+      "file": "canvas-800x600-4x.ppm",
+      "kind": "canvas",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 520,
+      "quads": 80,
+      "rectangles": [
+        [
+          6,
+          54,
+          192,
+          94
+        ]
+      ],
+      "scale": 4.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 7.94,
+      "draw_build_us": 22.431,
+      "file": "image-800x600-4x.ppm",
+      "kind": "image",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 1456,
+      "quads": 115,
+      "rectangles": [
+        [
+          6,
+          18,
+          192,
+          130
+        ],
+        [
+          2,
+          74,
+          100,
+          58
+        ]
+      ],
+      "scale": 4.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 5.26,
+      "draw_build_us": 10.86,
+      "file": "multiple-800x600-4x.ppm",
+      "kind": "multiple",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 672,
+      "quads": 97,
+      "rectangles": [
+        [
+          10,
+          18,
+          188,
+          130
+        ]
+      ],
+      "scale": 4.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 4.04,
+      "draw_build_us": 7.58,
+      "file": "note-800x600-4x.ppm",
+      "kind": "note",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 656,
+      "quads": 70,
+      "rectangles": [
+        [
+          34,
+          36,
+          164,
+          112
+        ]
+      ],
+      "scale": 4.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 4.84,
+      "draw_build_us": 15.639999999999999,
+      "file": "frame-800x600-4x.ppm",
+      "kind": "frame",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 664,
+      "quads": 72,
+      "rectangles": [
+        [
+          34,
+          36,
+          164,
+          112
+        ]
+      ],
+      "scale": 4.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 4.1,
+      "draw_build_us": 5.45,
+      "file": "annotation-800x600-4x.ppm",
+      "kind": "annotation",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 648,
+      "quads": 54,
+      "rectangles": [
+        [
+          34,
+          54,
+          164,
+          94
+        ]
+      ],
+      "scale": 4.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 2.29,
+      "draw_build_us": 13.9,
+      "file": "application-800x600-4x.ppm",
+      "kind": "application",
+      "overlay_capacity_bytes": 30720,
+      "owned_menu_bytes": 816,
+      "quads": 129,
+      "rectangles": [
+        [
+          4,
+          24,
+          192,
+          94
+        ],
+        [
+          2,
+          26,
+          192,
+          112
+        ]
+      ],
+      "scale": 4.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 5.5600000000000005,
+      "draw_build_us": 4.23,
+      "file": "canvas-800x600-8x.ppm",
+      "kind": "canvas",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 520,
+      "quads": 31,
+      "rectangles": [
+        [
+          6,
+          15,
+          92,
+          58
+        ]
+      ],
+      "scale": 8.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 17.3,
+      "draw_build_us": 7.4399999999999995,
+      "file": "image-800x600-8x.ppm",
+      "kind": "image",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 1456,
+      "quads": 60,
+      "rectangles": [
+        [
+          6,
+          15,
+          92,
+          58
+        ],
+        [
+          2,
+          15,
+          92,
+          58
+        ]
+      ],
+      "scale": 8.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 5.38,
+      "draw_build_us": 3.6100000000000003,
+      "file": "multiple-800x600-8x.ppm",
+      "kind": "multiple",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 672,
+      "quads": 28,
+      "rectangles": [
+        [
+          6,
+          15,
+          92,
+          58
+        ]
+      ],
+      "scale": 8.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 5.090000000000001,
+      "draw_build_us": 3.6799999999999997,
+      "file": "note-800x600-8x.ppm",
+      "kind": "note",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 656,
+      "quads": 32,
+      "rectangles": [
+        [
+          6,
+          15,
+          92,
+          58
+        ]
+      ],
+      "scale": 8.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 5.41,
+      "draw_build_us": 3.32,
+      "file": "frame-800x600-8x.ppm",
+      "kind": "frame",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 664,
+      "quads": 30,
+      "rectangles": [
+        [
+          6,
+          15,
+          92,
+          58
+        ]
+      ],
+      "scale": 8.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 5.79,
+      "draw_build_us": 3.09,
+      "file": "annotation-800x600-8x.ppm",
+      "kind": "annotation",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 648,
+      "quads": 26,
+      "rectangles": [
+        [
+          6,
+          15,
+          92,
+          58
+        ]
+      ],
+      "scale": 8.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 3.67,
+      "draw_build_us": 5.65,
+      "file": "application-800x600-8x.ppm",
+      "kind": "application",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 816,
+      "quads": 53,
+      "rectangles": [
+        [
+          4,
+          15,
+          92,
+          58
+        ],
+        [
+          2,
+          15,
+          92,
+          58
+        ]
+      ],
+      "scale": 8.0,
+      "screen": [
+        800,
+        600
+      ]
+    },
+    {
+      "construction_us": 5.48,
+      "draw_build_us": 8.64,
+      "file": "canvas-1024x768-1x.ppm",
+      "kind": "canvas",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 520,
+      "quads": 99,
+      "rectangles": [
+        [
+          810,
+          672,
+          212,
+          94
+        ]
+      ],
+      "scale": 1.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 9.26,
+      "draw_build_us": 24.6,
+      "file": "image-1024x768-1x.ppm",
+      "kind": "image",
+      "overlay_capacity_bytes": 30720,
+      "owned_menu_bytes": 1456,
+      "quads": 218,
+      "rectangles": [
+        [
+          778,
+          528,
+          244,
+          238
+        ],
+        [
+          678,
+          584,
+          100,
+          58
+        ]
+      ],
+      "scale": 1.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 6.510000000000001,
+      "draw_build_us": 10.08,
+      "file": "multiple-1024x768-1x.ppm",
+      "kind": "multiple",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 672,
+      "quads": 97,
+      "rectangles": [
+        [
+          834,
+          636,
+          188,
+          130
+        ]
+      ],
+      "scale": 1.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 6.67,
+      "draw_build_us": 6.37,
+      "file": "note-1024x768-1x.ppm",
+      "kind": "note",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 656,
+      "quads": 70,
+      "rectangles": [
+        [
+          858,
+          654,
+          164,
+          112
+        ]
+      ],
+      "scale": 1.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 14.76,
+      "draw_build_us": 8.35,
+      "file": "frame-1024x768-1x.ppm",
+      "kind": "frame",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 664,
+      "quads": 72,
+      "rectangles": [
+        [
+          858,
+          654,
+          164,
+          112
+        ]
+      ],
+      "scale": 1.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 5.55,
+      "draw_build_us": 6.2700000000000005,
+      "file": "annotation-1024x768-1x.ppm",
+      "kind": "annotation",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 648,
+      "quads": 54,
+      "rectangles": [
+        [
+          858,
+          672,
+          164,
+          94
+        ]
+      ],
+      "scale": 1.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 4.24,
+      "draw_build_us": 17.63,
+      "file": "application-1024x768-1x.ppm",
+      "kind": "application",
+      "overlay_capacity_bytes": 30720,
+      "owned_menu_bytes": 816,
+      "quads": 147,
+      "rectangles": [
+        [
+          4,
+          24,
+          196,
+          94
+        ],
+        [
+          200,
+          26,
+          212,
+          112
+        ]
+      ],
+      "scale": 1.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 6.13,
+      "draw_build_us": 9.78,
+      "file": "canvas-1024x768-2x.ppm",
+      "kind": "canvas",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 520,
+      "quads": 99,
+      "rectangles": [
+        [
+          298,
+          288,
+          212,
+          94
+        ]
+      ],
+      "scale": 2.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 8.15,
+      "draw_build_us": 25.44,
+      "file": "image-1024x768-2x.ppm",
+      "kind": "image",
+      "overlay_capacity_bytes": 30720,
+      "owned_menu_bytes": 1456,
+      "quads": 218,
+      "rectangles": [
+        [
+          266,
+          144,
+          244,
+          238
+        ],
+        [
+          166,
+          200,
+          100,
+          58
+        ]
+      ],
+      "scale": 2.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 6.89,
+      "draw_build_us": 9.91,
+      "file": "multiple-1024x768-2x.ppm",
+      "kind": "multiple",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 672,
+      "quads": 97,
+      "rectangles": [
+        [
+          322,
+          252,
+          188,
+          130
+        ]
+      ],
+      "scale": 2.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 6.63,
+      "draw_build_us": 6.36,
+      "file": "note-1024x768-2x.ppm",
+      "kind": "note",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 656,
+      "quads": 70,
+      "rectangles": [
+        [
+          346,
+          270,
+          164,
+          112
+        ]
+      ],
+      "scale": 2.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 9.870000000000001,
+      "draw_build_us": 8.16,
+      "file": "frame-1024x768-2x.ppm",
+      "kind": "frame",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 664,
+      "quads": 72,
+      "rectangles": [
+        [
+          346,
+          270,
+          164,
+          112
+        ]
+      ],
+      "scale": 2.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 7.3100000000000005,
+      "draw_build_us": 5.63,
+      "file": "annotation-1024x768-2x.ppm",
+      "kind": "annotation",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 648,
+      "quads": 54,
+      "rectangles": [
+        [
+          346,
+          288,
+          164,
+          94
+        ]
+      ],
+      "scale": 2.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 2.67,
+      "draw_build_us": 13.81,
+      "file": "application-1024x768-2x.ppm",
+      "kind": "application",
+      "overlay_capacity_bytes": 30720,
+      "owned_menu_bytes": 816,
+      "quads": 147,
+      "rectangles": [
+        [
+          4,
+          24,
+          196,
+          94
+        ],
+        [
+          200,
+          26,
+          212,
+          112
+        ]
+      ],
+      "scale": 2.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 5.720000000000001,
+      "draw_build_us": 8.729999999999999,
+      "file": "canvas-1024x768-4x.ppm",
+      "kind": "canvas",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 520,
+      "quads": 99,
+      "rectangles": [
+        [
+          42,
+          96,
+          212,
+          94
+        ]
+      ],
+      "scale": 4.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 6.93,
+      "draw_build_us": 16.48,
+      "file": "image-1024x768-4x.ppm",
+      "kind": "image",
+      "overlay_capacity_bytes": 30720,
+      "owned_menu_bytes": 1456,
+      "quads": 184,
+      "rectangles": [
+        [
+          10,
+          6,
+          244,
+          184
+        ],
+        [
+          2,
+          62,
+          100,
+          58
+        ]
+      ],
+      "scale": 4.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 5.57,
+      "draw_build_us": 9.26,
+      "file": "multiple-1024x768-4x.ppm",
+      "kind": "multiple",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 672,
+      "quads": 97,
+      "rectangles": [
+        [
+          66,
+          60,
+          188,
+          130
+        ]
+      ],
+      "scale": 4.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 5.74,
+      "draw_build_us": 6.11,
+      "file": "note-1024x768-4x.ppm",
+      "kind": "note",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 656,
+      "quads": 70,
+      "rectangles": [
+        [
+          90,
+          78,
+          164,
+          112
+        ]
+      ],
+      "scale": 4.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 6.42,
+      "draw_build_us": 6.569999999999999,
+      "file": "frame-1024x768-4x.ppm",
+      "kind": "frame",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 664,
+      "quads": 72,
+      "rectangles": [
+        [
+          90,
+          78,
+          164,
+          112
+        ]
+      ],
+      "scale": 4.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 4.7700000000000005,
+      "draw_build_us": 5.640000000000001,
+      "file": "annotation-1024x768-4x.ppm",
+      "kind": "annotation",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 648,
+      "quads": 54,
+      "rectangles": [
+        [
+          90,
+          96,
+          164,
+          94
+        ]
+      ],
+      "scale": 4.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 3.33,
+      "draw_build_us": 16.240000000000002,
+      "file": "application-1024x768-4x.ppm",
+      "kind": "application",
+      "overlay_capacity_bytes": 30720,
+      "owned_menu_bytes": 816,
+      "quads": 147,
+      "rectangles": [
+        [
+          4,
+          24,
+          196,
+          94
+        ],
+        [
+          2,
+          26,
+          212,
+          112
+        ]
+      ],
+      "scale": 4.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 4.58,
+      "draw_build_us": 5.58,
+      "file": "canvas-1024x768-8x.ppm",
+      "kind": "canvas",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 520,
+      "quads": 52,
+      "rectangles": [
+        [
+          6,
+          18,
+          120,
+          76
+        ]
+      ],
+      "scale": 8.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 7.0,
+      "draw_build_us": 6.21,
+      "file": "image-1024x768-8x.ppm",
+      "kind": "image",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 1456,
+      "quads": 70,
+      "rectangles": [
+        [
+          6,
+          18,
+          120,
+          76
+        ],
+        [
+          2,
+          36,
+          100,
+          58
+        ]
+      ],
+      "scale": 8.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 5.35,
+      "draw_build_us": 4.67,
+      "file": "multiple-1024x768-8x.ppm",
+      "kind": "multiple",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 672,
+      "quads": 44,
+      "rectangles": [
+        [
+          6,
+          18,
+          120,
+          76
+        ]
+      ],
+      "scale": 8.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 5.11,
+      "draw_build_us": 4.02,
+      "file": "note-1024x768-8x.ppm",
+      "kind": "note",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 656,
+      "quads": 45,
+      "rectangles": [
+        [
+          6,
+          18,
+          120,
+          76
+        ]
+      ],
+      "scale": 8.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 6.04,
+      "draw_build_us": 4.33,
+      "file": "frame-1024x768-8x.ppm",
+      "kind": "frame",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 664,
+      "quads": 42,
+      "rectangles": [
+        [
+          6,
+          18,
+          120,
+          76
+        ]
+      ],
+      "scale": 8.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 4.79,
+      "draw_build_us": 3.5599999999999996,
+      "file": "annotation-1024x768-8x.ppm",
+      "kind": "annotation",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 648,
+      "quads": 39,
+      "rectangles": [
+        [
+          6,
+          18,
+          120,
+          76
+        ]
+      ],
+      "scale": 8.0,
+      "screen": [
+        1024,
+        768
+      ]
+    },
+    {
+      "construction_us": 3.21,
+      "draw_build_us": 6.92,
+      "file": "application-1024x768-8x.ppm",
+      "kind": "application",
+      "overlay_capacity_bytes": 15360,
+      "owned_menu_bytes": 816,
+      "quads": 72,
+      "rectangles": [
+        [
+          4,
+          18,
+          120,
+          76
+        ],
+        [
+          2,
+          18,
+          120,
+          76
+        ]
+      ],
+      "scale": 8.0,
+      "screen": [
+        1024,
+        768
+      ]
+    }
+  ],
+  "closed_button_quads": 5,
+  "closed_button_redraw_mean_us": 0.3295732,
+  "scope": "software Vulkan offscreen; no native event-loop, human or idle/RSS measurement",
+  "raw_artifacts": [
+    {
+      "path": "benchmark-results/phase1h-ui/annotation-1024x768-1x.ppm",
+      "bytes": 2359312,
+      "sha256": "96c28639b6812506723f79550e042a3622e4b7989b00a26730edc202e893214b"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/annotation-1024x768-2x.ppm",
+      "bytes": 2359312,
+      "sha256": "6472004178498bdef59a0712a472c2295649a01de7ac3d84db41407841b0e275"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/annotation-1024x768-4x.ppm",
+      "bytes": 2359312,
+      "sha256": "eb0b95c89b934ece8c5e6f66b315af9911b39a8de6272f835be474994ccef330"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/annotation-1024x768-8x.ppm",
+      "bytes": 2359312,
+      "sha256": "c90bfab684b63ec99f34448c54932a0f11fe1deebc872b91eac35ed53cd17950"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/annotation-800x600-1x.ppm",
+      "bytes": 1440015,
+      "sha256": "7bbee79d27b5d3b8cf7aa00557fe1871654a17dcf7d77c4863e93476fcfbb18c"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/annotation-800x600-2x.ppm",
+      "bytes": 1440015,
+      "sha256": "ff8654731381697c82bdbdaccb4c00e64206436cde9b27ac4453815fa3736951"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/annotation-800x600-4x.ppm",
+      "bytes": 1440015,
+      "sha256": "ce80aa49dccc704f943876a0a3bf8979ddcfcdb97b45f47df4a79f041067c063"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/annotation-800x600-8x.ppm",
+      "bytes": 1440015,
+      "sha256": "e8deea3d4940ac2bb2b19d3b14fd1bbbabb2534d1d2528ed4e36637adf4ef35e"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/application-1024x768-1x.ppm",
+      "bytes": 2359312,
+      "sha256": "33a0835ec1cbd5782194d7661562316ad701a149b9d7fbe9acc5356befd7c683"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/application-1024x768-2x.ppm",
+      "bytes": 2359312,
+      "sha256": "ae3b2be7dfae1622a0750a3a057d6534da5ab73805835ae2a0c6ae4a190ac74d"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/application-1024x768-4x.ppm",
+      "bytes": 2359312,
+      "sha256": "737c2aa92e5905e51ff4db0cdc46ba04eb55211dfd3f360994218b6b4756ea69"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/application-1024x768-8x.ppm",
+      "bytes": 2359312,
+      "sha256": "bf0901dc4df17b2e8bb308065edc5c00eff12f1e8c3f584b39c69b0b182a2ca3"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/application-800x600-1x.ppm",
+      "bytes": 1440015,
+      "sha256": "b2ad249edcafe94a704ad9313a121443fe6255aa7306de2a851d02f1a49ccc04"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/application-800x600-2x.ppm",
+      "bytes": 1440015,
+      "sha256": "c7d03f9a389d3a26ac3179b5c0b72933f855852176c5cb889c89ad4900d4df39"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/application-800x600-4x.ppm",
+      "bytes": 1440015,
+      "sha256": "94c376ccb5aa33e99ed965e9dbdce7dc13e8a9e8f016942ac374497c7f6eeff0"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/application-800x600-8x.ppm",
+      "bytes": 1440015,
+      "sha256": "82691ddc9da985fef9b5c7221fb8dce614f0fc13332061ec341251fa85d9036e"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/canvas-1024x768-1x.ppm",
+      "bytes": 2359312,
+      "sha256": "2c080024f970a5db7edabc8ba66c4e466937cafea6a2cd7c79941bcd9f30a31b"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/canvas-1024x768-2x.ppm",
+      "bytes": 2359312,
+      "sha256": "bc59b2464d78edd1c6f3ad7126b36e009f5ead04fc309bab929b21b5fe48da05"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/canvas-1024x768-4x.ppm",
+      "bytes": 2359312,
+      "sha256": "92baaafca470222db4d90b1519e6ad244f753f2afcd1c5f961e9291ab0a0093b"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/canvas-1024x768-8x.ppm",
+      "bytes": 2359312,
+      "sha256": "cc294b7582c3117262c16a19e22ba84721438129015db32f6cdc3bf0946d654b"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/canvas-800x600-1x.ppm",
+      "bytes": 1440015,
+      "sha256": "ddd2748f5bbe228398a387044192a3cce9f9872881e3e226a6b9416a622e0b68"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/canvas-800x600-2x.ppm",
+      "bytes": 1440015,
+      "sha256": "c329f3da1ba11dc7acb840699611be95b33ecadc32ffcdd79f4d758619a2b248"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/canvas-800x600-4x.ppm",
+      "bytes": 1440015,
+      "sha256": "4e58bf14f1762032c306428fd78db57f7ba1c7788766ad0e4110db3612d01bf9"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/canvas-800x600-8x.ppm",
+      "bytes": 1440015,
+      "sha256": "85ec35334c004d55993fc6436b7c3c14e0ae4b161362ec7674e0576470104c1a"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/frame-1024x768-1x.ppm",
+      "bytes": 2359312,
+      "sha256": "b194638356a13fd59a9cf0d7c09001f0c42db79edf09b1c74d231179a0a564cf"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/frame-1024x768-2x.ppm",
+      "bytes": 2359312,
+      "sha256": "6f623b96d8bbc943967549429858b0a888259e9a64e462674a3899919b805307"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/frame-1024x768-4x.ppm",
+      "bytes": 2359312,
+      "sha256": "65919e4001246afc33c5e9c4068fa426309e67e7e34a37d796eeaf78b27987a4"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/frame-1024x768-8x.ppm",
+      "bytes": 2359312,
+      "sha256": "dfb2e245d4d77cbc4b7988c02a70ece4470e0730e5e03ef0a5f4e50e7e6dc15a"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/frame-800x600-1x.ppm",
+      "bytes": 1440015,
+      "sha256": "95ba363330f3b8ce05777a72a1a422ad9dbf718d40931b9fe8b1a0997c450ed2"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/frame-800x600-2x.ppm",
+      "bytes": 1440015,
+      "sha256": "7e7dc743589766df24e2f6e60eec0d4fefe5d29f6c4c07508ca171efffdfdf5c"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/frame-800x600-4x.ppm",
+      "bytes": 1440015,
+      "sha256": "f718c38d50716695365ff90d733289986d57e33a424a09a01a5e07140ee1a982"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/frame-800x600-8x.ppm",
+      "bytes": 1440015,
+      "sha256": "0133070eaffbf7e3604aa46a94a9d2a0dd4674c4febacb0ce89d95fb923975e6"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/image-1024x768-1x.ppm",
+      "bytes": 2359312,
+      "sha256": "30101ba84317d5718c62346c11e83d35a548c5ace9adc69aeab57497614667ad"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/image-1024x768-2x.ppm",
+      "bytes": 2359312,
+      "sha256": "c9a0df3ddf91d30006858692277b4accc291f59cb34f7aaf6aff9372be1a5af8"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/image-1024x768-4x.ppm",
+      "bytes": 2359312,
+      "sha256": "1e5e2add98ecd1ef3d7d7a8bfd1ee58cae8f299fc620039dd35db1944ddfb3d5"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/image-1024x768-8x.ppm",
+      "bytes": 2359312,
+      "sha256": "ba6d56b65f6c37a4fee8755ca5746077a066aca6eb25b7895a2d98f26dfc2889"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/image-800x600-1x.ppm",
+      "bytes": 1440015,
+      "sha256": "413610c1fb3b11b3ce03c1996f44de2674a19b30f1bb527879cfd1bec10b8d81"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/image-800x600-2x.ppm",
+      "bytes": 1440015,
+      "sha256": "292db3df06b4a5f9b026c98952ce0476794a599f6c15bec4faef149a6e5a7980"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/image-800x600-4x.ppm",
+      "bytes": 1440015,
+      "sha256": "031b80a5c8f78c2661cf0549513e44eaf48f70ad191df2baf8a5b431a9b31d05"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/image-800x600-8x.ppm",
+      "bytes": 1440015,
+      "sha256": "b7dbb40c21b6dedcdbea17b576558200373a548a9eeae0efdf8e0b0eecc1f260"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/multiple-1024x768-1x.ppm",
+      "bytes": 2359312,
+      "sha256": "7a59f3654bf22183ae26c1ad6f2aa6d47a60efe4abf5f71708e52eeddff9c8bd"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/multiple-1024x768-2x.ppm",
+      "bytes": 2359312,
+      "sha256": "0b2ff8528eaeb23621aa2e22e282f51342ff481419051e55f929cd341509b917"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/multiple-1024x768-4x.ppm",
+      "bytes": 2359312,
+      "sha256": "786f02e880344cbc6a4cf83e54c974f5c5918fc6a0b5e4c76662171bf295c68a"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/multiple-1024x768-8x.ppm",
+      "bytes": 2359312,
+      "sha256": "f7097a42bc306abd9328803e417cd93a87ec71ffa991ec8adbae7ed30b74fb01"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/multiple-800x600-1x.ppm",
+      "bytes": 1440015,
+      "sha256": "b3dd81aa6b882f759e995c4b1f73f5c23d571da972d8522c2cc0ee1f44587512"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/multiple-800x600-2x.ppm",
+      "bytes": 1440015,
+      "sha256": "1ef6eb0576ae2aeea3f84a1976d4182968847ddaccebdd49ef341441ce33d536"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/multiple-800x600-4x.ppm",
+      "bytes": 1440015,
+      "sha256": "e6e55f3424ffaff1a7df6a519f9e8f52eaa7f2d811d78868dae8322de90b81e9"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/multiple-800x600-8x.ppm",
+      "bytes": 1440015,
+      "sha256": "4eb5a92adf3f154b170e159ab0828c65aaaef7aaebb69daa13c73d8710f01796"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/note-1024x768-1x.ppm",
+      "bytes": 2359312,
+      "sha256": "9b505d23146bd912da35067c67815537bf99a416bbe53df9f9e5750f9b3be7db"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/note-1024x768-2x.ppm",
+      "bytes": 2359312,
+      "sha256": "e8efcce2cb5fd703f90c30186c4672a030cf6082d907923d635a0db372fbfb93"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/note-1024x768-4x.ppm",
+      "bytes": 2359312,
+      "sha256": "e1eacb52aec793983a6ea11baa7d47cdbe31611f241ccbb038dd4a3488cad7de"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/note-1024x768-8x.ppm",
+      "bytes": 2359312,
+      "sha256": "6d1b675e0dfdbe46d2ad78e65c05702a956449ec991d6f6a9c38e8f6b0584451"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/note-800x600-1x.ppm",
+      "bytes": 1440015,
+      "sha256": "efce030ab7f9fde4e09a6dc4dadf94729f8a354376755771bb7288fa168927ad"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/note-800x600-2x.ppm",
+      "bytes": 1440015,
+      "sha256": "4bb4de96538f9d20f1d7bdb99bcc6c8a4d6db79bc231cce4542cffcfe6d915e4"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/note-800x600-4x.ppm",
+      "bytes": 1440015,
+      "sha256": "5d8420e01bf4ce87c299cda79dd27458c653dce728a622f63e79e3ad5908f621"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/note-800x600-8x.ppm",
+      "bytes": 1440015,
+      "sha256": "9dddfe3fa11035ef44318a971c00f953f1f5e67e643654767fbc7250e1ebe8ed"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Close-1024x768-1x.ppm",
+      "bytes": 2359312,
+      "sha256": "93b7314ff7c882a38d7310b9efe370165765ff42563b54e05daf7a488794a530"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Close-1024x768-2x.ppm",
+      "bytes": 2359312,
+      "sha256": "4a223f2382ba47b6a4f974de2c84a84a9c20353a1aa9786690b868aa5d5ffc73"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Close-1024x768-4x.ppm",
+      "bytes": 2359312,
+      "sha256": "c21cc65d3e0016711510c593e14eb70aceea7fd0dba9b20dcb4cf986aad45df4"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Close-1024x768-8x.ppm",
+      "bytes": 2359312,
+      "sha256": "fa0da692c0d556e7192c85e263784b97f38a702d5d9eafff2759f5f757a5839d"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Close-800x600-1x.ppm",
+      "bytes": 1440015,
+      "sha256": "62b348842bdf0063e16e8a9dc6c66744e06b3d767068fc29617dd0a85ee5fb32"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Close-800x600-2x.ppm",
+      "bytes": 1440015,
+      "sha256": "f8dcde6ea8b6c6ddfc379d598b173f4c59ff5c710618a71157b4184cdfef76ec"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Close-800x600-4x.ppm",
+      "bytes": 1440015,
+      "sha256": "95c7213f8f857ef3b3e30916f95e4ef0f6100bac51c87d111b54e88bc008bf04"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Close-800x600-8x.ppm",
+      "bytes": 1440015,
+      "sha256": "f0c84d1e28ea4c4ade270061c2073e5c1781c092acb06709db708925754db7c2"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Error-1024x768-1x.ppm",
+      "bytes": 2359312,
+      "sha256": "d53c12d0b046d31e10ab5cbd6e4011a2dacf4e35d669912aa5a7a5c5bc135cd3"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Error-1024x768-2x.ppm",
+      "bytes": 2359312,
+      "sha256": "e427d28eaf68fb3c105fe6c88afb128f6375b753f1deaf78261ec63618cf113b"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Error-1024x768-4x.ppm",
+      "bytes": 2359312,
+      "sha256": "aee9bc0bfae1725ec8b44c01a50046bbb4cf1b6b07c9f5c948d20d82a19a4ac2"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Error-1024x768-8x.ppm",
+      "bytes": 2359312,
+      "sha256": "c70383a8789839c310af4ea6be60336287e4e4c925bdd544a08f8bbe8706c3bd"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Error-800x600-1x.ppm",
+      "bytes": 1440015,
+      "sha256": "5f138dc38f9f2682be1fb0422bb082778a12ebd57dcab589e81fc7113abe3ca2"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Error-800x600-2x.ppm",
+      "bytes": 1440015,
+      "sha256": "10bf110d97c0dd7d9539e8f034f6b7e6fa1b95333e238ecf5b47a3e1eebaa0ff"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Error-800x600-4x.ppm",
+      "bytes": 1440015,
+      "sha256": "9c298ecfa96711986427e32a806842d40730fc70173b1405366482ebac15f34f"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Error-800x600-8x.ppm",
+      "bytes": 1440015,
+      "sha256": "529d5722ac762d22251dcc555ac5a6b9e81bbb65496110d0954e184acf7759a0"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Keymap-1024x768-1x.ppm",
+      "bytes": 2359312,
+      "sha256": "26cd215e395c875d179c61a9d9baa7e8cb8a46571f54f37faa27f92aa7cc3204"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Keymap-1024x768-2x.ppm",
+      "bytes": 2359312,
+      "sha256": "4137d3f7968cac47fac928dbdf3611c53ebbadcd6ffcfa1f1f528c2eb8669c5a"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Keymap-1024x768-4x.ppm",
+      "bytes": 2359312,
+      "sha256": "b3f3a9fefedf3bb459de5ed0212f07866f10156d7139da43c7eb6402082354e7"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Keymap-1024x768-8x.ppm",
+      "bytes": 2359312,
+      "sha256": "5dd15e3bf562732c857d1e11dc2b602178a42bcc5d0d260857ed10116721b362"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Keymap-800x600-1x.ppm",
+      "bytes": 1440015,
+      "sha256": "0a9f623467dd1d65d801bf582f6c4471b8fa65ddf05bc5bb44ea22a5fe4fd910"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Keymap-800x600-2x.ppm",
+      "bytes": 1440015,
+      "sha256": "b0be3f218bda6f05ef13bc3aa4d8c0b25b46c35118ad58dccc1523b663ae264e"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Keymap-800x600-4x.ppm",
+      "bytes": 1440015,
+      "sha256": "e15fb003d5dd6c760c0b273890bcbce645e5c513aef3eb5609b02e43b58e07dc"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Keymap-800x600-8x.ppm",
+      "bytes": 1440015,
+      "sha256": "1d990eeceb8758c0957ed3558d60510272355f04bd340df0ef150344a4620765"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Preferences-1024x768-1x.ppm",
+      "bytes": 2359312,
+      "sha256": "f8aaf8284d6e1cf224a93f7493846da192c1faeefec14cb52026397abcdcd772"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Preferences-1024x768-2x.ppm",
+      "bytes": 2359312,
+      "sha256": "6d5affd3d5cbb859d6d3d1fd18dc5d22d884d5abc9c90ddcbe1bba3a7a73077a"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Preferences-1024x768-4x.ppm",
+      "bytes": 2359312,
+      "sha256": "71c512aa70c3dd1f11fd54b0938dd7c08a4c66ac90a107aaea5d3a0abb0918dd"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Preferences-1024x768-8x.ppm",
+      "bytes": 2359312,
+      "sha256": "88b6b73272d4e2d69f6f2ce4b2c0ec5d7ef5648cc920f378271b8a084f349f30"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Preferences-800x600-1x.ppm",
+      "bytes": 1440015,
+      "sha256": "f4d36a6900da7278b37aa8ba220efd8eb56a9a196369abfc48155546b9dfb93c"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Preferences-800x600-2x.ppm",
+      "bytes": 1440015,
+      "sha256": "aac4ad9d2997b7329edae97ca41ecc6bcfe566c4254c83d7149e82c4e1a38105"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Preferences-800x600-4x.ppm",
+      "bytes": 1440015,
+      "sha256": "25a04853057bf97d81df46272b96bbff53d3ae2a5043d6c2bbce917e82a0df0b"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Preferences-800x600-8x.ppm",
+      "bytes": 1440015,
+      "sha256": "1e88c9604fd8742ed08c94c6a4e7e9bef0503abefced90e42101fa0b4d83f4d0"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Recent-1024x768-1x.ppm",
+      "bytes": 2359312,
+      "sha256": "f7c8b0b61f32155962fb5ea5dfc2056755f04bf79695ba55b9aca74e202184bf"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Recent-1024x768-2x.ppm",
+      "bytes": 2359312,
+      "sha256": "578e0d6c01d624bfbf0472bcf1b20be68488f037d80c6e090183a2c8b524238f"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Recent-1024x768-4x.ppm",
+      "bytes": 2359312,
+      "sha256": "c9d4bd6537cc7c3e4682513c1db4c670d2f427b215d1819f5daf237f135d5263"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Recent-1024x768-8x.ppm",
+      "bytes": 2359312,
+      "sha256": "f8961912a541d309ad5b4417f4e4d71bae04d49e878e6c8ff236a53d94ebecaf"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Recent-800x600-1x.ppm",
+      "bytes": 1440015,
+      "sha256": "c664af5bc51c5986d854e5597647ec7c12cd8db7397f501fb958ef95ee717018"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Recent-800x600-2x.ppm",
+      "bytes": 1440015,
+      "sha256": "d563c43d104b40b18a462c2e6ec7db1e7a3c4810c528d74c10077cfb5060657b"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Recent-800x600-4x.ppm",
+      "bytes": 1440015,
+      "sha256": "be0c9b2793a79e936ac82849d0250cc9adc06e598e713689e0c1980ff9679cd2"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Recent-800x600-8x.ppm",
+      "bytes": 1440015,
+      "sha256": "67d00920671fc53ac7c87baa6305ee446fa55cc072b13a22ce87640f457b59c5"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Recovery-1024x768-1x.ppm",
+      "bytes": 2359312,
+      "sha256": "674fdb8679696e9061cb5608af8816fdff8380af4bc99935e5fc37bc5a021a30"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Recovery-1024x768-2x.ppm",
+      "bytes": 2359312,
+      "sha256": "852fa1c644c79b616c4d16fd2a5ad3f212406d72a38a8614b90eeaa3d6ddb1d4"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Recovery-1024x768-4x.ppm",
+      "bytes": 2359312,
+      "sha256": "60665726ad4e79fcdf88b1e3d2b7642ce82ca221b1cb82aed796cd88ca86fd7f"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Recovery-1024x768-8x.ppm",
+      "bytes": 2359312,
+      "sha256": "7a8c778ced00e13bcb4d53eb8c5e039209c020ee855f9ef1923fd488134a53d1"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Recovery-800x600-1x.ppm",
+      "bytes": 1440015,
+      "sha256": "cc7e8a61a365e229e129e761763199fb48468c5e2be274e12a90d15bae2dba26"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Recovery-800x600-2x.ppm",
+      "bytes": 1440015,
+      "sha256": "2bec642ea5778b58f564527e04e9bed61811df6b425b7755f31d90866aedbc32"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Recovery-800x600-4x.ppm",
+      "bytes": 1440015,
+      "sha256": "3cbe3b7072b21c25d27fe9a604a9da2bac489ec818dac6ec4902b8f1c8585523"
+    },
+    {
+      "path": "benchmark-results/phase1h-ui/panel-Recovery-800x600-8x.ppm",
+      "bytes": 1440015,
+      "sha256": "667d005902ef284d04161a61d1f1c8e15e56b5cb3c01a0ebcea407db5db51b75"
+    }
+  ],
+  "review_captures": [
+    {
+      "path": "benchmarks/phase1h-ui/application-1024x768-1x.png",
+      "bytes": 9283,
+      "sha256": "d99a7f2aebb50f73516150e61588b8bf87097d5c0d1b4d3e26d02c4309f167fc"
+    },
+    {
+      "path": "benchmarks/phase1h-ui/image-800x600-1x.png",
+      "bytes": 9093,
+      "sha256": "cc775b81d970d7fe01bac25bc001440743ec1970f68723d2219a08745a797629"
+    },
+    {
+      "path": "benchmarks/phase1h-ui/image-800x600-2x.png",
+      "bytes": 6671,
+      "sha256": "5d01d144f8039e025a31bbd017b88ac92166da463e4c54cf3396672fe7b47899"
+    },
+    {
+      "path": "benchmarks/phase1h-ui/multiple-1024x768-1x.png",
+      "bytes": 8606,
+      "sha256": "eec2c0e4e89dc77a92e406c4420d2a99d103452f1f74a6b9b5c40b4fea265452"
+    },
+    {
+      "path": "benchmarks/phase1h-ui/panel-Keymap-1024x768-2x.png",
+      "bytes": 11709,
+      "sha256": "833a4b2bd6bcd6bf370d699893d0e3c4959da523be76081958e259dfba359b34"
+    },
+    {
+      "path": "benchmarks/phase1h-ui/panel-Preferences-800x600-1x.png",
+      "bytes": 6202,
+      "sha256": "3ee5e8771f10641887bcb572281f407d8ac11f08f940fbb766624f95c1e4f2a0"
+    }
+  ],
+  "catalog_action_count": 89,
+  "native_gate": {
+    "status": "blocked",
+    "attempt": "XDG_RUNTIME_DIR=/tmp timeout 4s /tmp/tack-idle-x11/usr/bin/Xvfb :94 -screen 0 800x600x24 -nolisten tcp",
+    "exit_code": 1,
+    "log": "benchmark-results/phase1h-native/display.log",
+    "sha256": "4a746e750418879870851a022d56045aa53955eaee6b6a09931076a6bbd6b728",
+    "diagnostic": "_XSERVTransSocketCreateListener: failed to bind listener\n_XSERVTransSocketUNIXCreateListener: ...SocketCreateListener() failed\n_XSERVTransMakeAllCOTSServerListeners: failed to create listener for local\n_XSERVTransmkdir: Owner of /tmp/.X11-unix should be set to root\n_XSERVTransSocketCreateListener: failed to bind listener\n_XSERVTransSocketUNIXCreateListener: ...SocketCreateListener() failed\n_XSERVTransMakeAllCOTSServerListeners: failed to create listener for unix\n(EE) \nFatal server error:\n(EE) Cannot establish any listening sockets - Make sure an X server isn't already running(EE) \n",
+    "hardware_gpu_tested": false,
+    "human_observed": false
+  },
+  "checks": {
+    "rust_passed": 141,
+    "python_passed": 9,
+    "gpu_explicit_passed": 6,
+    "adapter_scope": "lavapipe software Vulkan, no hardware/display claim",
+    "fmt": "pass",
+    "check_all_targets_all_features": "pass",
+    "clippy_warnings_denied": "pass",
+    "rustdoc": "pass",
+    "dependency_checks": "cached advisory DB; advisories/bans/licenses/sources pass; no network refresh"
+  },
+  "binary": {
+    "path": "./bin/tack",
+    "sha256": "918843973e6e28240add6bfb7fe551200382b32dd81fa386314c5ec02bcec091",
+    "bytes": 114790776,
+    "build": "STATUS: CURRENT\ncommit: fae987c1f9006881b846b3ac171c6f10faa5a686\nprofile: release\nbuilt_utc: 2026-10-05T21:42:37Z\nbinary: ./bin/tack\nworktree_dirty: true\nsha256: 918843973e6e28240add6bfb7fe551200382b32dd81fa386314c5ec02bcec091\ncheckpoint: phase 1H \u2014 contextual UI and shared Undo/Redo; native validation pending\n",
+    "source_head": "fae987c1f9006881b846b3ac171c6f10faa5a686",
+    "worktree_dirty": true,
+    "stripped_bytes": 17794216
+  },
+  "audit_notes": [
+    "owned_menu_bytes is menu struct + item vector capacities + shortcut string capacities, not RSS or allocator metadata",
+    "overlay capacity is existing CPU quad vector payload, not driver/GPU memory",
+    "construction timings exclude context selection scan; ordering and context availability may scan document order",
+    "no idle event-loop CPU/RSS measurement possible without native display",
+    "56 menu renders plus 48 existing-panel renders; large scales test containment/scrolling, not readability"
+  ],
+  "validation_logs": [
+    {
+      "path": "benchmark-results/phase1h-validation/git-stage.log",
+      "sha256": "f0b22fdc3fddbab0ad1252eda7611d988846c7202d8f12a255a7c829a6695157"
+    },
+    {
+      "path": "benchmark-results/phase1h-validation/tack-1h-bin-final.log",
+      "sha256": "b77d833468d0d34a5aae39caf2ed12739700d23f196ab0cb806894152ac4f164"
+    },
+    {
+      "path": "benchmark-results/phase1h-validation/tack-1h-check-final.log",
+      "sha256": "731ed0f6f7744b501fa5cb031f87f337848f32bd1091870d113777b14d291814"
+    },
+    {
+      "path": "benchmark-results/phase1h-validation/tack-1h-clippy-final.log",
+      "sha256": "00bbb623bb4d0a9b84a081d5c2eabbc8dd06416e2fb58f991870cd3d8fa8cc86"
+    },
+    {
+      "path": "benchmark-results/phase1h-validation/tack-1h-context-final.log",
+      "sha256": "ab82541965a6cb0ca082de58b4b32db4867acb582b94418323f5e57d1f4c776a"
+    },
+    {
+      "path": "benchmark-results/phase1h-validation/tack-1h-deny-offline.log",
+      "sha256": "48c848d7c00ec4ee4ca48fdda5969268057f5fdbe5427bb715a3336ca75c3cb5"
+    },
+    {
+      "path": "benchmark-results/phase1h-validation/tack-1h-gpu-final.log",
+      "sha256": "277a5ced3398ee75a1d063326aa7d9f9f82dd9d649d5a9cbb4eff2e69090766c"
+    },
+    {
+      "path": "benchmark-results/phase1h-validation/tack-1h-python-final.log",
+      "sha256": "c18cb6a6ac6389c261ffcbe0bfe05b7f801044514bb633492e1a855538f7df65"
+    },
+    {
+      "path": "benchmark-results/phase1h-validation/tack-1h-quality-final.log",
+      "sha256": "970af4c5634013952928d6af2f67cb4953b87bbdac8a444b7f6d1689f15f285d"
+    },
+    {
+      "path": "benchmark-results/phase1h-validation/tack-1h-ui-final.log",
+      "sha256": "d9cba2f82925890b8ac557d70564b58b751dd438cbeae2adf42dae187ffa3164"
+    }
+  ],
+  "source_archive": {
+    "path": "benchmark-results/phase1h-handoff/source.zip",
+    "files": 187,
+    "bytes": 3418515,
+    "sha256": "fd0a7f59a6966e0f15e831b2ff34c743f1df9a86c9329a3e5f7d9eadeda220ad",
+    "scope": "tracked public source/tool/config/gfx plus five new 1H source/test/example files; excludes private briefs, untracked user gfx, build outputs and reports"
+  },
+  "git": {
+    "status": "blocked",
+    "stage_exit_code": 128,
+    "stage_error": "fatal: Unable to create '/home/gurp/softs/tack/.git/index.lock': Read-only file system",
+    "pushed": false,
+    "head": "fae987c1f9006881b846b3ac171c6f10faa5a686"
+  },
+  "advisory_database": {
+    "commit": "ef6173cbc5c50ec8166f9a5b28f07834144373ee",
+    "commit_time": "2026-10-03T10:14:03+02:00",
+    "network_refreshed": false
+  }
+}

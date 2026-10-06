@@ -1,0 +1,1430 @@
+{
+  "binary_sha256": "13b294987327090b38c563001965b902c1a860529f30688ebd64d87d071a4a71",
+  "harness_sha256": "b1b9910d0958e35bff443c645dabac2a08636f1d26c5e4a20b0235dcc133c44b",
+  "runs": [
+    {
+      "name": "1k",
+      "board_sha256": "bcb8610b28a52ebece738764aefc9ffbf48508e0f23622babacb8e35f529481f",
+      "report_sha256": "fe36c3a0c56e1fd3ae02e8cab06dbc65bea14c86f0017080b77a4f7f12dff6e3",
+      "peak_rss_bytes": 386097152,
+      "distribution_ms": {
+        "query_ms": {
+          "p50": 0.184082,
+          "p99": 0.273523,
+          "max": 0.405614
+        },
+        "scene_ms": {
+          "p50": 0.003969999999999994,
+          "p99": 0.008670000000000011,
+          "max": 0.010630000000000028
+        },
+        "supply_ms": {
+          "p50": 0.038940999999999996,
+          "p99": 1.487725,
+          "max": 4.78376
+        },
+        "encode_ms": {
+          "p50": 0.163772,
+          "p99": 0.31426400000000004,
+          "max": 0.385594
+        },
+        "submit_ms": {
+          "p50": 0.066541,
+          "p99": 0.127322,
+          "max": 0.190222
+        },
+        "poll_ms": {
+          "p50": 0.00047999999999999996,
+          "p99": 0.00153,
+          "max": 0.004719999999999999
+        },
+        "acquire_ms": {
+          "p50": 0.0207,
+          "p99": 0.036059999999999995,
+          "max": 0.057089999999999995
+        },
+        "present_ms": {
+          "p50": 37.892253000000004,
+          "p99": 52.663936,
+          "max": 92.993013
+        },
+        "callback_ms": {
+          "p50": 38.440159,
+          "p99": 53.361853,
+          "max": 94.089905
+        }
+      },
+      "episodes": [
+        {
+          "epoch": 0,
+          "entered_ms": 426.953463,
+          "useful_delay_ms": 147.96786300000002,
+          "quality_delay_ms": 485.611421
+        },
+        {
+          "epoch": 1,
+          "entered_ms": 3025.024358,
+          "useful_delay_ms": 38.92956400000003,
+          "quality_delay_ms": 238.63347299999987
+        },
+        {
+          "epoch": 2,
+          "entered_ms": 5021.538842,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 159.60896400000001
+        },
+        {
+          "epoch": 3,
+          "entered_ms": 7037.79545,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 246.48875400000088
+        },
+        {
+          "epoch": 4,
+          "entered_ms": 9033.436835,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 0.0
+        },
+        {
+          "epoch": 5,
+          "entered_ms": 11001.588414,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 0.0
+        },
+        {
+          "epoch": 6,
+          "entered_ms": 13020.140566,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 0.0
+        },
+        {
+          "epoch": 7,
+          "entered_ms": 15033.875589000001,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 0.0
+        }
+      ],
+      "first_useful_ms": 574.921326,
+      "max_visible": 9,
+      "max_detailed": 9,
+      "peak_gpu_payload": 51691520,
+      "peak_cpu_payload": 50790400,
+      "peak_pending": 16,
+      "peak_queued": 14,
+      "cpu_evictions": 2,
+      "discarded": 0,
+      "reprioritized": 1,
+      "source_bytes": 325351,
+      "container_bytes": 543683,
+      "metadata_ms": 1.196632,
+      "gpu_ms_p99": 1.417536,
+      "first_frame_ms": 426.953463,
+      "native_startup_ms": 410.711285,
+      "gpu_setup_ms": 388.87154899999996,
+      "metadata_bytes": 150008,
+      "visibility_memo_bytes": 0,
+      "navigation_end_pending": 0,
+      "errors": 0,
+      "drain_ms": 0.03961,
+      "max_upload_bytes": 10485760,
+      "max_uploads": 2,
+      "episode_scope": "first callback in scripted two-second camera epoch; includes initial load; unfinished epochs censored"
+    },
+    {
+      "name": "5k",
+      "board_sha256": "69578491c82c633925611d8da7ba52989035c2a6bc0997b82ea6ae9929571430",
+      "report_sha256": "9ca1ab439e80d4a0297a60eb908b6155962f3a87779da3477b9da72835e9d9e8",
+      "peak_rss_bytes": 391294976,
+      "distribution_ms": {
+        "query_ms": {
+          "p50": 0.052601,
+          "p99": 0.089061,
+          "max": 0.546285
+        },
+        "scene_ms": {
+          "p50": 0.004410000000000001,
+          "p99": 0.00921,
+          "max": 0.01079999999999992
+        },
+        "supply_ms": {
+          "p50": 0.033850000000000005,
+          "p99": 1.672997,
+          "max": 5.060671999999999
+        },
+        "encode_ms": {
+          "p50": 0.174282,
+          "p99": 0.293293,
+          "max": 0.336754
+        },
+        "submit_ms": {
+          "p50": 0.066591,
+          "p99": 0.152871,
+          "max": 0.201252
+        },
+        "poll_ms": {
+          "p50": 0.00043,
+          "p99": 0.0011400000000000002,
+          "max": 0.00946
+        },
+        "acquire_ms": {
+          "p50": 0.024541,
+          "p99": 0.035809999999999995,
+          "max": 0.05478
+        },
+        "present_ms": {
+          "p50": 37.68393,
+          "p99": 46.117647999999996,
+          "max": 67.656151
+        },
+        "callback_ms": {
+          "p50": 38.111295000000005,
+          "p99": 47.874646,
+          "max": 72.919726
+        }
+      },
+      "episodes": [
+        {
+          "epoch": 0,
+          "entered_ms": 512.5361800000001,
+          "useful_delay_ms": 147.9700929999999,
+          "quality_delay_ms": 485.4602789999999
+        },
+        {
+          "epoch": 1,
+          "entered_ms": 3000.3598629999997,
+          "useful_delay_ms": 158.94811700000037,
+          "quality_delay_ms": 522.3586020000002
+        },
+        {
+          "epoch": 2,
+          "entered_ms": 5027.916778,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 130.1146090000002
+        },
+        {
+          "epoch": 3,
+          "entered_ms": 7040.350577,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 252.85545999999977
+        },
+        {
+          "epoch": 4,
+          "entered_ms": 9035.782598999998,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 0.0
+        },
+        {
+          "epoch": 5,
+          "entered_ms": 11005.781917,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 0.0
+        },
+        {
+          "epoch": 6,
+          "entered_ms": 13010.650936999999,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 0.0
+        },
+        {
+          "epoch": 7,
+          "entered_ms": 15034.16757,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 0.0
+        }
+      ],
+      "first_useful_ms": 660.506273,
+      "max_visible": 9,
+      "max_detailed": 9,
+      "peak_gpu_payload": 54476800,
+      "peak_cpu_payload": 51118080,
+      "peak_pending": 16,
+      "peak_queued": 14,
+      "cpu_evictions": 6,
+      "discarded": 0,
+      "reprioritized": 1,
+      "source_bytes": 397743,
+      "container_bytes": 1211969,
+      "metadata_ms": 10.374097,
+      "gpu_ms_p99": 1.53152,
+      "first_frame_ms": 512.5361800000001,
+      "native_startup_ms": 494.602224,
+      "gpu_setup_ms": 473.33608399999997,
+      "metadata_bytes": 690008,
+      "visibility_memo_bytes": 393216,
+      "navigation_end_pending": 0,
+      "errors": 0,
+      "drain_ms": 0.039611,
+      "max_upload_bytes": 10485760,
+      "max_uploads": 2,
+      "episode_scope": "first callback in scripted two-second camera epoch; includes initial load; unfinished epochs censored"
+    },
+    {
+      "name": "50k",
+      "board_sha256": "d540b97deaf9ab3a73b5bd2dfdda60ace0869d97039fa42e07752feb4981597b",
+      "report_sha256": "690991bb01219aa3196683bd607ec569d6a288e90832d15c4e0662b801dc0e1d",
+      "peak_rss_bytes": 418877440,
+      "distribution_ms": {
+        "query_ms": {
+          "p50": 0.371153,
+          "p99": 0.467215,
+          "max": 10.324857
+        },
+        "scene_ms": {
+          "p50": 0.00421999999999996,
+          "p99": 0.00868999999999992,
+          "max": 0.013509999999999966
+        },
+        "supply_ms": {
+          "p50": 0.042301,
+          "p99": 1.492585,
+          "max": 4.613627
+        },
+        "encode_ms": {
+          "p50": 0.17110199999999998,
+          "p99": 0.258853,
+          "max": 0.341624
+        },
+        "submit_ms": {
+          "p50": 0.065471,
+          "p99": 0.11633099999999999,
+          "max": 0.142472
+        },
+        "poll_ms": {
+          "p50": 0.00039000000000000005,
+          "p99": 0.0008500000000000001,
+          "max": 0.00741
+        },
+        "acquire_ms": {
+          "p50": 0.02124,
+          "p99": 0.031721,
+          "max": 0.0554
+        },
+        "present_ms": {
+          "p50": 37.087214,
+          "p99": 44.46551,
+          "max": 50.425083
+        },
+        "callback_ms": {
+          "p50": 37.801331,
+          "p99": 47.792945,
+          "max": 50.982078
+        }
+      },
+      "episodes": [
+        {
+          "epoch": 0,
+          "entered_ms": 459.27563799999996,
+          "useful_delay_ms": 149.48053800000002,
+          "quality_delay_ms": 490.76285400000006
+        },
+        {
+          "epoch": 1,
+          "entered_ms": 3035.1474930000004,
+          "useful_delay_ms": 147.12665499999957,
+          "quality_delay_ms": 484.96586499999967
+        },
+        {
+          "epoch": 2,
+          "entered_ms": 5018.4788100000005,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 122.08167499999945
+        },
+        {
+          "epoch": 3,
+          "entered_ms": 7004.367714,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 245.9247779999996
+        },
+        {
+          "epoch": 4,
+          "entered_ms": 9023.888385999999,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 0.0
+        },
+        {
+          "epoch": 5,
+          "entered_ms": 11000.559474,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 0.0
+        },
+        {
+          "epoch": 6,
+          "entered_ms": 13035.658587,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 0.0
+        },
+        {
+          "epoch": 7,
+          "entered_ms": 15004.716256,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 0.0
+        }
+      ],
+      "first_useful_ms": 608.756176,
+      "max_visible": 9,
+      "max_detailed": 9,
+      "peak_gpu_payload": 54476800,
+      "peak_cpu_payload": 51118080,
+      "peak_pending": 16,
+      "peak_queued": 14,
+      "cpu_evictions": 6,
+      "discarded": 0,
+      "reprioritized": 1,
+      "source_bytes": 397825,
+      "container_bytes": 7285911,
+      "metadata_ms": 67.52136,
+      "gpu_ms_p99": 1.603168,
+      "first_frame_ms": 459.27563799999996,
+      "native_startup_ms": 415.047639,
+      "gpu_setup_ms": 389.373913,
+      "metadata_bytes": 6765008,
+      "visibility_memo_bytes": 3145728,
+      "navigation_end_pending": 0,
+      "errors": 0,
+      "drain_ms": 0.04279,
+      "max_upload_bytes": 10485760,
+      "max_uploads": 2,
+      "episode_scope": "first callback in scripted two-second camera epoch; includes initial load; unfinished epochs censored"
+    },
+    {
+      "name": "10k-shapes",
+      "board_sha256": "bca58665367c5d44d27ef2cabb2c58eee77c9586b3b091e9531e112d6f6237af",
+      "report_sha256": "f5846d32e2d63d23d6567a3ce572d5c98864d0b8bc6c2a063d4ac3848e5fd00c",
+      "peak_rss_bytes": 328515584,
+      "distribution_ms": {
+        "query_ms": {
+          "p50": 1.5288059999999999,
+          "p99": 1.654007,
+          "max": 1.909209
+        },
+        "scene_ms": {
+          "p50": 0.002170000000000122,
+          "p99": 0.003100000000000134,
+          "max": 0.007190000000000001
+        },
+        "supply_ms": {
+          "p50": 0.0036899999999999997,
+          "p99": 0.0056300000000000005,
+          "max": 0.011
+        },
+        "encode_ms": {
+          "p50": 0.093251,
+          "p99": 0.128361,
+          "max": 2.1143720000000004
+        },
+        "submit_ms": {
+          "p50": 0.040141,
+          "p99": 0.0629,
+          "max": 0.07454100000000001
+        },
+        "poll_ms": {
+          "p50": 0.00046,
+          "p99": 0.0009299999999999999,
+          "max": 0.00705
+        },
+        "acquire_ms": {
+          "p50": 0.016399999999999998,
+          "p99": 0.02982,
+          "max": 0.05652
+        },
+        "present_ms": {
+          "p50": 37.103034,
+          "p99": 45.648053000000004,
+          "max": 47.946717
+        },
+        "callback_ms": {
+          "p50": 40.55258,
+          "p99": 49.132849,
+          "max": 51.370062000000004
+        }
+      },
+      "episodes": [
+        {
+          "epoch": 0,
+          "entered_ms": 411.04859799999997,
+          "useful_delay_ms": null,
+          "quality_delay_ms": null
+        },
+        {
+          "epoch": 1,
+          "entered_ms": 3018.486351,
+          "useful_delay_ms": null,
+          "quality_delay_ms": null
+        },
+        {
+          "epoch": 2,
+          "entered_ms": 5009.024982,
+          "useful_delay_ms": null,
+          "quality_delay_ms": null
+        },
+        {
+          "epoch": 3,
+          "entered_ms": 7034.531886,
+          "useful_delay_ms": null,
+          "quality_delay_ms": null
+        },
+        {
+          "epoch": 4,
+          "entered_ms": 9021.495931000001,
+          "useful_delay_ms": null,
+          "quality_delay_ms": null
+        },
+        {
+          "epoch": 5,
+          "entered_ms": 11017.738762,
+          "useful_delay_ms": null,
+          "quality_delay_ms": null
+        },
+        {
+          "epoch": 6,
+          "entered_ms": 13042.071804000001,
+          "useful_delay_ms": null,
+          "quality_delay_ms": null
+        },
+        {
+          "epoch": 7,
+          "entered_ms": 15017.073913999999,
+          "useful_delay_ms": null,
+          "quality_delay_ms": null
+        }
+      ],
+      "first_useful_ms": null,
+      "max_visible": 0,
+      "max_detailed": 0,
+      "peak_gpu_payload": 0,
+      "peak_cpu_payload": 0,
+      "peak_pending": 0,
+      "peak_queued": 0,
+      "cpu_evictions": 0,
+      "discarded": 0,
+      "reprioritized": 0,
+      "source_bytes": 0,
+      "container_bytes": 1070100,
+      "metadata_ms": 9.518418,
+      "gpu_ms_p99": 0.128192,
+      "first_frame_ms": 411.04859799999997,
+      "native_startup_ms": 385.724696,
+      "gpu_setup_ms": 361.142902,
+      "metadata_bytes": 1070100,
+      "visibility_memo_bytes": 0,
+      "navigation_end_pending": 0,
+      "errors": 0,
+      "drain_ms": 0.042761,
+      "max_upload_bytes": 0,
+      "max_uploads": 0,
+      "episode_scope": "first callback in scripted two-second camera epoch; includes initial load; unfinished epochs censored"
+    },
+    {
+      "name": "mixed",
+      "board_sha256": "8b18c11a651259ead78d0e9e6632219248f5cb1bb8767cbcc5233c90dfc8cf29",
+      "report_sha256": "3c621e2e81e827a94d42e1aef9ca27fb896233aeb82665b4d79c726d34022c06",
+      "peak_rss_bytes": 410468352,
+      "distribution_ms": {
+        "query_ms": {
+          "p50": 0.203903,
+          "p99": 0.24636200000000003,
+          "max": 0.265143
+        },
+        "scene_ms": {
+          "p50": 0.01173999999999998,
+          "p99": 0.0374509999999999,
+          "max": 0.08244099999999999
+        },
+        "supply_ms": {
+          "p50": 0.08202100000000001,
+          "p99": 3.9157610000000003,
+          "max": 6.394376
+        },
+        "encode_ms": {
+          "p50": 0.18476199999999998,
+          "p99": 0.33280400000000004,
+          "max": 1.9637410000000002
+        },
+        "submit_ms": {
+          "p50": 0.057151,
+          "p99": 0.126281,
+          "max": 0.15876200000000001
+        },
+        "poll_ms": {
+          "p50": 0.00045,
+          "p99": 0.00109,
+          "max": 0.00475
+        },
+        "acquire_ms": {
+          "p50": 0.020551,
+          "p99": 0.03288,
+          "max": 0.053181
+        },
+        "present_ms": {
+          "p50": 37.692831000000005,
+          "p99": 45.842225,
+          "max": 55.524305000000005
+        },
+        "callback_ms": {
+          "p50": 38.401058,
+          "p99": 48.730685,
+          "max": 62.392636
+        }
+      },
+      "episodes": [
+        {
+          "epoch": 0,
+          "entered_ms": 423.509297,
+          "useful_delay_ms": 367.39841700000005,
+          "quality_delay_ms": 1349.605612
+        },
+        {
+          "epoch": 1,
+          "entered_ms": 3000.016979,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 0.0
+        },
+        {
+          "epoch": 2,
+          "entered_ms": 5024.105339,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 510.0627540000005
+        },
+        {
+          "epoch": 3,
+          "entered_ms": 7023.536623,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 226.8446100000001
+        },
+        {
+          "epoch": 4,
+          "entered_ms": 9015.935674,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 777.011258999999
+        },
+        {
+          "epoch": 5,
+          "entered_ms": 11038.330885000001,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 738.8969049999978
+        },
+        {
+          "epoch": 6,
+          "entered_ms": 13025.659394,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 137.69341599999825
+        },
+        {
+          "epoch": 7,
+          "entered_ms": 15036.454945,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 90.22116500000084
+        }
+      ],
+      "first_useful_ms": 790.907714,
+      "max_visible": 30,
+      "max_detailed": 30,
+      "peak_gpu_payload": 68648960,
+      "peak_cpu_payload": 52387840,
+      "peak_pending": 16,
+      "peak_queued": 15,
+      "cpu_evictions": 89,
+      "discarded": 2,
+      "reprioritized": 15,
+      "source_bytes": 904021,
+      "container_bytes": 1196284,
+      "metadata_ms": 1.248593,
+      "gpu_ms_p99": 1.467296,
+      "first_frame_ms": 423.509297,
+      "native_startup_ms": 406.04906600000004,
+      "gpu_setup_ms": 380.777034,
+      "metadata_bytes": 164517,
+      "visibility_memo_bytes": 0,
+      "navigation_end_pending": 0,
+      "errors": 0,
+      "drain_ms": 0.041941,
+      "max_upload_bytes": 10485760,
+      "max_uploads": 5,
+      "episode_scope": "first callback in scripted two-second camera epoch; includes initial load; unfinished epochs censored"
+    },
+    {
+      "name": "sparse",
+      "board_sha256": "c23f6c9d38c364d9fd30a9c2a91f9b6976401a4a08763fb57ef02f9a802a9c14",
+      "report_sha256": "8bd3a9fb5d9ebb5773ea36c35f2de2c7baa7a54c4586beee9186f46d8da5c762",
+      "peak_rss_bytes": 365707264,
+      "distribution_ms": {
+        "query_ms": {
+          "p50": 0.047871000000000004,
+          "p99": 0.072841,
+          "max": 0.5312560000000001
+        },
+        "scene_ms": {
+          "p50": 0.004470000000000009,
+          "p99": 0.00917999999999991,
+          "max": 0.012389999999999991
+        },
+        "supply_ms": {
+          "p50": 0.02819,
+          "p99": 0.44005500000000003,
+          "max": 4.134952
+        },
+        "encode_ms": {
+          "p50": 0.176532,
+          "p99": 0.254813,
+          "max": 0.301103
+        },
+        "submit_ms": {
+          "p50": 0.06632,
+          "p99": 0.148441,
+          "max": 0.205242
+        },
+        "poll_ms": {
+          "p50": 0.00051,
+          "p99": 0.0011099999999999999,
+          "max": 0.00668
+        },
+        "acquire_ms": {
+          "p50": 0.02512,
+          "p99": 0.03218,
+          "max": 0.05407
+        },
+        "present_ms": {
+          "p50": 35.999033,
+          "p99": 46.196339,
+          "max": 50.605134
+        },
+        "callback_ms": {
+          "p50": 36.409957,
+          "p99": 46.614283,
+          "max": 54.969209
+        }
+      },
+      "episodes": [
+        {
+          "epoch": 0,
+          "entered_ms": 430.38858899999997,
+          "useful_delay_ms": 111.584406,
+          "quality_delay_ms": 337.465346
+        },
+        {
+          "epoch": 1,
+          "entered_ms": 3015.395319,
+          "useful_delay_ms": 109.56110499999977,
+          "quality_delay_ms": 333.99437999999964
+        },
+        {
+          "epoch": 2,
+          "entered_ms": 5005.274034,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 157.60900300000048
+        },
+        {
+          "epoch": 3,
+          "entered_ms": 7019.267658999999,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 113.3003030000009
+        },
+        {
+          "epoch": 4,
+          "entered_ms": 9024.30644,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 0.0
+        },
+        {
+          "epoch": 5,
+          "entered_ms": 11000.665475,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 0.0
+        },
+        {
+          "epoch": 6,
+          "entered_ms": 13004.457973999999,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 0.0
+        },
+        {
+          "epoch": 7,
+          "entered_ms": 15031.730577,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 0.0
+        }
+      ],
+      "first_useful_ms": 541.972995,
+      "max_visible": 6,
+      "max_detailed": 6,
+      "peak_gpu_payload": 29327360,
+      "peak_cpu_payload": 29491200,
+      "peak_pending": 14,
+      "peak_queued": 12,
+      "cpu_evictions": 0,
+      "discarded": 0,
+      "reprioritized": 0,
+      "source_bytes": 253015,
+      "container_bytes": 953187,
+      "metadata_ms": 6.217524,
+      "gpu_ms_p99": 1.165056,
+      "first_frame_ms": 430.38858899999997,
+      "native_startup_ms": 412.495843,
+      "gpu_setup_ms": 387.618105,
+      "metadata_bytes": 690008,
+      "visibility_memo_bytes": 393216,
+      "navigation_end_pending": 0,
+      "errors": 0,
+      "drain_ms": 0.038821,
+      "max_upload_bytes": 10485760,
+      "max_uploads": 2,
+      "episode_scope": "first callback in scripted two-second camera epoch; includes initial load; unfinished epochs censored"
+    },
+    {
+      "name": "potato-5k",
+      "board_sha256": "69578491c82c633925611d8da7ba52989035c2a6bc0997b82ea6ae9929571430",
+      "report_sha256": "37a19c94fbecac79c51f7054f12139f7bf710d063f7ba27950959ad90d1a8547",
+      "peak_rss_bytes": 338837504,
+      "distribution_ms": {
+        "query_ms": {
+          "p50": 0.046891,
+          "p99": 0.067051,
+          "max": 0.546536
+        },
+        "scene_ms": {
+          "p50": 0.003970000000000001,
+          "p99": 0.00784000000000007,
+          "max": 0.010840000000000002
+        },
+        "supply_ms": {
+          "p50": 0.036291000000000004,
+          "p99": 0.432205,
+          "max": 1.661867
+        },
+        "encode_ms": {
+          "p50": 0.15574100000000002,
+          "p99": 0.260153,
+          "max": 0.311154
+        },
+        "submit_ms": {
+          "p50": 0.061191,
+          "p99": 0.118701,
+          "max": 0.15782200000000002
+        },
+        "poll_ms": {
+          "p50": 0.00046,
+          "p99": 0.00165,
+          "max": 0.0069299999999999995
+        },
+        "acquire_ms": {
+          "p50": 0.02064,
+          "p99": 0.02994,
+          "max": 0.037851
+        },
+        "present_ms": {
+          "p50": 36.899902,
+          "p99": 43.718073000000004,
+          "max": 48.736405
+        },
+        "callback_ms": {
+          "p50": 37.252356,
+          "p99": 43.983236000000005,
+          "max": 49.041838
+        }
+      },
+      "episodes": [
+        {
+          "epoch": 0,
+          "entered_ms": 425.44957700000003,
+          "useful_delay_ms": 293.05470599999995,
+          "quality_delay_ms": 622.8050019999998
+        },
+        {
+          "epoch": 1,
+          "entered_ms": 3019.972796,
+          "useful_delay_ms": 290.2812469999999,
+          "quality_delay_ms": 627.0794060000003
+        },
+        {
+          "epoch": 2,
+          "entered_ms": 5003.94718,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 75.5852130000003
+        },
+        {
+          "epoch": 3,
+          "entered_ms": 7012.73237,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 0.0
+        },
+        {
+          "epoch": 4,
+          "entered_ms": 9018.476079999999,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 206.04023400000187
+        },
+        {
+          "epoch": 5,
+          "entered_ms": 11002.625905,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 215.57679300000018
+        },
+        {
+          "epoch": 6,
+          "entered_ms": 13027.864306,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 75.20962899999904
+        },
+        {
+          "epoch": 7,
+          "entered_ms": 15034.06797,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 0.0
+        }
+      ],
+      "first_useful_ms": 718.504283,
+      "max_visible": 9,
+      "max_detailed": 8,
+      "peak_gpu_payload": 8601600,
+      "peak_cpu_payload": 7208960,
+      "peak_pending": 4,
+      "peak_queued": 3,
+      "cpu_evictions": 21,
+      "discarded": 1,
+      "reprioritized": 0,
+      "source_bytes": 307387,
+      "container_bytes": 1211969,
+      "metadata_ms": 9.516528,
+      "gpu_ms_p99": 0.302496,
+      "first_frame_ms": 425.44957700000003,
+      "native_startup_ms": 407.663893,
+      "gpu_setup_ms": 386.649466,
+      "metadata_bytes": 690008,
+      "visibility_memo_bytes": 393216,
+      "navigation_end_pending": 0,
+      "errors": 0,
+      "drain_ms": 0.03942,
+      "max_upload_bytes": 655360,
+      "max_uploads": 1,
+      "episode_scope": "first callback in scripted two-second camera epoch; includes initial load; unfinished epochs censored"
+    },
+    {
+      "name": "sparse-immediate",
+      "board_sha256": "c23f6c9d38c364d9fd30a9c2a91f9b6976401a4a08763fb57ef02f9a802a9c14",
+      "report_sha256": "bdbee6e439091640cf3901f93ac18285333e498c1ee795829f6f3113e63bc482",
+      "peak_rss_bytes": 365420544,
+      "distribution_ms": {
+        "query_ms": {
+          "p50": 0.03762,
+          "p99": 0.060411,
+          "max": 0.674117
+        },
+        "scene_ms": {
+          "p50": 0.003720000000000001,
+          "p99": 0.008140000000000036,
+          "max": 0.012581000000000009
+        },
+        "supply_ms": {
+          "p50": 0.01927,
+          "p99": 0.426865,
+          "max": 3.9773910000000003
+        },
+        "encode_ms": {
+          "p50": 0.14327099999999998,
+          "p99": 0.228913,
+          "max": 0.324994
+        },
+        "submit_ms": {
+          "p50": 0.058360999999999996,
+          "p99": 0.107961,
+          "max": 0.225163
+        },
+        "poll_ms": {
+          "p50": 0.00045,
+          "p99": 0.0011200000000000001,
+          "max": 0.005691
+        },
+        "acquire_ms": {
+          "p50": 0.01886,
+          "p99": 0.032690000000000004,
+          "max": 0.048411
+        },
+        "present_ms": {
+          "p50": 37.221125,
+          "p99": 45.528831,
+          "max": 52.695686
+        },
+        "callback_ms": {
+          "p50": 37.544239,
+          "p99": 45.989637,
+          "max": 53.05367
+        }
+      },
+      "episodes": [
+        {
+          "epoch": 0,
+          "entered_ms": 422.693939,
+          "useful_delay_ms": 111.784178,
+          "quality_delay_ms": 336.8061
+        },
+        {
+          "epoch": 1,
+          "entered_ms": 3015.937175,
+          "useful_delay_ms": 109.546065,
+          "quality_delay_ms": 333.5706960000002
+        },
+        {
+          "epoch": 2,
+          "entered_ms": 5013.872523,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 158.15466899999956
+        },
+        {
+          "epoch": 3,
+          "entered_ms": 7013.661921,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 118.11069299999963
+        },
+        {
+          "epoch": 4,
+          "entered_ms": 9020.082208,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 0.0
+        },
+        {
+          "epoch": 5,
+          "entered_ms": 11021.455782,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 0.0
+        },
+        {
+          "epoch": 6,
+          "entered_ms": 13030.632727,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 0.0
+        },
+        {
+          "epoch": 7,
+          "entered_ms": 15037.611629,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 0.0
+        }
+      ],
+      "first_useful_ms": 534.478117,
+      "max_visible": 6,
+      "max_detailed": 6,
+      "peak_gpu_payload": 29327360,
+      "peak_cpu_payload": 29491200,
+      "peak_pending": 14,
+      "peak_queued": 12,
+      "cpu_evictions": 0,
+      "discarded": 0,
+      "reprioritized": 0,
+      "source_bytes": 253015,
+      "container_bytes": 953187,
+      "metadata_ms": 6.6018680000000005,
+      "gpu_ms_p99": 1.394848,
+      "first_frame_ms": 422.693939,
+      "native_startup_ms": 404.486971,
+      "gpu_setup_ms": 383.008638,
+      "metadata_bytes": 690008,
+      "visibility_memo_bytes": 393216,
+      "navigation_end_pending": 0,
+      "errors": 0,
+      "drain_ms": 0.037761,
+      "max_upload_bytes": 10485760,
+      "max_uploads": 2,
+      "episode_scope": "first callback in scripted two-second camera epoch; includes initial load; unfinished epochs censored"
+    },
+    {
+      "name": "dense-5k",
+      "board_sha256": "69578491c82c633925611d8da7ba52989035c2a6bc0997b82ea6ae9929571430",
+      "report_sha256": "5aaa39f8d65d129c306acb9e1b3ff0d5a1c5bb116babe4e37900f9357c8c3f42",
+      "peak_rss_bytes": 324202496,
+      "distribution_ms": {
+        "query_ms": {
+          "p50": 1.05725,
+          "p99": 1.167562,
+          "max": 1.7025880000000002
+        },
+        "scene_ms": {
+          "p50": 0.15093099999999993,
+          "p99": 0.2789129999999993,
+          "max": 0.28694299999999995
+        },
+        "supply_ms": {
+          "p50": 4.815591,
+          "p99": 5.315915,
+          "max": 5.376966
+        },
+        "encode_ms": {
+          "p50": 2.1554130000000002,
+          "p99": 2.2858940000000003,
+          "max": 4.132383
+        },
+        "submit_ms": {
+          "p50": 0.04475,
+          "p99": 0.056410999999999996,
+          "max": 0.0639
+        },
+        "poll_ms": {
+          "p50": 0.0006,
+          "p99": 0.00119,
+          "max": 0.006059999999999999
+        },
+        "acquire_ms": {
+          "p50": 0.02643,
+          "p99": 0.03175,
+          "max": 0.03499
+        },
+        "present_ms": {
+          "p50": 36.284746,
+          "p99": 37.137425,
+          "max": 37.405578
+        },
+        "callback_ms": {
+          "p50": 44.749223,
+          "p99": 45.672503000000006,
+          "max": 46.38575
+        }
+      },
+      "episodes": [
+        {
+          "epoch": 0,
+          "entered_ms": 424.521598,
+          "useful_delay_ms": 1168.9661110000002,
+          "quality_delay_ms": 1434.8757850000002
+        }
+      ],
+      "first_useful_ms": 1593.4877090000002,
+      "max_visible": 5000,
+      "max_detailed": 0,
+      "peak_gpu_payload": 163840,
+      "peak_cpu_payload": 163840,
+      "peak_pending": 16,
+      "peak_queued": 14,
+      "cpu_evictions": 0,
+      "discarded": 0,
+      "reprioritized": 0,
+      "source_bytes": 0,
+      "container_bytes": 1737890,
+      "metadata_ms": 7.972382,
+      "gpu_ms_p99": 0.126816,
+      "first_frame_ms": 424.521598,
+      "native_startup_ms": 398.224086,
+      "gpu_setup_ms": 372.947484,
+      "metadata_bytes": 690008,
+      "visibility_memo_bytes": 393216,
+      "navigation_end_pending": 0,
+      "errors": 0,
+      "drain_ms": 0.010920000000000001,
+      "max_upload_bytes": 5120,
+      "max_uploads": 2,
+      "episode_scope": "static view; elapsed epochs are not camera jumps"
+    },
+    {
+      "name": "dense-potato",
+      "board_sha256": "69578491c82c633925611d8da7ba52989035c2a6bc0997b82ea6ae9929571430",
+      "report_sha256": "18a36b7c6feeb22ca07d8ceddd489c4eec00629ead7cfc812d0bf84d33401abc",
+      "peak_rss_bytes": 323792896,
+      "distribution_ms": {
+        "query_ms": {
+          "p50": 1.046981,
+          "p99": 1.1581919999999999,
+          "max": 1.606386
+        },
+        "scene_ms": {
+          "p50": 0.15257199999999926,
+          "p99": 0.28383299999999956,
+          "max": 0.284243
+        },
+        "supply_ms": {
+          "p50": 4.754289,
+          "p99": 5.279085,
+          "max": 5.846031
+        },
+        "encode_ms": {
+          "p50": 2.191913,
+          "p99": 2.480866,
+          "max": 4.167663
+        },
+        "submit_ms": {
+          "p50": 0.043681,
+          "p99": 0.05735,
+          "max": 0.066071
+        },
+        "poll_ms": {
+          "p50": 0.00047999999999999996,
+          "p99": 0.00094,
+          "max": 0.00527
+        },
+        "acquire_ms": {
+          "p50": 0.026461,
+          "p99": 0.030510000000000002,
+          "max": 0.03056
+        },
+        "present_ms": {
+          "p50": 36.199666,
+          "p99": 37.065644,
+          "max": 37.681681000000005
+        },
+        "callback_ms": {
+          "p50": 44.43397,
+          "p99": 46.023506999999995,
+          "max": 46.151228
+        }
+      },
+      "episodes": [
+        {
+          "epoch": 0,
+          "entered_ms": 427.233556,
+          "useful_delay_ms": 2325.789515,
+          "quality_delay_ms": null
+        },
+        {
+          "epoch": 1,
+          "entered_ms": 3019.6440230000003,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 267.13087700000005
+        }
+      ],
+      "first_useful_ms": 2753.023071,
+      "max_visible": 5000,
+      "max_detailed": 0,
+      "peak_gpu_payload": 40960,
+      "peak_cpu_payload": 40960,
+      "peak_pending": 4,
+      "peak_queued": 3,
+      "cpu_evictions": 0,
+      "discarded": 0,
+      "reprioritized": 0,
+      "source_bytes": 0,
+      "container_bytes": 1737890,
+      "metadata_ms": 9.093194,
+      "gpu_ms_p99": 0.125056,
+      "first_frame_ms": 427.233556,
+      "native_startup_ms": 401.19190599999996,
+      "gpu_setup_ms": 377.279859,
+      "metadata_bytes": 690008,
+      "visibility_memo_bytes": 393216,
+      "navigation_end_pending": 0,
+      "errors": 0,
+      "drain_ms": 0.01167,
+      "max_upload_bytes": 640,
+      "max_uploads": 1,
+      "episode_scope": "static view; elapsed epochs are not camera jumps"
+    },
+    {
+      "name": "oversubscribed-highlod",
+      "board_sha256": "ec09334c0235bd463a520ed7d1058737fad6534a3f48acee93ae0849d9a6ab10",
+      "report_sha256": "55ad48d16a3c3d961bc3dbb532b72db4961ae9429bcf00886ac649b625b6a7ed",
+      "peak_rss_bytes": 379408384,
+      "distribution_ms": {
+        "query_ms": {
+          "p50": 1.038333,
+          "p99": 1.159173,
+          "max": 1.653484
+        },
+        "scene_ms": {
+          "p50": 0.1816709999999997,
+          "p99": 0.28475100000000175,
+          "max": 0.28859100000000115
+        },
+        "supply_ms": {
+          "p50": 4.928902,
+          "p99": 8.340629999999999,
+          "max": 8.790861000000001
+        },
+        "encode_ms": {
+          "p50": 2.128834,
+          "p99": 2.507386,
+          "max": 4.05942
+        },
+        "submit_ms": {
+          "p50": 0.044,
+          "p99": 0.05366,
+          "max": 0.05766
+        },
+        "poll_ms": {
+          "p50": 0.00045,
+          "p99": 0.00092,
+          "max": 0.00597
+        },
+        "acquire_ms": {
+          "p50": 0.02316,
+          "p99": 0.0297,
+          "max": 0.031010000000000003
+        },
+        "present_ms": {
+          "p50": 58.28911,
+          "p99": 65.004237,
+          "max": 66.99574199999999
+        },
+        "callback_ms": {
+          "p50": 66.57197099999999,
+          "p99": 76.427024,
+          "max": 77.670857
+        }
+      },
+      "episodes": [
+        {
+          "epoch": 0,
+          "entered_ms": 418.08516699999996,
+          "useful_delay_ms": 1737.1476559999999,
+          "quality_delay_ms": null
+        },
+        {
+          "epoch": 1,
+          "entered_ms": 3041.93234,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 71.19234099999994
+        }
+      ],
+      "first_useful_ms": 2155.232823,
+      "max_visible": 5000,
+      "max_detailed": 313,
+      "peak_gpu_payload": 42106880,
+      "peak_cpu_payload": 42106880,
+      "peak_pending": 16,
+      "peak_queued": 14,
+      "cpu_evictions": 0,
+      "discarded": 0,
+      "reprioritized": 0,
+      "source_bytes": 72294,
+      "container_bytes": 1737890,
+      "metadata_ms": 9.076722,
+      "gpu_ms_p99": 25.45808,
+      "first_frame_ms": 418.08516699999996,
+      "native_startup_ms": 392.161195,
+      "gpu_setup_ms": 367.332456,
+      "metadata_bytes": 690008,
+      "visibility_memo_bytes": 393216,
+      "navigation_end_pending": 0,
+      "errors": 0,
+      "drain_ms": 0.01116,
+      "max_upload_bytes": 10485760,
+      "max_uploads": 2,
+      "episode_scope": "static view; elapsed epochs are not camera jumps"
+    },
+    {
+      "name": "oversubscribed-potato",
+      "board_sha256": "ec09334c0235bd463a520ed7d1058737fad6534a3f48acee93ae0849d9a6ab10",
+      "report_sha256": "828070d7b075e34dc2384e0ea99d6e7f0dac8580a6d24dfa3561cf85c5eda0c4",
+      "peak_rss_bytes": 334438400,
+      "distribution_ms": {
+        "query_ms": {
+          "p50": 1.042983,
+          "p99": 1.2917429999999999,
+          "max": 1.6291140000000002
+        },
+        "scene_ms": {
+          "p50": 0.16494000000000053,
+          "p99": 0.2920309999999997,
+          "max": 0.4439010000000003
+        },
+        "supply_ms": {
+          "p50": 4.841252,
+          "p99": 5.602153,
+          "max": 6.058614
+        },
+        "encode_ms": {
+          "p50": 2.105175,
+          "p99": 3.244178,
+          "max": 3.977589
+        },
+        "submit_ms": {
+          "p50": 0.04566,
+          "p99": 0.062431,
+          "max": 0.06739
+        },
+        "poll_ms": {
+          "p50": 0.00043,
+          "p99": 0.0012100000000000001,
+          "max": 0.00605
+        },
+        "acquire_ms": {
+          "p50": 0.02289,
+          "p99": 0.038771,
+          "max": 0.03989
+        },
+        "present_ms": {
+          "p50": 57.95155,
+          "p99": 60.906717,
+          "max": 62.455709999999996
+        },
+        "callback_ms": {
+          "p50": 66.17514,
+          "p99": 69.459338,
+          "max": 70.83123099999999
+        }
+      },
+      "episodes": [
+        {
+          "epoch": 0,
+          "entered_ms": 441.455104,
+          "useful_delay_ms": null,
+          "quality_delay_ms": null
+        },
+        {
+          "epoch": 1,
+          "entered_ms": 3036.575957,
+          "useful_delay_ms": 859.24244,
+          "quality_delay_ms": null
+        },
+        {
+          "epoch": 2,
+          "entered_ms": 5027.613945,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 197.99826699999994
+        }
+      ],
+      "first_useful_ms": 3895.818397,
+      "max_visible": 5000,
+      "max_detailed": 625,
+      "peak_gpu_payload": 5283840,
+      "peak_cpu_payload": 5283840,
+      "peak_pending": 4,
+      "peak_queued": 3,
+      "cpu_evictions": 0,
+      "discarded": 0,
+      "reprioritized": 0,
+      "source_bytes": 144628,
+      "container_bytes": 1737890,
+      "metadata_ms": 10.021194000000001,
+      "gpu_ms_p99": 22.58944,
+      "first_frame_ms": 441.455104,
+      "native_startup_ms": 415.63094099999995,
+      "gpu_setup_ms": 390.526701,
+      "metadata_bytes": 690008,
+      "visibility_memo_bytes": 393216,
+      "navigation_end_pending": 0,
+      "errors": 0,
+      "drain_ms": 0.011800999999999999,
+      "max_upload_bytes": 655360,
+      "max_uploads": 1,
+      "episode_scope": "static view; elapsed epochs are not camera jumps"
+    }
+  ],
+  "scope": "generated shared-source fixtures, warm OS caches, isolated X11; epochs censored if unfinished; no human/monitor latency claim",
+  "budgets": {
+    "cpu_mib": [
+      64,
+      8
+    ],
+    "gpu_mib": [
+      128,
+      16
+    ],
+    "ssd_mib": [
+      512,
+      8
+    ],
+    "workers": [
+      2,
+      1
+    ],
+    "requests": [
+      16,
+      4
+    ],
+    "upload_mib": [
+      16,
+      1
+    ],
+    "upload_count": [
+      8,
+      2
+    ]
+  },
+  "guarantees": "caps are payload ownership caps; codec scratch, staged results and driver allocation excluded; tests enforce tighter limits; generated sources shared across objects"
+}
