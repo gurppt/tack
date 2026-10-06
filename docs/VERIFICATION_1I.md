@@ -50,6 +50,12 @@ in [the phase report](MISSION_1I_REPORT.md) and [JSON evidence](../benchmarks/ph
    focus drains; modifier/layout changes retain captured release; one-shot
    completion clears overrides; modal reset additionally resets held input.
 
+Final semantic review also records the punctuation limitation: “logical” is the
+unmodified base character, not Shift/AltGr text. Defaults with absent base
+punctuation on French layouts may need remapping/menu. Core native shortcuts
+remain proven; punctuation availability is an owner ergonomics review item,
+so no unqualified A acceptance is awarded.
+
 No shipping code was edited by the verifier. Earlier exploratory failures and
 older native binaries are excluded from final acceptance evidence. The owner
 should run [the human checklist](HUMAN_TEST_1I.md); native Windows desktop,

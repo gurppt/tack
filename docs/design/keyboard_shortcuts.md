@@ -8,7 +8,14 @@ Ctrl+Shift+Z and Ctrl+Y both redo. Existing modifiers are unchanged.
 
 On native Linux/Windows, winit's `key_without_modifiers()` supplies the active
 layout's base key, independent of Shift/Caps/Ctrl transformation. Text composition
-continues through the separate native text/IME path. Keyboard events retain both
+continues through the separate native text/IME path. Here “logical character”
+means the layout's unmodified base character, not composed text produced by
+Shift/AltGr. Punctuation defaults such as [ ], Shift+[ ], Ctrl+Shift+. can require
+remapping or menu invocation on layouts without those base characters, including
+French layouts. Labels describe the configured binding; they do not guarantee
+that every keyboard layout exposes that base character. The native matrix proves
+the targeted letter/named shortcuts, not all punctuation. This remaining
+punctuation ergonomics question is reserved for owner review. Keyboard events retain both
 physical identity and fixed-size logical identity; no per-event heap queue,
 timer, translation table per board or background worker is added. Resolution
 scans the existing bounded keymap (256 bindings), with at most 32 held inputs.

@@ -28,6 +28,9 @@ text Undo; Escape discards the draft. Snap can introduce overlap because it is
 independent quantization. Preferences v1 migrate logical key names; unsupported
 legacy positions preserve the original profile and require repair/export to v2.
 
+Check punctuation shortcuts if you use them: bindings use the layout's base
+character, not Shift/AltGr-composed text. [ ], Shift+[ ], Ctrl+Shift+. may need
+remapping or menu invocation in AZERTY; this remains an ergonomic review item.
 Record any remaining friction with resolution, layout, exact key/tool and steps.
 Real Windows desktop review is separate from Windows CI. Do not interpret the
 native Xvfb automation as a comfort or physical monitor latency assessment.

@@ -37,6 +37,13 @@ are conservatively refused to avoid layout-dependent ambiguity. This deliberatel
 may reject combinations that would not collide on one particular layout.
 See [keyboard policy](design/keyboard_shortcuts.md) for complete migration limits.
 
+Remaining shortcut ergonomics: logical characters are layout base characters,
+not text produced by Shift/AltGr. Punctuation defaults ([ ], Shift+[ ],
+Ctrl+Shift+.) may require remapping/menu invocation on French layouts lacking
+those base characters. Labels reflect the configured binding, not its availability
+on every keyboard. The targeted native matrix does not prove all punctuation;
+this is explicitly part of the pending owner review and the B verdict.
+
 Ctrl+Z remains consumed while a note draft is active: there is no local text
 Undo buffer. It cannot erase earlier document edits. Ctrl+Enter commits one note
 operation, then document Undo works normally; Escape discards the draft.

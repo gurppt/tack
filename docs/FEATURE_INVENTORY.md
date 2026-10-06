@@ -13,6 +13,11 @@ reads the active user keymap. An em dash means no default press shortcut.
 All actions can be inspected/remapped in Tack → Edit → Keymap. This exposure
 does not make experimental tool modes fully operational. Version-2 imports may
 explicitly bind physical positions; labels show `pos:Code(KeyZ)` for those.
+Logical characters are base characters before Shift/AltGr text composition.
+Punctuation defaults ([ ], Shift+[ ], Ctrl+Shift+.) may require remapping or menu
+invocation on layouts without those base characters. Their listed labels describe
+the configured binding, not universal keyboard availability. The native matrix
+covers the targeted letter/named commands, not every punctuation default.
 Version-1 advertised key names migrate to logical keys; unsupported legacy
 positions fail safely without overwriting the profile. See the
 [keyboard policy](design/keyboard_shortcuts.md).
