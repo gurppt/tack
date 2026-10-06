@@ -107,11 +107,18 @@ def main():
             record('long drag commits geometry', moved != imported)
             session.key('ctrl+z')
             record('one Undo restores whole gesture', session.save(board) == imported)
+            session.shot('before-keymap')
+            before_keymap = Image.open(work / 'context-before-keymap.png').convert('RGB')
             session.key('F10', 'Down', 'Down', 'Right')
-            for _ in range(6):
+            # Right selects child row zero; five steps reach Keymap row five.
+            for _ in range(5):
                 session.key('Down')
             session.key('Return')
             session.shot('keymap')
+            keymap_capture = Image.open(work / 'context-keymap.png').convert('RGB')
+            # At ordinary scale, this point lies in the modal body below all
+            # context submenus and outside our imported fixture's image area.
+            record('Keymap modal visibly opens', keymap_capture.getpixel((80, 360)) != before_keymap.getpixel((80, 360)))
             session.key('Escape', 'Escape')
             # Preferences have a ten-row panel; test both ordinary integer scales.
             for scale in (1, 2):
