@@ -22,7 +22,17 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y nasm cmake
       - name: Native build prerequisites (Windows)
         if: runner.os == 'Windows'
-        run: choco install nasm --version=2.16.03 -y
+        shell: bash
+        run: |
+          for nasm_attempt in 1 2 3; do
+            if choco install nasm --version=2.16.03 -y; then
+              exit 0
+            fi
+            if [ "$nasm_attempt" -lt 3 ]; then
+              sleep 15
+            fi
+          done
+          exit 1
       - name: Prepare pinned native decoder
         shell: bash
         run: |
