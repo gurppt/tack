@@ -1,0 +1,2538 @@
+{
+  "status": "technical verification and exact implementation CI passed; owner aesthetics/usual-desktop producer and Windows/Wayland clipboard runtime pending",
+  "provenance": {
+    "commit": "38529aa5262bcf02ffd7dd67fcb6f24091c4c489",
+    "source_snapshot_sha256": "05d859e36b61d5cd412e75d5d6e686586efee0613ea1e4ea36c6d6559619713c",
+    "source_files": 200,
+    "scope": "tracked source/config/tools/assets/CI/CONTRIBUTING; excludes reports/docs/receipts/ignored evidence/user gfx",
+    "algorithm": "SHA256 UTF8 JSON sorted keys compact separators of source_file_sha256"
+  },
+  "source_file_sha256": {
+    ".cargo/config.toml": "04e169797aaf9f4a2f9d4a7c02b11478a3de0371714147ea0f61408b5e205983",
+    ".github/pull_request_template.md": "e5ca1dd4e9bb1680952bc07d1ec5aa17c28d019df83e741429c02ef99a553b22",
+    ".github/workflows/advisories.yml": "816d8e621d5ed25a3e399a68ce5d8dabc568023524c67aac5919d16f4d0df980",
+    ".github/workflows/quality.yml": "800e38c4ee4e1080ce15bc68d8cba69bc8e3187255190b9e3e61a6899e8c390a",
+    ".gitignore": "176839d7bdfec34ba6d83db7ba0bd9840ac27cf85ca7c27bc3d3696e9e581c14",
+    "CONTRIBUTING.md": "0df4a43668c40ee1e203d862b8129207e4107aa2df51df9e0bf29130f09a0045",
+    "Cargo.lock": "a61b60ab6a25970422e17e912db677a97c1bd0bf63deeabab74f8866ab207fee",
+    "Cargo.toml": "25344d77a750fda2df69976fb588d2ba645069d116c2bc1aa5917fcbae3f1bb0",
+    "assets/pixel-font/COPYING": "cd2785c2b8e0a01d203560265b2d2d47cdb1401d2707d25918ac5531bcdba947",
+    "assets/pixel-font/COPYRIGHT.txt": "809b9c704ff34068a6601737bc09de82a75c57f8f7ac134d27c67d250405ef0c",
+    "assets/pixel-font/LICENSE.txt": "1e74cb82bf476843e97c2596297b04219b1a7e51f7238944a8c031cb9401fa87",
+    "assets/pixel-font/OFL-1.1.txt": "869692af094c57fb7258c57fe26820c759319603321d0ffeb278de3651763ded",
+    "assets/pixel-font/README.md": "b114cdcf29e1dc409e41ef1677e530b0190ba2777025ae4979a4c60873cfe875",
+    "assets/pixel-font/provenance.json": "7c488cfa78468e777562dd2c28b28dc1c40b1ec660bbfc6ed2b7948f08f5e6d2",
+    "assets/pixel-font/tack-label-glyphs.bin": "5c2ff18025a8ad7cd8f0c615d9dcb9f8bed4207f1f03d6a857a71f0b2ebe299b",
+    "assets/pixel-font/unifont-18.0.01.hex.gz": "e66385c79a0b8b24a466f3129930e08a966a935b4bf3b28c6bb17a9df9bf791d",
+    "assets/pixel-font/unifont_upper-18.0.01.hex.gz": "ef531f3675950380a92569beceb3af0a7efea05dbc5755a1d08cbd1dca83210f",
+    "assets/ui-font/LICENSE": "f33fe8679d5b2abecc4f1313ce6c6bfa58262964de5f7bca146596a7318047af",
+    "assets/ui-font/provenance.json": "d6181ccdb2d0772bc61d1fcad156977939dc8904f5e56d58ed050f88f467dc0e",
+    "assets/ui-font/spleen-8x16.bdf": "b38b32a66920068965a3101f98071d310c5c74659fe86e55d346140770f8f6e8",
+    "assets/ui-font/spleen-glyphs.bin": "6c083bb6db7086dbb167e50bafb3b93f5eca3077e8384af6f0b7a20602f3f837",
+    "crates/tack-app/Cargo.toml": "14c1e6a04d1d0797dc123e0de4da82a9d61b9db39e7effed1bb02c2502dda3e2",
+    "crates/tack-app/build.rs": "55e6dd185b42f3e9ee972bd509dc2afcaf0b71f7a581284b7d824a4e5aa6ec21",
+    "crates/tack-app/examples/clipboard_probe.rs": "fe2c73102e4254b42e11055bb6cd6602c7f40a9521d5168d14085bf024b30876",
+    "crates/tack-app/examples/context_ui.rs": "a2e93c4846511f5d4c19936e21ed6cadb94d56a04a24c404f415ec00f280befd",
+    "crates/tack-app/examples/disk_cost.rs": "e9d0ee36624fa2dc66ffc0dbaaec1107e60f6dae5156ed2ac799cd4311104b55",
+    "crates/tack-app/examples/layout_cost.rs": "a7f60f6c1d66835d1104bf29ee05e11dbeb860117540852fc2be4897b634fecb",
+    "crates/tack-app/src/actions.rs": "529bf9169bb7f3152c8323701fcd4a312b0350be66a705c0db8311f17c5fcb5e",
+    "crates/tack-app/src/annotation_cli.rs": "3de9f2f0bdb65a0b742748e5ed97daf2f385acb39942623e9a1fd7ea1ed83c4b",
+    "crates/tack-app/src/annotation_geometry.rs": "fcf7e03f6a0801b47bc207503b2e6f6ace4a9920b016c75e6a220d1960d219f1",
+    "crates/tack-app/src/annotation_input.rs": "a1cc2eba4d7d0ea53a4604fdd51b734653532e0c27746f8dade1fd5e06833856",
+    "crates/tack-app/src/annotation_scene.rs": "3dca78d19a4e44674f66abde333b2969a614e68ba21ea5d431d209af7df10478",
+    "crates/tack-app/src/annotation_text_scene.rs": "9ef437d421bf76451784d6c0c5c6760370ed00765d2bafdec4bba2a7e603c9fe",
+    "crates/tack-app/src/annotation_tool.rs": "44f7b4945ea26c5b9067407d2795930e24bd6a00bdf777296c665f7a5683352f",
+    "crates/tack-app/src/benchmark.rs": "54a467fee4238f9007237c6421d97dda1fa2f0476683d75031985b9ca72e7bdd",
+    "crates/tack-app/src/bindings.rs": "1ca4557d74d0632bed817be076bc0ee47cbe992d70a334d343ffd01e176cb97f",
+    "crates/tack-app/src/clipboard.rs": "065e52ee06eca1d54c5e298fd7c63c24a6831bdba2115d63d22fbd9f108dcc6d",
+    "crates/tack-app/src/context_menu.rs": "395f65d9c00a7545667a5db7bcd719d0611442dbac2a2e8a50e34bbf66cd92ca",
+    "crates/tack-app/src/coverage.rs": "422f0557c2b1b819f12248e7fcac8921f87e2342fc69d282a9c856346c03aac5",
+    "crates/tack-app/src/image_benchmark.rs": "2a403e95da99becba8eee59e5f4f2eace1932fef1e07b9dd301f3a227549da3d",
+    "crates/tack-app/src/image_geometry.rs": "c3e176e59c67e04382a0336b822c0663cd1dd0c045d45ceacdb906a42fde704d",
+    "crates/tack-app/src/image_gizmo.rs": "f21b2c16ead6dd9307a0c36130cd2e556f50004f43fe4e08fa9eb92078cd8940",
+    "crates/tack-app/src/image_input.rs": "d37c1479395af42465f7ab7e8f0926882b6a03d469beb0f4d76e3b004c024f9b",
+    "crates/tack-app/src/image_interaction.rs": "930a665e53389a085c7900e6d36c7f820980a89b150f09c91111865935b52216",
+    "crates/tack-app/src/image_save.rs": "1b60e33154c1c01c0a5af1711c26bc68167486605df8ed2eba22039221ae4bcf",
+    "crates/tack-app/src/input.rs": "a7ce2b54d448a2ec0eab1f2704742e124d298d439ff69b56c9308ec6c322bdd9",
+    "crates/tack-app/src/lib.rs": "cf8eeaba389ad2128cd0994d9c2243582cb2fe0bb03242eeb1d9e97a1c703b21",
+    "crates/tack-app/src/local_import.rs": "3c87de608bcf73ffa19d7f7298b12484c05f098c1a9590ae6996b10a1383e98c",
+    "crates/tack-app/src/local_relink.rs": "94193ddbec794e195aca9d180b0fa059aee2e24c3bab6cbe53b41dd90616a2ee",
+    "crates/tack-app/src/local_ui.rs": "504e5e4a64fcbeac413a10558dd861f7779136491cb518b405528fe0c104d168",
+    "crates/tack-app/src/local_worker.rs": "60bb977008a2e0fe76123450e83234605c921e2cd309863d0c9c3e25b6681a83",
+    "crates/tack-app/src/main.rs": "309360e9a31f34956df1d0e2e0177564997f3a5873a57be4ab927b955aa0e6c1",
+    "crates/tack-app/src/native_files.rs": "4069847fce6bbcaae9a050bb8622a40d37758a897fc8825affdfb0a3542dabd1",
+    "crates/tack-app/src/navigation.rs": "607b936b5e23846f74d931c1c43f9d3f77526ce3281bb82c1ee45844da2f254d",
+    "crates/tack-app/src/navigation_input.rs": "3a3206f88cb8a5bdf9d1cabf74a19d3ddd952629eeb81dd8274dd6c086906e9c",
+    "crates/tack-app/src/note_layout.rs": "9a01a4b88efffd031a24315d704009eea794ecc24eae8bf118404202544c800f",
+    "crates/tack-app/src/pixel_font.rs": "a2f86dd5d162784f1fecbec46293f35cd02f44d34953e6b0277d4f295efd7809",
+    "crates/tack-app/src/preferences.rs": "555f78064a7c49e4738ad31633c75e2972f5e78e734a882d74face5154327cea",
+    "crates/tack-app/src/product_bindings.rs": "b3ed714cedef68bb82b7009225ffb1a0600d455c4ebacce12d52d1045a142f32",
+    "crates/tack-app/src/product_cli.rs": "ec7593660b01d860b067f28c16316a70fa87931f8560ffd2270aa4c359497eee",
+    "crates/tack-app/src/product_window.rs": "9d0bfd3d8462c15b8fc5baef9603196de95e59a9728ef87b39d3ec9dc8400213",
+    "crates/tack-app/src/product_window/launch.rs": "8bfc101cc00bc31f5cecc45149d7e2f28a9f27cd730c24e9681ddf8b94ca1ea6",
+    "crates/tack-app/src/product_window/local.rs": "b8ccf7f8e8549d2ebff7ca078f29223fdb0f20ee9010a52c563b6db28d643da7",
+    "crates/tack-app/src/product_window/menus.rs": "d0123f95ae274e9430608694b478bacd053b2d3fdd3f0e5e5dccf6f693f8e640",
+    "crates/tack-app/src/recovery_schedule.rs": "cff8877cdba3bf518806204fec89707ddce32206002b77ca5f187329f5439501",
+    "crates/tack-app/src/report_output.rs": "51e49ce570dfc99724e8749262aa22531286dea87b42364a9b42de3424411cc4",
+    "crates/tack-app/src/selection_commands.rs": "b0dd4f53deb235ec7dd2c8d6ec0a19c5f8ce850e2530f4017cb29a03b2d500ed",
+    "crates/tack-app/src/session.rs": "eefd0897879346820503a7fcd6a546db5d267748fb20d9c384271b8b49a6b8ed",
+    "crates/tack-app/src/source_actions.rs": "8395e11977c8e0de6f5b5264332589c72b2c422bb9f29296602c9a2ba6018afd",
+    "crates/tack-app/src/spatial_cli.rs": "8112486010b434323ab6c1e4943b62d1f3dec44be93874a11ff675249d5b700f",
+    "crates/tack-app/src/spatial_input.rs": "5035a18cbd136d2ad1478a3abda9081c26bb055843f3be80d3314019ebe94be4",
+    "crates/tack-app/src/spatial_layout.rs": "c77b7f0a6435ce5757ef4e8a0730d5b93aa92530dfb384b3ee8639a5def451a3",
+    "crates/tack-app/src/spatial_overlay.rs": "032d99d7031ba81ebf0c36550cdd5aeb78f410f9a18daac126ebc4c2c706e9d5",
+    "crates/tack-app/src/spatial_snap.rs": "59a7c0c4777ecd2cc62e72bce9745f5ac908f568fd3e974dfac252bfc625f942",
+    "crates/tack-app/src/supply_cli.rs": "ad9d82a1afc275f39a591342d17b9b17c4e266222407ac59ea517c938d908d68",
+    "crates/tack-app/src/supply_plan.rs": "2bc04c8e3cd13db1e7133752a1faed857c0a5072565200e733679f2862d3b990",
+    "crates/tack-app/src/ui_theme.rs": "31faeaac1ad623544e10ddc70829fc35738256a237a885f577ba85fa14c14afd",
+    "crates/tack-app/src/visibility.rs": "9c3a0472655c5bd3f500b649518f6aa70b3105c4d09891a98792f504f60333e4",
+    "crates/tack-app/src/window.rs": "7396208a6deb23654da5d20e788358fbcdf88c93c8e5556c52b3d9f4789f0485",
+    "crates/tack-app/tests/actions_input.rs": "045415fb90762641ba8136adc687a6a67fff94f80a21caa183a78649f5bd4ae9",
+    "crates/tack-app/tests/annotations.rs": "7ef7adafb26b26c31fdfee7b12bb97569481c5ca3c4906f8babb7195faf0e403",
+    "crates/tack-app/tests/context_menu.rs": "8af220174fec4966c7122ee99b51748e7734c649e666096c893278812f5e2105",
+    "crates/tack-app/tests/image_interaction.rs": "d384754a07920724a73a92e4915033487bbf04fc6bc6dc36f4d6ccc404d2edb8",
+    "crates/tack-app/tests/image_persistence.rs": "ac490e609144b75723ed887a8a5ea765a7abd30c02c548bc297677701fad2296",
+    "crates/tack-app/tests/input_layout.rs": "49eecca528aa5ef53b58774a9aed4459a340f1ccdba78ee40a48570ca7c83b96",
+    "crates/tack-app/tests/local_production.rs": "c4ba7b04e6c31e99804c3b9facc648f42be8621c15a2ece81db473e4640a7d29",
+    "crates/tack-app/tests/product_cli.rs": "e37ce81a2a38dca59721bf6bba70ac19cb7e31e6f2517d1571d45c20c0204d10",
+    "crates/tack-app/tests/spatial.rs": "4b02ba402543222d83d18f68c2fed545a75d944176a30e7d97aa29c8d4d31136",
+    "crates/tack-app/tests/ui_polish.rs": "4d34a4fb2dfcf58ec348dc38db7c86945afcd138fef0118570b35b788e6e004a",
+    "crates/tack-assets/Cargo.toml": "e1f041f09a384fa58fd207b5be5676b4d9c837191fe1a92b84528cb67d3e5b34",
+    "crates/tack-assets/examples/overview_prepare.rs": "c84364922f36603b9d63d24e93fa9c2043ff15f09858a8b9f87140cdc6656c8d",
+    "crates/tack-assets/examples/thumbnail_microbench.rs": "7414dae0ae35e1fe7d45b72527671587f15c533d1cb7435d7aaf3638877fcfb9",
+    "crates/tack-assets/src/board.rs": "508d0c13c7b55b7a97e2c63f899bc9fd4d8ce195b912bab2c0b0dc28d6309199",
+    "crates/tack-assets/src/decode.rs": "0defa01ad769e853105b1a4b2114a9c71e024a262e6bbafdc7b3b301bae49671",
+    "crates/tack-assets/src/lib.rs": "c6ae6a3257436241c27a1e9f0647fe29cc67afcd40353849841afa02cdd4b088",
+    "crates/tack-assets/src/loader.rs": "bd782db1b8648ead5c4694f22aac10c8901007fd9e1696fef57d7abc5528139f",
+    "crates/tack-assets/src/native_thumbnail.rs": "a4cc92e495015c98b51aad7b1e14cdf3bdfdb6487bd3dd14c80189383f0a42ef",
+    "crates/tack-assets/src/preparation.rs": "494794d2af350d855ab7fec2588cd255999daec0184657be014ee129c34a8d4b",
+    "crates/tack-assets/src/product.rs": "df43f9248ca9a298832848c3cc7f42eede58e2c7618477351ca1f6be52f3f9d2",
+    "crates/tack-assets/src/profile.rs": "5c4bb0cec9ad8ef2bd956e3689cafc7b7cee52e276a17b09b40fd3533961c48f",
+    "crates/tack-assets/src/representation.rs": "ced1c21a36aa37c9567c2773b2df4c2cf1915146cdafaae7421aca891432f0fb",
+    "crates/tack-assets/tests/benchmark_board.rs": "f0c06ba5c4f70314babaaab2462b22292f71eeb101e3a7f365dba575bbb2789e",
+    "crates/tack-assets/tests/native_thumbnail.rs": "e45a81e40b57bfab926917d185935394c6f7e645b1700d98638da09c9af6df34",
+    "crates/tack-assets/tests/pipeline.rs": "7891c6ee081ee99bae888aaf0fe1675f5db46a46aa1faf9e7b4f11d9c55d8cfb",
+    "crates/tack-assets/tests/product.rs": "631a2dbcb1538001b8c9bd2c72b872bd07950d0f4986465002bb1b58e751ffba",
+    "crates/tack-core/Cargo.toml": "f15e91e4bb447003ecd33c7f2d36ab161d701da760832a492baa482a30843715",
+    "crates/tack-core/src/annotations.rs": "e6d3d6b4d462f300533e2aff128edb5b0826039de5be0ef4f0eb51005e30d012",
+    "crates/tack-core/src/camera.rs": "499a3d7df48f122e64e874f0c35c53572bdddc5fabac65365a599c2f4ad1716c",
+    "crates/tack-core/src/commands.rs": "f00807036f2a1010b8e54af26ac7a73be7fae49b3f9e0d6af578b2aeda672aa7",
+    "crates/tack-core/src/document.rs": "510f7f991a688c88b21b6307ef658a73b74f472620910db76651fcbcf6cd4550",
+    "crates/tack-core/src/groups.rs": "bd795bfd8332f607f714cff9e04ef6f5871ba792c2becc42ad69a77a87f03446",
+    "crates/tack-core/src/history.rs": "288fd1cee24480d9e8a7643ada7b1ddab03278988e45f7ecf5688a810af040a6",
+    "crates/tack-core/src/ids.rs": "7f9ab07c6dba3ed41ff59e6e8b0e97c78056ce3c903414105ee3f68a019dc1de",
+    "crates/tack-core/src/lib.rs": "b2073346126d15af4a815776d347d4aaa5015a2cc2aed1d5deb625845b043a1b",
+    "crates/tack-core/src/model.rs": "a089f43038fbfaee019c6c6c134e26562bac2c714ea633641a4f8fc5c3a379c1",
+    "crates/tack-core/src/query.rs": "6dc2f039e3ed48c7f5d07f76b5adac683f1e21e42f8ceb04746f74cecace7f9c",
+    "crates/tack-core/src/residency.rs": "7dca1c0e10098d192b5ba8c201520207f5176b49f95b448989fc37ba7b475c60",
+    "crates/tack-core/src/source_path.rs": "84e99b7e36a1c6c23e15e8dbc69ea4438c975efd95da35a9e04c0ab22a98c5b4",
+    "crates/tack-core/src/stroke.rs": "70cc81567f8207d64c9999f5d904a6457940fcf7d024bcbd49eb9dbca7a4de3b",
+    "crates/tack-core/src/transform.rs": "3af9d8e55af70a8ce2ad311389044882fd1d915244c0a54a109ab9cbbe793313",
+    "crates/tack-core/tests/annotations.rs": "93b136ec19783a57c74d2962c35cd7bf57a90d4d2b2a88e5eca77a2dec2b39c3",
+    "crates/tack-core/tests/document.rs": "fd9196e858cf930b0c4878869a6c4a84a36c4701338d0415ce75961613e42c99",
+    "crates/tack-core/tests/image_batches.rs": "a4a863b773c803ce8bc05a779f0368dde7462133b62071053f8b78b668058d65",
+    "crates/tack-core/tests/invariants.rs": "3a67d91706276e8d4a6dac348dffbff10c9691f9d65beaf9b160336fc4c78d10",
+    "crates/tack-core/tests/spatial.rs": "14c2df05da36775ff9fda7f5a35c933a934f5d30e12240ab3468d31c96a31015",
+    "crates/tack-render/Cargo.toml": "1779b600bda861f9af89efe098fe21912a67308b4553521e70eb9d4b712bef07",
+    "crates/tack-render/src/annotations.rs": "4a7226d2a9a1fdb9c1ea440c6c94e5e7992cb673ee48bec2abaa26190f590636",
+    "crates/tack-render/src/annotations.wgsl": "8524ce9f92a2100bb0934efb33d6bfcb15ef592ba9509ee951391d786b4eeedc",
+    "crates/tack-render/src/canvas.wgsl": "db604cfb645f3f2037df73ec3a669cf7f8e0588202ebda05f145ddb65347232a",
+    "crates/tack-render/src/gpu.rs": "cca7c712d6468dce754a7468503a1795120eba9ee99b35425f1c8ab4ee7608a7",
+    "crates/tack-render/src/grid.rs": "e1be365540d3a89ac6662df4a186c09a5ac31ac8d485abcc09e94659267ccfe1",
+    "crates/tack-render/src/grid.wgsl": "9c0e3887786bd17186e79c28f8845eec9dcab6156907bc6a646a8f1ec1b34b16",
+    "crates/tack-render/src/lib.rs": "6f8633a623eb4dada9afb994affe2045b32be2acbf70be1f95d21c5f6f5b2685",
+    "crates/tack-render/src/overlay.rs": "2f189dccbcd883099b696d70237fc15e0a82b1e7ede6a53b4bb9ba2367144317",
+    "crates/tack-render/src/overlay.wgsl": "efc218ca0ddaf941522d8e8d17ea1a57fb9fe6016c44fad01127533b0edc22a5",
+    "crates/tack-render/src/pixel_grid.rs": "70b1e969bfcb53733e0ecc56ce4d985cc62a11528573c96e3d6e616ac5af55ef",
+    "crates/tack-render/src/timing.rs": "33161a72598d15f993851001e7a95624de05589c9eac018ad6983b5105802c48",
+    "crates/tack-render/tests/document_query.rs": "4298b9846e98e4cdd41fa373ad7f4a6ba9ce6943a3bca20628e713e135266732",
+    "crates/tack-render/tests/gpu_smoke.rs": "21acfc1f6918e97aedde29eb1099d3f6729141fe781413e105874d4b023e5ecd",
+    "crates/tack-render/tests/product_gpu.rs": "13cb760ff23f9c4cb4c04225c1f860fb97b2f59024e595dcd0a8826ac081e4b0",
+    "crates/tack-storage/Cargo.toml": "e60685c568387200d5a03b41cbfc8b32e736c95010cc50288a21c31ee4540fc2",
+    "crates/tack-storage/src/annotation_codec.rs": "eb79adf1bdb9175586a13ce436d33f868504e7fa1a212a02c314de0a680b5f68",
+    "crates/tack-storage/src/codec.rs": "8719cec8d75252392407cc00957e029949500bab45c0308245eac3fe090175b9",
+    "crates/tack-storage/src/lib.rs": "439001d7f50f27f4c8bb392fe98ae2ad7374b1ceb703ae1e06606c5fcb6d611e",
+    "crates/tack-storage/src/ownership.rs": "2bc4876e56a76c602d88329f0385ddbe48a7e7f1bf253407d012c77f1c71eafd",
+    "crates/tack-storage/src/reader.rs": "7e3873717628ef9e2c78392833d0003207b9723c9b81ab18eab3c4372dbf56d1",
+    "crates/tack-storage/src/recovery.rs": "75824b42fc4313cbe4d43dfe1ad81be2d96528575a8632375ab99dc6e97f5224",
+    "crates/tack-storage/src/save.rs": "3a2884b4dd1f2f113b16b398714beadda107486dfef41d4f2b5ea09be4842be8",
+    "crates/tack-storage/tests/annotations.rs": "d6b5d890a7e0db10b2cff13291899f597b6c6dfdd4ab74abcae2533fb1abcfb2",
+    "crates/tack-storage/tests/persistence.rs": "30871479099d9b7b3f0002ae66790116dbdb607fa6c43537f0a624f293ba4abc",
+    "crates/tack-storage/tests/recovery.rs": "664ab7c959f75427a5ef6eee488caf779d845bfe0f60fb479af4b92aeaa697d0",
+    "crates/tack-storage/tests/spatial.rs": "5dc6ad5636c5a91e98cead1ad7c46c292b882693b3283893571a280d581423f6",
+    "deny.toml": "1e2f78a07609f7f887adcd745064b476fd3d6ed5f325f851bb53801b66791049",
+    "rust-toolchain.toml": "7d21c66a15f41bad66b82ed06a289f5dc8a6e3751951d2696bbf20ce296f2b0f",
+    "tools/asset_experiments.py": "618967ea43aaa9ac40640892d7610e00a323318f28161c96586d4db675950682",
+    "tools/build-test-bin.sh": "c28a6d2db91fcae2449525c346a9115750774a426ea0fa6265e420302fbcb11f",
+    "tools/build_pixel_font.py": "78e64dd4d2a9770766ff263cb51232d5ed3220842f17f1ba5342a9d481bac8c6",
+    "tools/build_ui_font.py": "ceaa56805f4308e793735ca064d5dd860d39fc59d57c23fa12bd828db9cb5dd7",
+    "tools/check.sh": "a227b652e37f4119ce4fb3a43ba023ddeaf09eaaa51d8049f3cc72977a9440ea",
+    "tools/check_preparation_recovery.py": "bc2070328a980884e39f3d97ee6dc8b67962247db42d0c9db6830378748091b1",
+    "tools/collect_native_evidence.py": "9467a69c9b11e368cc98620c9723e500160a6d738baf7973efccbc7cfc5bbca2",
+    "tools/generate_corpus.py": "160f9a2949484ce4ac82a074535810b800490be8109586069166ca14ac9eab51",
+    "tools/generate_supply_images.py": "25562bbfa9e326bb7d8ba4c613eae44d63a6104455ca12222e8bc62041f92be6",
+    "tools/host_checks.sh": "18807f92c72ae308685b9348119852846d843c2d79964af3d55b662ea9390fc8",
+    "tools/native_decoder_experiments.py": "cbc150f6fe0a9c1e33a03ec886a4322f0d016a4bd6f7375b60b4ecf15d56f931",
+    "tools/prepare_linux.sh": "06587706255fd6fbcfe8d5dde15debe7eaa0819a2ff5af746b90a9b7263bc85e",
+    "tools/prepare_turbojpeg.py": "10397aceca2014e90204fdf28715ece159e85e62190e193e67254dc088646cf8",
+    "tools/run_annotations.py": "9abebc547648b5c7ec981e66766957748ffcc73f6e01264510827515fdfb2d01",
+    "tools/run_benchmarks.py": "8847cf8f0a090489d09e0e4714caadcb007a751286dd28da816684c44ae3b798",
+    "tools/run_clipboard_producers.py": "dc64a04964808565b119b20b231a298b96e8cb8ca85499b9c7b583763a73dc01",
+    "tools/run_context_checks.py": "db916ff3e4286078b7ad95b5335da13c661a726d50870172f047c0453cd8778e",
+    "tools/run_idle.py": "6b36441063760cf348a3e88cf8d9ec7a26e73d4cf99d84eb9b875904cd5ee678",
+    "tools/run_image_interaction.py": "c1ee61c5afc1bb8b7d0b1aeed380a5471cfa9f718490f744f38ddb5c56b684da",
+    "tools/run_input_layout.py": "dcee7f0a9b0b525e4d45183959479dc58931f9c0ef5fd618842d2eadc664610d",
+    "tools/run_layout_cost.py": "8958e938fde807c82303d89a3a1ab04b9f9828621187eec0edaa9845831eb40d",
+    "tools/run_local_production.py": "b115383d77c9b1f95e2ede745005633bd85b107c9fe745c9c378eed6e8ff385e",
+    "tools/run_local_resources.py": "5273e68a9844838466a1b4ab521f74dfa6349de919c984d8aedcb3a24e60480d",
+    "tools/run_multi_instance_resources.py": "c12a34d75826c166eeaebd41291048ac8bf808d6440821d38f459a911c5ace1e",
+    "tools/run_native_annotation_checks.py": "b9b2b1ce0f7d89d3e34a0c2a2d8bad49301e5fb9c8c74911f170199a32b5e2a4",
+    "tools/run_native_image_checks.py": "4d49f751b5f13f57b482b2f53bbdc80d177c957985abb0cce8e81a703a4dd529",
+    "tools/run_native_polish_checks.py": "ec95d93cfac63e5b102dd3a4e625cd063144edce9fd094cdf104131b5bd8e2d8",
+    "tools/run_native_recovery_checks.py": "ecb4348f728b36f6b2bfca327bcbf74dc52130e59bddc93be0ae333df103f2be",
+    "tools/run_native_spatial_checks.py": "3e5cc7a0e68b2dabb0533071bfa4f0f9c870dd65e326a3c3816cfdef905cbf52",
+    "tools/run_native_zoom_checks.py": "3ea7efe01a5bf33b2a3aca335fbc86bb7fe9a5354ee3be13efa480f93da9b455",
+    "tools/run_polish_idle.py": "267d479985427329ca0907ec16e09ee034aa1f971e530427868ea402b6666569",
+    "tools/run_polish_performance.py": "7a220119f2e042ae41ef70d8080d1fb7b9ed180c4b6912c8982e3c3f7811789d",
+    "tools/run_preparation.py": "1ad7713fcb02db792b0296d597cfbffbda00e6db6b1c5a5b16cec2d8cf9835d3",
+    "tools/run_product_persistence.py": "6040c00c50f11f6abfb38236a454f2e96537d50f8cbce872a66e4c8dffa554db",
+    "tools/run_spatial.py": "30423bbe40e14b084680b44ecdfd5a4ba54839e936027856af0e00fdb54d1259",
+    "tools/run_streaming.py": "6b75d9e9c43d5dd27361e5065fa0532fb62216845068074db80bcce9f6dc6b27",
+    "tools/run_supply.py": "4e0f044d9209d8a8e15873b42ee501d8ee517cf6b8f726932cc7f313bf2c903c",
+    "tools/run_supply_idle.py": "540409d2125cacc8a057e58d4f27b86dd499c824a4a20f1e7943c1fd1df85b44",
+    "tools/run_supply_instances.py": "4ee29b896c8741edb53342902a1501c3f4a1035efe946ec9416a89a6132ab58a",
+    "tools/test_benchmark_harness.py": "d63151a399ad6628663bc1d16526744783f954ef3ef1beb60048455a3fc21770",
+    "tools/test_corpus.py": "d1568a0c98bc6c854b4cb7a55f257abbdbadc8510713fe87f75f44423e405559",
+    "tools/test_image_interaction_harness.py": "fb9b5c46dd95eb6caf96e0382d3a0b8f5808b67786215c1395b1f6ed6805dc45",
+    "tools/test_preparation_harness.py": "ec86260d686c7d3e26bfc985604acf0a34a1e41ba55e82742a8bcdd6c11ff227",
+    "tools/test_supply_harness.py": "d0493b0fe429efbc4def305d18da9449387e726b1c3ca9c5baf9d7486a5ce17a",
+    "tools/test_ui_font.py": "9d5d09dd142c2bb63ce8276e8a3f5bf2057419f8c58ae8c3b1e05bda9c34476c",
+    "tools/x11_drop.py": "7f2a6b01ed3f2f28d8c7fb49cb6c5ae2196ae3136a409903134f1f05e8412f8c"
+  },
+  "host": {
+    "cpu": "AMD Ryzen 7 2700X",
+    "adapter": "NVIDIA GeForce RTX 2060",
+    "backend": "Vulkan",
+    "display": ":98",
+    "scope": "owned Xvfb native X11; no owner desktop input"
+  },
+  "binary": {
+    "shipping_sha256": "418d1fa7ea66e87c79eaaf3e178af37d2b9b5156768fe2556e6d6caa3d49ac18",
+    "shipping_bytes": 115418672,
+    "baseline_stripped_bytes": 17908392,
+    "current_stripped_bytes": 17931688,
+    "stripped_delta_bytes": 23296,
+    "text_sha256": {
+      "shipping": "39a94466807dd4e6f5a71ff8167bc77182834a0a36dd1207fb898284938ed5b9",
+      "current_stripped": "39a94466807dd4e6f5a71ff8167bc77182834a0a36dd1207fb898284938ed5b9",
+      "baseline_stripped": "47fe9e7ed589650d6acbfb6aa45fdd505ce710d18cf70a0d19c31cd8cbfd7f15"
+    },
+    "new_rust_dependencies": 0,
+    "lockfile_packages": 276,
+    "profile": "release debug=1; strip --strip-all for both performance/audit copies",
+    "baseline_original": "STATUS: CURRENT\ncommit: bc28331471221f929adb0b4b0609f3b37b4161f4\nprofile: release\nbuilt_utc: 2026-10-06T07:56:35Z\nbinary: ./bin/tack\nworktree_dirty: true\nsha256: 56ffdaf83a6f4678e20127c887cf2b64788b7ce03cb87bbc2fe34a5facc4ab90\ncheckpoint: Phase 1I \u2014 native/performance and exact code/config CI verified; owner review pending\n",
+    "disk_free_bytes": 50883231744,
+    "current_stripped_sha256": "ffc84555f2d443447c5674dcf6158649093a27156db1ee707b04471d7505432d",
+    "baseline_stripped_sha256": "c2f70c36924027a45f717d78566ebe083adc4eca4b045798d147418ead19f534",
+    "temporary_current_comparison_removed_after_verification": true
+  },
+  "baseline_reproduction": [
+    {
+      "case": "screenshot",
+      "session": "x11",
+      "display": ":98",
+      "helper": "xclip missing from app PATH",
+      "advertised": [
+        "TARGETS",
+        "image/png"
+      ],
+      "chosen": null,
+      "result": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 native file/clipboard helper unavailable on this host \u00b7 Pointer",
+      "imported": 0,
+      "error": "native file/clipboard helper unavailable on this host"
+    },
+    {
+      "case": "file",
+      "session": "x11",
+      "display": ":98",
+      "helper": "xclip missing from app PATH",
+      "advertised": [
+        "TARGETS",
+        "text/uri-list"
+      ],
+      "chosen": null,
+      "result": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 native file/clipboard helper unavailable on this host \u00b7 Pointer",
+      "imported": 0,
+      "error": "native file/clipboard helper unavailable on this host"
+    },
+    {
+      "case": "multiple",
+      "session": "x11",
+      "display": ":98",
+      "helper": "xclip missing from app PATH",
+      "advertised": [
+        "TARGETS",
+        "text/uri-list"
+      ],
+      "chosen": null,
+      "result": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 native file/clipboard helper unavailable on this host \u00b7 Pointer",
+      "imported": 0,
+      "error": "native file/clipboard helper unavailable on this host"
+    },
+    {
+      "case": "text",
+      "session": "x11",
+      "display": ":98",
+      "helper": "xclip missing from app PATH",
+      "advertised": [
+        "TARGETS",
+        "UTF8_STRING"
+      ],
+      "chosen": null,
+      "result": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 native file/clipboard helper unavailable on this host \u00b7 Pointer",
+      "imported": 0,
+      "error": "native file/clipboard helper unavailable on this host"
+    }
+  ],
+  "native": {
+    "scope": "automated native X11 events on owned display; no owner aesthetic feedback; no Windows/Wayland runtime claim",
+    "binary_sha256": "418d1fa7ea66e87c79eaaf3e178af37d2b9b5156768fe2556e6d6caa3d49ac18",
+    "probe_sha256": "a0f5e4b1215880ec761f66a1dd9f7c4a3eb4efb586794ff609ca263ff18e245e",
+    "helper": "/home/gurp/.local/bin/xclip",
+    "helper_sha256": "164f28f2dbb989161f2757fe7c75a65a6083447bc5b427f65679dbdfcd106ed8",
+    "display": ":98",
+    "checks": [
+      {
+        "name": "PNG screenshot Ctrl+V",
+        "observed": true,
+        "detail": {
+          "imported": 0,
+          "kind": "embedded image",
+          "staged": "/home/gurp/softs/tack/benchmark-results/phase1j/native-accepted/probe-work/clipboard.png"
+        }
+      },
+      {
+        "name": "screenshot uses embedded source",
+        "observed": true,
+        "detail": {
+          "assets": 1,
+          "discarded_overviews": 0,
+          "document_id": "e95cf168efba12c8e4c3136d3d1cef02",
+          "embedded": 1,
+          "metadata_bytes": 453,
+          "metadata_ms": 0.08523,
+          "objects": 1,
+          "original_bytes_read": 0,
+          "overviews": 1,
+          "sources": 1
+        }
+      },
+      {
+        "name": "single file-manager PNG URI",
+        "observed": true,
+        "detail": {
+          "count": 1,
+          "imported": 0,
+          "kind": "local files",
+          "rejected": 0
+        }
+      },
+      {
+        "name": "single JPEG URI",
+        "observed": true,
+        "detail": {
+          "count": 1,
+          "imported": 0,
+          "kind": "local files",
+          "rejected": 0
+        }
+      },
+      {
+        "name": "multiple copied files",
+        "observed": true,
+        "detail": {
+          "count": 2,
+          "imported": 0,
+          "kind": "local files",
+          "rejected": 0
+        }
+      },
+      {
+        "name": "mixed batch keeps valid images with summarized rejects",
+        "observed": true,
+        "detail": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer \u00b7 Import: 2 admitted, 2 rejected (unsupported, remote or unreadable files)"
+      },
+      {
+        "name": "context menu Paste same semantic path",
+        "observed": true,
+        "detail": {
+          "imported": 0,
+          "kind": "embedded image",
+          "staged": "/home/gurp/softs/tack/benchmark-results/phase1j/native-accepted/probe-work/clipboard.png"
+        }
+      },
+      {
+        "name": "plain text creates note",
+        "observed": true,
+        "detail": {
+          "bytes": 25,
+          "imported": 0,
+          "kind": "text"
+        }
+      },
+      {
+        "name": "text is a durable note",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "editor text paste and confirmation",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "JPEG clipboard payload",
+        "observed": true,
+        "detail": {
+          "imported": 0,
+          "kind": "embedded image",
+          "staged": "/home/gurp/softs/tack/benchmark-results/phase1j/native-accepted/probe-work/clipboard.jpg"
+        }
+      },
+      {
+        "name": "unsupported MIME",
+        "observed": true,
+        "detail": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Unsupported clipboard format: copy local image files, a PNG/JPEG screenshot, or text \u00b7 Pointer"
+      },
+      {
+        "name": "remote URI refused",
+        "observed": true,
+        "detail": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 No supported local clipboard files; remote or invalid references were rejected \u00b7 Pointer"
+      },
+      {
+        "name": "missing helper actionable",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "pure Wayland missing helper actionable without session type",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "missing desktop actionable",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "oversize refuses before staging/decode",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "cancel after read discards result and removes staging",
+        "observed": true,
+        "detail": {
+          "delivered": 0,
+          "kind": "cancelled",
+          "staged_after": false,
+          "staged_before": true
+        }
+      },
+      {
+        "name": "scale increase to 2x",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "scale decreases to 1x",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "exactly three themes round-trip native profile",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "theme/scale do not change board bytes",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "application and keymap remain reachable and editable",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "clipboard worker/helper released after use",
+        "observed": true,
+        "detail": {
+          "tasks": [
+            "tack",
+            "llvmpipe-0",
+            "llvmpipe-1",
+            "llvmpipe-2",
+            "llvmpipe-3",
+            "llvmpipe-4",
+            "llvmpipe-5",
+            "llvmpipe-6",
+            "llvmpipe-7",
+            "llvmpipe-8",
+            "llvmpipe-9",
+            "llvmpipe-10",
+            "llvmpipe-11",
+            "llvmpipe-12",
+            "llvmpipe-13",
+            "llvmpipe-14",
+            "llvmpipe-15",
+            "tack",
+            "tack",
+            "tack",
+            "tack",
+            "tack",
+            "tack",
+            "tack",
+            "tack",
+            "tack",
+            "tack",
+            "tack",
+            "tack",
+            "tack",
+            "tack",
+            "tack",
+            "tack",
+            "tack:disk$0",
+            "tack",
+            "[vkcf] Analysis",
+            "[vkrt] Analysis",
+            "[vkps] Update",
+            "tack",
+            "tack-product-di",
+            "tack-product-di"
+          ],
+          "children": []
+        }
+      },
+      {
+        "name": "profile restart preserves scale",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "native viewport 1024x768",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "native viewport 1600x900",
+        "observed": true,
+        "detail": null
+      }
+    ],
+    "clipboard": [
+      {
+        "case": "PNG screenshot Ctrl+V",
+        "session": "x11",
+        "helper": "/home/gurp/.local/bin/xclip",
+        "normalized": {
+          "imported": 0,
+          "kind": "embedded image",
+          "staged": "/home/gurp/softs/tack/benchmark-results/phase1j/native-accepted/probe-work/clipboard.png"
+        },
+        "backend_mime_worker_trace": "clipboard backend=xclip advertised=[\"TARGETS\", \"image/png\"] chosen=image/png\nclipboard backend=xclip advertised=[\"TARGETS\", \"image/png\"] chosen=image/png bytes=228",
+        "worker_result": "embedded image",
+        "imported_total": 1,
+        "app_title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "case": "single file-manager PNG URI",
+        "session": "x11",
+        "helper": "/home/gurp/.local/bin/xclip",
+        "normalized": {
+          "count": 1,
+          "imported": 0,
+          "kind": "local files",
+          "rejected": 0
+        },
+        "backend_mime_worker_trace": "clipboard backend=xclip advertised=[\"TARGETS\", \"text/uri-list\"] chosen=text/uri-list\nclipboard backend=xclip advertised=[\"TARGETS\", \"text/uri-list\"] chosen=text/uri-list bytes=81",
+        "worker_result": "local files",
+        "imported_total": 2,
+        "app_title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "case": "single JPEG URI",
+        "session": "x11",
+        "helper": "/home/gurp/.local/bin/xclip",
+        "normalized": {
+          "count": 1,
+          "imported": 0,
+          "kind": "local files",
+          "rejected": 0
+        },
+        "backend_mime_worker_trace": "clipboard backend=xclip advertised=[\"TARGETS\", \"text/uri-list\"] chosen=text/uri-list\nclipboard backend=xclip advertised=[\"TARGETS\", \"text/uri-list\"] chosen=text/uri-list bytes=81",
+        "worker_result": "local files",
+        "imported_total": 3,
+        "app_title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "case": "multiple copied files",
+        "session": "x11",
+        "helper": "/home/gurp/.local/bin/xclip",
+        "normalized": {
+          "count": 2,
+          "imported": 0,
+          "kind": "local files",
+          "rejected": 0
+        },
+        "backend_mime_worker_trace": "clipboard backend=xclip advertised=[\"TARGETS\", \"x-special/gnome-copied-files\"] chosen=x-special/gnome-copied-files\nclipboard backend=xclip advertised=[\"TARGETS\", \"x-special/gnome-copied-files\"] chosen=x-special/gnome-copied-files bytes=168",
+        "worker_result": "local files",
+        "imported_total": 5,
+        "app_title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "case": "mixed valid, remote, invalid image",
+        "session": "x11",
+        "helper": "/home/gurp/.local/bin/xclip",
+        "normalized": {
+          "count": 3,
+          "imported": 0,
+          "kind": "local files",
+          "rejected": 1
+        },
+        "backend_mime_worker_trace": "clipboard backend=xclip advertised=[\"TARGETS\", \"text/uri-list\"] chosen=text/uri-list\nclipboard backend=xclip advertised=[\"TARGETS\", \"text/uri-list\"] chosen=text/uri-list bytes=270",
+        "worker_result": "local files"
+      },
+      {
+        "case": "context menu Paste same semantic path",
+        "session": "x11",
+        "helper": "/home/gurp/.local/bin/xclip",
+        "normalized": {
+          "imported": 0,
+          "kind": "embedded image",
+          "staged": "/home/gurp/softs/tack/benchmark-results/phase1j/native-accepted/probe-work/clipboard.png"
+        },
+        "backend_mime_worker_trace": "clipboard backend=xclip advertised=[\"TARGETS\", \"image/png\"] chosen=image/png\nclipboard backend=xclip advertised=[\"TARGETS\", \"image/png\"] chosen=image/png bytes=228",
+        "worker_result": "embedded image",
+        "imported_total": 8,
+        "app_title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "case": "plain text creates note",
+        "session": "x11",
+        "helper": "/home/gurp/.local/bin/xclip",
+        "normalized": {
+          "bytes": 25,
+          "imported": 0,
+          "kind": "text"
+        },
+        "backend_mime_worker_trace": "clipboard backend=xclip advertised=[\"TARGETS\", \"UTF8_STRING\"] chosen=UTF8_STRING\nclipboard backend=xclip advertised=[\"TARGETS\", \"UTF8_STRING\"] chosen=UTF8_STRING bytes=25",
+        "worker_result": "text",
+        "imported_total": 9,
+        "app_title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "case": "text into existing editor",
+        "session": "x11",
+        "helper": "/home/gurp/.local/bin/xclip",
+        "normalized": {
+          "bytes": 21,
+          "imported": 0,
+          "kind": "text"
+        },
+        "backend_mime_worker_trace": "clipboard backend=xclip advertised=[\"TARGETS\", \"UTF8_STRING\"] chosen=UTF8_STRING\nclipboard backend=xclip advertised=[\"TARGETS\", \"UTF8_STRING\"] chosen=UTF8_STRING bytes=21",
+        "worker_result": "text"
+      },
+      {
+        "case": "JPEG clipboard payload",
+        "session": "x11",
+        "helper": "/home/gurp/.local/bin/xclip",
+        "normalized": {
+          "imported": 0,
+          "kind": "embedded image",
+          "staged": "/home/gurp/softs/tack/benchmark-results/phase1j/native-accepted/probe-work/clipboard.jpg"
+        },
+        "backend_mime_worker_trace": "clipboard backend=xclip advertised=[\"TARGETS\", \"image/jpeg\"] chosen=image/jpeg\nclipboard backend=xclip advertised=[\"TARGETS\", \"image/jpeg\"] chosen=image/jpeg bytes=788",
+        "worker_result": "embedded image",
+        "imported_total": 11,
+        "app_title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "case": "unsupported MIME",
+        "session": "x11",
+        "helper": "/home/gurp/.local/bin/xclip",
+        "normalized": {
+          "error": "Unsupported clipboard format: copy local image files, a PNG/JPEG screenshot, or text",
+          "imported": 0,
+          "kind": "error"
+        },
+        "backend_mime_worker_trace": "clipboard backend=xclip advertised=[\"TARGETS\", \"application/octet-stream\"] chosen=none",
+        "worker_result": "error"
+      },
+      {
+        "case": "remote URI refused",
+        "session": "x11",
+        "helper": "/home/gurp/.local/bin/xclip",
+        "normalized": {
+          "error": "No supported local clipboard files; remote or invalid references were rejected",
+          "imported": 0,
+          "kind": "error"
+        },
+        "backend_mime_worker_trace": "clipboard backend=xclip advertised=[\"TARGETS\", \"text/uri-list\"] chosen=text/uri-list\nclipboard backend=xclip advertised=[\"TARGETS\", \"text/uri-list\"] chosen=text/uri-list bytes=27",
+        "worker_result": "error"
+      },
+      {
+        "case": "missing helper",
+        "session": "x11",
+        "helper": "/home/gurp/.local/bin/xclip",
+        "normalized": {
+          "error": "Clipboard helper missing: install xclip for images/files, or xsel for text",
+          "imported": 0,
+          "kind": "error"
+        },
+        "backend_mime_worker_trace": "",
+        "worker_result": "error"
+      },
+      {
+        "case": "pure Wayland missing helper",
+        "session": "x11",
+        "helper": "/home/gurp/.local/bin/xclip",
+        "normalized": {
+          "error": "Clipboard helper missing: install wl-clipboard (wl-paste)",
+          "imported": 0,
+          "kind": "error"
+        },
+        "backend_mime_worker_trace": "",
+        "worker_result": "error"
+      },
+      {
+        "case": "missing desktop backend",
+        "session": "x11",
+        "helper": "/home/gurp/.local/bin/xclip",
+        "normalized": {
+          "error": "Clipboard backend unavailable: start Tack in an X11 or Wayland desktop session",
+          "imported": 0,
+          "kind": "error"
+        },
+        "backend_mime_worker_trace": "",
+        "worker_result": "error"
+      },
+      {
+        "case": "oversize clipboard PNG",
+        "session": "x11",
+        "helper": "/home/gurp/.local/bin/xclip",
+        "normalized": {
+          "error": "Clipboard payload exceeds its size limit",
+          "imported": 0,
+          "kind": "error"
+        },
+        "backend_mime_worker_trace": "clipboard backend=xclip advertised=[\"TARGETS\", \"image/png\"] chosen=image/png",
+        "worker_result": "error"
+      }
+    ]
+  },
+  "actual_producers": [
+    {
+      "case": "actual Flameshot capture to clipboard",
+      "normalized": {
+        "error": "Native helper could not complete the operation; retry",
+        "imported": 0,
+        "kind": "error"
+      },
+      "trace": "",
+      "display": ":98",
+      "session": "X11",
+      "binary_sha256": "418d1fa7ea66e87c79eaaf3e178af37d2b9b5156768fe2556e6d6caa3d49ac18"
+    },
+    {
+      "case": "actual owned window screenshot + xclip selection",
+      "normalized": {
+        "imported": 0,
+        "kind": "embedded image",
+        "staged": "/home/gurp/softs/tack/benchmark-results/phase1j/producers-accepted/probe/clipboard.png"
+      },
+      "trace": "clipboard backend=xclip advertised=[\"TARGETS\", \"image/png\"] chosen=image/png\nclipboard backend=xclip advertised=[\"TARGETS\", \"image/png\"] chosen=image/png bytes=987\n",
+      "display": ":98",
+      "session": "X11",
+      "binary_sha256": "418d1fa7ea66e87c79eaaf3e178af37d2b9b5156768fe2556e6d6caa3d49ac18",
+      "imported_total": 1
+    },
+    {
+      "case": "actual Dolphin copied single PNG",
+      "normalized": {
+        "count": 1,
+        "imported": 0,
+        "kind": "local files",
+        "rejected": 0
+      },
+      "trace": "clipboard backend=xclip advertised=[\"text/uri-list\", \"text/x-moz-url\", \"text/plain\", \"application/x-kde4-urilist\", \"application/vnd.portal.filetransfer\", \"TARGETS\", \"MULTIPLE\", \"TIMESTAMP\", \"SAVE_TARGETS\"] chosen=text/uri-list\nclipboard backend=xclip advertised=[\"text/uri-list\", \"text/x-moz-url\", \"text/plain\", \"application/x-kde4-urilist\", \"application/vnd.portal.filetransfer\", \"TARGETS\", \"MULTIPLE\", \"TIMESTAMP\", \"SAVE_TARGETS\"] chosen=text/uri-list bytes=88\n",
+      "display": ":98",
+      "session": "X11",
+      "binary_sha256": "418d1fa7ea66e87c79eaaf3e178af37d2b9b5156768fe2556e6d6caa3d49ac18",
+      "imported_total": 2
+    },
+    {
+      "case": "actual Dolphin copied single JPEG",
+      "normalized": {
+        "count": 1,
+        "imported": 0,
+        "kind": "local files",
+        "rejected": 0
+      },
+      "trace": "clipboard backend=xclip advertised=[\"text/uri-list\", \"text/x-moz-url\", \"text/plain\", \"application/x-kde4-urilist\", \"application/vnd.portal.filetransfer\", \"TARGETS\", \"MULTIPLE\", \"TIMESTAMP\", \"SAVE_TARGETS\"] chosen=text/uri-list\nclipboard backend=xclip advertised=[\"text/uri-list\", \"text/x-moz-url\", \"text/plain\", \"application/x-kde4-urilist\", \"application/vnd.portal.filetransfer\", \"TARGETS\", \"MULTIPLE\", \"TIMESTAMP\", \"SAVE_TARGETS\"] chosen=text/uri-list bytes=88\n",
+      "display": ":98",
+      "session": "X11",
+      "binary_sha256": "418d1fa7ea66e87c79eaaf3e178af37d2b9b5156768fe2556e6d6caa3d49ac18",
+      "imported_total": 3
+    },
+    {
+      "case": "actual Dolphin multiple images",
+      "normalized": {
+        "count": 2,
+        "imported": 0,
+        "kind": "local files",
+        "rejected": 0
+      },
+      "trace": "clipboard backend=xclip advertised=[\"text/uri-list\", \"text/x-moz-url\", \"text/plain\", \"application/x-kde4-urilist\", \"application/vnd.portal.filetransfer\", \"TARGETS\", \"MULTIPLE\", \"TIMESTAMP\", \"SAVE_TARGETS\"] chosen=text/uri-list\nclipboard backend=xclip advertised=[\"text/uri-list\", \"text/x-moz-url\", \"text/plain\", \"application/x-kde4-urilist\", \"application/vnd.portal.filetransfer\", \"TARGETS\", \"MULTIPLE\", \"TIMESTAMP\", \"SAVE_TARGETS\"] chosen=text/uri-list bytes=176\n",
+      "display": ":98",
+      "session": "X11",
+      "binary_sha256": "418d1fa7ea66e87c79eaaf3e178af37d2b9b5156768fe2556e6d6caa3d49ac18",
+      "imported_total": 5
+    }
+  ],
+  "performance": {
+    "scope": "paired native empty-board user-driven pan; startup frames excluded, warm caches, serialized GPU ownership; GPU timestamp pass cost distinct from CPU submit/present",
+    "baseline_sha256": "c2f70c36924027a45f717d78566ebe083adc4eca4b045798d147418ead19f534",
+    "current_sha256": "ffc84555f2d443447c5674dcf6158649093a27156db1ee707b04471d7505432d",
+    "board_sha256": "1ce0be03dfe22de25689de4bec52052408455a5f4d5775f507967a0cb3c210d5",
+    "measured_frames": 2696,
+    "measured_gpu_samples": 2696,
+    "summary": [
+      {
+        "size": "800x600",
+        "grid": false,
+        "mean_paired_run_medians": {
+          "baseline": {
+            "gpu_pass_ms": 0.00536,
+            "cpu_ms": 0.17491600000000002
+          },
+          "current": {
+            "gpu_pass_ms": 0.011936,
+            "cpu_ms": 0.165031
+          }
+        },
+        "gpu_delta_us": 6.5760000000000005
+      },
+      {
+        "size": "800x600",
+        "grid": true,
+        "mean_paired_run_medians": {
+          "baseline": {
+            "gpu_pass_ms": 0.012496,
+            "cpu_ms": 0.190871
+          },
+          "current": {
+            "gpu_pass_ms": 0.012272,
+            "cpu_ms": 0.15619100000000002
+          }
+        },
+        "gpu_delta_us": -0.22400000000000025
+      },
+      {
+        "size": "1024x768",
+        "grid": false,
+        "mean_paired_run_medians": {
+          "baseline": {
+            "gpu_pass_ms": 0.0051199999999999996,
+            "cpu_ms": 0.219006
+          },
+          "current": {
+            "gpu_pass_ms": 0.017008000000000002,
+            "cpu_ms": 0.2165965
+          }
+        },
+        "gpu_delta_us": 11.888000000000003
+      },
+      {
+        "size": "1024x768",
+        "grid": true,
+        "mean_paired_run_medians": {
+          "baseline": {
+            "gpu_pass_ms": 0.017456,
+            "cpu_ms": 0.208761
+          },
+          "current": {
+            "gpu_pass_ms": 0.017632000000000002,
+            "cpu_ms": 0.199431
+          }
+        },
+        "gpu_delta_us": 0.17600000000000254
+      },
+      {
+        "size": "1600x900",
+        "grid": false,
+        "mean_paired_run_medians": {
+          "baseline": {
+            "gpu_pass_ms": 0.005456000000000001,
+            "cpu_ms": 0.1629355
+          },
+          "current": {
+            "gpu_pass_ms": 0.02848,
+            "cpu_ms": 0.15450599999999998
+          }
+        },
+        "gpu_delta_us": 23.023999999999997
+      },
+      {
+        "size": "1600x900",
+        "grid": true,
+        "mean_paired_run_medians": {
+          "baseline": {
+            "gpu_pass_ms": 0.02824,
+            "cpu_ms": 0.15671600000000002
+          },
+          "current": {
+            "gpu_pass_ms": 0.028687999999999998,
+            "cpu_ms": 0.153401
+          }
+        },
+        "gpu_delta_us": 0.447999999999997
+      }
+    ],
+    "runs": [
+      {
+        "pair": 0,
+        "size": "800x600",
+        "grid": false,
+        "binary": "baseline",
+        "report": "0-800x600-grid-0-baseline.json",
+        "report_sha256": "8c41b82482fb0c09495abaf4bfbe1b221d5eb5dd6469da4818ccc695d883936e",
+        "frames": 162,
+        "gpu_samples": 162,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.00418,
+            "p99": 0.008409999999999997,
+            "max": 0.011559999999999999
+          },
+          "encode_ms": {
+            "p50": 0.10312,
+            "p99": 0.156391,
+            "max": 0.162011
+          },
+          "submit_ms": {
+            "p50": 0.04715,
+            "p99": 0.07841000000000001,
+            "max": 0.180271
+          },
+          "cpu_ms": {
+            "p50": 0.17261100000000001,
+            "p99": 0.239651,
+            "max": 0.328282
+          },
+          "present_ms": {
+            "p50": 19.486352,
+            "p99": 20.611867,
+            "max": 20.714218
+          },
+          "callback_ms": {
+            "p50": 19.717083,
+            "p99": 20.854089,
+            "max": 20.960049
+          },
+          "gpu_pass_ms": {
+            "p50": 0.005344,
+            "p99": 0.018528,
+            "max": 0.019616
+          }
+        }
+      },
+      {
+        "pair": 0,
+        "size": "800x600",
+        "grid": false,
+        "binary": "current",
+        "report": "0-800x600-grid-0-current.json",
+        "report_sha256": "99e2754fabf83735e1ea0079480bc70697dd8e5e8128855581764d2ddcdef92d",
+        "frames": 162,
+        "gpu_samples": 162,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0016700000000000005,
+            "p99": 0.003170000000000001,
+            "max": 0.010380000000000004
+          },
+          "encode_ms": {
+            "p50": 0.092541,
+            "p99": 0.15892099999999998,
+            "max": 0.24199099999999998
+          },
+          "submit_ms": {
+            "p50": 0.04168,
+            "p99": 0.06888000000000001,
+            "max": 0.08242100000000001
+          },
+          "cpu_ms": {
+            "p50": 0.14916100000000002,
+            "p99": 0.242971,
+            "max": 0.340711
+          },
+          "present_ms": {
+            "p50": 19.571392,
+            "p99": 21.696182,
+            "max": 24.665406
+          },
+          "callback_ms": {
+            "p50": 19.764743000000003,
+            "p99": 21.919493000000003,
+            "max": 24.914107
+          },
+          "gpu_pass_ms": {
+            "p50": 0.011936,
+            "p99": 0.035232,
+            "max": 0.036192
+          }
+        }
+      },
+      {
+        "pair": 0,
+        "size": "800x600",
+        "grid": true,
+        "binary": "baseline",
+        "report": "0-800x600-grid-1-baseline.json",
+        "report_sha256": "0c49b4e93a22d6f853b6dfc599242d889c1f07ad9e0065b4205c3f77b2961860",
+        "frames": 164,
+        "gpu_samples": 164,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0052,
+            "p99": 0.008640000000000002,
+            "max": 0.012879999999999997
+          },
+          "encode_ms": {
+            "p50": 0.11882000000000001,
+            "p99": 0.176741,
+            "max": 0.936074
+          },
+          "submit_ms": {
+            "p50": 0.04849,
+            "p99": 0.07435,
+            "max": 0.09652100000000001
+          },
+          "cpu_ms": {
+            "p50": 0.189581,
+            "p99": 0.280431,
+            "max": 1.002185
+          },
+          "present_ms": {
+            "p50": 19.465612,
+            "p99": 20.534006,
+            "max": 21.343211
+          },
+          "callback_ms": {
+            "p50": 19.684713,
+            "p99": 20.754747000000002,
+            "max": 21.614212000000002
+          },
+          "gpu_pass_ms": {
+            "p50": 0.01248,
+            "p99": 0.013824,
+            "max": 0.0376
+          }
+        }
+      },
+      {
+        "pair": 0,
+        "size": "800x600",
+        "grid": true,
+        "binary": "current",
+        "report": "0-800x600-grid-1-current.json",
+        "report_sha256": "352935c854056ca549d7fc4322f5d80716e7598a4c5d1d7aac7ea00f4510d099",
+        "frames": 164,
+        "gpu_samples": 164,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.002340000000000001,
+            "p99": 0.004811000000000001,
+            "max": 0.01199
+          },
+          "encode_ms": {
+            "p50": 0.10179,
+            "p99": 0.176481,
+            "max": 0.228101
+          },
+          "submit_ms": {
+            "p50": 0.04214,
+            "p99": 0.08159,
+            "max": 0.11620000000000001
+          },
+          "cpu_ms": {
+            "p50": 0.16140100000000002,
+            "p99": 0.259482,
+            "max": 0.29396100000000003
+          },
+          "present_ms": {
+            "p50": 19.713173,
+            "p99": 21.192529,
+            "max": 22.624916
+          },
+          "callback_ms": {
+            "p50": 19.920704,
+            "p99": 21.510021000000002,
+            "max": 22.814636999999998
+          },
+          "gpu_pass_ms": {
+            "p50": 0.012288,
+            "p99": 0.036256,
+            "max": 0.036416
+          }
+        }
+      },
+      {
+        "pair": 0,
+        "size": "1024x768",
+        "grid": false,
+        "binary": "baseline",
+        "report": "0-1024x768-grid-0-baseline.json",
+        "report_sha256": "974d428cfdb440912d63c8aad76a6899578ad2c13c851e4d501143dcf0848c21",
+        "frames": 112,
+        "gpu_samples": 112,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.005779999999999998,
+            "p99": 0.008059999999999998,
+            "max": 0.008291
+          },
+          "encode_ms": {
+            "p50": 0.14744000000000002,
+            "p99": 0.182561,
+            "max": 0.19184099999999998
+          },
+          "submit_ms": {
+            "p50": 0.056711,
+            "p99": 0.08084000000000001,
+            "max": 0.086781
+          },
+          "cpu_ms": {
+            "p50": 0.22726100000000002,
+            "p99": 0.282381,
+            "max": 0.29855099999999996
+          },
+          "present_ms": {
+            "p50": 30.556623000000002,
+            "p99": 33.247387,
+            "max": 34.14763
+          },
+          "callback_ms": {
+            "p50": 30.826995,
+            "p99": 33.59339799999999,
+            "max": 34.435482
+          },
+          "gpu_pass_ms": {
+            "p50": 0.005216,
+            "p99": 0.006144,
+            "max": 0.006144
+          }
+        }
+      },
+      {
+        "pair": 0,
+        "size": "1024x768",
+        "grid": false,
+        "binary": "current",
+        "report": "0-1024x768-grid-0-current.json",
+        "report_sha256": "742378df29e5d01be0c1269b49559375e5fe7b0a1dda2066f174733b023093b4",
+        "frames": 111,
+        "gpu_samples": 111,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0021799999999999996,
+            "p99": 0.0034199999999999994,
+            "max": 0.003979999999999999
+          },
+          "encode_ms": {
+            "p50": 0.14889,
+            "p99": 0.188251,
+            "max": 0.22301100000000001
+          },
+          "submit_ms": {
+            "p50": 0.0576,
+            "p99": 0.0811,
+            "max": 0.08941
+          },
+          "cpu_ms": {
+            "p50": 0.227762,
+            "p99": 0.29540099999999997,
+            "max": 0.329961
+          },
+          "present_ms": {
+            "p50": 30.638484000000002,
+            "p99": 31.992541,
+            "max": 32.053921
+          },
+          "callback_ms": {
+            "p50": 30.894326,
+            "p99": 32.264372,
+            "max": 32.425681999999995
+          },
+          "gpu_pass_ms": {
+            "p50": 0.01696,
+            "p99": 0.04912,
+            "max": 0.049856
+          }
+        }
+      },
+      {
+        "pair": 0,
+        "size": "1024x768",
+        "grid": true,
+        "binary": "baseline",
+        "report": "0-1024x768-grid-1-baseline.json",
+        "report_sha256": "427e0747aad7a2586ce893e9a9bcb39fb95139ae88662ea6893df6282b7a8d42",
+        "frames": 113,
+        "gpu_samples": 113,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.00425,
+            "p99": 0.009339999999999998,
+            "max": 0.03476
+          },
+          "encode_ms": {
+            "p50": 0.112301,
+            "p99": 0.196701,
+            "max": 0.9083439999999999
+          },
+          "submit_ms": {
+            "p50": 0.054251,
+            "p99": 0.07323,
+            "max": 0.12651099999999998
+          },
+          "cpu_ms": {
+            "p50": 0.18694100000000002,
+            "p99": 0.30023099999999997,
+            "max": 0.981375
+          },
+          "present_ms": {
+            "p50": 30.961856,
+            "p99": 32.323352,
+            "max": 32.465104000000004
+          },
+          "callback_ms": {
+            "p50": 31.178887,
+            "p99": 32.604403999999995,
+            "max": 32.725134000000004
+          },
+          "gpu_pass_ms": {
+            "p50": 0.017536,
+            "p99": 0.018432,
+            "max": 0.021472
+          }
+        }
+      },
+      {
+        "pair": 0,
+        "size": "1024x768",
+        "grid": true,
+        "binary": "current",
+        "report": "0-1024x768-grid-1-current.json",
+        "report_sha256": "d4ab8cc4997ea5baef3ece116f9748e1a9c88b9715414b378a8127afbf50e079",
+        "frames": 115,
+        "gpu_samples": 115,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0036100000000000004,
+            "p99": 0.004730000000000001,
+            "max": 0.005760000000000001
+          },
+          "encode_ms": {
+            "p50": 0.14784999999999998,
+            "p99": 0.183941,
+            "max": 0.21097100000000002
+          },
+          "submit_ms": {
+            "p50": 0.057381,
+            "p99": 0.07601999999999999,
+            "max": 0.0773
+          },
+          "cpu_ms": {
+            "p50": 0.228041,
+            "p99": 0.28390099999999996,
+            "max": 0.290862
+          },
+          "present_ms": {
+            "p50": 30.886606,
+            "p99": 33.89967,
+            "max": 34.560213
+          },
+          "callback_ms": {
+            "p50": 31.158247,
+            "p99": 34.170931,
+            "max": 34.820674000000004
+          },
+          "gpu_pass_ms": {
+            "p50": 0.017568,
+            "p99": 0.05136,
+            "max": 0.054592
+          }
+        }
+      },
+      {
+        "pair": 0,
+        "size": "1600x900",
+        "grid": false,
+        "binary": "baseline",
+        "report": "0-1600x900-grid-0-baseline.json",
+        "report_sha256": "1511f6fe507c1c17f7e5a86073e09f5503fa040ea5aaeb45fc1bbed64dd8ec5e",
+        "frames": 62,
+        "gpu_samples": 62,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0051600000000000005,
+            "p99": 0.00636,
+            "max": 0.006449999999999999
+          },
+          "encode_ms": {
+            "p50": 0.106331,
+            "p99": 0.14439100000000002,
+            "max": 0.15166100000000002
+          },
+          "submit_ms": {
+            "p50": 0.037669999999999995,
+            "p99": 0.054391,
+            "max": 0.05466
+          },
+          "cpu_ms": {
+            "p50": 0.16297999999999999,
+            "p99": 0.204701,
+            "max": 0.228331
+          },
+          "present_ms": {
+            "p50": 56.332315,
+            "p99": 57.127819,
+            "max": 57.352109999999996
+          },
+          "callback_ms": {
+            "p50": 56.520726,
+            "p99": 57.33177,
+            "max": 57.586701
+          },
+          "gpu_pass_ms": {
+            "p50": 0.005472,
+            "p99": 0.006144,
+            "max": 0.006144
+          }
+        }
+      },
+      {
+        "pair": 0,
+        "size": "1600x900",
+        "grid": false,
+        "binary": "current",
+        "report": "0-1600x900-grid-0-current.json",
+        "report_sha256": "a39a43959719fa1f88d6f98b040bf25c13d8c36ef6bcb31024d43f91eed261e5",
+        "frames": 58,
+        "gpu_samples": 58,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0018800000000000006,
+            "p99": 0.002930000000000001,
+            "max": 0.0030299999999999997
+          },
+          "encode_ms": {
+            "p50": 0.10092999999999999,
+            "p99": 0.14181,
+            "max": 0.15472
+          },
+          "submit_ms": {
+            "p50": 0.03751,
+            "p99": 0.054401000000000005,
+            "max": 0.08122
+          },
+          "cpu_ms": {
+            "p50": 0.153801,
+            "p99": 0.205521,
+            "max": 0.21754099999999998
+          },
+          "present_ms": {
+            "p50": 56.460456,
+            "p99": 58.380205,
+            "max": 58.417935
+          },
+          "callback_ms": {
+            "p50": 56.670617,
+            "p99": 58.558386,
+            "max": 58.607736
+          },
+          "gpu_pass_ms": {
+            "p50": 0.028384,
+            "p99": 0.069056,
+            "max": 0.08112
+          }
+        }
+      },
+      {
+        "pair": 0,
+        "size": "1600x900",
+        "grid": true,
+        "binary": "baseline",
+        "report": "0-1600x900-grid-1-baseline.json",
+        "report_sha256": "bb67c499ad432911d7b73bbcb68de02022c8927150ccfb35344c08a5e349cdd1",
+        "frames": 64,
+        "gpu_samples": 64,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.00712,
+            "p99": 0.010151,
+            "max": 0.01022
+          },
+          "encode_ms": {
+            "p50": 0.0961,
+            "p99": 0.14261,
+            "max": 0.7709429999999999
+          },
+          "submit_ms": {
+            "p50": 0.03622,
+            "p99": 0.055220000000000005,
+            "max": 0.05678999999999999
+          },
+          "cpu_ms": {
+            "p50": 0.15710100000000002,
+            "p99": 0.20635099999999998,
+            "max": 0.833314
+          },
+          "present_ms": {
+            "p50": 56.536957,
+            "p99": 59.621791,
+            "max": 68.94507499999999
+          },
+          "callback_ms": {
+            "p50": 56.746428,
+            "p99": 59.860512,
+            "max": 69.212036
+          },
+          "gpu_pass_ms": {
+            "p50": 0.02832,
+            "p99": 0.028672,
+            "max": 0.028672
+          }
+        }
+      },
+      {
+        "pair": 0,
+        "size": "1600x900",
+        "grid": true,
+        "binary": "current",
+        "report": "0-1600x900-grid-1-current.json",
+        "report_sha256": "54e616d3a15fe36cb781e22375934f2d669edfaa5231af7f83f3ab3e30595193",
+        "frames": 64,
+        "gpu_samples": 64,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0034799999999999996,
+            "p99": 0.008100000000000001,
+            "max": 0.01049
+          },
+          "encode_ms": {
+            "p50": 0.09401999999999999,
+            "p99": 0.14947,
+            "max": 0.15334
+          },
+          "submit_ms": {
+            "p50": 0.036981,
+            "p99": 0.058811,
+            "max": 0.06981
+          },
+          "cpu_ms": {
+            "p50": 0.149901,
+            "p99": 0.21714099999999997,
+            "max": 0.226011
+          },
+          "present_ms": {
+            "p50": 56.593275999999996,
+            "p99": 58.965508,
+            "max": 59.4611
+          },
+          "callback_ms": {
+            "p50": 56.810327,
+            "p99": 59.160489,
+            "max": 59.652872
+          },
+          "gpu_pass_ms": {
+            "p50": 0.028704,
+            "p99": 0.086208,
+            "max": 0.086208
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "800x600",
+        "grid": false,
+        "binary": "current",
+        "report": "1-800x600-grid-0-current.json",
+        "report_sha256": "a52ff3fd43268c6d3abc9a0b2d87062f86e4bbbcb2d63f3675155b01b126597c",
+        "frames": 161,
+        "gpu_samples": 161,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0015500000000000002,
+            "p99": 0.0030799999999999994,
+            "max": 0.0053999999999999986
+          },
+          "encode_ms": {
+            "p50": 0.11149,
+            "p99": 0.17201,
+            "max": 0.183041
+          },
+          "submit_ms": {
+            "p50": 0.04852,
+            "p99": 0.07687000000000001,
+            "max": 0.08127999999999999
+          },
+          "cpu_ms": {
+            "p50": 0.180901,
+            "p99": 0.267091,
+            "max": 0.282611
+          },
+          "present_ms": {
+            "p50": 19.456352,
+            "p99": 20.363536,
+            "max": 20.666878
+          },
+          "callback_ms": {
+            "p50": 19.670472,
+            "p99": 20.622097999999998,
+            "max": 20.945209
+          },
+          "gpu_pass_ms": {
+            "p50": 0.011936,
+            "p99": 0.012416,
+            "max": 0.013632
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "800x600",
+        "grid": false,
+        "binary": "baseline",
+        "report": "1-800x600-grid-0-baseline.json",
+        "report_sha256": "a64d44c18d59519dfe927c386b60a3ac9846cd6165f0d466590a7db1fc8d6d11",
+        "frames": 161,
+        "gpu_samples": 161,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.004159999999999999,
+            "p99": 0.00668,
+            "max": 0.007369999999999999
+          },
+          "encode_ms": {
+            "p50": 0.10989,
+            "p99": 0.164151,
+            "max": 0.16866099999999998
+          },
+          "submit_ms": {
+            "p50": 0.046751,
+            "p99": 0.069831,
+            "max": 0.07781
+          },
+          "cpu_ms": {
+            "p50": 0.177221,
+            "p99": 0.246961,
+            "max": 0.253121
+          },
+          "present_ms": {
+            "p50": 19.478931000000003,
+            "p99": 20.570327,
+            "max": 20.940417999999998
+          },
+          "callback_ms": {
+            "p50": 19.709372,
+            "p99": 20.742188000000002,
+            "max": 21.171959
+          },
+          "gpu_pass_ms": {
+            "p50": 0.005376,
+            "p99": 0.018432,
+            "max": 0.018432
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "800x600",
+        "grid": true,
+        "binary": "current",
+        "report": "1-800x600-grid-1-current.json",
+        "report_sha256": "2165c88522b6028735736617cac1f63c3e2ad861887f85238d78e8f8b63a6f75",
+        "frames": 164,
+        "gpu_samples": 164,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0021899999999999997,
+            "p99": 0.004879999999999999,
+            "max": 0.0070300000000000015
+          },
+          "encode_ms": {
+            "p50": 0.09315999999999999,
+            "p99": 0.163821,
+            "max": 0.20849099999999998
+          },
+          "submit_ms": {
+            "p50": 0.04142,
+            "p99": 0.08884,
+            "max": 0.257611
+          },
+          "cpu_ms": {
+            "p50": 0.150981,
+            "p99": 0.25616099999999997,
+            "max": 0.479692
+          },
+          "present_ms": {
+            "p50": 19.568522,
+            "p99": 21.554452,
+            "max": 23.520071
+          },
+          "callback_ms": {
+            "p50": 19.766753,
+            "p99": 21.733303,
+            "max": 23.804552
+          },
+          "gpu_pass_ms": {
+            "p50": 0.012256,
+            "p99": 0.034912,
+            "max": 0.036352
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "800x600",
+        "grid": true,
+        "binary": "baseline",
+        "report": "1-800x600-grid-1-baseline.json",
+        "report_sha256": "7fe4923dae72caa17cc3acb1c862c80b853e937ffe94ddfa742dcc506bed1cee",
+        "frames": 164,
+        "gpu_samples": 164,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.005390000000000001,
+            "p99": 0.008779999999999996,
+            "max": 0.008981
+          },
+          "encode_ms": {
+            "p50": 0.12076,
+            "p99": 0.173331,
+            "max": 0.7501829999999999
+          },
+          "submit_ms": {
+            "p50": 0.04632,
+            "p99": 0.079211,
+            "max": 0.08320999999999999
+          },
+          "cpu_ms": {
+            "p50": 0.192161,
+            "p99": 0.271872,
+            "max": 0.8082630000000001
+          },
+          "present_ms": {
+            "p50": 19.507052,
+            "p99": 20.228626,
+            "max": 20.648327000000002
+          },
+          "callback_ms": {
+            "p50": 19.746043,
+            "p99": 20.686477,
+            "max": 21.022058
+          },
+          "gpu_pass_ms": {
+            "p50": 0.012512,
+            "p99": 0.013824,
+            "max": 0.039232
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "1024x768",
+        "grid": false,
+        "binary": "current",
+        "report": "1-1024x768-grid-0-current.json",
+        "report_sha256": "7b1e1238b29411b201bca205f0c2bffd24200d27c1245916b1302465d8d14c49",
+        "frames": 111,
+        "gpu_samples": 111,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0018799999999999997,
+            "p99": 0.0033699999999999997,
+            "max": 0.008749999999999999
+          },
+          "encode_ms": {
+            "p50": 0.13395,
+            "p99": 0.172451,
+            "max": 0.185911
+          },
+          "submit_ms": {
+            "p50": 0.0526,
+            "p99": 0.06989,
+            "max": 0.0887
+          },
+          "cpu_ms": {
+            "p50": 0.205431,
+            "p99": 0.264312,
+            "max": 0.299142
+          },
+          "present_ms": {
+            "p50": 30.937296,
+            "p99": 33.548018,
+            "max": 34.04903
+          },
+          "callback_ms": {
+            "p50": 31.174317,
+            "p99": 33.779039,
+            "max": 34.264140999999995
+          },
+          "gpu_pass_ms": {
+            "p50": 0.017056,
+            "p99": 0.05104,
+            "max": 0.051776
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "1024x768",
+        "grid": false,
+        "binary": "baseline",
+        "report": "1-1024x768-grid-0-baseline.json",
+        "report_sha256": "c12cce9da4f8c98d4ca6d928cbb1714a31910448bd643a87b24b65ac492fcdec",
+        "frames": 110,
+        "gpu_samples": 110,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0052499999999999995,
+            "p99": 0.009189999999999999,
+            "max": 0.01466
+          },
+          "encode_ms": {
+            "p50": 0.135631,
+            "p99": 0.176951,
+            "max": 0.189051
+          },
+          "submit_ms": {
+            "p50": 0.051751,
+            "p99": 0.072341,
+            "max": 0.08394
+          },
+          "cpu_ms": {
+            "p50": 0.210751,
+            "p99": 0.26552200000000004,
+            "max": 0.293222
+          },
+          "present_ms": {
+            "p50": 30.798695000000002,
+            "p99": 33.387797,
+            "max": 34.575712
+          },
+          "callback_ms": {
+            "p50": 31.064367,
+            "p99": 33.643389000000006,
+            "max": 34.854624
+          },
+          "gpu_pass_ms": {
+            "p50": 0.005024,
+            "p99": 0.006144,
+            "max": 0.008192
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "1024x768",
+        "grid": true,
+        "binary": "current",
+        "report": "1-1024x768-grid-1-current.json",
+        "report_sha256": "16a5621e2b068736ae3e6c64e9cf3ac6ceec94a44188fb049524321e6c21ebf0",
+        "frames": 113,
+        "gpu_samples": 113,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0020000000000000005,
+            "p99": 0.00422,
+            "max": 0.004569999999999999
+          },
+          "encode_ms": {
+            "p50": 0.10108,
+            "p99": 0.19017099999999998,
+            "max": 0.194271
+          },
+          "submit_ms": {
+            "p50": 0.05336,
+            "p99": 0.08581,
+            "max": 0.10364999999999999
+          },
+          "cpu_ms": {
+            "p50": 0.170821,
+            "p99": 0.28872099999999995,
+            "max": 0.310251
+          },
+          "present_ms": {
+            "p50": 30.876305,
+            "p99": 33.35453699999999,
+            "max": 35.463786999999996
+          },
+          "callback_ms": {
+            "p50": 31.101906,
+            "p99": 33.597468,
+            "max": 35.641518
+          },
+          "gpu_pass_ms": {
+            "p50": 0.017696,
+            "p99": 0.05024,
+            "max": 0.052224
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "1024x768",
+        "grid": true,
+        "binary": "baseline",
+        "report": "1-1024x768-grid-1-baseline.json",
+        "report_sha256": "869130a02f14de8368ced835ec88faa65bdb6ad18a0603e275f7a879eb867f0f",
+        "frames": 115,
+        "gpu_samples": 115,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.006410000000000001,
+            "p99": 0.0083,
+            "max": 0.00937
+          },
+          "encode_ms": {
+            "p50": 0.15118099999999998,
+            "p99": 0.189251,
+            "max": 0.7538739999999999
+          },
+          "submit_ms": {
+            "p50": 0.055,
+            "p99": 0.07765999999999999,
+            "max": 0.07957
+          },
+          "cpu_ms": {
+            "p50": 0.23058099999999998,
+            "p99": 0.28353100000000003,
+            "max": 0.815414
+          },
+          "present_ms": {
+            "p50": 30.762455000000003,
+            "p99": 31.81904,
+            "max": 32.174112
+          },
+          "callback_ms": {
+            "p50": 31.044846,
+            "p99": 32.141151,
+            "max": 32.452143
+          },
+          "gpu_pass_ms": {
+            "p50": 0.017376,
+            "p99": 0.018432,
+            "max": 0.018432
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "1600x900",
+        "grid": false,
+        "binary": "current",
+        "report": "1-1600x900-grid-0-current.json",
+        "report_sha256": "69bf7bc1afac14bc671e5288409c38246f6c8692d3e63e4416ac7d593f63fb0f",
+        "frames": 61,
+        "gpu_samples": 61,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0013699999999999997,
+            "p99": 0.003170000000000001,
+            "max": 0.00437
+          },
+          "encode_ms": {
+            "p50": 0.09215100000000001,
+            "p99": 0.12444100000000001,
+            "max": 0.148611
+          },
+          "submit_ms": {
+            "p50": 0.045001,
+            "p99": 0.07258,
+            "max": 0.07605
+          },
+          "cpu_ms": {
+            "p50": 0.155211,
+            "p99": 0.196761,
+            "max": 0.229211
+          },
+          "present_ms": {
+            "p50": 56.698967,
+            "p99": 59.408259,
+            "max": 59.444610000000004
+          },
+          "callback_ms": {
+            "p50": 56.893148,
+            "p99": 59.626540999999996,
+            "max": 59.642671
+          },
+          "gpu_pass_ms": {
+            "p50": 0.028576,
+            "p99": 0.080544,
+            "max": 0.083808
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "1600x900",
+        "grid": false,
+        "binary": "baseline",
+        "report": "1-1600x900-grid-0-baseline.json",
+        "report_sha256": "2cb88da250a506c261c90ccab088dc9b6d2981216bbdabcf59a84d297676384e",
+        "frames": 60,
+        "gpu_samples": 60,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.005330000000000001,
+            "p99": 0.00694,
+            "max": 0.007970000000000003
+          },
+          "encode_ms": {
+            "p50": 0.099441,
+            "p99": 0.13660000000000003,
+            "max": 0.14994100000000002
+          },
+          "submit_ms": {
+            "p50": 0.03798,
+            "p99": 0.05685,
+            "max": 0.0751
+          },
+          "cpu_ms": {
+            "p50": 0.162891,
+            "p99": 0.204041,
+            "max": 0.212821
+          },
+          "present_ms": {
+            "p50": 56.329235,
+            "p99": 56.851848000000004,
+            "max": 57.124459
+          },
+          "callback_ms": {
+            "p50": 56.527876,
+            "p99": 57.059168,
+            "max": 57.31687
+          },
+          "gpu_pass_ms": {
+            "p50": 0.00544,
+            "p99": 0.006144,
+            "max": 0.006144
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "1600x900",
+        "grid": true,
+        "binary": "current",
+        "report": "1-1600x900-grid-1-current.json",
+        "report_sha256": "da1a5649586410e4e2a3fc3c8ef5c1f63e120150a9905603b153a3a25d0201ee",
+        "frames": 61,
+        "gpu_samples": 61,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0029699999999999987,
+            "p99": 0.00506,
+            "max": 0.005439999999999999
+          },
+          "encode_ms": {
+            "p50": 0.09493,
+            "p99": 0.145831,
+            "max": 0.14806
+          },
+          "submit_ms": {
+            "p50": 0.039321,
+            "p99": 0.06728,
+            "max": 0.07046
+          },
+          "cpu_ms": {
+            "p50": 0.156901,
+            "p99": 0.222321,
+            "max": 0.223921
+          },
+          "present_ms": {
+            "p50": 56.550927,
+            "p99": 60.106073,
+            "max": 61.006557
+          },
+          "callback_ms": {
+            "p50": 56.783117000000004,
+            "p99": 60.279234,
+            "max": 61.227138000000004
+          },
+          "gpu_pass_ms": {
+            "p50": 0.028672,
+            "p99": 0.079328,
+            "max": 0.081888
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "1600x900",
+        "grid": true,
+        "binary": "baseline",
+        "report": "1-1600x900-grid-1-baseline.json",
+        "report_sha256": "eb37afa82f602fa6e0193d60f6680ff9e2e59308a6c04788bcd71e617b36646f",
+        "frames": 64,
+        "gpu_samples": 64,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.006639999999999999,
+            "p99": 0.010610000000000001,
+            "max": 0.010659999999999998
+          },
+          "encode_ms": {
+            "p50": 0.097481,
+            "p99": 0.16795,
+            "max": 0.7611230000000001
+          },
+          "submit_ms": {
+            "p50": 0.03796,
+            "p99": 0.053411,
+            "max": 0.064941
+          },
+          "cpu_ms": {
+            "p50": 0.156331,
+            "p99": 0.23896099999999998,
+            "max": 0.8208230000000001
+          },
+          "present_ms": {
+            "p50": 56.186954,
+            "p99": 59.132298999999996,
+            "max": 59.133178
+          },
+          "callback_ms": {
+            "p50": 56.405586,
+            "p99": 59.31317,
+            "max": 59.329739
+          },
+          "gpu_pass_ms": {
+            "p50": 0.02816,
+            "p99": 0.087008,
+            "max": 0.087552
+          }
+        }
+      }
+    ],
+    "raw_receipt": "benchmark-results/phase1j/performance-accepted/receipt.json",
+    "raw_receipt_sha256": "c8205e1a3e78e246a444b5aa6c29b1acb727f755523b17b4b741d209d1b6e8f5"
+  },
+  "idle": [
+    {
+      "case": "idle-baseline",
+      "grid": "hidden",
+      "seconds": 5.025118812045548,
+      "binary_sha256": "c2f70c36924027a45f717d78566ebe083adc4eca4b045798d147418ead19f534",
+      "redraws": 0,
+      "gpu_submissions": 0,
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "main_thread": {
+        "name": "tack",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0,
+        "involuntary_switches": 0
+      },
+      "whole_process_cpu_ticks": 1,
+      "rss_delta_bytes": 0,
+      "raw": "benchmark-results/phase1j/idle-accepted/idle-baseline/summary.json",
+      "raw_sha256": "0930581ff0f44e5ffd17d3700c044be54cbb6d16c5419a3aed5e825a5a1c5381"
+    },
+    {
+      "case": "idle-closed",
+      "grid": "hidden",
+      "seconds": 5.026147398981266,
+      "binary_sha256": "418d1fa7ea66e87c79eaaf3e178af37d2b9b5156768fe2556e6d6caa3d49ac18",
+      "redraws": 0,
+      "gpu_submissions": 0,
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "main_thread": {
+        "name": "tack",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0,
+        "involuntary_switches": 0
+      },
+      "whole_process_cpu_ticks": 3,
+      "rss_delta_bytes": 0,
+      "raw": "benchmark-results/phase1j/idle-accepted/idle-closed/summary.json",
+      "raw_sha256": "0b825418fd943d1afb5013c4b988ffeb15a8ad9a62e0e9299317936ed18b365f"
+    },
+    {
+      "case": "idle-dark",
+      "grid": "hidden",
+      "seconds": 5.024699714034796,
+      "binary_sha256": "418d1fa7ea66e87c79eaaf3e178af37d2b9b5156768fe2556e6d6caa3d49ac18",
+      "redraws": 0,
+      "gpu_submissions": 0,
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "main_thread": {
+        "name": "tack",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0,
+        "involuntary_switches": 0
+      },
+      "whole_process_cpu_ticks": 2,
+      "rss_delta_bytes": 0,
+      "raw": "benchmark-results/phase1j/idle-accepted/idle-dark/summary.json",
+      "raw_sha256": "f354d88d860ee329b82ec978a079e86718a8f8c9a3dfd37ad737db92f6f7beb4"
+    },
+    {
+      "case": "idle-dark",
+      "grid": "visible",
+      "seconds": 5.0236576400347985,
+      "binary_sha256": "418d1fa7ea66e87c79eaaf3e178af37d2b9b5156768fe2556e6d6caa3d49ac18",
+      "redraws": 0,
+      "gpu_submissions": 0,
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "main_thread": {
+        "name": "tack",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0,
+        "involuntary_switches": 0
+      },
+      "whole_process_cpu_ticks": 2,
+      "rss_delta_bytes": 0,
+      "raw": "benchmark-results/phase1j/idle-accepted/idle-dark/summary.json",
+      "raw_sha256": "f354d88d860ee329b82ec978a079e86718a8f8c9a3dfd37ad737db92f6f7beb4"
+    },
+    {
+      "case": "idle-light",
+      "grid": "hidden",
+      "seconds": 5.023602825007401,
+      "binary_sha256": "418d1fa7ea66e87c79eaaf3e178af37d2b9b5156768fe2556e6d6caa3d49ac18",
+      "redraws": 0,
+      "gpu_submissions": 0,
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "main_thread": {
+        "name": "tack",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0,
+        "involuntary_switches": 0
+      },
+      "whole_process_cpu_ticks": 2,
+      "rss_delta_bytes": 0,
+      "raw": "benchmark-results/phase1j/idle-accepted/idle-light/summary.json",
+      "raw_sha256": "2eddb41db053c8fe21468361147d780f986067a4fcbf11a88ee630ef575e04c5"
+    },
+    {
+      "case": "idle-light",
+      "grid": "visible",
+      "seconds": 5.023617347003892,
+      "binary_sha256": "418d1fa7ea66e87c79eaaf3e178af37d2b9b5156768fe2556e6d6caa3d49ac18",
+      "redraws": 0,
+      "gpu_submissions": 0,
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "main_thread": {
+        "name": "tack",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0,
+        "involuntary_switches": 0
+      },
+      "whole_process_cpu_ticks": 2,
+      "rss_delta_bytes": 0,
+      "raw": "benchmark-results/phase1j/idle-accepted/idle-light/summary.json",
+      "raw_sha256": "2eddb41db053c8fe21468361147d780f986067a4fcbf11a88ee630ef575e04c5"
+    },
+    {
+      "case": "idle-menu",
+      "grid": "hidden",
+      "seconds": 5.023231064027641,
+      "binary_sha256": "418d1fa7ea66e87c79eaaf3e178af37d2b9b5156768fe2556e6d6caa3d49ac18",
+      "redraws": 0,
+      "gpu_submissions": 0,
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "main_thread": {
+        "name": "tack",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0,
+        "involuntary_switches": 0
+      },
+      "whole_process_cpu_ticks": 2,
+      "rss_delta_bytes": 0,
+      "raw": "benchmark-results/phase1j/idle-accepted/idle-menu/summary.json",
+      "raw_sha256": "3832aa46c0f5fb4097fbb513d6aa800095f6c59047e62afe42737d2b464a7f94"
+    },
+    {
+      "case": "idle-neutral",
+      "grid": "hidden",
+      "seconds": 5.02502955798991,
+      "binary_sha256": "418d1fa7ea66e87c79eaaf3e178af37d2b9b5156768fe2556e6d6caa3d49ac18",
+      "redraws": 0,
+      "gpu_submissions": 0,
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "main_thread": {
+        "name": "tack",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0,
+        "involuntary_switches": 0
+      },
+      "whole_process_cpu_ticks": 2,
+      "rss_delta_bytes": 0,
+      "raw": "benchmark-results/phase1j/idle-accepted/idle-neutral/summary.json",
+      "raw_sha256": "8ca1db095cef7305da83468ff14f01c4dfd180ba817a8eb732d3960645c55a0b"
+    },
+    {
+      "case": "idle-neutral",
+      "grid": "visible",
+      "seconds": 5.023787447018549,
+      "binary_sha256": "418d1fa7ea66e87c79eaaf3e178af37d2b9b5156768fe2556e6d6caa3d49ac18",
+      "redraws": 0,
+      "gpu_submissions": 0,
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "main_thread": {
+        "name": "tack",
+        "cpu_ticks": 0,
+        "voluntary_switches": 0,
+        "involuntary_switches": 0
+      },
+      "whole_process_cpu_ticks": 2,
+      "rss_delta_bytes": 0,
+      "raw": "benchmark-results/phase1j/idle-accepted/idle-neutral/summary.json",
+      "raw_sha256": "8ca1db095cef7305da83468ff14f01c4dfd180ba817a8eb732d3960645c55a0b"
+    }
+  ],
+  "gradient_pixels": [
+    {
+      "theme": "VeryDark",
+      "top_rgb": [
+        22,
+        25,
+        31
+      ],
+      "bottom_rgb": [
+        27,
+        30,
+        36
+      ],
+      "distinct_row_colors": 16,
+      "monotonic": true,
+      "screen_space_same_row": true,
+      "x_columns": [
+        450,
+        500
+      ]
+    },
+    {
+      "theme": "NeutralGray",
+      "top_rgb": [
+        53,
+        56,
+        63
+      ],
+      "bottom_rgb": [
+        57,
+        61,
+        67
+      ],
+      "distinct_row_colors": 14,
+      "monotonic": true,
+      "screen_space_same_row": true,
+      "x_columns": [
+        450,
+        500
+      ]
+    },
+    {
+      "theme": "Light",
+      "top_rgb": [
+        216,
+        218,
+        219
+      ],
+      "bottom_rgb": [
+        221,
+        222,
+        223
+      ],
+      "distinct_row_colors": 14,
+      "monotonic": true,
+      "screen_space_same_row": true,
+      "x_columns": [
+        450,
+        500
+      ]
+    }
+  ],
+  "captures": [
+    {
+      "path": "benchmarks/phase1j-ui/native-theme-VeryDark.png",
+      "sha256": "b9f272699889738e861f4c50d3c51cad192a66862ca1b6dd575f37bedaad5663",
+      "bytes": 2809
+    },
+    {
+      "path": "benchmarks/phase1j-ui/native-theme-NeutralGray.png",
+      "sha256": "01714965b7a7c9b0152c3358f5c1e08a8e67f95d08059bca5fe937fb405f50b2",
+      "bytes": 2716
+    },
+    {
+      "path": "benchmarks/phase1j-ui/native-theme-Light.png",
+      "sha256": "6bffc35c2c9b7cdaecfbf145222c2b20027a3dcfe796340892ff988f19cb3897",
+      "bytes": 2851
+    },
+    {
+      "path": "benchmarks/phase1j-ui/native-menu-VeryDark.png",
+      "sha256": "1d37444e00aa079241bcf8826517e24508f2857c5ebf53b3efbebaf31dc482d4",
+      "bytes": 4430
+    },
+    {
+      "path": "benchmarks/phase1j-ui/native-menu-NeutralGray.png",
+      "sha256": "de9609ad50378bd6a3007fb286b06f3abf41c8a8d5e33ab10ecb8113c5d4f941",
+      "bytes": 4360
+    },
+    {
+      "path": "benchmarks/phase1j-ui/native-menu-Light.png",
+      "sha256": "2a7991c9d47287a810ae2e116f97ddc8dd3c51c88c55b55614f05952da791cb8",
+      "bytes": 4468
+    },
+    {
+      "path": "benchmarks/phase1j-ui/native-File-2x.png",
+      "sha256": "2e336c867c9bf796b68a91f81d617350a0811a4554edf61d04634aa2962cdfd7",
+      "bytes": 4784
+    },
+    {
+      "path": "benchmarks/phase1j-ui/native-parent-preferences-2x.png",
+      "sha256": "da96e44b3fd190ccce087716b6009f203efe1acee28fbc5429a30e1b484ccfaf",
+      "bytes": 3446
+    },
+    {
+      "path": "benchmarks/phase1j-ui/size-1024x768-preferences.png",
+      "sha256": "55afcc96107cbb8e94e293315d314fa025d3a1d7eee92ceda22099cb3098498c",
+      "bytes": 5637
+    },
+    {
+      "path": "benchmarks/phase1j-ui/size-1600x900-combined.png",
+      "sha256": "071e012a85d98e534f742efa170cdca991280159936082758520c31f98977458",
+      "bytes": 8066
+    },
+    {
+      "path": "benchmarks/phase1j-ui/actual-screenshot.png",
+      "sha256": "ce7e98b7024a047b3728bbfaf4755b5b9e75b7e45ce08d184072f89130382f33",
+      "bytes": 987
+    },
+    {
+      "path": "benchmarks/phase1j-ui/app-actual-collages.png",
+      "sha256": "5a4ba46a4fab8cbedce282123b1f2e5713b7eced8b71732bfa5081419bf87175",
+      "bytes": 1510
+    }
+  ],
+  "quality": {
+    "rust_passed": 163,
+    "rust_failed": 0,
+    "ordinary_gpu_ignored": 6,
+    "python_passed": 9,
+    "hardware_gpu_passed": 8,
+    "local_log_sha256": "fdf51d19d221e74e82b1c287e520acb77e00e662f8684c50502f7edd6d5ade92",
+    "gpu_log_sha256": "df607798ecc6e23c6202da2c4e1bfcb9c8a643e89a1744adb217c02f3eaf7ea4",
+    "deny": "advisories/bans/licenses/sources pass; duplicate transitive-version warnings retained"
+  },
+  "ci": {
+    "sha": "38529aa5262bcf02ffd7dd67fcb6f24091c4c489",
+    "runs": [
+      {
+        "id": 37523458475,
+        "name": "Quality",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/gurppt/tack/actions/runs/37523458475",
+        "jobs": [
+          {
+            "name": "rust (ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "current_step": null,
+            "steps": []
+          },
+          {
+            "name": "rust (windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "current_step": null,
+            "steps": []
+          },
+          {
+            "name": "dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "current_step": null,
+            "steps": []
+          }
+        ]
+      }
+    ]
+  },
+  "disk": {
+    "policy": "10 GiB free reserve; shared targets/corpus; preferred 512 MiB per phase; targeted cleanup preserving only-proof evidence",
+    "free_bytes": 50861727744,
+    "utc": "2026-10-06T20:12:02.939753+00:00",
+    "removed_generated_paths": [
+      {
+        "path": "benchmark-results/phase1j/real-producers/cache",
+        "bytes": 2101785
+      },
+      {
+        "path": "benchmark-results/phase1j/real-producers-2/cache",
+        "bytes": 13510728
+      },
+      {
+        "path": "benchmark-results/phase1j/producers-accepted/cache",
+        "bytes": 13510751
+      },
+      {
+        "path": "benchmark-results/phase1j/perf-current",
+        "bytes": 17931688
+      },
+      {
+        "path": "tools/__pycache__",
+        "bytes": 408135
+      }
+    ],
+    "protected_files_verified_unchanged": 529,
+    "source_user_gfx_bin_primary_raw_preserved": true,
+    "free_bytes_before": 50861154304,
+    "free_bytes_after": 50908942336,
+    "remaining_phase_generated_bytes": 28227416,
+    "budget_bytes": 536870912,
+    "baseline_comparison_retained": true,
+    "temporary_current_comparison_removed": true
+  },
+  "evidence_scope": "raw reports/logs local ignored benchmark-results/phase1j; compact selected PNGs and receipts tracked; failed Flameshot producer attempt is not a pass",
+  "independent_verification": {
+    "reviewer": "/root/phase1j_verifier",
+    "status": "no unresolved correctness findings; technical review passed",
+    "report": "docs/VERIFICATION_1J.md"
+  }
+}

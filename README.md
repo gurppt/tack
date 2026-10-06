@@ -1,16 +1,20 @@
 # Tack
 
 Native, local-first reference board. This repository currently contains
-**Phase 1I layout-aware shortcuts, one-shot tools and atomic grid arrangement**. The executable opens
+**Phase 1J clipboard reliability, unified menus and lightweight visual polish**. The executable opens
 an empty local board by default; renderer benchmarks remain explicit commands.
-Right-click an object or blank canvas; the tiny Tack entry (or F10) opens
-application commands. Undo: Ctrl+Z; Redo: Ctrl+Shift+Z.
+Right-click an object or blank canvas: application commands appear above the
+contextual actions. F10 opens the same application commands. Preferences offers
+Auto/1×/2×/3×/4× UI scale and Very Dark, Neutral Gray or Light backgrounds.
+Undo: Ctrl+Z; Redo: Ctrl+Shift+Z.
 Multi-selection → right-click → Arrange offers grid arrangement and grid snapping.
-See [the Phase 1I report](docs/MISSION_1I_REPORT.md),
+See [the Phase 1J report](docs/MISSION_1J_REPORT.md),
+[the polish design](docs/design/ui_polish.md),
+[the Phase 1I report](docs/MISSION_1I_REPORT.md),
 [the current performance report](docs/MISSION_1G_REPORT.md),
 [the contextual UI report](docs/MISSION_1H_REPORT.md),
 [the feature inventory](docs/FEATURE_INVENTORY.md),
-[the human test checklist](docs/HUMAN_TEST_1I.md),
+[the human test checklist](docs/HUMAN_TEST_1J.md),
 [the supply design](docs/design/local_image_supply.md),
 [Phase 1F](docs/MISSION_1F_REPORT.md),
 [Phase 1E](docs/MISSION_1E_REPORT.md),
@@ -39,7 +43,7 @@ The current Linux client is also available directly as `./bin/tack`.
 Rebuild it with `bash tools/build-test-bin.sh`; `bin/BUILD.txt` records its
 commit, timestamp, dirty state and checksum. A successful build replaces the
 binary atomically. This directory is local and ignored by Git.
-Phase 1G stops for human review before collaboration work.
+Phase 1J stops for owner review before the next major branch.
 
 The native thumbnail build needs Python 3.12+, CMake, a C compiler and NASM
 on PATH. It verifies the official libjpeg-turbo 3.2.0 archive and installs a
@@ -298,14 +302,18 @@ target/release/tack-app /path/board.tack   # existing board
 | F10 | All actions menu; Up/Down/Enter or click |
 | Ctrl+N / Ctrl+O | New independent window / Open picker |
 | Ctrl+I / image drop | Import one or many JPEG/PNG images |
-| Ctrl+V | Paste image, local file paths/URIs, or text into an active note |
+| Ctrl+V | Paste PNG/JPEG, copied local image files, or text (new note / active editor) |
 | Ctrl+S / Ctrl+Shift+S | Save / Save As to an unused filename |
 | Ctrl+Shift+R | Relink the selected image's shared source |
 | Ctrl+comma | Preferences, recent/keymap actions via F10 |
 
 Embedded import is the default; Preferences switches linked/embedded and sampling,
-grid default, UI scale, handles and picking radius. Linux pickers use optional
-`zenity`; clipboard uses optional `xclip` (X11) or `wl-paste` (Wayland). Windows
+grid default, direct UI scale, background theme, handles and picking radius.
+Linux pickers use optional `zenity`. Clipboard needs `xclip` on X11 or
+`wl-paste` from `wl-clipboard` on Wayland; `xsel` is a text-only X11 fallback.
+Missing helpers produce an installation message. File lists take priority over
+image payloads and text; remote URIs are never downloaded. Screenshots are
+embedded, independent of the default import mode. Windows
 uses its fixed native text/reference/file helper; image paste is not claimed there.
 Escape cancels remaining import work; already admitted images stay undoable.
 

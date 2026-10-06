@@ -1,9 +1,9 @@
-# Current feature inventory — Phase 1I
+# Current feature inventory — Phase 1J
 
 Code audit of the local prototype on 2026-10-06, based on `Action::ALL`,
 `product_bindings`, `ImageInput`, annotation/spatial input, local file workers,
 storage/recovery and tests. This inventories shipped and reachable code, not a roadmap.
-Phase 1I has 170 automated native assertions on US and French XKB layouts at
+Historical Phase 1I evidence has 170 automated native assertions on US and French XKB layouts at
 800×600 and 1024×768. Owner comfort/discovery review and real Windows desktop
 validation remain pending; “implemented” does not imply human acceptance.
 
@@ -107,7 +107,7 @@ selection, tool choice, camera and text drafts. Menu paths are one submenu deep.
 | Open linked image source (`OpenSource`) | implemented | one native linked image | Ctrl+Shift+O | platform helper | image → Source | No | session | Explicit local OS helper; unavailable for embedded/foreign paths. Native path passed as a single argument. |
 | Reveal linked image source (`RevealSource`) | implemented | one native linked image | Ctrl+Alt+O | platform helper | image → Source | No | session | Explicit local OS helper; unavailable for embedded/foreign paths. Native path passed as a single argument. |
 | Copy linked source path (`CopySourcePath`) | implemented | one native linked image | Ctrl+Shift+C | platform helper | image → Source | No | session | Explicit local OS helper; unavailable for embedded/foreign paths. Native path passed as a single argument. |
-| Local menu (`ApplicationMenu`) | implemented | window | F10 or tiny Tack button | Tack button | application root | No | session | No permanent menu bar. |
+| Local menu (`ApplicationMenu`) | implemented | window | F10 or right-click | shared Tack block | every context root | No | session | Shared File/Edit/View/Tools/Preferences/Keymap block; no permanent Tack button or menu bar. |
 | New board (`NewBoard`) | implemented | board | Ctrl+N | Tack → File | No | No | new file/session | Starts a separate local window. |
 | Open board (`OpenBoard`) | implemented | board | Ctrl+O | Tack → File | No | No | file | Native picker; separate window; no current-board replacement. |
 | Import images (`ImportImages`) | implemented | images | Ctrl+I | Tack → File | canvas | Yes, per admitted image | Board | PNG/JPEG; native picker, bounded asynchronous import. |
@@ -120,6 +120,11 @@ selection, tool choice, camera and text drafts. Menu paths are one submenu deep.
 | Import keymap (`ImportKeymap`) | implemented | profile | — | Preferences | No | No | profile | Validated JSON; unsupported/corrupt files rejected. |
 | Export keymap (`ExportKeymap`) | implemented | profile | — | Preferences | No | No | profile | Exports preferences and keymap together. |
 
+Phase 1J adds 27 automated native clipboard/menu/scale/theme checks, actual
+Dolphin single/multiple-image copying and owned-window screenshot paste on
+Linux X11/NVIDIA Vulkan. Owner aesthetics and real Windows/Wayland clipboard
+runtime remain pending. See [Phase 1J](MISSION_1J_REPORT.md).
+
 ## Features outside the semantic action catalog
 
 | Feature | Status | Type / invocation / shortcut | UI and context exposure | Undoable? | Persisted? | Limits / notes |
@@ -129,22 +134,23 @@ selection, tool choice, camera and text drafts. Menu paths are one submenu deep.
 | Marquee selection | implemented | empty-canvas left drag; Shift adds | outline | No | session | Includes annotations and groups under current hit rules. |
 | Double-click text | implemented | existing frame or note; double left click | inline editor; Edit/Rename context equivalent | after commit | Board | Bounded plain text, no rich text / local text history. |
 | Note input / IME | partial | text editor, typing / IME / paste; Ctrl+A, Backspace, Delete; Ctrl+Enter; Escape | inline draft | document Undo after commit | Board | Bounded 16 KiB; whole-text replacement/deletion model; no arbitrary rich editor/caret navigation/local Ctrl+Z buffer. |
-| Clipboard PNG | implemented | Ctrl+V, canvas Paste, Tack Edit Paste | native clipboard worker | admitted image | Board | Pasted image is embedded regardless of default import mode. |
-| Clipboard text | implemented | Ctrl+V, canvas Paste | creates plain note, or paste into active draft | after admission/commit | Board | Active text editing retains document undo focus rules. |
-| Clipboard file URI list | implemented | Ctrl+V, canvas Paste | bounded local import | per admitted image | Board | Native local file URIs only; not arbitrary remote downloads. |
+| Clipboard PNG/JPEG | implemented | Ctrl+V, canvas Paste, Tack Edit Paste | native clipboard worker | admitted image | Board | PNG/JPEG payload is embedded regardless of default import mode; 64 MiB encoded cap. X11 xclip or Wayland wl-paste; actionable missing-helper errors. |
+| Clipboard text | implemented | Ctrl+V, canvas Paste | creates plain note, or paste into active draft | after admission/commit | Board | Creates one undoable note; active editor paste retains document undo focus rules. 16 KiB note cap; slash-leading prose stays text. |
+| Clipboard file URI list | implemented | Ctrl+V, canvas Paste | bounded local import | per admitted image | Board | Local URI lists/gnome-copied-files take priority over PNG/JPEG and text. Valid entries survive remote/invalid entries with one rejection summary; 64 KiB / 4096 references. Existing absolute image-path text remains supported; no remote downloads. |
 | Drag/drop image files | implemented | OS drop into canvas | native window | per admitted image | Board | Bounded batch/debounce; Escape cancels remaining admission. |
 | Linked / embedded import | implemented | Preferences → Import; picker/drop; CLI create | temporary preferences | import undo | Board and profile default | Original authority and shared sources preserved. |
 | Default sampling | implemented | Preferences → Image sampling | temporary preferences | No for default; image override Yes | profile / image override Board | Renderer samples Default independently from stored representation. |
-| UI scale / handle size / hit radius | implemented | Preferences, Enter cycle | compact temporary panel | No | profile | Integer 1–4 or system-rounded 1–8; large scale on a small screen necessarily truncates labels. |
+| UI scale / handle size / hit radius | implemented | Preferences | direct scale chooser; handles/radius cycle | No | profile | Auto or 1–4 selectable in either direction; Auto uses rounded system DPI bounded 1–8. Native 800×600 1×/2× tested. Very large scale on small screens still truncates labels. |
+| Background theme | implemented | Preferences → Background | three direct choices | No | profile only | Very Dark / Neutral Gray / Light, nearby-color screen-space gradient in existing grid pass. Bitmap UI and immutable cyan/magenta/yellow palette; no board/schema changes. Old profiles default Neutral Gray; unknown future themes rejected without overwriting profile. |
 | Keymap search/capture | implemented | Tack → Edit → Keymap; type, Enter, F6; Delete; F5 / Shift+F5 / Ctrl+F5 | temporary panel | No | profile | Press/release/hold/wheel, bounded capture/conflict validation, action/category/all resets. Menu labels follow actual configured press bindings. |
 | Close confirmation | implemented | OS close button / window manager | Save / Discard / Cancel panel | No | normal Save if selected | No new Quit action; closing stays in the existing native lifecycle. |
 | Recovery restore/discard | implemented | open board with newer valid recovery | bounded modal; choice required before import | restored document starts dirty | recovery/normal file authority | Normal save remains distinct; document history itself is not serialized. |
 | Read-only board lock conflict | implemented | second writer to same board | errors/status; Save As | No | lock file / new identity if Save As | Separate board windows work independently; no collaboration. |
 | Failed import/relink/save status | implemented | native operations | title/errors/temporary panel | successful admission only | committed Board only | Drafts remain on failed save; bounded worker/cancellation model retained. |
 | Image supply / missing-source fallback | implemented | open/pan/zoom/relink | canvas imagery/status | source edits Yes; display supply No | original/preview Board; details disposable | 1G bounded projected asynchronous 128/512/2048 supply; see 1G report for limits. |
-| Save and reopen | implemented | File menu / Ctrl+S / Ctrl+Shift+S / Ctrl+O / recent list | tiny application entry + native pickers | Save itself No | .tack | Commands serialize committed geometry/crop/style/order/groups; selection/tools/history are transient. |
-| Context resolution / dismissal | implemented | right click object/blank; Esc, outside click, activation | six specific context kinds | No; command Yes where listed | session | Preserves selected multi-selection/group; clicks outside dismiss without starting a drag. No timers/animations. |
-| Menu keyboard navigation | implemented | Up/Down, Left/Right, Enter, Escape, wheel | popup only | No; command Yes | session | One child submenu, no timed hover; disabled rows remain visible. |
+| Save and reopen | implemented | File menu / Ctrl+S / Ctrl+Shift+S / Ctrl+O / recent list | shared right-click Tack block / F10 + native pickers | Save itself No | .tack | Commands serialize committed geometry/crop/style/order/groups; selection/tools/history are transient. |
+| Context resolution / dismissal | implemented | right click object/blank; Esc, outside click, activation | shared Tack block + six specific context kinds | No; command Yes where listed | session | Preserves selected multi-selection/group; clicks outside dismiss without starting a drag. No timers/animations. |
+| Menu keyboard navigation | implemented | Up/Down, Left/Right, Enter, Escape, wheel | popup only | No; command Yes | session | One child submenu, no timed hover; disabled rows remain visible. Headings skipped by keyboard; 800×600 2× bounded adjacent columns keep parent accessible. |
 | Contextual cursor feedback | implemented | hover/move/handle/crop/text | native platform cursor | No | session | No cursor asset cache or animation. |
 | Multiple local windows | implemented | New/Open create another window | File menu | per document | separate .tack | Resource budgets are per instance; no shared-board synchronization. |
 | Developer CLI and benchmark modes | experimental | explicit create/inspect/supply/preparation/benchmark commands and flags | CLI only, absent from authoring menus | depends on CLI operation | generated files/receipts | Explicit diagnostics; not a new authoring feature or a legacy-hardware performance guarantee. |
