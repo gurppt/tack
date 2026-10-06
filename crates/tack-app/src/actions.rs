@@ -14,6 +14,12 @@ pub enum Tool {
     Scribble,
 }
 impl Tool {
+    pub fn is_one_shot(self) -> bool {
+        matches!(
+            self,
+            Self::Text | Self::Rectangle | Self::Line | Self::Arrow
+        )
+    }
     pub fn is_annotation(self) -> bool {
         matches!(
             self,
@@ -91,7 +97,7 @@ pub enum Action {
 }
 impl Action {
     /// Enumerable action catalog, including currently unassigned actions.
-    pub const ALL: [Self; 89] = [
+    pub const ALL: [Self; 91] = [
         Self::SelectTool(Tool::Pointer),
         Self::SelectTool(Tool::Pan),
         Self::SelectTool(Tool::RotateView),
@@ -130,6 +136,8 @@ impl Action {
         Self::ToggleGrid,
         Self::ToggleSnapping,
         Self::SnapDisable,
+        Self::Layout(crate::spatial_layout::Layout::Grid),
+        Self::Layout(crate::spatial_layout::Layout::SnapToGrid),
         Self::Layout(crate::spatial_layout::Layout::Left),
         Self::Layout(crate::spatial_layout::Layout::HorizontalCenter),
         Self::Layout(crate::spatial_layout::Layout::Right),
@@ -286,6 +294,8 @@ impl Action {
             Self::ToggleSnapping => "Toggle snapping",
             Self::SnapDisable => "Temporarily disable snapping",
             Self::Layout(layout) => match layout {
+                crate::spatial_layout::Layout::Grid => "Arrange in Grid",
+                crate::spatial_layout::Layout::SnapToGrid => "Snap selection to grid",
                 crate::spatial_layout::Layout::Left => "Align left",
                 crate::spatial_layout::Layout::HorizontalCenter => "Align horizontal center",
                 crate::spatial_layout::Layout::Right => "Align right",
@@ -363,6 +373,15 @@ pub struct Interaction {
     temporary: Vec<(HoldToken, Tool)>,
 }
 impl Interaction {
+    pub fn complete_creation(&mut self, tool: Tool) {
+        if tool.is_one_shot() {
+            self.reset_pointer();
+        }
+    }
+    pub fn reset_pointer(&mut self) {
+        self.base = Tool::Pointer;
+        self.temporary.clear();
+    }
     pub fn tool(&self) -> Tool {
         self.temporary.last().map(|(_, t)| *t).unwrap_or(self.base)
     }

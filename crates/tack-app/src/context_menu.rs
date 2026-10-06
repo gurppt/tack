@@ -146,6 +146,7 @@ impl Context {
             | Action::Opacity(_) => self.all_images,
             Action::GroupSelection => self.group,
             Action::UngroupSelection => self.ungroup,
+            Action::Layout(Arrangement::SnapToGrid) => self.any,
             Action::Layout(_) => self.align,
             Action::RenameFrame => {
                 matches!(self.selection_kind, ContextKind::Note | ContextKind::Frame)
@@ -173,6 +174,7 @@ pub enum Group {
     Sampling,
     Opacity,
     Order,
+    Arrange,
     Align,
     Style,
     Source,
@@ -195,53 +197,64 @@ pub struct Item {
     pub shortcut: String,
 }
 /// Only real configured press bindings are advertised; unassigned actions stay blank.
+pub fn binding_label(b: &crate::bindings::Binding) -> String {
+    let (mods, qualifier) = match b.modifiers {
+        ModifierMatch::Exact(m) => (m, ""),
+        ModifierMatch::Contains(m) => (m, "+other"),
+        ModifierMatch::Any => (Modifiers::NONE, "+any"),
+    };
+    let mut label = String::new();
+    for (modifier, text) in [
+        (Modifiers::CONTROL, "Ctrl+"),
+        (Modifiers::SHIFT, "Shift+"),
+        (Modifiers::ALT, "Alt+"),
+        (Modifiers::SUPER, "Super+"),
+    ] {
+        if mods.contains(modifier) {
+            label.push_str(text);
+        }
+    }
+    match b.control {
+        PhysicalControl::LogicalKey(crate::input::LogicalKey::Character(c)) => {
+            label.push(c.to_ascii_uppercase())
+        }
+        PhysicalControl::LogicalKey(crate::input::LogicalKey::Named(n)) => {
+            let name = match n {
+                winit::keyboard::NamedKey::Delete => "Del",
+                winit::keyboard::NamedKey::Escape => "Esc",
+                winit::keyboard::NamedKey::PageUp => "PgUp",
+                winit::keyboard::NamedKey::PageDown => "PgDn",
+                winit::keyboard::NamedKey::ArrowLeft => "Left",
+                winit::keyboard::NamedKey::ArrowRight => "Right",
+                winit::keyboard::NamedKey::ArrowUp => "Up",
+                winit::keyboard::NamedKey::ArrowDown => "Down",
+                _ => {
+                    label.push_str(&format!("{n:?}"));
+                    ""
+                }
+            };
+            label.push_str(name);
+        }
+        PhysicalControl::Key(key) => label.push_str(&format!("pos:{key:?}")),
+        other => label.push_str(&format!("{other:?}")),
+    }
+    label.push_str(qualifier);
+    label
+}
 pub fn shortcut(keymap: &Keymap, action: Action) -> String {
     keymap
         .for_action(action)
-        .find_map(|b| {
-            let (
-                PhysicalControl::Key(PhysicalKey::Code(key)),
-                ModifierMatch::Exact(mods),
-                Trigger::Press,
-            ) = (b.control, b.modifiers, b.trigger)
-            else {
-                return None;
-            };
-            let raw = format!("{key:?}");
-            let name = match key {
-                KeyCode::Delete => "Del",
-                KeyCode::Escape => "Esc",
-                KeyCode::PageUp => "PgUp",
-                KeyCode::PageDown => "PgDn",
-                KeyCode::Comma => ",",
-                KeyCode::Period => ".",
-                KeyCode::BracketLeft => "[",
-                KeyCode::BracketRight => "]",
-                KeyCode::ArrowLeft => "Left",
-                KeyCode::ArrowRight => "Right",
-                KeyCode::ArrowUp => "Up",
-                KeyCode::ArrowDown => "Down",
-                _ => raw
-                    .strip_prefix("Key")
-                    .or_else(|| raw.strip_prefix("Digit"))
-                    .unwrap_or(&raw),
-            };
-            let mut label = String::new();
-            for (modifier, text) in [
-                (Modifiers::CONTROL, "Ctrl+"),
-                (Modifiers::SHIFT, "Shift+"),
-                (Modifiers::ALT, "Alt+"),
-                (Modifiers::SUPER, "Super+"),
-            ] {
-                if mods.contains(modifier) {
-                    label.push_str(text);
-                }
-            }
-            label.push_str(name);
-            Some(label)
+        .find(|b| {
+            matches!(
+                b.control,
+                PhysicalControl::Key(_) | PhysicalControl::LogicalKey(_)
+            ) && matches!(b.modifiers, ModifierMatch::Exact(_))
+                && b.trigger == Trigger::Press
         })
+        .map(binding_label)
         .unwrap_or_default()
 }
+
 fn action(label: &'static str, a: Action, context: Context, keymap: &Keymap) -> Item {
     Item {
         label,
@@ -291,6 +304,32 @@ pub fn items(context: Context, submenu: Option<Group>, keymap: &Keymap) -> Vec<I
             .into_iter()
             .map(|(l, v)| a(l, Action::Order(v)))
             .collect(),
+            Group::Arrange => vec![
+                a("Arrange in Grid", Action::Layout(Arrangement::Grid)),
+                a("Snap to Grid", Action::Layout(Arrangement::SnapToGrid)),
+                a("Align left", Action::Layout(Arrangement::Left)),
+                a(
+                    "Align center",
+                    Action::Layout(Arrangement::HorizontalCenter),
+                ),
+                a("Align right", Action::Layout(Arrangement::Right)),
+                a("Align top", Action::Layout(Arrangement::Top)),
+                a("Align middle", Action::Layout(Arrangement::VerticalCenter)),
+                a("Align bottom", Action::Layout(Arrangement::Bottom)),
+                a(
+                    "Distribute horizontal",
+                    Action::Layout(Arrangement::DistributeHorizontal),
+                ),
+                a(
+                    "Distribute vertical",
+                    Action::Layout(Arrangement::DistributeVertical),
+                ),
+                a(
+                    "Pack horizontal",
+                    Action::Layout(Arrangement::PackHorizontal),
+                ),
+                a("Pack vertical", Action::Layout(Arrangement::PackVertical)),
+            ],
             Group::Align => [
                 ("Left", Arrangement::Left),
                 ("Center", Arrangement::HorizontalCenter),
@@ -399,7 +438,7 @@ pub fn items(context: Context, submenu: Option<Group>, keymap: &Keymap) -> Vec<I
         ]),
         ContextKind::Frame => v.extend([a("Rename", RenameFrame), a("Focus frame", FocusFrame)]),
         ContextKind::Annotation => v.push(group("Style", Group::Style, true)),
-        ContextKind::Multiple => v.push(group("Align / distribute", Group::Align, context.align)),
+        ContextKind::Multiple => v.push(group("Arrange", Group::Arrange, context.any)),
         _ => {}
     }
     v.push(group(
@@ -771,6 +810,18 @@ impl ContextMenu {
         Result::Dismiss
     }
     pub fn key(&mut self, key: KeyCode, keymap: &Keymap, camera: &Camera) -> Result {
+        let control = crate::input::LogicalKey::from_legacy(key)
+            .map(PhysicalControl::LogicalKey)
+            .unwrap_or(PhysicalControl::Key(PhysicalKey::Code(key)));
+        self.key_control(key, control, keymap, camera)
+    }
+    fn key_control(
+        &mut self,
+        key: KeyCode,
+        control: PhysicalControl,
+        keymap: &Keymap,
+        camera: &Camera,
+    ) -> Result {
         match key {
             KeyCode::Escape => return Result::Dismiss,
             KeyCode::ArrowLeft if self.child.is_some() => self.close_child(),
@@ -799,11 +850,7 @@ impl ContextMenu {
             }
             _ => {
                 if let Some(b) = keymap
-                    .matching(
-                        PhysicalControl::Key(PhysicalKey::Code(key)),
-                        self.modifiers,
-                        Trigger::Press,
-                    )
+                    .matching(control, self.modifiers, Trigger::Press)
                     .next()
                     && self.context.enabled(b.action)
                 {
@@ -850,9 +897,20 @@ impl ContextMenu {
                 }
                 Result::None
             }
-            WindowEvent::KeyboardInput { event, .. } if event.state == ElementState::Pressed => {
+            WindowEvent::KeyboardInput { event, .. }
+                if event.state == ElementState::Pressed && !event.repeat =>
+            {
                 if let PhysicalKey::Code(key) = event.physical_key {
-                    self.key(key, keymap, camera)
+                    self.key_control(
+                        key,
+                        keymap.keyboard_control(
+                            event.physical_key,
+                            crate::input::logical_key(event),
+                            self.modifiers,
+                        ),
+                        keymap,
+                        camera,
+                    )
                 } else {
                     Result::None
                 }

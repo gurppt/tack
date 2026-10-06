@@ -152,6 +152,9 @@ impl ImageInput {
         }
     }
     pub(crate) fn reset_modal_inputs(&mut self) {
+        // A modal draft owns keyboard input: no captured temporary tool may
+        // outlive the physical state it replaces. Completion returns Pointer.
+        self.annotation.tools.reset_pointer();
         self.state = InputState::default();
         self.snap.disabled = false;
         self.snap.clear();
@@ -186,6 +189,7 @@ impl ImageInput {
             return Ok(());
         };
         if c.generation != editor.generation() {
+            self.annotation.tools.complete_creation(c.tool);
             return Err("document changed during annotation creation".into());
         }
         let distance = (c.end[0] - c.start[0]).hypot(c.end[1] - c.start[1]) * camera.zoom();
@@ -193,6 +197,7 @@ impl ImageInput {
             && (distance < self.gizmo.scale * 2. && c.tool != Tool::Scribble
                 || c.tool == Tool::Scribble && c.points.len() < 2)
         {
+            self.annotation.tools.complete_creation(c.tool);
             return Ok(());
         }
         let id = tack_storage::new_object_id()?;
@@ -232,6 +237,7 @@ impl ImageInput {
                 index: editor.document().object_order().len(),
             })?;
             self.images.selection.select(Some(id), false);
+            self.annotation.tools.complete_creation(c.tool);
         }
         Ok(())
     }
@@ -246,6 +252,10 @@ impl ImageInput {
             if matches!(
                 physical,
                 PhysicalEvent::Modifiers(_)
+                    | PhysicalEvent::Keyboard {
+                        state: ElementState::Released,
+                        ..
+                    }
                     | PhysicalEvent::Button {
                         state: ElementState::Released,
                         ..
@@ -278,7 +288,11 @@ impl ImageInput {
                 if self
                     .keymap
                     .matching(
-                        crate::input::PhysicalControl::Key(event.physical_key),
+                        self.keymap.keyboard_control(
+                            event.physical_key,
+                            crate::input::logical_key(event),
+                            self.state.modifiers(),
+                        ),
                         self.state.modifiers(),
                         crate::bindings::Trigger::Press,
                     )
@@ -288,12 +302,20 @@ impl ImageInput {
                     return Ok(());
                 }
                 match event.physical_key {
-                    PhysicalKey::Code(KeyCode::Escape) => self.annotation.edit = None,
+                    PhysicalKey::Code(KeyCode::Escape) => {
+                        self.annotation.edit = None;
+                        self.annotation.tools.reset_pointer();
+                        self.reset_modal_inputs();
+                    }
                     PhysicalKey::Code(KeyCode::Enter) if ctrl => {
                         if let Some(edit) = self.annotation.edit.clone() {
                             let id = edit.id;
+                            let is_new = edit.is_new;
                             edit.finish(editor)?;
                             self.annotation.edit = None;
+                            if is_new {
+                                self.annotation.tools.complete_creation(Tool::Text);
+                            }
                             self.images.selection.select(Some(id), false);
                         }
                         self.reset_modal_inputs();
@@ -308,7 +330,10 @@ impl ImageInput {
                             e.backspace();
                         }
                     }
-                    PhysicalKey::Code(KeyCode::KeyA) if ctrl => {
+                    _ if ctrl
+                        && crate::input::logical_key(event)
+                            == Some(crate::input::LogicalKey::Character('a')) =>
+                    {
                         if let Some(e) = &mut self.annotation.edit {
                             e.replace = true;
                         }

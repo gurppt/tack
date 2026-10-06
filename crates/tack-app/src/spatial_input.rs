@@ -226,6 +226,7 @@ impl ImageInput {
                     index: editor.document().object_order().len(),
                 })?;
                 self.images.selection.select(Some(id), false);
+                self.annotation.tools.reset_pointer();
             }
             Action::RenameFrame => {
                 if self.images.selection.len() == 1

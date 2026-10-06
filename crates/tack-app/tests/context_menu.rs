@@ -12,7 +12,7 @@ use tack_app::{
 use tack_core::*;
 use winit::{
     event::{ElementState, MouseButton},
-    keyboard::{KeyCode, PhysicalKey},
+    keyboard::KeyCode,
 };
 type R<T = ()> = Result<T, Box<dyn std::error::Error + Send + Sync>>;
 fn fixture() -> R<DocumentEditor> {
@@ -202,7 +202,9 @@ fn key(
     for state in [ElementState::Pressed, ElementState::Released] {
         input.physical(
             PhysicalEvent::Button {
-                control: PhysicalControl::Key(PhysicalKey::Code(k)),
+                control: PhysicalControl::LogicalKey(
+                    tack_app::input::LogicalKey::from_legacy(k).ok_or("logical key")?,
+                ),
                 state,
                 repeat: false,
             },
@@ -407,7 +409,9 @@ fn popup_cancels_preview_preserves_modifiers_and_order_alpha_roundtrip() -> R {
     ); // stale availability is rechecked by the native owner
     input.physical(
         PhysicalEvent::Button {
-            control: PhysicalControl::Key(PhysicalKey::Code(KeyCode::KeyZ)),
+            control: PhysicalControl::LogicalKey(
+                tack_app::input::LogicalKey::from_legacy(KeyCode::KeyZ).ok_or("logical key")?,
+            ),
             state: ElementState::Pressed,
             repeat: false,
         },
@@ -417,7 +421,9 @@ fn popup_cancels_preview_preserves_modifiers_and_order_alpha_roundtrip() -> R {
     assert_eq!(e.undo_len(), 1);
     input.physical(
         PhysicalEvent::Button {
-            control: PhysicalControl::Key(PhysicalKey::Code(KeyCode::KeyZ)),
+            control: PhysicalControl::LogicalKey(
+                tack_app::input::LogicalKey::from_legacy(KeyCode::KeyZ).ok_or("logical key")?,
+            ),
             state: ElementState::Released,
             repeat: false,
         },
@@ -431,7 +437,9 @@ fn popup_cancels_preview_preserves_modifiers_and_order_alpha_roundtrip() -> R {
     )?;
     input.physical(
         PhysicalEvent::Button {
-            control: PhysicalControl::Key(PhysicalKey::Code(KeyCode::KeyZ)),
+            control: PhysicalControl::LogicalKey(
+                tack_app::input::LogicalKey::from_legacy(KeyCode::KeyZ).ok_or("logical key")?,
+            ),
             state: ElementState::Pressed,
             repeat: false,
         },

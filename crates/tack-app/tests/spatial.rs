@@ -291,10 +291,7 @@ fn frame_group_semantic_actions_focus_and_cancel_preserve_document() -> R {
 }
 #[test]
 fn x_hold_recomputes_preview_without_losing_pointer_capture() -> R {
-    use winit::{
-        event::ElementState,
-        keyboard::{KeyCode, PhysicalKey},
-    };
+    use winit::{event::ElementState, keyboard::KeyCode};
     let mut e = fixture()?;
     let mut input = ImageInput::new()?;
     let mut camera = Camera::new([1280, 720]);
@@ -310,7 +307,9 @@ fn x_hold_recomputes_preview_without_losing_pointer_capture() -> R {
         .preview_transform(e.document(), ObjectId::new(1)?)
         .ok_or("preview")?;
     assert_eq!(snapped.center()[0], 50.);
-    let key = PhysicalControl::Key(PhysicalKey::Code(KeyCode::KeyX));
+    let key = PhysicalControl::LogicalKey(
+        tack_app::input::LogicalKey::from_legacy(KeyCode::KeyX).ok_or("logical key")?,
+    );
     input.physical(
         PhysicalEvent::Button {
             control: key,
@@ -403,14 +402,16 @@ fn interior_marquee_ignores_containing_frame_and_overlap_distribution_avoids_pro
 fn native_name_ime_is_utf8_bounded_and_f2_reusable_after_modal_release() -> R {
     use winit::{
         event::{ElementState, Ime, WindowEvent},
-        keyboard::{KeyCode, PhysicalKey},
+        keyboard::KeyCode,
     };
     let mut e = fixture()?;
     let mut input = ImageInput::new()?;
     let mut camera = Camera::new([1280, 720]);
     invoke(&mut input, &mut e, &mut camera, Action::CreateFrame)?;
     let id = input.images.selection.ids().next().ok_or("frame")?;
-    let f2 = PhysicalControl::Key(PhysicalKey::Code(KeyCode::F2));
+    let f2 = PhysicalControl::LogicalKey(
+        tack_app::input::LogicalKey::from_legacy(KeyCode::F2).ok_or("logical key")?,
+    );
     for name in ["Références 猫", "Ж 😀"] {
         input.physical(
             PhysicalEvent::Button {

@@ -111,7 +111,7 @@ pub struct Preferences {
 impl Preferences {
     pub fn defaults() -> Result<Self, AssetError> {
         Ok(Self {
-            version: 1,
+            version: 2,
             grid: false,
             sampling: "Smooth".into(),
             embedded_import: true,
@@ -127,7 +127,7 @@ impl Preferences {
         })
     }
     pub fn keymap(&self) -> Result<Keymap, AssetError> {
-        if self.version != 1
+        if !matches!(self.version, 1 | 2)
             || self.keymap.len() > crate::bindings::MAX_BINDINGS
             || self.recent.len() > MAX_RECENT
             || self.ui_scale > 4
@@ -146,7 +146,14 @@ impl Preferences {
         }
         let mut keymap = Keymap::default();
         for record in &self.keymap {
-            keymap.bind(record.binding()?)?;
+            let mut binding = record.binding()?;
+            if self.version == 1
+                && let PhysicalControl::Key(winit::keyboard::PhysicalKey::Code(code)) =
+                    binding.control
+            {
+                binding.control = crate::input::LogicalKey::from_legacy(code).map(PhysicalControl::LogicalKey).ok_or("unsupported version-1 key; export with an explicit physical version-2 binding")?;
+            }
+            keymap.bind(binding)?;
         }
         Ok(keymap)
     }
@@ -186,8 +193,16 @@ pub fn read(path: &Path) -> Result<Preferences, AssetError> {
     if bytes.len() > MAX_PROFILE_BYTES {
         return Err("preferences file exceeds bound".into());
     }
-    let profile: Preferences = serde_json::from_slice(&bytes)?;
-    profile.keymap()?;
+    let mut profile: Preferences = serde_json::from_slice(&bytes)?;
+    let keymap = profile.keymap()?;
+    if profile.version == 1 {
+        profile.version = 2;
+        profile.keymap = keymap
+            .bindings()
+            .iter()
+            .map(BindingRecord::from_binding)
+            .collect();
+    }
     Ok(profile)
 }
 /// Atomic explicit export. Existing files require the caller's deliberate target choice.

@@ -4,10 +4,7 @@ use crate::{
     bindings::{Binding, BindingError, Keymap, ModifierMatch, Trigger},
     input::{Modifiers, PhysicalControl, PointerButton, WheelAxis},
 };
-use winit::{
-    event::MouseButton,
-    keyboard::{KeyCode, PhysicalKey},
-};
+use winit::{event::MouseButton, keyboard::KeyCode};
 pub fn product_keymap() -> Result<Keymap, BindingError> {
     let mut map = Keymap::default();
     use crate::spatial_layout::Layout;
@@ -105,7 +102,9 @@ pub fn product_keymap() -> Result<Keymap, BindingError> {
         (KeyCode::KeyC, ctrl.union(shift), Action::CopySourcePath),
     ] {
         map.bind(Binding {
-            control: PhysicalControl::Key(PhysicalKey::Code(code)),
+            control: PhysicalControl::LogicalKey(
+                crate::input::LogicalKey::from_legacy(code).ok_or(BindingError::InvalidControl)?,
+            ),
             modifiers: ModifierMatch::Exact(mods),
             trigger: Trigger::Press,
             action,
@@ -158,7 +157,9 @@ pub fn product_keymap() -> Result<Keymap, BindingError> {
         (KeyCode::KeyT, alt, Action::CycleFiltering),
     ] {
         map.bind(Binding {
-            control: PhysicalControl::Key(PhysicalKey::Code(code)),
+            control: PhysicalControl::LogicalKey(
+                crate::input::LogicalKey::from_legacy(code).ok_or(BindingError::InvalidControl)?,
+            ),
             modifiers: if action == Action::CancelInteraction {
                 ModifierMatch::Any
             } else {
@@ -210,7 +211,9 @@ pub fn product_keymap() -> Result<Keymap, BindingError> {
         ),
     ] {
         map.bind(Binding {
-            control: PhysicalControl::Key(PhysicalKey::Code(code)),
+            control: PhysicalControl::LogicalKey(
+                crate::input::LogicalKey::from_legacy(code).ok_or(BindingError::InvalidControl)?,
+            ),
             modifiers: ModifierMatch::Exact(mods),
             trigger: Trigger::Press,
             action,
@@ -221,14 +224,16 @@ pub fn product_keymap() -> Result<Keymap, BindingError> {
         (KeyCode::KeyV, Layout::DistributeVertical),
     ] {
         map.bind(Binding {
-            control: PhysicalControl::Key(PhysicalKey::Code(code)),
+            control: PhysicalControl::LogicalKey(
+                crate::input::LogicalKey::from_legacy(code).ok_or(BindingError::InvalidControl)?,
+            ),
             modifiers: ModifierMatch::Exact(ctrl.union(shift)),
             trigger: Trigger::Press,
             action: Action::Layout(layout),
         })?;
     }
     map.bind(Binding {
-        control: PhysicalControl::Key(PhysicalKey::Code(KeyCode::KeyX)),
+        control: PhysicalControl::LogicalKey(crate::input::LogicalKey::Character('x')),
         modifiers: ModifierMatch::Any,
         trigger: Trigger::Hold,
         action: Action::SnapDisable,

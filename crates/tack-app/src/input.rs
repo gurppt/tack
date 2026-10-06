@@ -6,7 +6,7 @@ use crate::{
 use std::{error::Error, fmt};
 use winit::{
     event::{ElementState, MouseButton, MouseScrollDelta, WindowEvent},
-    keyboard::{ModifiersState, PhysicalKey},
+    keyboard::{Key, KeyCode, ModifiersState, NamedKey, PhysicalKey},
 };
 
 pub const MAX_HELD_INPUTS: usize = 32;
@@ -20,9 +20,126 @@ pub enum WheelAxis {
     Horizontal,
     Vertical,
 }
+/// Layout-aware base key, without modifiers; fixed-size and serializable.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub enum LogicalKey {
+    Character(char),
+    Named(NamedKey),
+}
+impl LogicalKey {
+    pub fn from_key(key: &Key) -> Option<Self> {
+        match key {
+            Key::Character(text) => {
+                let mut chars = text.chars();
+                let c = chars.next()?;
+                chars
+                    .next()
+                    .is_none()
+                    .then_some(Self::Character(c.to_ascii_lowercase()))
+            }
+            Key::Named(name) => Some(Self::Named(*name)),
+            _ => None,
+        }
+    }
+    /// Version-1 profiles displayed US key names. Preserve those advertised
+    /// names as logical bindings when migrating, including custom assignments.
+    pub fn from_legacy(code: KeyCode) -> Option<Self> {
+        Some(match code {
+            KeyCode::KeyA => Self::Character('a'),
+            KeyCode::KeyB => Self::Character('b'),
+            KeyCode::KeyC => Self::Character('c'),
+            KeyCode::KeyD => Self::Character('d'),
+            KeyCode::KeyE => Self::Character('e'),
+            KeyCode::KeyF => Self::Character('f'),
+            KeyCode::KeyG => Self::Character('g'),
+            KeyCode::KeyH => Self::Character('h'),
+            KeyCode::KeyI => Self::Character('i'),
+            KeyCode::KeyJ => Self::Character('j'),
+            KeyCode::KeyK => Self::Character('k'),
+            KeyCode::KeyL => Self::Character('l'),
+            KeyCode::KeyM => Self::Character('m'),
+            KeyCode::KeyN => Self::Character('n'),
+            KeyCode::KeyO => Self::Character('o'),
+            KeyCode::KeyP => Self::Character('p'),
+            KeyCode::KeyQ => Self::Character('q'),
+            KeyCode::KeyR => Self::Character('r'),
+            KeyCode::KeyS => Self::Character('s'),
+            KeyCode::KeyT => Self::Character('t'),
+            KeyCode::KeyU => Self::Character('u'),
+            KeyCode::KeyV => Self::Character('v'),
+            KeyCode::KeyW => Self::Character('w'),
+            KeyCode::KeyX => Self::Character('x'),
+            KeyCode::KeyY => Self::Character('y'),
+            KeyCode::KeyZ => Self::Character('z'),
+            KeyCode::Digit0 => Self::Character('0'),
+            KeyCode::Digit1 => Self::Character('1'),
+            KeyCode::Digit2 => Self::Character('2'),
+            KeyCode::Digit3 => Self::Character('3'),
+            KeyCode::Digit4 => Self::Character('4'),
+            KeyCode::Digit5 => Self::Character('5'),
+            KeyCode::Digit6 => Self::Character('6'),
+            KeyCode::Digit7 => Self::Character('7'),
+            KeyCode::Digit8 => Self::Character('8'),
+            KeyCode::Digit9 => Self::Character('9'),
+            KeyCode::Comma => Self::Character(','),
+            KeyCode::Period => Self::Character('.'),
+            KeyCode::BracketLeft => Self::Character('['),
+            KeyCode::BracketRight => Self::Character(']'),
+            KeyCode::Slash => Self::Character('/'),
+            KeyCode::Backslash => Self::Character('\\'),
+            KeyCode::Minus => Self::Character('-'),
+            KeyCode::Equal => Self::Character('='),
+            KeyCode::Semicolon => Self::Character(';'),
+            KeyCode::Quote => Self::Character('\''),
+            KeyCode::Backquote => Self::Character('`'),
+            KeyCode::Space => Self::Named(NamedKey::Space),
+            KeyCode::Escape => Self::Named(NamedKey::Escape),
+            KeyCode::Enter => Self::Named(NamedKey::Enter),
+            KeyCode::Tab => Self::Named(NamedKey::Tab),
+            KeyCode::Backspace => Self::Named(NamedKey::Backspace),
+            KeyCode::Delete => Self::Named(NamedKey::Delete),
+            KeyCode::Insert => Self::Named(NamedKey::Insert),
+            KeyCode::Home => Self::Named(NamedKey::Home),
+            KeyCode::End => Self::Named(NamedKey::End),
+            KeyCode::PageUp => Self::Named(NamedKey::PageUp),
+            KeyCode::PageDown => Self::Named(NamedKey::PageDown),
+            KeyCode::ArrowLeft => Self::Named(NamedKey::ArrowLeft),
+            KeyCode::ArrowRight => Self::Named(NamedKey::ArrowRight),
+            KeyCode::ArrowUp => Self::Named(NamedKey::ArrowUp),
+            KeyCode::ArrowDown => Self::Named(NamedKey::ArrowDown),
+            KeyCode::F1 => Self::Named(NamedKey::F1),
+            KeyCode::F2 => Self::Named(NamedKey::F2),
+            KeyCode::F3 => Self::Named(NamedKey::F3),
+            KeyCode::F4 => Self::Named(NamedKey::F4),
+            KeyCode::F5 => Self::Named(NamedKey::F5),
+            KeyCode::F6 => Self::Named(NamedKey::F6),
+            KeyCode::F7 => Self::Named(NamedKey::F7),
+            KeyCode::F8 => Self::Named(NamedKey::F8),
+            KeyCode::F9 => Self::Named(NamedKey::F9),
+            KeyCode::F10 => Self::Named(NamedKey::F10),
+            KeyCode::F11 => Self::Named(NamedKey::F11),
+            KeyCode::F12 => Self::Named(NamedKey::F12),
+            KeyCode::F13 => Self::Named(NamedKey::F13),
+            KeyCode::F14 => Self::Named(NamedKey::F14),
+            KeyCode::F15 => Self::Named(NamedKey::F15),
+            KeyCode::F16 => Self::Named(NamedKey::F16),
+            KeyCode::F17 => Self::Named(NamedKey::F17),
+            KeyCode::F18 => Self::Named(NamedKey::F18),
+            KeyCode::F19 => Self::Named(NamedKey::F19),
+            KeyCode::F20 => Self::Named(NamedKey::F20),
+            KeyCode::F21 => Self::Named(NamedKey::F21),
+            KeyCode::F22 => Self::Named(NamedKey::F22),
+            KeyCode::F23 => Self::Named(NamedKey::F23),
+            KeyCode::F24 => Self::Named(NamedKey::F24),
+            _ => return None,
+        })
+    }
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum PhysicalControl {
     Key(PhysicalKey),
+    LogicalKey(LogicalKey),
     Pointer(PointerButton),
     Wheel(WheelAxis),
 }
@@ -64,6 +181,12 @@ impl From<ModifiersState> for Modifiers {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum PhysicalEvent {
+    Keyboard {
+        physical: PhysicalKey,
+        logical: Option<LogicalKey>,
+        state: ElementState,
+        repeat: bool,
+    },
     Button {
         control: PhysicalControl,
         state: ElementState,
@@ -80,8 +203,9 @@ pub enum PhysicalEvent {
 /// At most two events (wheel axes); no event queue or per-event allocation.
 pub fn normalize(event: &WindowEvent) -> [Option<PhysicalEvent>; 2] {
     let first = match event {
-        WindowEvent::KeyboardInput { event, .. } => Some(PhysicalEvent::Button {
-            control: PhysicalControl::Key(event.physical_key),
+        WindowEvent::KeyboardInput { event, .. } => Some(PhysicalEvent::Keyboard {
+            physical: event.physical_key,
+            logical: logical_key(event),
             state: event.state,
             repeat: event.repeat,
         }),
@@ -120,6 +244,7 @@ pub fn wheel_steps(delta: MouseScrollDelta) -> [f64; 2] {
 
 #[derive(Clone, Copy)]
 struct HeldInput {
+    identity: PhysicalControl,
     control: PhysicalControl,
     temporary: Option<(Action, HoldToken)>,
 }
@@ -159,7 +284,43 @@ impl InputState {
         keymap: &Keymap,
         mut emit: impl FnMut(ActionEvent),
     ) -> Result<(), InputError> {
+        let (identity, event) = if let PhysicalEvent::Keyboard {
+            physical,
+            logical,
+            state,
+            repeat,
+        } = event
+        {
+            let identity = PhysicalControl::Key(physical);
+            // An alias key never releases another physical key's captured edge.
+            if state == ElementState::Released && !self.held.iter().any(|h| h.identity == identity)
+            {
+                return Ok(());
+            }
+            let control = self
+                .held
+                .iter()
+                .find(|h| h.identity == identity)
+                .map_or_else(
+                    || keymap.keyboard_control(physical, logical, self.modifiers),
+                    |h| h.control,
+                );
+            let assign = (state == ElementState::Pressed
+                && !self.held.iter().any(|h| h.control == control))
+            .then_some((identity, control));
+            (
+                assign,
+                PhysicalEvent::Button {
+                    control,
+                    state,
+                    repeat,
+                },
+            )
+        } else {
+            (None, event)
+        };
         match event {
+            PhysicalEvent::Keyboard { .. } => return Err(InputError::InvalidButton),
             PhysicalEvent::Modifiers(modifiers) => self.modifiers = modifiers,
             PhysicalEvent::FocusLost => {
                 for held in self.held.drain(..) {
@@ -222,7 +383,11 @@ impl InputState {
                         temporary = Some((binding.action, HoldToken(self.next_token)));
                     }
                 }
-                self.held.push(HeldInput { control, temporary });
+                self.held.push(HeldInput {
+                    identity: control,
+                    control,
+                    temporary,
+                });
                 if let Some((action, token)) = temporary {
                     emit(ActionEvent {
                         action,
@@ -261,6 +426,11 @@ impl InputState {
                 }
             }
         }
+        if let Some((identity, control)) = identity
+            && let Some(held) = self.held.iter_mut().find(|h| h.control == control)
+        {
+            held.identity = identity;
+        }
         Ok(())
     }
 }
@@ -278,3 +448,17 @@ impl fmt::Display for InputError {
     }
 }
 impl Error for InputError {}
+
+/// winit's desktop base-key value respects the active layout while removing
+/// Shift/Caps/Control. The logical event value remains available in diagnostics.
+pub fn logical_key(event: &winit::event::KeyEvent) -> Option<LogicalKey> {
+    #[cfg(any(target_os = "linux", target_os = "windows", target_os = "macos"))]
+    {
+        use winit::platform::modifier_supplement::KeyEventExtModifierSupplement;
+        LogicalKey::from_key(&event.key_without_modifiers())
+    }
+    #[cfg(not(any(target_os = "linux", target_os = "windows", target_os = "macos")))]
+    {
+        LogicalKey::from_key(&event.logical_key)
+    }
+}

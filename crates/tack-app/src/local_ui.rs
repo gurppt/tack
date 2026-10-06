@@ -157,7 +157,7 @@ impl LocalUi {
                             | KeyCode::SuperLeft
                             | KeyCode::SuperRight,
                         ) => None,
-                        key => Some(PhysicalControl::Key(key)),
+                        _ => crate::input::logical_key(event).map(PhysicalControl::LogicalKey),
                     }
                 }
                 WindowEvent::MouseInput {
@@ -444,7 +444,11 @@ impl LocalUi {
                         keymap.for_action(*a).count(),
                         keymap
                             .for_action(*a)
-                            .map(|b| format!("{:?} {:?} {:?}", b.control, b.modifiers, b.trigger))
+                            .map(|b| format!(
+                                "{} {:?}",
+                                crate::context_menu::binding_label(b),
+                                b.trigger
+                            ))
                             .collect::<Vec<_>>()
                             .join("; ")
                     )

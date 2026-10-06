@@ -27,6 +27,7 @@ pub struct ImageInput {
     pub pending_source: Option<Action>,
     pub pending_local: Option<Action>,
     pub(crate) state: InputState,
+    input_trace: bool,
     cursor: [f64; 2],
     active_token: Option<HoldToken>,
     center_handle: bool,
@@ -48,6 +49,7 @@ impl ImageInput {
             pending_source: None,
             pending_local: None,
             state: InputState::default(),
+            input_trace: std::env::var_os("TACK_TRACE_INPUT").is_some(),
             cursor: [0.; 2],
             active_token: None,
             center_handle: false,
@@ -61,13 +63,27 @@ impl ImageInput {
         if let Some(edit) = &self.annotation.edit {
             let id = edit.id;
             edit.as_ref().clone().finish(editor)?;
+            let is_new = edit.is_new;
             self.annotation.edit = None;
+            if is_new {
+                self.annotation
+                    .tools
+                    .complete_creation(crate::actions::Tool::Text);
+            }
             self.images.selection.select(Some(id), false);
         }
         self.finish_name_edit(editor, true)?;
         Ok(())
     }
     pub fn cancel(&mut self) {
+        if let Some(c) = &self.annotation.creation {
+            self.annotation.tools.complete_creation(c.tool);
+        }
+        if self.annotation.edit.as_ref().is_some_and(|e| e.is_new) {
+            self.annotation
+                .tools
+                .complete_creation(crate::actions::Tool::Text);
+        }
         self.annotation.creation = None;
         self.annotation.edit = None;
         self.images.cancel();
@@ -224,6 +240,14 @@ impl ImageInput {
         editor: &mut DocumentEditor,
         camera: &mut Camera,
     ) -> Result<bool, AssetError> {
+        if self.input_trace {
+            eprintln!(
+                "TACK_INPUT dispatch={event:?} generation={} undo={} redo={}",
+                editor.generation(),
+                editor.undo_len(),
+                editor.redo_len()
+            );
+        }
         let ActionEvent { action, phase } = event;
         if matches!(action, Action::TemporaryTool(_)) {
             self.annotation_action(event, editor)?;
@@ -407,7 +431,7 @@ impl ImageInput {
                 return Ok(false);
             }
             match action {
-                Action::CancelInteraction => {}
+                Action::CancelInteraction => self.annotation.tools.reset_pointer(),
                 Action::Undo => {
                     editor.undo()?;
                 }
@@ -497,6 +521,8 @@ impl ImageInput {
             self.cancel();
             self.last_click = None;
             self.name_edit = None;
+            let tool = self.annotation.tools.tool();
+            self.annotation.tools.complete_creation(tool);
         }
         Ok(save)
     }
@@ -545,8 +571,20 @@ impl ImageInput {
         editor: &mut DocumentEditor,
         camera: &mut Camera,
     ) -> Result<bool, AssetError> {
-        let save_pressed = matches!(event, WindowEvent::KeyboardInput {event, ..} if event.state == winit::event::ElementState::Pressed
-            && self.keymap.matching(crate::input::PhysicalControl::Key(event.physical_key), self.state.modifiers(), crate::bindings::Trigger::Press).any(|b| b.action == Action::Save));
+        if self.input_trace
+            && let WindowEvent::KeyboardInput { event: key, .. } = event
+        {
+            eprintln!(
+                "TACK_INPUT physical={:?} logical={:?} modifiers={:?} normalized={:?} repeat={}",
+                key.physical_key,
+                key.logical_key,
+                self.state.modifiers(),
+                crate::input::normalize(event),
+                key.repeat
+            );
+        }
+        let save_pressed = matches!(event, WindowEvent::KeyboardInput {event, ..} if event.state == winit::event::ElementState::Pressed && !event.repeat
+            && self.keymap.matching(self.keymap.keyboard_control(event.physical_key, crate::input::logical_key(event), self.state.modifiers()), self.state.modifiers(), crate::bindings::Trigger::Press).any(|b| b.action == Action::Save));
         if save_pressed && (self.annotation.edit.is_some() || self.name_edit.is_some()) {
             self.commit_drafts(editor)?;
             return Ok(true);
@@ -561,6 +599,10 @@ impl ImageInput {
                 if matches!(
                     physical,
                     PhysicalEvent::Modifiers(_)
+                        | PhysicalEvent::Keyboard {
+                            state: winit::event::ElementState::Released,
+                            ..
+                        }
                         | PhysicalEvent::Button {
                             state: winit::event::ElementState::Released,
                             ..

@@ -52,6 +52,11 @@ fn creation_capture_cancel_pan_priority_and_one_exact_inverse() -> Result {
         assert!(input.annotation.creation.is_none());
         input.physical(button(Released), &mut e, &mut camera)?;
         assert_eq!(e.undo_len(), 0);
+        input.dispatch(
+            event(Action::SelectTool(tool), ActionPhase::Invoke),
+            &mut e,
+            &mut camera,
+        )?;
         input.cursor_moved([300., 250.], &e, &mut camera)?;
         input.physical(button(Pressed), &mut e, &mut camera)?;
         input.cursor_moved([400., 300.], &e, &mut camera)?;

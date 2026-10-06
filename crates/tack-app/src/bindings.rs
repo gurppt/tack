@@ -1,6 +1,6 @@
 use crate::{
     actions::Action,
-    input::{Modifiers, PhysicalControl},
+    input::{LogicalKey, Modifiers, PhysicalControl},
 };
 use std::{error::Error, fmt};
 
@@ -52,7 +52,14 @@ pub struct Keymap {
     bindings: Vec<Binding>,
 }
 impl Keymap {
-    pub fn bind(&mut self, binding: Binding) -> Result<(), BindingError> {
+    pub fn bind(&mut self, mut binding: Binding) -> Result<(), BindingError> {
+        if let PhysicalControl::LogicalKey(LogicalKey::Character(c)) = binding.control {
+            if c.is_control() {
+                return Err(BindingError::InvalidControl);
+            }
+            binding.control =
+                PhysicalControl::LogicalKey(LogicalKey::Character(c.to_ascii_lowercase()));
+        }
         let wheel = matches!(binding.control, PhysicalControl::Wheel(_));
         let valid = match binding.trigger {
             Trigger::Wheel => wheel && binding.action == Action::ZoomView,
@@ -69,8 +76,14 @@ impl Keymap {
             return Err(BindingError::InvalidTrigger);
         }
         if let Some(existing) = self.bindings.iter().position(|b| {
-            b.control == binding.control
-                && (b.trigger == binding.trigger
+            let mixed = matches!(
+                (b.control, binding.control),
+                (PhysicalControl::Key(_), PhysicalControl::LogicalKey(_))
+                    | (PhysicalControl::LogicalKey(_), PhysicalControl::Key(_))
+            );
+            (b.control == binding.control || mixed)
+                && (mixed
+                    || b.trigger == binding.trigger
                     || matches!(
                         (b.trigger, binding.trigger),
                         (Trigger::Hold, Trigger::Press) | (Trigger::Press, Trigger::Hold)
@@ -84,6 +97,25 @@ impl Keymap {
         }
         self.bindings.push(binding);
         Ok(())
+    }
+    /// Resolve one keyboard domain only. Mixed physical/logical bindings with
+    /// overlapping modifiers/triggers are refused by bind, avoiding double actions.
+    pub fn keyboard_control(
+        &self,
+        physical: winit::keyboard::PhysicalKey,
+        logical: Option<LogicalKey>,
+        modifiers: Modifiers,
+    ) -> PhysicalControl {
+        let physical = PhysicalControl::Key(physical);
+        if self
+            .bindings
+            .iter()
+            .any(|b| b.control == physical && b.modifiers.matches(modifiers))
+        {
+            physical
+        } else {
+            logical.map(PhysicalControl::LogicalKey).unwrap_or(physical)
+        }
     }
     pub fn unassign(&mut self, action: Action) {
         self.bindings.retain(|binding| binding.action != action);
@@ -113,6 +145,7 @@ impl Keymap {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum BindingError {
     InvalidTrigger,
+    InvalidControl,
     Conflict { existing: usize },
     Full,
 }
