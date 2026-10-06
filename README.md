@@ -1,14 +1,16 @@
 # Tack
 
 Native, local-first reference board. This repository currently contains
-**Mission 1H contextual pixel UI + updated 1G native performance validation**. The executable opens
+**Phase 1I layout-aware shortcuts, one-shot tools and atomic grid arrangement**. The executable opens
 an empty local board by default; renderer benchmarks remain explicit commands.
 Right-click an object or blank canvas; the tiny Tack entry (or F10) opens
 application commands. Undo: Ctrl+Z; Redo: Ctrl+Shift+Z.
-See [the current performance report](docs/MISSION_1G_REPORT.md),
+Multi-selection → right-click → Arrange offers grid arrangement and grid snapping.
+See [the Phase 1I report](docs/MISSION_1I_REPORT.md),
+[the current performance report](docs/MISSION_1G_REPORT.md),
 [the contextual UI report](docs/MISSION_1H_REPORT.md),
 [the feature inventory](docs/FEATURE_INVENTORY.md),
-[the human test checklist](docs/HUMAN_TEST_1H.md),
+[the human test checklist](docs/HUMAN_TEST_1I.md),
 [the supply design](docs/design/local_image_supply.md),
 [Phase 1F](docs/MISSION_1F_REPORT.md),
 [Phase 1E](docs/MISSION_1E_REPORT.md),

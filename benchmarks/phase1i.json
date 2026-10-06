@@ -1,0 +1,3648 @@
+{
+  "status": "B \u2014 automated gates passed; owner comfort/discovery and real Windows desktop review pending",
+  "provenance": {
+    "commit": "fd687d31789d9528d090eabe1aca0eee9ea1f066",
+    "source_snapshot_sha256": "2803c4177c91562bb663839b4ff525cf46c31860f6e492a91a26d03f2790acef",
+    "source_files": 191,
+    "scope": "tracked crates/tools/CI/assets/Cargo/config; excludes docs, receipts, ignored raw evidence and user untracked gfx"
+  },
+  "source_file_sha256": {
+    ".cargo/config.toml": "04e169797aaf9f4a2f9d4a7c02b11478a3de0371714147ea0f61408b5e205983",
+    ".github/pull_request_template.md": "e5ca1dd4e9bb1680952bc07d1ec5aa17c28d019df83e741429c02ef99a553b22",
+    ".github/workflows/advisories.yml": "816d8e621d5ed25a3e399a68ce5d8dabc568023524c67aac5919d16f4d0df980",
+    ".github/workflows/quality.yml": "768c379ec6cc3bb1e0947cc967de090a8ff52d561e1d56491935298ee36a9af8",
+    ".gitignore": "176839d7bdfec34ba6d83db7ba0bd9840ac27cf85ca7c27bc3d3696e9e581c14",
+    "Cargo.lock": "a61b60ab6a25970422e17e912db677a97c1bd0bf63deeabab74f8866ab207fee",
+    "Cargo.toml": "7b4ae2860bc70ede203ef65a734f79e10e1088fc1b32df20140666cc53ee2822",
+    "assets/pixel-font/COPYING": "cd2785c2b8e0a01d203560265b2d2d47cdb1401d2707d25918ac5531bcdba947",
+    "assets/pixel-font/COPYRIGHT.txt": "809b9c704ff34068a6601737bc09de82a75c57f8f7ac134d27c67d250405ef0c",
+    "assets/pixel-font/LICENSE.txt": "1e74cb82bf476843e97c2596297b04219b1a7e51f7238944a8c031cb9401fa87",
+    "assets/pixel-font/OFL-1.1.txt": "869692af094c57fb7258c57fe26820c759319603321d0ffeb278de3651763ded",
+    "assets/pixel-font/README.md": "b114cdcf29e1dc409e41ef1677e530b0190ba2777025ae4979a4c60873cfe875",
+    "assets/pixel-font/provenance.json": "7c488cfa78468e777562dd2c28b28dc1c40b1ec660bbfc6ed2b7948f08f5e6d2",
+    "assets/pixel-font/tack-label-glyphs.bin": "5c2ff18025a8ad7cd8f0c615d9dcb9f8bed4207f1f03d6a857a71f0b2ebe299b",
+    "assets/pixel-font/unifont-18.0.01.hex.gz": "e66385c79a0b8b24a466f3129930e08a966a935b4bf3b28c6bb17a9df9bf791d",
+    "assets/pixel-font/unifont_upper-18.0.01.hex.gz": "ef531f3675950380a92569beceb3af0a7efea05dbc5755a1d08cbd1dca83210f",
+    "assets/ui-font/LICENSE": "f33fe8679d5b2abecc4f1313ce6c6bfa58262964de5f7bca146596a7318047af",
+    "assets/ui-font/provenance.json": "d6181ccdb2d0772bc61d1fcad156977939dc8904f5e56d58ed050f88f467dc0e",
+    "assets/ui-font/spleen-8x16.bdf": "b38b32a66920068965a3101f98071d310c5c74659fe86e55d346140770f8f6e8",
+    "assets/ui-font/spleen-glyphs.bin": "6c083bb6db7086dbb167e50bafb3b93f5eca3077e8384af6f0b7a20602f3f837",
+    "crates/tack-app/Cargo.toml": "14c1e6a04d1d0797dc123e0de4da82a9d61b9db39e7effed1bb02c2502dda3e2",
+    "crates/tack-app/build.rs": "55e6dd185b42f3e9ee972bd509dc2afcaf0b71f7a581284b7d824a4e5aa6ec21",
+    "crates/tack-app/examples/context_ui.rs": "f328b627d3d6145a10700f3ff4c13ac2e6432dd52920152f27367c3f7c93d6c1",
+    "crates/tack-app/examples/disk_cost.rs": "e9d0ee36624fa2dc66ffc0dbaaec1107e60f6dae5156ed2ac799cd4311104b55",
+    "crates/tack-app/examples/layout_cost.rs": "a7f60f6c1d66835d1104bf29ee05e11dbeb860117540852fc2be4897b634fecb",
+    "crates/tack-app/src/actions.rs": "529bf9169bb7f3152c8323701fcd4a312b0350be66a705c0db8311f17c5fcb5e",
+    "crates/tack-app/src/annotation_cli.rs": "3de9f2f0bdb65a0b742748e5ed97daf2f385acb39942623e9a1fd7ea1ed83c4b",
+    "crates/tack-app/src/annotation_geometry.rs": "fcf7e03f6a0801b47bc207503b2e6f6ace4a9920b016c75e6a220d1960d219f1",
+    "crates/tack-app/src/annotation_input.rs": "9f79876d3368208b935fd135fd477ea21e6adfb33bacc9c8acc99ca6c966c72f",
+    "crates/tack-app/src/annotation_scene.rs": "3d60101716d84fa3e916524cb6d1f0799625bcb8a8a2b03cc4db9772d8fcd285",
+    "crates/tack-app/src/annotation_text_scene.rs": "9ef437d421bf76451784d6c0c5c6760370ed00765d2bafdec4bba2a7e603c9fe",
+    "crates/tack-app/src/annotation_tool.rs": "44f7b4945ea26c5b9067407d2795930e24bd6a00bdf777296c665f7a5683352f",
+    "crates/tack-app/src/benchmark.rs": "54a467fee4238f9007237c6421d97dda1fa2f0476683d75031985b9ca72e7bdd",
+    "crates/tack-app/src/bindings.rs": "1ca4557d74d0632bed817be076bc0ee47cbe992d70a334d343ffd01e176cb97f",
+    "crates/tack-app/src/context_menu.rs": "34a400215f47a402ab0e6e7c70450d63531a0e36b356e94e319b8f7d7ec08d8b",
+    "crates/tack-app/src/coverage.rs": "422f0557c2b1b819f12248e7fcac8921f87e2342fc69d282a9c856346c03aac5",
+    "crates/tack-app/src/image_benchmark.rs": "2a403e95da99becba8eee59e5f4f2eace1932fef1e07b9dd301f3a227549da3d",
+    "crates/tack-app/src/image_geometry.rs": "c3e176e59c67e04382a0336b822c0663cd1dd0c045d45ceacdb906a42fde704d",
+    "crates/tack-app/src/image_gizmo.rs": "5ab6525804c164c50bf6b8e195b2cda57993451c6b5e3bae6caf413f966ec3a1",
+    "crates/tack-app/src/image_input.rs": "d37c1479395af42465f7ab7e8f0926882b6a03d469beb0f4d76e3b004c024f9b",
+    "crates/tack-app/src/image_interaction.rs": "930a665e53389a085c7900e6d36c7f820980a89b150f09c91111865935b52216",
+    "crates/tack-app/src/image_save.rs": "1b60e33154c1c01c0a5af1711c26bc68167486605df8ed2eba22039221ae4bcf",
+    "crates/tack-app/src/input.rs": "a7ce2b54d448a2ec0eab1f2704742e124d298d439ff69b56c9308ec6c322bdd9",
+    "crates/tack-app/src/lib.rs": "6366e374d82e7c2c46c7f07656da45a926b4e06c00f280fbca62316ce5efa7f3",
+    "crates/tack-app/src/local_import.rs": "f1bec5c2b3733a7192db4e524c1261698f02ddb9a3a6ee437cb93cf8aa564960",
+    "crates/tack-app/src/local_relink.rs": "94193ddbec794e195aca9d180b0fa059aee2e24c3bab6cbe53b41dd90616a2ee",
+    "crates/tack-app/src/local_ui.rs": "12473fe68afa5b5d56e354672ed6cb22505e0e79b25279c79f5c15fb8c706728",
+    "crates/tack-app/src/local_worker.rs": "77ef992ee2cf000b2beba6d588a63cb0dce667e95c71056d2bbc5c6c2ba3dafc",
+    "crates/tack-app/src/main.rs": "309360e9a31f34956df1d0e2e0177564997f3a5873a57be4ab927b955aa0e6c1",
+    "crates/tack-app/src/native_files.rs": "d11640a4ee752d78e972d9ab1c78e601c434bb241f8de17696b9fe27b1eb566b",
+    "crates/tack-app/src/navigation.rs": "607b936b5e23846f74d931c1c43f9d3f77526ce3281bb82c1ee45844da2f254d",
+    "crates/tack-app/src/navigation_input.rs": "3a3206f88cb8a5bdf9d1cabf74a19d3ddd952629eeb81dd8274dd6c086906e9c",
+    "crates/tack-app/src/note_layout.rs": "9a01a4b88efffd031a24315d704009eea794ecc24eae8bf118404202544c800f",
+    "crates/tack-app/src/pixel_font.rs": "a2f86dd5d162784f1fecbec46293f35cd02f44d34953e6b0277d4f295efd7809",
+    "crates/tack-app/src/preferences.rs": "693e492471bf94fdc1d1a5e4e7c923cd592dfa70bcf299ade617c765261ccf91",
+    "crates/tack-app/src/product_bindings.rs": "b3ed714cedef68bb82b7009225ffb1a0600d455c4ebacce12d52d1045a142f32",
+    "crates/tack-app/src/product_cli.rs": "ec7593660b01d860b067f28c16316a70fa87931f8560ffd2270aa4c359497eee",
+    "crates/tack-app/src/product_window.rs": "be3fa85a910d3a08df26444e222cdde16a79f59aa4e5812a53753aa25b975a46",
+    "crates/tack-app/src/product_window/launch.rs": "8bfc101cc00bc31f5cecc45149d7e2f28a9f27cd730c24e9681ddf8b94ca1ea6",
+    "crates/tack-app/src/product_window/local.rs": "9c8713ac5e801444a58aed8776eacc7838d8bfed1d049f7e5b4452e75824de2d",
+    "crates/tack-app/src/product_window/menus.rs": "1fb6628607f97bd9cdbaa9f9c681f77c2aded44ba03256287823a3607daa9f44",
+    "crates/tack-app/src/recovery_schedule.rs": "cff8877cdba3bf518806204fec89707ddce32206002b77ca5f187329f5439501",
+    "crates/tack-app/src/report_output.rs": "51e49ce570dfc99724e8749262aa22531286dea87b42364a9b42de3424411cc4",
+    "crates/tack-app/src/selection_commands.rs": "b0dd4f53deb235ec7dd2c8d6ec0a19c5f8ce850e2530f4017cb29a03b2d500ed",
+    "crates/tack-app/src/session.rs": "eefd0897879346820503a7fcd6a546db5d267748fb20d9c384271b8b49a6b8ed",
+    "crates/tack-app/src/source_actions.rs": "8395e11977c8e0de6f5b5264332589c72b2c422bb9f29296602c9a2ba6018afd",
+    "crates/tack-app/src/spatial_cli.rs": "8112486010b434323ab6c1e4943b62d1f3dec44be93874a11ff675249d5b700f",
+    "crates/tack-app/src/spatial_input.rs": "5035a18cbd136d2ad1478a3abda9081c26bb055843f3be80d3314019ebe94be4",
+    "crates/tack-app/src/spatial_layout.rs": "c77b7f0a6435ce5757ef4e8a0730d5b93aa92530dfb384b3ee8639a5def451a3",
+    "crates/tack-app/src/spatial_overlay.rs": "34dc97893b1e7156e636e93da2f58c6742650d077e07251aab087d9844722034",
+    "crates/tack-app/src/spatial_snap.rs": "59a7c0c4777ecd2cc62e72bce9745f5ac908f568fd3e974dfac252bfc625f942",
+    "crates/tack-app/src/supply_cli.rs": "ad9d82a1afc275f39a591342d17b9b17c4e266222407ac59ea517c938d908d68",
+    "crates/tack-app/src/supply_plan.rs": "2bc04c8e3cd13db1e7133752a1faed857c0a5072565200e733679f2862d3b990",
+    "crates/tack-app/src/visibility.rs": "9c3a0472655c5bd3f500b649518f6aa70b3105c4d09891a98792f504f60333e4",
+    "crates/tack-app/src/window.rs": "7396208a6deb23654da5d20e788358fbcdf88c93c8e5556c52b3d9f4789f0485",
+    "crates/tack-app/tests/actions_input.rs": "045415fb90762641ba8136adc687a6a67fff94f80a21caa183a78649f5bd4ae9",
+    "crates/tack-app/tests/annotations.rs": "7ef7adafb26b26c31fdfee7b12bb97569481c5ca3c4906f8babb7195faf0e403",
+    "crates/tack-app/tests/context_menu.rs": "73298c663f206fb66700e039d8886961a22c15d17ca1b2a80379471dffe92138",
+    "crates/tack-app/tests/image_interaction.rs": "d384754a07920724a73a92e4915033487bbf04fc6bc6dc36f4d6ccc404d2edb8",
+    "crates/tack-app/tests/image_persistence.rs": "ac490e609144b75723ed887a8a5ea765a7abd30c02c548bc297677701fad2296",
+    "crates/tack-app/tests/input_layout.rs": "49eecca528aa5ef53b58774a9aed4459a340f1ccdba78ee40a48570ca7c83b96",
+    "crates/tack-app/tests/local_production.rs": "302e973c07b91f733d378c7258fffe01f827c8056ef10ba0916e00158b976af3",
+    "crates/tack-app/tests/product_cli.rs": "e37ce81a2a38dca59721bf6bba70ac19cb7e31e6f2517d1571d45c20c0204d10",
+    "crates/tack-app/tests/spatial.rs": "f09c6a32e7a35941c1477589dbc5d194ede9edbb8c25db967f65d7a292cc290d",
+    "crates/tack-assets/Cargo.toml": "e1f041f09a384fa58fd207b5be5676b4d9c837191fe1a92b84528cb67d3e5b34",
+    "crates/tack-assets/examples/overview_prepare.rs": "c84364922f36603b9d63d24e93fa9c2043ff15f09858a8b9f87140cdc6656c8d",
+    "crates/tack-assets/examples/thumbnail_microbench.rs": "7414dae0ae35e1fe7d45b72527671587f15c533d1cb7435d7aaf3638877fcfb9",
+    "crates/tack-assets/src/board.rs": "508d0c13c7b55b7a97e2c63f899bc9fd4d8ce195b912bab2c0b0dc28d6309199",
+    "crates/tack-assets/src/decode.rs": "0defa01ad769e853105b1a4b2114a9c71e024a262e6bbafdc7b3b301bae49671",
+    "crates/tack-assets/src/lib.rs": "c6ae6a3257436241c27a1e9f0647fe29cc67afcd40353849841afa02cdd4b088",
+    "crates/tack-assets/src/loader.rs": "bd782db1b8648ead5c4694f22aac10c8901007fd9e1696fef57d7abc5528139f",
+    "crates/tack-assets/src/native_thumbnail.rs": "a4cc92e495015c98b51aad7b1e14cdf3bdfdb6487bd3dd14c80189383f0a42ef",
+    "crates/tack-assets/src/preparation.rs": "494794d2af350d855ab7fec2588cd255999daec0184657be014ee129c34a8d4b",
+    "crates/tack-assets/src/product.rs": "df43f9248ca9a298832848c3cc7f42eede58e2c7618477351ca1f6be52f3f9d2",
+    "crates/tack-assets/src/profile.rs": "5c4bb0cec9ad8ef2bd956e3689cafc7b7cee52e276a17b09b40fd3533961c48f",
+    "crates/tack-assets/src/representation.rs": "ced1c21a36aa37c9567c2773b2df4c2cf1915146cdafaae7421aca891432f0fb",
+    "crates/tack-assets/tests/benchmark_board.rs": "f0c06ba5c4f70314babaaab2462b22292f71eeb101e3a7f365dba575bbb2789e",
+    "crates/tack-assets/tests/native_thumbnail.rs": "e45a81e40b57bfab926917d185935394c6f7e645b1700d98638da09c9af6df34",
+    "crates/tack-assets/tests/pipeline.rs": "7891c6ee081ee99bae888aaf0fe1675f5db46a46aa1faf9e7b4f11d9c55d8cfb",
+    "crates/tack-assets/tests/product.rs": "631a2dbcb1538001b8c9bd2c72b872bd07950d0f4986465002bb1b58e751ffba",
+    "crates/tack-core/Cargo.toml": "f15e91e4bb447003ecd33c7f2d36ab161d701da760832a492baa482a30843715",
+    "crates/tack-core/src/annotations.rs": "e6d3d6b4d462f300533e2aff128edb5b0826039de5be0ef4f0eb51005e30d012",
+    "crates/tack-core/src/camera.rs": "499a3d7df48f122e64e874f0c35c53572bdddc5fabac65365a599c2f4ad1716c",
+    "crates/tack-core/src/commands.rs": "f00807036f2a1010b8e54af26ac7a73be7fae49b3f9e0d6af578b2aeda672aa7",
+    "crates/tack-core/src/document.rs": "510f7f991a688c88b21b6307ef658a73b74f472620910db76651fcbcf6cd4550",
+    "crates/tack-core/src/groups.rs": "bd795bfd8332f607f714cff9e04ef6f5871ba792c2becc42ad69a77a87f03446",
+    "crates/tack-core/src/history.rs": "288fd1cee24480d9e8a7643ada7b1ddab03278988e45f7ecf5688a810af040a6",
+    "crates/tack-core/src/ids.rs": "7f9ab07c6dba3ed41ff59e6e8b0e97c78056ce3c903414105ee3f68a019dc1de",
+    "crates/tack-core/src/lib.rs": "b2073346126d15af4a815776d347d4aaa5015a2cc2aed1d5deb625845b043a1b",
+    "crates/tack-core/src/model.rs": "a089f43038fbfaee019c6c6c134e26562bac2c714ea633641a4f8fc5c3a379c1",
+    "crates/tack-core/src/query.rs": "6dc2f039e3ed48c7f5d07f76b5adac683f1e21e42f8ceb04746f74cecace7f9c",
+    "crates/tack-core/src/residency.rs": "7dca1c0e10098d192b5ba8c201520207f5176b49f95b448989fc37ba7b475c60",
+    "crates/tack-core/src/source_path.rs": "84e99b7e36a1c6c23e15e8dbc69ea4438c975efd95da35a9e04c0ab22a98c5b4",
+    "crates/tack-core/src/stroke.rs": "70cc81567f8207d64c9999f5d904a6457940fcf7d024bcbd49eb9dbca7a4de3b",
+    "crates/tack-core/src/transform.rs": "3af9d8e55af70a8ce2ad311389044882fd1d915244c0a54a109ab9cbbe793313",
+    "crates/tack-core/tests/annotations.rs": "93b136ec19783a57c74d2962c35cd7bf57a90d4d2b2a88e5eca77a2dec2b39c3",
+    "crates/tack-core/tests/document.rs": "fd9196e858cf930b0c4878869a6c4a84a36c4701338d0415ce75961613e42c99",
+    "crates/tack-core/tests/image_batches.rs": "a4a863b773c803ce8bc05a779f0368dde7462133b62071053f8b78b668058d65",
+    "crates/tack-core/tests/invariants.rs": "3a67d91706276e8d4a6dac348dffbff10c9691f9d65beaf9b160336fc4c78d10",
+    "crates/tack-core/tests/spatial.rs": "14c2df05da36775ff9fda7f5a35c933a934f5d30e12240ab3468d31c96a31015",
+    "crates/tack-render/Cargo.toml": "1779b600bda861f9af89efe098fe21912a67308b4553521e70eb9d4b712bef07",
+    "crates/tack-render/src/annotations.rs": "4a7226d2a9a1fdb9c1ea440c6c94e5e7992cb673ee48bec2abaa26190f590636",
+    "crates/tack-render/src/annotations.wgsl": "8524ce9f92a2100bb0934efb33d6bfcb15ef592ba9509ee951391d786b4eeedc",
+    "crates/tack-render/src/canvas.wgsl": "db604cfb645f3f2037df73ec3a669cf7f8e0588202ebda05f145ddb65347232a",
+    "crates/tack-render/src/gpu.rs": "2cafc532d1b5da7c0c3007ed6e9d82c123a64785203f35c2319266e65aec2fa1",
+    "crates/tack-render/src/grid.rs": "8feb62c6cedbe5a64bddc62ca6792340ef46cfcaa833d3906a611146ce13e628",
+    "crates/tack-render/src/grid.wgsl": "cc86360a006a4dbdb20fe563c35c05f8a0fe88c56332a41c4db698f90bb3fa49",
+    "crates/tack-render/src/lib.rs": "5a5f8e9ea4c8fcc7550d011767c100b3516f542867e61082a1248d978e5c9d1f",
+    "crates/tack-render/src/overlay.rs": "2f189dccbcd883099b696d70237fc15e0a82b1e7ede6a53b4bb9ba2367144317",
+    "crates/tack-render/src/overlay.wgsl": "efc218ca0ddaf941522d8e8d17ea1a57fb9fe6016c44fad01127533b0edc22a5",
+    "crates/tack-render/src/pixel_grid.rs": "70b1e969bfcb53733e0ecc56ce4d985cc62a11528573c96e3d6e616ac5af55ef",
+    "crates/tack-render/src/timing.rs": "33161a72598d15f993851001e7a95624de05589c9eac018ad6983b5105802c48",
+    "crates/tack-render/tests/document_query.rs": "4298b9846e98e4cdd41fa373ad7f4a6ba9ce6943a3bca20628e713e135266732",
+    "crates/tack-render/tests/gpu_smoke.rs": "21acfc1f6918e97aedde29eb1099d3f6729141fe781413e105874d4b023e5ecd",
+    "crates/tack-render/tests/product_gpu.rs": "13cb760ff23f9c4cb4c04225c1f860fb97b2f59024e595dcd0a8826ac081e4b0",
+    "crates/tack-storage/Cargo.toml": "e60685c568387200d5a03b41cbfc8b32e736c95010cc50288a21c31ee4540fc2",
+    "crates/tack-storage/src/annotation_codec.rs": "eb79adf1bdb9175586a13ce436d33f868504e7fa1a212a02c314de0a680b5f68",
+    "crates/tack-storage/src/codec.rs": "8719cec8d75252392407cc00957e029949500bab45c0308245eac3fe090175b9",
+    "crates/tack-storage/src/lib.rs": "439001d7f50f27f4c8bb392fe98ae2ad7374b1ceb703ae1e06606c5fcb6d611e",
+    "crates/tack-storage/src/ownership.rs": "2bc4876e56a76c602d88329f0385ddbe48a7e7f1bf253407d012c77f1c71eafd",
+    "crates/tack-storage/src/reader.rs": "7e3873717628ef9e2c78392833d0003207b9723c9b81ab18eab3c4372dbf56d1",
+    "crates/tack-storage/src/recovery.rs": "75824b42fc4313cbe4d43dfe1ad81be2d96528575a8632375ab99dc6e97f5224",
+    "crates/tack-storage/src/save.rs": "3a2884b4dd1f2f113b16b398714beadda107486dfef41d4f2b5ea09be4842be8",
+    "crates/tack-storage/tests/annotations.rs": "d6b5d890a7e0db10b2cff13291899f597b6c6dfdd4ab74abcae2533fb1abcfb2",
+    "crates/tack-storage/tests/persistence.rs": "30871479099d9b7b3f0002ae66790116dbdb607fa6c43537f0a624f293ba4abc",
+    "crates/tack-storage/tests/recovery.rs": "664ab7c959f75427a5ef6eee488caf779d845bfe0f60fb479af4b92aeaa697d0",
+    "crates/tack-storage/tests/spatial.rs": "5dc6ad5636c5a91e98cead1ad7c46c292b882693b3283893571a280d581423f6",
+    "deny.toml": "1e2f78a07609f7f887adcd745064b476fd3d6ed5f325f851bb53801b66791049",
+    "rust-toolchain.toml": "7d21c66a15f41bad66b82ed06a289f5dc8a6e3751951d2696bbf20ce296f2b0f",
+    "tools/asset_experiments.py": "618967ea43aaa9ac40640892d7610e00a323318f28161c96586d4db675950682",
+    "tools/build-test-bin.sh": "c28a6d2db91fcae2449525c346a9115750774a426ea0fa6265e420302fbcb11f",
+    "tools/build_pixel_font.py": "78e64dd4d2a9770766ff263cb51232d5ed3220842f17f1ba5342a9d481bac8c6",
+    "tools/build_ui_font.py": "ceaa56805f4308e793735ca064d5dd860d39fc59d57c23fa12bd828db9cb5dd7",
+    "tools/check.sh": "a227b652e37f4119ce4fb3a43ba023ddeaf09eaaa51d8049f3cc72977a9440ea",
+    "tools/check_preparation_recovery.py": "bc2070328a980884e39f3d97ee6dc8b67962247db42d0c9db6830378748091b1",
+    "tools/collect_native_evidence.py": "9467a69c9b11e368cc98620c9723e500160a6d738baf7973efccbc7cfc5bbca2",
+    "tools/generate_corpus.py": "160f9a2949484ce4ac82a074535810b800490be8109586069166ca14ac9eab51",
+    "tools/generate_supply_images.py": "25562bbfa9e326bb7d8ba4c613eae44d63a6104455ca12222e8bc62041f92be6",
+    "tools/host_checks.sh": "18807f92c72ae308685b9348119852846d843c2d79964af3d55b662ea9390fc8",
+    "tools/native_decoder_experiments.py": "cbc150f6fe0a9c1e33a03ec886a4322f0d016a4bd6f7375b60b4ecf15d56f931",
+    "tools/prepare_linux.sh": "06587706255fd6fbcfe8d5dde15debe7eaa0819a2ff5af746b90a9b7263bc85e",
+    "tools/prepare_turbojpeg.py": "10397aceca2014e90204fdf28715ece159e85e62190e193e67254dc088646cf8",
+    "tools/run_annotations.py": "9abebc547648b5c7ec981e66766957748ffcc73f6e01264510827515fdfb2d01",
+    "tools/run_benchmarks.py": "8847cf8f0a090489d09e0e4714caadcb007a751286dd28da816684c44ae3b798",
+    "tools/run_context_checks.py": "db916ff3e4286078b7ad95b5335da13c661a726d50870172f047c0453cd8778e",
+    "tools/run_idle.py": "6b36441063760cf348a3e88cf8d9ec7a26e73d4cf99d84eb9b875904cd5ee678",
+    "tools/run_image_interaction.py": "c1ee61c5afc1bb8b7d0b1aeed380a5471cfa9f718490f744f38ddb5c56b684da",
+    "tools/run_input_layout.py": "dcee7f0a9b0b525e4d45183959479dc58931f9c0ef5fd618842d2eadc664610d",
+    "tools/run_layout_cost.py": "8958e938fde807c82303d89a3a1ab04b9f9828621187eec0edaa9845831eb40d",
+    "tools/run_local_production.py": "b115383d77c9b1f95e2ede745005633bd85b107c9fe745c9c378eed6e8ff385e",
+    "tools/run_local_resources.py": "5273e68a9844838466a1b4ab521f74dfa6349de919c984d8aedcb3a24e60480d",
+    "tools/run_multi_instance_resources.py": "c12a34d75826c166eeaebd41291048ac8bf808d6440821d38f459a911c5ace1e",
+    "tools/run_native_annotation_checks.py": "b9b2b1ce0f7d89d3e34a0c2a2d8bad49301e5fb9c8c74911f170199a32b5e2a4",
+    "tools/run_native_image_checks.py": "4d49f751b5f13f57b482b2f53bbdc80d177c957985abb0cce8e81a703a4dd529",
+    "tools/run_native_recovery_checks.py": "ecb4348f728b36f6b2bfca327bcbf74dc52130e59bddc93be0ae333df103f2be",
+    "tools/run_native_spatial_checks.py": "3e5cc7a0e68b2dabb0533071bfa4f0f9c870dd65e326a3c3816cfdef905cbf52",
+    "tools/run_native_zoom_checks.py": "3ea7efe01a5bf33b2a3aca335fbc86bb7fe9a5354ee3be13efa480f93da9b455",
+    "tools/run_preparation.py": "1ad7713fcb02db792b0296d597cfbffbda00e6db6b1c5a5b16cec2d8cf9835d3",
+    "tools/run_product_persistence.py": "6040c00c50f11f6abfb38236a454f2e96537d50f8cbce872a66e4c8dffa554db",
+    "tools/run_spatial.py": "30423bbe40e14b084680b44ecdfd5a4ba54839e936027856af0e00fdb54d1259",
+    "tools/run_streaming.py": "6b75d9e9c43d5dd27361e5065fa0532fb62216845068074db80bcce9f6dc6b27",
+    "tools/run_supply.py": "4e0f044d9209d8a8e15873b42ee501d8ee517cf6b8f726932cc7f313bf2c903c",
+    "tools/run_supply_idle.py": "540409d2125cacc8a057e58d4f27b86dd499c824a4a20f1e7943c1fd1df85b44",
+    "tools/run_supply_instances.py": "4ee29b896c8741edb53342902a1501c3f4a1035efe946ec9416a89a6132ab58a",
+    "tools/test_benchmark_harness.py": "d63151a399ad6628663bc1d16526744783f954ef3ef1beb60048455a3fc21770",
+    "tools/test_corpus.py": "d1568a0c98bc6c854b4cb7a55f257abbdbadc8510713fe87f75f44423e405559",
+    "tools/test_image_interaction_harness.py": "fb9b5c46dd95eb6caf96e0382d3a0b8f5808b67786215c1395b1f6ed6805dc45",
+    "tools/test_preparation_harness.py": "ec86260d686c7d3e26bfc985604acf0a34a1e41ba55e82742a8bcdd6c11ff227",
+    "tools/test_supply_harness.py": "d0493b0fe429efbc4def305d18da9449387e726b1c3ca9c5baf9d7486a5ce17a",
+    "tools/test_ui_font.py": "9d5d09dd142c2bb63ce8276e8a3f5bf2057419f8c58ae8c3b1e05bda9c34476c",
+    "tools/x11_drop.py": "7f2a6b01ed3f2f28d8c7fb49cb6c5ae2196ae3136a409903134f1f05e8412f8c"
+  },
+  "runtime": {
+    "sha256": "56ffdaf83a6f4678e20127c887cf2b64788b7ce03cb87bbc2fe34a5facc4ab90",
+    "baseline_sha256": "4d21e4ea6322f9898abf82682513d9339cd9b0f1abd15ac894d1d76a697af6ee",
+    "platform": "Linux-7.1.5-76070105-generic-x86_64-with-glibc2.39",
+    "cpu": "AMD Ryzen 7 2700X",
+    "gpu": "NVIDIA GeForce RTX 2060",
+    "backend": "Vulkan",
+    "display": "owned Xvfb :97, no compositor; native clients 800x600 / 1024x768; not physical monitor latency",
+    "dependencies_changed": false
+  },
+  "binary_budget": {
+    "prior": {
+      "release_bytes": 114874416,
+      "fully_stripped_bytes": 17804776
+    },
+    "current": {
+      "release_bytes": 115282304,
+      "fully_stripped_bytes": 17908392
+    },
+    "fully_stripped_delta": 103616,
+    "fully_stripped_delta_percent": 0.581956212198345,
+    "locked_packages": 276
+  },
+  "reproduction": {
+    "binary_sha256": "4d21e4ea6322f9898abf82682513d9339cd9b0f1abd15ac894d1d76a697af6ee",
+    "OS": "Linux",
+    "window_backend": "X11/Xvfb NVIDIA Vulkan",
+    "method": "real native XDND, pointer move, Ctrl+Z, menu Undo; actual XKB us/fr layouts",
+    "rows": [
+      {
+        "layout": "us",
+        "move_changed_document": true,
+        "keyboard_undo_reverted": true,
+        "menu_undo_reverted": true,
+        "keyboard_state": {
+          "schema": 1,
+          "objects": [
+            {
+              "id": 209184398626093170837606453407640629954,
+              "kind": "image",
+              "center": [
+                -200.0,
+                -120.0
+              ],
+              "size": [
+                350.0,
+                218.75
+              ]
+            }
+          ],
+          "groups": 0
+        },
+        "moved_state": {
+          "schema": 1,
+          "objects": [
+            {
+              "id": 209184398626093170837606453407640629954,
+              "kind": "image",
+              "center": [
+                -135.0,
+                -85.0
+              ],
+              "size": [
+                350.0,
+                218.75
+              ]
+            }
+          ],
+          "groups": 0
+        },
+        "restored_state": {
+          "schema": 1,
+          "objects": [
+            {
+              "id": 209184398626093170837606453407640629954,
+              "kind": "image",
+              "center": [
+                -200.0,
+                -120.0
+              ],
+              "size": [
+                350.0,
+                218.75
+              ]
+            }
+          ],
+          "groups": 0
+        },
+        "xkb": "rules:      evdev\nmodel:      pc105\nlayout:     us"
+      },
+      {
+        "layout": "fr",
+        "move_changed_document": true,
+        "keyboard_undo_reverted": false,
+        "menu_undo_reverted": true,
+        "keyboard_state": {
+          "schema": 1,
+          "objects": [
+            {
+              "id": 2377056146739737483185637583689288037,
+              "kind": "image",
+              "center": [
+                -135.0,
+                -85.0
+              ],
+              "size": [
+                350.0,
+                218.75
+              ]
+            }
+          ],
+          "groups": 0
+        },
+        "moved_state": {
+          "schema": 1,
+          "objects": [
+            {
+              "id": 2377056146739737483185637583689288037,
+              "kind": "image",
+              "center": [
+                -135.0,
+                -85.0
+              ],
+              "size": [
+                350.0,
+                218.75
+              ]
+            }
+          ],
+          "groups": 0
+        },
+        "restored_state": {
+          "schema": 1,
+          "objects": [
+            {
+              "id": 2377056146739737483185637583689288037,
+              "kind": "image",
+              "center": [
+                -200.0,
+                -120.0
+              ],
+              "size": [
+                350.0,
+                218.75
+              ]
+            }
+          ],
+          "groups": 0
+        },
+        "xkb": "rules:      evdev\nmodel:      pc105\nlayout:     fr"
+      }
+    ]
+  },
+  "native": {
+    "harness_sha256": "dcee7f0a9b0b525e4d45183959479dc58931f9c0ef5fd618842d2eadc664610d",
+    "scope": "native X11/XKB us/fr automation, NVIDIA Vulkan; no human comfort or Windows desktop claim",
+    "total_assertions": 170,
+    "rows": [
+      {
+        "size": "800x600",
+        "layout": "us",
+        "checks": [
+          {
+            "name": "move changes persisted document",
+            "passed": true
+          },
+          {
+            "name": "logical Ctrl+Z reaches native owner and restores document",
+            "passed": true
+          },
+          {
+            "name": "logical Ctrl+Shift+Z restores exact move",
+            "passed": true
+          },
+          {
+            "name": "popup keyboard Undo restores same history",
+            "passed": true
+          },
+          {
+            "name": "Ctrl+Y alias restores exact move",
+            "passed": true
+          },
+          {
+            "name": "menu Undo restores same operation",
+            "passed": true
+          },
+          {
+            "name": "draft consumes document Undo",
+            "passed": true
+          },
+          {
+            "name": "note commit returns Pointer and logical draft SelectAll replaces text",
+            "passed": true
+          },
+          {
+            "name": "F2 opens note editing",
+            "passed": true
+          },
+          {
+            "name": "repeat suppression and modifier release order undo note once",
+            "passed": true
+          },
+          {
+            "name": "note cancel returns Pointer without history",
+            "passed": true
+          },
+          {
+            "name": "r creates shape and returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "r creation is one Undo",
+            "passed": true
+          },
+          {
+            "name": "l creates shape and returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "l creation is one Undo",
+            "passed": true
+          },
+          {
+            "name": "a creates shape and returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "a creation is one Undo",
+            "passed": true
+          },
+          {
+            "name": "Freehand remains repeatable",
+            "passed": true
+          },
+          {
+            "name": "V returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "Freehand creation is one Undo",
+            "passed": true
+          },
+          {
+            "name": "Escape cancels uncommitted shape and returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "focus loss cancels uncommitted tool without history",
+            "passed": true
+          },
+          {
+            "name": "frame creation returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "frame creation is one Undo",
+            "passed": true
+          },
+          {
+            "name": "logical Select All and Delete affect all objects",
+            "passed": true
+          },
+          {
+            "name": "deletion is one Undo",
+            "passed": true
+          },
+          {
+            "name": "Arrange in Grid changes both axes and preserves sizes",
+            "passed": true
+          },
+          {
+            "name": "Arrange in Grid is one exact Undo",
+            "passed": true
+          },
+          {
+            "name": "Arrange Redo restores exact arrangement",
+            "passed": true
+          },
+          {
+            "name": "Snap Selection changes arrangement in one atomic action",
+            "passed": true
+          },
+          {
+            "name": "Snap Selection is one exact Undo",
+            "passed": true
+          },
+          {
+            "name": "Snap Selection Redo exact",
+            "passed": true
+          },
+          {
+            "name": "conflicting native key capture refused and original Undo preserved",
+            "passed": true
+          },
+          {
+            "name": "native remap removes previous Undo shortcut",
+            "passed": true
+          },
+          {
+            "name": "native logical remap reaches shared Undo",
+            "passed": true
+          },
+          {
+            "name": "native Redo after remapped Undo restores exact state",
+            "passed": true
+          },
+          {
+            "name": "native viewport exact",
+            "passed": true
+          },
+          {
+            "name": "grid and snapping shortcuts dispatched",
+            "passed": true
+          },
+          {
+            "name": "native backend GPU with no supply errors",
+            "passed": true
+          },
+          {
+            "name": "native Undo dispatch traced",
+            "passed": true
+          },
+          {
+            "name": "Save and reopen preserve arrangement authority",
+            "passed": true
+          },
+          {
+            "name": "reopened native supply has no errors",
+            "passed": true
+          }
+        ],
+        "report_sha256": "af0d6b02f9e0182f8a6280f2289fa00b46f18a915d3ac8ca0511bb6eeac85de0",
+        "captures": {
+          "input-keymap-remapped.png": "6bd64830f76afaac88a3ef9b2f35e97a5762c50a85f1cfe2aa4795d7280e115e",
+          "input-image-location.png": "e38d4e6876849b6c65d9c130da44fb81773053df61c4447b894ad22a8543f1c5",
+          "input-keymap-conflict.png": "3e6b57be88d438b72bfcdd210f64813e15231f441c8b39e8dad3876edca165c3",
+          "input-arrange-menu-1.png": "7d39682730f5c816eb793150ede227c6dd7d9e447bfbd0966ac4b821053a5c7a",
+          "input-arrange-menu-0.png": "270cd98d039ea9e6dc523fb980022e7abb4a0098a0ad5f82187b2f6ddf32b3aa",
+          "input-keymap.png": "8794e9d436dd1f05dd3febd6d84caefcbf8ecceb4fb155bef4c1122c165ea70c"
+        }
+      },
+      {
+        "size": "800x600",
+        "layout": "fr",
+        "checks": [
+          {
+            "name": "move changes persisted document",
+            "passed": true
+          },
+          {
+            "name": "logical Ctrl+Z reaches native owner and restores document",
+            "passed": true
+          },
+          {
+            "name": "logical Ctrl+Shift+Z restores exact move",
+            "passed": true
+          },
+          {
+            "name": "popup keyboard Undo restores same history",
+            "passed": true
+          },
+          {
+            "name": "Ctrl+Y alias restores exact move",
+            "passed": true
+          },
+          {
+            "name": "menu Undo restores same operation",
+            "passed": true
+          },
+          {
+            "name": "draft consumes document Undo",
+            "passed": true
+          },
+          {
+            "name": "note commit returns Pointer and logical draft SelectAll replaces text",
+            "passed": true
+          },
+          {
+            "name": "F2 opens note editing",
+            "passed": true
+          },
+          {
+            "name": "repeat suppression and modifier release order undo note once",
+            "passed": true
+          },
+          {
+            "name": "note cancel returns Pointer without history",
+            "passed": true
+          },
+          {
+            "name": "r creates shape and returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "r creation is one Undo",
+            "passed": true
+          },
+          {
+            "name": "l creates shape and returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "l creation is one Undo",
+            "passed": true
+          },
+          {
+            "name": "a creates shape and returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "a creation is one Undo",
+            "passed": true
+          },
+          {
+            "name": "Freehand remains repeatable",
+            "passed": true
+          },
+          {
+            "name": "V returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "Freehand creation is one Undo",
+            "passed": true
+          },
+          {
+            "name": "Escape cancels uncommitted shape and returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "focus loss cancels uncommitted tool without history",
+            "passed": true
+          },
+          {
+            "name": "frame creation returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "frame creation is one Undo",
+            "passed": true
+          },
+          {
+            "name": "logical Select All and Delete affect all objects",
+            "passed": true
+          },
+          {
+            "name": "deletion is one Undo",
+            "passed": true
+          },
+          {
+            "name": "Arrange in Grid changes both axes and preserves sizes",
+            "passed": true
+          },
+          {
+            "name": "Arrange in Grid is one exact Undo",
+            "passed": true
+          },
+          {
+            "name": "Arrange Redo restores exact arrangement",
+            "passed": true
+          },
+          {
+            "name": "Snap Selection changes arrangement in one atomic action",
+            "passed": true
+          },
+          {
+            "name": "Snap Selection is one exact Undo",
+            "passed": true
+          },
+          {
+            "name": "Snap Selection Redo exact",
+            "passed": true
+          },
+          {
+            "name": "conflicting native key capture refused and original Undo preserved",
+            "passed": true
+          },
+          {
+            "name": "native remap removes previous Undo shortcut",
+            "passed": true
+          },
+          {
+            "name": "native logical remap reaches shared Undo",
+            "passed": true
+          },
+          {
+            "name": "native Redo after remapped Undo restores exact state",
+            "passed": true
+          },
+          {
+            "name": "native viewport exact",
+            "passed": true
+          },
+          {
+            "name": "grid and snapping shortcuts dispatched",
+            "passed": true
+          },
+          {
+            "name": "native backend GPU with no supply errors",
+            "passed": true
+          },
+          {
+            "name": "native Undo dispatch traced",
+            "passed": true
+          },
+          {
+            "name": "AZERTY Z is physical W in native normalization",
+            "passed": true
+          },
+          {
+            "name": "Save and reopen preserve arrangement authority",
+            "passed": true
+          },
+          {
+            "name": "reopened native supply has no errors",
+            "passed": true
+          }
+        ],
+        "report_sha256": "a431da72e6b489825ae1a55b0d402fecf6fa00d6a3a4bd3cda95808c76d1bdad",
+        "captures": {
+          "input-keymap-remapped.png": "6bd64830f76afaac88a3ef9b2f35e97a5762c50a85f1cfe2aa4795d7280e115e",
+          "input-image-location.png": "e38d4e6876849b6c65d9c130da44fb81773053df61c4447b894ad22a8543f1c5",
+          "input-keymap-conflict.png": "3e6b57be88d438b72bfcdd210f64813e15231f441c8b39e8dad3876edca165c3",
+          "input-arrange-menu-1.png": "7d39682730f5c816eb793150ede227c6dd7d9e447bfbd0966ac4b821053a5c7a",
+          "input-arrange-menu-0.png": "270cd98d039ea9e6dc523fb980022e7abb4a0098a0ad5f82187b2f6ddf32b3aa",
+          "input-keymap.png": "8794e9d436dd1f05dd3febd6d84caefcbf8ecceb4fb155bef4c1122c165ea70c"
+        }
+      },
+      {
+        "size": "1024x768",
+        "layout": "us",
+        "checks": [
+          {
+            "name": "move changes persisted document",
+            "passed": true
+          },
+          {
+            "name": "logical Ctrl+Z reaches native owner and restores document",
+            "passed": true
+          },
+          {
+            "name": "logical Ctrl+Shift+Z restores exact move",
+            "passed": true
+          },
+          {
+            "name": "popup keyboard Undo restores same history",
+            "passed": true
+          },
+          {
+            "name": "Ctrl+Y alias restores exact move",
+            "passed": true
+          },
+          {
+            "name": "menu Undo restores same operation",
+            "passed": true
+          },
+          {
+            "name": "draft consumes document Undo",
+            "passed": true
+          },
+          {
+            "name": "note commit returns Pointer and logical draft SelectAll replaces text",
+            "passed": true
+          },
+          {
+            "name": "F2 opens note editing",
+            "passed": true
+          },
+          {
+            "name": "repeat suppression and modifier release order undo note once",
+            "passed": true
+          },
+          {
+            "name": "note cancel returns Pointer without history",
+            "passed": true
+          },
+          {
+            "name": "r creates shape and returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "r creation is one Undo",
+            "passed": true
+          },
+          {
+            "name": "l creates shape and returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "l creation is one Undo",
+            "passed": true
+          },
+          {
+            "name": "a creates shape and returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "a creation is one Undo",
+            "passed": true
+          },
+          {
+            "name": "Freehand remains repeatable",
+            "passed": true
+          },
+          {
+            "name": "V returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "Freehand creation is one Undo",
+            "passed": true
+          },
+          {
+            "name": "Escape cancels uncommitted shape and returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "focus loss cancels uncommitted tool without history",
+            "passed": true
+          },
+          {
+            "name": "frame creation returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "frame creation is one Undo",
+            "passed": true
+          },
+          {
+            "name": "logical Select All and Delete affect all objects",
+            "passed": true
+          },
+          {
+            "name": "deletion is one Undo",
+            "passed": true
+          },
+          {
+            "name": "Arrange in Grid changes both axes and preserves sizes",
+            "passed": true
+          },
+          {
+            "name": "Arrange in Grid is one exact Undo",
+            "passed": true
+          },
+          {
+            "name": "Arrange Redo restores exact arrangement",
+            "passed": true
+          },
+          {
+            "name": "Snap Selection changes arrangement in one atomic action",
+            "passed": true
+          },
+          {
+            "name": "Snap Selection is one exact Undo",
+            "passed": true
+          },
+          {
+            "name": "Snap Selection Redo exact",
+            "passed": true
+          },
+          {
+            "name": "conflicting native key capture refused and original Undo preserved",
+            "passed": true
+          },
+          {
+            "name": "native remap removes previous Undo shortcut",
+            "passed": true
+          },
+          {
+            "name": "native logical remap reaches shared Undo",
+            "passed": true
+          },
+          {
+            "name": "native Redo after remapped Undo restores exact state",
+            "passed": true
+          },
+          {
+            "name": "native viewport exact",
+            "passed": true
+          },
+          {
+            "name": "grid and snapping shortcuts dispatched",
+            "passed": true
+          },
+          {
+            "name": "native backend GPU with no supply errors",
+            "passed": true
+          },
+          {
+            "name": "native Undo dispatch traced",
+            "passed": true
+          },
+          {
+            "name": "Save and reopen preserve arrangement authority",
+            "passed": true
+          },
+          {
+            "name": "reopened native supply has no errors",
+            "passed": true
+          }
+        ],
+        "report_sha256": "467a1a08592e19cd922f4260f14c63b09f351810b13eedbaf17ca81af3db5259",
+        "captures": {
+          "input-keymap-remapped.png": "47f85db8227de317e477608b6d4aa279d7bff690f0fc9f283003ef3594fdbb39",
+          "input-image-location.png": "a999fbf1643d956cb340e4fd5dbd91848ff11d1fa8537f8a99e6ad48fafa7303",
+          "input-keymap-conflict.png": "7fa2a31a44522f2e9d41822a95049db64d28356e17b21e59e9e24db8e1603bdc",
+          "input-arrange-menu-1.png": "3e8c82c928d58146233d1620f0b620425339ba349364f98e81fd2fffcf996ea5",
+          "input-arrange-menu-0.png": "1d917099e430d64665ad65f4fb1ae4901236d1ae30ec54eb62e342109e02a334",
+          "input-keymap.png": "adbb3c358a2f7a1b8c97a67bde442a098cfd0ccae7215c8d93a94ca3b91fabfa"
+        }
+      },
+      {
+        "size": "1024x768",
+        "layout": "fr",
+        "checks": [
+          {
+            "name": "move changes persisted document",
+            "passed": true
+          },
+          {
+            "name": "logical Ctrl+Z reaches native owner and restores document",
+            "passed": true
+          },
+          {
+            "name": "logical Ctrl+Shift+Z restores exact move",
+            "passed": true
+          },
+          {
+            "name": "popup keyboard Undo restores same history",
+            "passed": true
+          },
+          {
+            "name": "Ctrl+Y alias restores exact move",
+            "passed": true
+          },
+          {
+            "name": "menu Undo restores same operation",
+            "passed": true
+          },
+          {
+            "name": "draft consumes document Undo",
+            "passed": true
+          },
+          {
+            "name": "note commit returns Pointer and logical draft SelectAll replaces text",
+            "passed": true
+          },
+          {
+            "name": "F2 opens note editing",
+            "passed": true
+          },
+          {
+            "name": "repeat suppression and modifier release order undo note once",
+            "passed": true
+          },
+          {
+            "name": "note cancel returns Pointer without history",
+            "passed": true
+          },
+          {
+            "name": "r creates shape and returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "r creation is one Undo",
+            "passed": true
+          },
+          {
+            "name": "l creates shape and returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "l creation is one Undo",
+            "passed": true
+          },
+          {
+            "name": "a creates shape and returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "a creation is one Undo",
+            "passed": true
+          },
+          {
+            "name": "Freehand remains repeatable",
+            "passed": true
+          },
+          {
+            "name": "V returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "Freehand creation is one Undo",
+            "passed": true
+          },
+          {
+            "name": "Escape cancels uncommitted shape and returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "focus loss cancels uncommitted tool without history",
+            "passed": true
+          },
+          {
+            "name": "frame creation returns Pointer",
+            "passed": true
+          },
+          {
+            "name": "frame creation is one Undo",
+            "passed": true
+          },
+          {
+            "name": "logical Select All and Delete affect all objects",
+            "passed": true
+          },
+          {
+            "name": "deletion is one Undo",
+            "passed": true
+          },
+          {
+            "name": "Arrange in Grid changes both axes and preserves sizes",
+            "passed": true
+          },
+          {
+            "name": "Arrange in Grid is one exact Undo",
+            "passed": true
+          },
+          {
+            "name": "Arrange Redo restores exact arrangement",
+            "passed": true
+          },
+          {
+            "name": "Snap Selection changes arrangement in one atomic action",
+            "passed": true
+          },
+          {
+            "name": "Snap Selection is one exact Undo",
+            "passed": true
+          },
+          {
+            "name": "Snap Selection Redo exact",
+            "passed": true
+          },
+          {
+            "name": "conflicting native key capture refused and original Undo preserved",
+            "passed": true
+          },
+          {
+            "name": "native remap removes previous Undo shortcut",
+            "passed": true
+          },
+          {
+            "name": "native logical remap reaches shared Undo",
+            "passed": true
+          },
+          {
+            "name": "native Redo after remapped Undo restores exact state",
+            "passed": true
+          },
+          {
+            "name": "native viewport exact",
+            "passed": true
+          },
+          {
+            "name": "grid and snapping shortcuts dispatched",
+            "passed": true
+          },
+          {
+            "name": "native backend GPU with no supply errors",
+            "passed": true
+          },
+          {
+            "name": "native Undo dispatch traced",
+            "passed": true
+          },
+          {
+            "name": "AZERTY Z is physical W in native normalization",
+            "passed": true
+          },
+          {
+            "name": "Save and reopen preserve arrangement authority",
+            "passed": true
+          },
+          {
+            "name": "reopened native supply has no errors",
+            "passed": true
+          }
+        ],
+        "report_sha256": "7ff29f34b7018bc6a4244bb3dc6a3e61776eec777c306384d5c8af9cc074cfd0",
+        "captures": {
+          "input-keymap-remapped.png": "47f85db8227de317e477608b6d4aa279d7bff690f0fc9f283003ef3594fdbb39",
+          "input-image-location.png": "a999fbf1643d956cb340e4fd5dbd91848ff11d1fa8537f8a99e6ad48fafa7303",
+          "input-keymap-conflict.png": "7fa2a31a44522f2e9d41822a95049db64d28356e17b21e59e9e24db8e1603bdc",
+          "input-arrange-menu-1.png": "3e8c82c928d58146233d1620f0b620425339ba349364f98e81fd2fffcf996ea5",
+          "input-arrange-menu-0.png": "1d917099e430d64665ad65f4fb1ae4901236d1ae30ec54eb62e342109e02a334",
+          "input-keymap.png": "adbb3c358a2f7a1b8c97a67bde442a098cfd0ccae7215c8d93a94ca3b91fabfa"
+        }
+      }
+    ]
+  },
+  "layout": {
+    "scope": "7 uninstrumented CPU samples per size; separate glibc memusage observations include identical fixture and visibility rebuild; allocator deltas include small reporting differences and are not exact Rust liveness; run serially without compiler/native GPU overlap",
+    "binary_sha256": "b0c259fcc8707c424d40dece3fb03e7ef4b8d44cbe3522c70c0257aa38876405",
+    "harness_sha256": "8958e938fde807c82303d89a3a1ab04b9f9828621187eec0edaa9845831eb40d",
+    "rows": [
+      {
+        "n": 10,
+        "uninstrumented_runs": [
+          {
+            "apply_ms": 0.00409,
+            "history_bytes": 1936,
+            "mode": "full",
+            "n": 10,
+            "plan_ms": 0.01931,
+            "planned_command_bytes": 1936,
+            "redraw_query_ms": 0.00066,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 0,
+            "visible": 10
+          },
+          {
+            "apply_ms": 0.00219,
+            "history_bytes": 1936,
+            "mode": "full",
+            "n": 10,
+            "plan_ms": 0.012079999999999999,
+            "planned_command_bytes": 1936,
+            "redraw_query_ms": 0.00047999999999999996,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 0,
+            "visible": 10
+          },
+          {
+            "apply_ms": 0.00191,
+            "history_bytes": 1936,
+            "mode": "full",
+            "n": 10,
+            "plan_ms": 0.01059,
+            "planned_command_bytes": 1936,
+            "redraw_query_ms": 0.00029,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 0,
+            "visible": 10
+          },
+          {
+            "apply_ms": 0.0044599999999999996,
+            "history_bytes": 1936,
+            "mode": "full",
+            "n": 10,
+            "plan_ms": 0.02008,
+            "planned_command_bytes": 1936,
+            "redraw_query_ms": 0.00063,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 0,
+            "visible": 10
+          },
+          {
+            "apply_ms": 0.00377,
+            "history_bytes": 1936,
+            "mode": "full",
+            "n": 10,
+            "plan_ms": 0.03234,
+            "planned_command_bytes": 1936,
+            "redraw_query_ms": 0.00063,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 0,
+            "visible": 10
+          },
+          {
+            "apply_ms": 0.0039,
+            "history_bytes": 1936,
+            "mode": "full",
+            "n": 10,
+            "plan_ms": 0.01932,
+            "planned_command_bytes": 1936,
+            "redraw_query_ms": 0.00058,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 0,
+            "visible": 10
+          },
+          {
+            "apply_ms": 0.00399,
+            "history_bytes": 1936,
+            "mode": "full",
+            "n": 10,
+            "plan_ms": 0.020970000000000003,
+            "planned_command_bytes": 1936,
+            "redraw_query_ms": 0.00067,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 0,
+            "visible": 10
+          }
+        ],
+        "allocator": {
+          "baseline": {
+            "heap_total": 8860,
+            "heap_peak": 6823,
+            "stack_peak": 3472
+          },
+          "plan": {
+            "heap_total": 12244,
+            "heap_peak": 8288,
+            "stack_peak": 3472
+          },
+          "full": {
+            "heap_total": 14708,
+            "heap_peak": 9279,
+            "stack_peak": 3472
+          }
+        },
+        "plan_extra_requested_bytes": 3384,
+        "plan_extra_peak_bytes": 1465,
+        "apply_extra_requested_bytes": 2464
+      },
+      {
+        "n": 100,
+        "uninstrumented_runs": [
+          {
+            "apply_ms": 0.034190000000000005,
+            "history_bytes": 17776,
+            "mode": "full",
+            "n": 100,
+            "plan_ms": 0.10472999999999999,
+            "planned_command_bytes": 17776,
+            "redraw_query_ms": 0.00665,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 0,
+            "visible": 100
+          },
+          {
+            "apply_ms": 0.028170999999999998,
+            "history_bytes": 17776,
+            "mode": "full",
+            "n": 100,
+            "plan_ms": 0.06284000000000001,
+            "planned_command_bytes": 17776,
+            "redraw_query_ms": 0.00409,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 0,
+            "visible": 100
+          },
+          {
+            "apply_ms": 0.04401,
+            "history_bytes": 17776,
+            "mode": "full",
+            "n": 100,
+            "plan_ms": 0.094701,
+            "planned_command_bytes": 17776,
+            "redraw_query_ms": 0.00675,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 0,
+            "visible": 100
+          },
+          {
+            "apply_ms": 0.03868,
+            "history_bytes": 17776,
+            "mode": "full",
+            "n": 100,
+            "plan_ms": 0.11117099999999999,
+            "planned_command_bytes": 17776,
+            "redraw_query_ms": 0.00753,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 0,
+            "visible": 100
+          },
+          {
+            "apply_ms": 0.03885,
+            "history_bytes": 17776,
+            "mode": "full",
+            "n": 100,
+            "plan_ms": 0.07356,
+            "planned_command_bytes": 17776,
+            "redraw_query_ms": 0.00496,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 0,
+            "visible": 100
+          },
+          {
+            "apply_ms": 0.02684,
+            "history_bytes": 17776,
+            "mode": "full",
+            "n": 100,
+            "plan_ms": 0.05979,
+            "planned_command_bytes": 17776,
+            "redraw_query_ms": 0.00412,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 0,
+            "visible": 100
+          },
+          {
+            "apply_ms": 0.039490000000000004,
+            "history_bytes": 17776,
+            "mode": "full",
+            "n": 100,
+            "plan_ms": 0.111451,
+            "planned_command_bytes": 17776,
+            "redraw_query_ms": 0.0074,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 0,
+            "visible": 100
+          }
+        ],
+        "allocator": {
+          "baseline": {
+            "heap_total": 42173,
+            "heap_peak": 40136,
+            "stack_peak": 4672
+          },
+          "plan": {
+            "heap_total": 83157,
+            "heap_peak": 71201,
+            "stack_peak": 6144
+          },
+          "full": {
+            "heap_total": 101461,
+            "heap_peak": 73409,
+            "stack_peak": 6144
+          }
+        },
+        "plan_extra_requested_bytes": 40984,
+        "plan_extra_peak_bytes": 31065,
+        "apply_extra_requested_bytes": 18304
+      },
+      {
+        "n": 1000,
+        "uninstrumented_runs": [
+          {
+            "apply_ms": 0.445581,
+            "history_bytes": 176176,
+            "mode": "full",
+            "n": 1000,
+            "plan_ms": 1.248845,
+            "planned_command_bytes": 176176,
+            "redraw_query_ms": 0.092301,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 0,
+            "visible": 1000
+          },
+          {
+            "apply_ms": 0.225131,
+            "history_bytes": 176176,
+            "mode": "full",
+            "n": 1000,
+            "plan_ms": 0.6399720000000001,
+            "planned_command_bytes": 176176,
+            "redraw_query_ms": 0.04562,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 0,
+            "visible": 1000
+          },
+          {
+            "apply_ms": 0.440301,
+            "history_bytes": 176176,
+            "mode": "full",
+            "n": 1000,
+            "plan_ms": 1.250834,
+            "planned_command_bytes": 176176,
+            "redraw_query_ms": 0.093491,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 0,
+            "visible": 1000
+          },
+          {
+            "apply_ms": 0.448252,
+            "history_bytes": 176176,
+            "mode": "full",
+            "n": 1000,
+            "plan_ms": 1.2566540000000002,
+            "planned_command_bytes": 176176,
+            "redraw_query_ms": 0.09194000000000001,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 0,
+            "visible": 1000
+          },
+          {
+            "apply_ms": 0.427232,
+            "history_bytes": 176176,
+            "mode": "full",
+            "n": 1000,
+            "plan_ms": 1.256564,
+            "planned_command_bytes": 176176,
+            "redraw_query_ms": 0.10686,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 0,
+            "visible": 1000
+          },
+          {
+            "apply_ms": 0.426441,
+            "history_bytes": 176176,
+            "mode": "full",
+            "n": 1000,
+            "plan_ms": 1.268575,
+            "planned_command_bytes": 176176,
+            "redraw_query_ms": 0.09255,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 0,
+            "visible": 1000
+          },
+          {
+            "apply_ms": 0.442851,
+            "history_bytes": 176176,
+            "mode": "full",
+            "n": 1000,
+            "plan_ms": 1.2550540000000001,
+            "planned_command_bytes": 176176,
+            "redraw_query_ms": 0.091451,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 0,
+            "visible": 1000
+          }
+        ],
+        "allocator": {
+          "baseline": {
+            "heap_total": 351326,
+            "heap_peak": 349289,
+            "stack_peak": 4672
+          },
+          "plan": {
+            "heap_total": 739606,
+            "heap_peak": 655650,
+            "stack_peak": 6144
+          },
+          "full": {
+            "heap_total": 916310,
+            "heap_peak": 699362,
+            "stack_peak": 6144
+          }
+        },
+        "plan_extra_requested_bytes": 388280,
+        "plan_extra_peak_bytes": 306361,
+        "apply_extra_requested_bytes": 176704
+      },
+      {
+        "n": 10000,
+        "uninstrumented_runs": [
+          {
+            "apply_ms": 2.3129079999999997,
+            "history_bytes": 1760176,
+            "mode": "full",
+            "n": 10000,
+            "plan_ms": 11.004907,
+            "planned_command_bytes": 1760176,
+            "redraw_query_ms": 0.502072,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 786432,
+            "visible": 10000
+          },
+          {
+            "apply_ms": 3.879863,
+            "history_bytes": 1760176,
+            "mode": "full",
+            "n": 10000,
+            "plan_ms": 11.337039,
+            "planned_command_bytes": 1760176,
+            "redraw_query_ms": 0.696082,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 786432,
+            "visible": 10000
+          },
+          {
+            "apply_ms": 2.250218,
+            "history_bytes": 1760176,
+            "mode": "full",
+            "n": 10000,
+            "plan_ms": 10.422855,
+            "planned_command_bytes": 1760176,
+            "redraw_query_ms": 0.510352,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 786432,
+            "visible": 10000
+          },
+          {
+            "apply_ms": 2.206447,
+            "history_bytes": 1760176,
+            "mode": "full",
+            "n": 10000,
+            "plan_ms": 10.676546,
+            "planned_command_bytes": 1760176,
+            "redraw_query_ms": 0.507381,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 786432,
+            "visible": 10000
+          },
+          {
+            "apply_ms": 2.214247,
+            "history_bytes": 1760176,
+            "mode": "full",
+            "n": 10000,
+            "plan_ms": 10.388696,
+            "planned_command_bytes": 1760176,
+            "redraw_query_ms": 0.496272,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 786432,
+            "visible": 10000
+          },
+          {
+            "apply_ms": 2.2390280000000002,
+            "history_bytes": 1760176,
+            "mode": "full",
+            "n": 10000,
+            "plan_ms": 10.211355,
+            "planned_command_bytes": 1760176,
+            "redraw_query_ms": 0.500342,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 786432,
+            "visible": 10000
+          },
+          {
+            "apply_ms": 2.3253380000000003,
+            "history_bytes": 1760176,
+            "mode": "full",
+            "n": 10000,
+            "plan_ms": 10.634776,
+            "planned_command_bytes": 1760176,
+            "redraw_query_ms": 0.512761,
+            "scope": "CPU plan, atomic history apply, first redraw visibility rebuild; actual GPU redraw measured in native matrix; allocator separately instrumented via glibc memusage",
+            "visibility_bytes": 786432,
+            "visible": 10000
+          }
+        ],
+        "allocator": {
+          "baseline": {
+            "heap_total": 4330111,
+            "heap_peak": 4328074,
+            "stack_peak": 4672
+          },
+          "plan": {
+            "heap_total": 8703543,
+            "heap_peak": 7113155,
+            "stack_peak": 6144
+          },
+          "full": {
+            "heap_total": 10464247,
+            "heap_peak": 7113155,
+            "stack_peak": 6144
+          }
+        },
+        "plan_extra_requested_bytes": 4373432,
+        "plan_extra_peak_bytes": 2785081,
+        "apply_extra_requested_bytes": 1760704
+      }
+    ]
+  },
+  "supply": {
+    "0-prior": {
+      "binary_sha256": "4d21e4ea6322f9898abf82682513d9339cd9b0f1abd15ac894d1d76a697af6ee",
+      "harness_sha256": "4e0f044d9209d8a8e15873b42ee501d8ee517cf6b8f726932cc7f313bf2c903c",
+      "window_size_requested": "800x600",
+      "seconds": 9,
+      "scope": "generated shared-source fixtures, warm OS caches, isolated X11; epochs censored if unfinished; no human/monitor latency claim",
+      "runs": [
+        {
+          "name": "5k",
+          "board_sha256": "69578491c82c633925611d8da7ba52989035c2a6bc0997b82ea6ae9929571430",
+          "report_sha256": "c687e97c630831298c986218b61b3e5db6683290dc97b7b844969342da7bb824",
+          "peak_rss_bytes": 314843136,
+          "distribution_ms": {
+            "query_ms": {
+              "p50": 0.02466,
+              "p99": 0.05093,
+              "max": 0.507822
+            },
+            "scene_ms": {
+              "p50": 0.004529999999999998,
+              "p99": 0.010330000000000061,
+              "max": 0.01480999999999999
+            },
+            "supply_ms": {
+              "p50": 0.014651,
+              "p99": 0.368251,
+              "max": 4.3627650000000004
+            },
+            "encode_ms": {
+              "p50": 0.086751,
+              "p99": 0.202971,
+              "max": 0.32172100000000003
+            },
+            "submit_ms": {
+              "p50": 0.039029999999999995,
+              "p99": 0.09023099999999999,
+              "max": 0.15097
+            },
+            "poll_ms": {
+              "p50": 0.00045,
+              "p99": 0.00084,
+              "max": 0.0057799999999999995
+            },
+            "acquire_ms": {
+              "p50": 0.010761000000000001,
+              "p99": 0.022949999999999998,
+              "max": 0.025939999999999998
+            },
+            "present_ms": {
+              "p50": 20.097877999999998,
+              "p99": 27.279992999999997,
+              "max": 34.262977
+            },
+            "callback_ms": {
+              "p50": 20.333190000000002,
+              "p99": 29.744001,
+              "max": 38.843332000000004
+            }
+          },
+          "first_useful_ms": 404.313084,
+          "max_visible": 6,
+          "max_detailed": 6,
+          "peak_gpu_payload": 50298880,
+          "peak_cpu_payload": 50544640,
+          "peak_pending": 13,
+          "peak_queued": 11,
+          "cpu_evictions": 0,
+          "discarded": 0,
+          "reprioritized": 0,
+          "source_bytes": 289236,
+          "container_bytes": 982369,
+          "metadata_ms": 9.01625,
+          "gpu_ms_p99": 0.925696
+        },
+        {
+          "name": "50k",
+          "board_sha256": "d540b97deaf9ab3a73b5bd2dfdda60ace0869d97039fa42e07752feb4981597b",
+          "report_sha256": "3ea230cacaeb81cf2c0fbf65049caed82f87ffccab04d0c2a501a6c85a75c38e",
+          "peak_rss_bytes": 342175744,
+          "distribution_ms": {
+            "query_ms": {
+              "p50": 0.255801,
+              "p99": 0.383242,
+              "max": 10.177555
+            },
+            "scene_ms": {
+              "p50": 0.007689999999999982,
+              "p99": 0.011501000000000004,
+              "max": 0.015719999999999984
+            },
+            "supply_ms": {
+              "p50": 0.023209999999999998,
+              "p99": 0.345662,
+              "max": 4.013364
+            },
+            "encode_ms": {
+              "p50": 0.115481,
+              "p99": 0.18402100000000002,
+              "max": 0.287001
+            },
+            "submit_ms": {
+              "p50": 0.043111000000000003,
+              "p99": 0.08777,
+              "max": 0.12629100000000001
+            },
+            "poll_ms": {
+              "p50": 0.00042,
+              "p99": 0.00087,
+              "max": 0.00743
+            },
+            "acquire_ms": {
+              "p50": 0.011569999999999999,
+              "p99": 0.02588,
+              "max": 0.02936
+            },
+            "present_ms": {
+              "p50": 20.178867999999998,
+              "p99": 27.464724,
+              "max": 31.426287
+            },
+            "callback_ms": {
+              "p50": 20.67645,
+              "p99": 30.907315,
+              "max": 31.861298
+            }
+          },
+          "first_useful_ms": 429.220959,
+          "max_visible": 6,
+          "max_detailed": 6,
+          "peak_gpu_payload": 50298880,
+          "peak_cpu_payload": 50544640,
+          "peak_pending": 13,
+          "peak_queued": 11,
+          "cpu_evictions": 0,
+          "discarded": 0,
+          "reprioritized": 0,
+          "source_bytes": 289325,
+          "container_bytes": 7059578,
+          "metadata_ms": 66.492316,
+          "gpu_ms_p99": 0.98016
+        },
+        {
+          "name": "sparse",
+          "board_sha256": "c23f6c9d38c364d9fd30a9c2a91f9b6976401a4a08763fb57ef02f9a802a9c14",
+          "report_sha256": "a66680ac2f3038c064b4bd17d0bce1081a5fe82c2f3f5263e70c0223d03b0bed",
+          "peak_rss_bytes": 291381248,
+          "distribution_ms": {
+            "query_ms": {
+              "p50": 0.02178,
+              "p99": 0.04248,
+              "max": 0.5175919999999999
+            },
+            "scene_ms": {
+              "p50": 0.00425,
+              "p99": 0.012510000000000004,
+              "max": 0.014000000000000012
+            },
+            "supply_ms": {
+              "p50": 0.011770000000000001,
+              "p99": 0.272641,
+              "max": 3.805443
+            },
+            "encode_ms": {
+              "p50": 0.08543999999999999,
+              "p99": 0.17143,
+              "max": 0.270201
+            },
+            "submit_ms": {
+              "p50": 0.04025,
+              "p99": 0.07894,
+              "max": 0.097971
+            },
+            "poll_ms": {
+              "p50": 0.00041,
+              "p99": 0.00081,
+              "max": 0.00729
+            },
+            "acquire_ms": {
+              "p50": 0.0104,
+              "p99": 0.022600000000000002,
+              "max": 0.025671
+            },
+            "present_ms": {
+              "p50": 20.223418,
+              "p99": 27.149022,
+              "max": 30.582984
+            },
+            "callback_ms": {
+              "p50": 20.426189,
+              "p99": 27.822513999999998,
+              "max": 31.677058000000002
+            }
+          },
+          "first_useful_ms": 370.356409,
+          "max_visible": 4,
+          "max_detailed": 4,
+          "peak_gpu_payload": 26542080,
+          "peak_cpu_payload": 26705920,
+          "peak_pending": 8,
+          "peak_queued": 6,
+          "cpu_evictions": 0,
+          "discarded": 0,
+          "reprioritized": 0,
+          "source_bytes": 180711,
+          "container_bytes": 889730,
+          "metadata_ms": 6.020951,
+          "gpu_ms_p99": 1.027168
+        }
+      ]
+    },
+    "0-current": {
+      "binary_sha256": "56ffdaf83a6f4678e20127c887cf2b64788b7ce03cb87bbc2fe34a5facc4ab90",
+      "harness_sha256": "4e0f044d9209d8a8e15873b42ee501d8ee517cf6b8f726932cc7f313bf2c903c",
+      "window_size_requested": "800x600",
+      "seconds": 9,
+      "scope": "generated shared-source fixtures, warm OS caches, isolated X11; epochs censored if unfinished; no human/monitor latency claim",
+      "runs": [
+        {
+          "name": "5k",
+          "board_sha256": "69578491c82c633925611d8da7ba52989035c2a6bc0997b82ea6ae9929571430",
+          "report_sha256": "c0d6a849848092e4e5dbbd12e1481223ba6e98c1765454e7e266d2d4313723fe",
+          "peak_rss_bytes": 314884096,
+          "distribution_ms": {
+            "query_ms": {
+              "p50": 0.031381000000000006,
+              "p99": 0.05588,
+              "max": 0.533001
+            },
+            "scene_ms": {
+              "p50": 0.005050000000000002,
+              "p99": 0.010300000000000004,
+              "max": 0.020589999999999997
+            },
+            "supply_ms": {
+              "p50": 0.01781,
+              "p99": 0.405721,
+              "max": 4.054704
+            },
+            "encode_ms": {
+              "p50": 0.10932,
+              "p99": 0.198851,
+              "max": 0.300021
+            },
+            "submit_ms": {
+              "p50": 0.04319,
+              "p99": 0.07516,
+              "max": 0.11214099999999999
+            },
+            "poll_ms": {
+              "p50": 0.00042,
+              "p99": 0.00075,
+              "max": 0.00548
+            },
+            "acquire_ms": {
+              "p50": 0.01289,
+              "p99": 0.02883,
+              "max": 0.03612
+            },
+            "present_ms": {
+              "p50": 19.542417,
+              "p99": 29.209089000000002,
+              "max": 36.320803
+            },
+            "callback_ms": {
+              "p50": 19.923007,
+              "p99": 30.515273999999998,
+              "max": 36.591254
+            }
+          },
+          "first_useful_ms": 407.007254,
+          "max_visible": 6,
+          "max_detailed": 6,
+          "peak_gpu_payload": 50298880,
+          "peak_cpu_payload": 50544640,
+          "peak_pending": 13,
+          "peak_queued": 11,
+          "cpu_evictions": 0,
+          "discarded": 0,
+          "reprioritized": 0,
+          "source_bytes": 289236,
+          "container_bytes": 982369,
+          "metadata_ms": 10.257014999999999,
+          "gpu_ms_p99": 1.114752
+        },
+        {
+          "name": "50k",
+          "board_sha256": "d540b97deaf9ab3a73b5bd2dfdda60ace0869d97039fa42e07752feb4981597b",
+          "report_sha256": "2cac2c129fc8842628d38995a7cc789805553db3f65245c425110c89ef065bcb",
+          "peak_rss_bytes": 342048768,
+          "distribution_ms": {
+            "query_ms": {
+              "p50": 0.267321,
+              "p99": 0.402801,
+              "max": 10.117965
+            },
+            "scene_ms": {
+              "p50": 0.006200999999999995,
+              "p99": 0.012160000000000004,
+              "max": 0.01575999999999996
+            },
+            "supply_ms": {
+              "p50": 0.02268,
+              "p99": 0.384641,
+              "max": 4.007594
+            },
+            "encode_ms": {
+              "p50": 0.112271,
+              "p99": 0.204291,
+              "max": 0.308401
+            },
+            "submit_ms": {
+              "p50": 0.038770000000000006,
+              "p99": 0.10014100000000001,
+              "max": 0.139701
+            },
+            "poll_ms": {
+              "p50": 0.00038,
+              "p99": 0.0007999999999999999,
+              "max": 0.00745
+            },
+            "acquire_ms": {
+              "p50": 0.011331,
+              "p99": 0.02736,
+              "max": 0.038010999999999996
+            },
+            "present_ms": {
+              "p50": 20.102029,
+              "p99": 26.990720999999997,
+              "max": 35.650751
+            },
+            "callback_ms": {
+              "p50": 20.59931,
+              "p99": 27.617884,
+              "max": 37.533478
+            }
+          },
+          "first_useful_ms": 393.098146,
+          "max_visible": 6,
+          "max_detailed": 6,
+          "peak_gpu_payload": 50298880,
+          "peak_cpu_payload": 50544640,
+          "peak_pending": 13,
+          "peak_queued": 11,
+          "cpu_evictions": 0,
+          "discarded": 0,
+          "reprioritized": 0,
+          "source_bytes": 289325,
+          "container_bytes": 7059578,
+          "metadata_ms": 65.645873,
+          "gpu_ms_p99": 1.220256
+        },
+        {
+          "name": "sparse",
+          "board_sha256": "c23f6c9d38c364d9fd30a9c2a91f9b6976401a4a08763fb57ef02f9a802a9c14",
+          "report_sha256": "1e87c144cb1a592beab1d6c8fbd22e3023b2c97a6dab6ace957dee50de1b314d",
+          "peak_rss_bytes": 290848768,
+          "distribution_ms": {
+            "query_ms": {
+              "p50": 0.02145,
+              "p99": 0.0515,
+              "max": 0.555872
+            },
+            "scene_ms": {
+              "p50": 0.003810000000000001,
+              "p99": 0.01205999999999996,
+              "max": 0.02070000000000005
+            },
+            "supply_ms": {
+              "p50": 0.011899999999999999,
+              "p99": 0.30306099999999997,
+              "max": 3.646382
+            },
+            "encode_ms": {
+              "p50": 0.07286000000000001,
+              "p99": 0.19777099999999997,
+              "max": 0.308291
+            },
+            "submit_ms": {
+              "p50": 0.034221,
+              "p99": 0.07942099999999999,
+              "max": 0.15489
+            },
+            "poll_ms": {
+              "p50": 0.00043,
+              "p99": 0.00084,
+              "max": 0.006059999999999999
+            },
+            "acquire_ms": {
+              "p50": 0.00914,
+              "p99": 0.026699999999999998,
+              "max": 0.04829
+            },
+            "present_ms": {
+              "p50": 20.178228999999998,
+              "p99": 26.963681,
+              "max": 32.97322200000001
+            },
+            "callback_ms": {
+              "p50": 20.366319,
+              "p99": 29.38354,
+              "max": 33.121913000000006
+            }
+          },
+          "first_useful_ms": 371.241592,
+          "max_visible": 4,
+          "max_detailed": 4,
+          "peak_gpu_payload": 26542080,
+          "peak_cpu_payload": 26705920,
+          "peak_pending": 8,
+          "peak_queued": 6,
+          "cpu_evictions": 0,
+          "discarded": 0,
+          "reprioritized": 0,
+          "source_bytes": 180711,
+          "container_bytes": 889730,
+          "metadata_ms": 9.144611000000001,
+          "gpu_ms_p99": 1.009504
+        }
+      ]
+    },
+    "1-prior": {
+      "binary_sha256": "4d21e4ea6322f9898abf82682513d9339cd9b0f1abd15ac894d1d76a697af6ee",
+      "harness_sha256": "4e0f044d9209d8a8e15873b42ee501d8ee517cf6b8f726932cc7f313bf2c903c",
+      "window_size_requested": "800x600",
+      "seconds": 9,
+      "scope": "generated shared-source fixtures, warm OS caches, isolated X11; epochs censored if unfinished; no human/monitor latency claim",
+      "runs": [
+        {
+          "name": "5k",
+          "board_sha256": "69578491c82c633925611d8da7ba52989035c2a6bc0997b82ea6ae9929571430",
+          "report_sha256": "ecef671fb121cceb01893914b787d74030617cff090a1b911e5d894d563fcfbc",
+          "peak_rss_bytes": 316428288,
+          "distribution_ms": {
+            "query_ms": {
+              "p50": 0.0205,
+              "p99": 0.05351,
+              "max": 0.528752
+            },
+            "scene_ms": {
+              "p50": 0.003580000000000007,
+              "p99": 0.012409999999999977,
+              "max": 0.01976
+            },
+            "supply_ms": {
+              "p50": 0.01375,
+              "p99": 0.468672,
+              "max": 4.039934000000001
+            },
+            "encode_ms": {
+              "p50": 0.07132100000000001,
+              "p99": 0.180951,
+              "max": 0.285341
+            },
+            "submit_ms": {
+              "p50": 0.03296,
+              "p99": 0.08524000000000001,
+              "max": 0.1224
+            },
+            "poll_ms": {
+              "p50": 0.00045,
+              "p99": 0.00086,
+              "max": 0.00569
+            },
+            "acquire_ms": {
+              "p50": 0.0087,
+              "p99": 0.02802,
+              "max": 0.065911
+            },
+            "present_ms": {
+              "p50": 20.030418,
+              "p99": 28.202286,
+              "max": 33.090692999999995
+            },
+            "callback_ms": {
+              "p50": 20.243519000000003,
+              "p99": 29.847741,
+              "max": 33.242903
+            }
+          },
+          "first_useful_ms": 409.84016299999996,
+          "max_visible": 6,
+          "max_detailed": 6,
+          "peak_gpu_payload": 50298880,
+          "peak_cpu_payload": 50544640,
+          "peak_pending": 13,
+          "peak_queued": 11,
+          "cpu_evictions": 0,
+          "discarded": 0,
+          "reprioritized": 0,
+          "source_bytes": 289236,
+          "container_bytes": 982369,
+          "metadata_ms": 5.363218000000001,
+          "gpu_ms_p99": 1.116192
+        },
+        {
+          "name": "50k",
+          "board_sha256": "d540b97deaf9ab3a73b5bd2dfdda60ace0869d97039fa42e07752feb4981597b",
+          "report_sha256": "68eeed6d99c6eb3ce49cb67238fd752466e3157753f94417b2ba91859256f23c",
+          "peak_rss_bytes": 344416256,
+          "distribution_ms": {
+            "query_ms": {
+              "p50": 0.262871,
+              "p99": 0.346491,
+              "max": 10.522806000000001
+            },
+            "scene_ms": {
+              "p50": 0.007321000000000043,
+              "p99": 0.013331000000000051,
+              "max": 0.021409999999999967
+            },
+            "supply_ms": {
+              "p50": 0.02268,
+              "p99": 0.394692,
+              "max": 4.091914
+            },
+            "encode_ms": {
+              "p50": 0.10565000000000001,
+              "p99": 0.157381,
+              "max": 0.298241
+            },
+            "submit_ms": {
+              "p50": 0.03698,
+              "p99": 0.07536,
+              "max": 0.08566
+            },
+            "poll_ms": {
+              "p50": 0.00039000000000000005,
+              "p99": 0.0007999999999999999,
+              "max": 0.0067
+            },
+            "acquire_ms": {
+              "p50": 0.01119,
+              "p99": 0.021001000000000002,
+              "max": 0.0283
+            },
+            "present_ms": {
+              "p50": 20.129499,
+              "p99": 26.580951,
+              "max": 32.659341000000005
+            },
+            "callback_ms": {
+              "p50": 20.61005,
+              "p99": 29.050288000000002,
+              "max": 33.114832
+            }
+          },
+          "first_useful_ms": 418.193711,
+          "max_visible": 6,
+          "max_detailed": 6,
+          "peak_gpu_payload": 50298880,
+          "peak_cpu_payload": 50544640,
+          "peak_pending": 13,
+          "peak_queued": 11,
+          "cpu_evictions": 0,
+          "discarded": 0,
+          "reprioritized": 0,
+          "source_bytes": 289325,
+          "container_bytes": 7059578,
+          "metadata_ms": 66.13644500000001,
+          "gpu_ms_p99": 1.04192
+        },
+        {
+          "name": "sparse",
+          "board_sha256": "c23f6c9d38c364d9fd30a9c2a91f9b6976401a4a08763fb57ef02f9a802a9c14",
+          "report_sha256": "032b06ef01e0867d12c170b3db4df17c618f936031e37590c3c68b89900f1a90",
+          "peak_rss_bytes": 290938880,
+          "distribution_ms": {
+            "query_ms": {
+              "p50": 0.022350000000000002,
+              "p99": 0.0492,
+              "max": 0.516512
+            },
+            "scene_ms": {
+              "p50": 0.004489999999999999,
+              "p99": 0.012529999999999996,
+              "max": 0.01850999999999997
+            },
+            "supply_ms": {
+              "p50": 0.009680000000000001,
+              "p99": 0.304181,
+              "max": 3.9024739999999998
+            },
+            "encode_ms": {
+              "p50": 0.07182999999999999,
+              "p99": 0.180051,
+              "max": 0.298141
+            },
+            "submit_ms": {
+              "p50": 0.033800000000000004,
+              "p99": 0.06802,
+              "max": 0.08535
+            },
+            "poll_ms": {
+              "p50": 0.00041,
+              "p99": 0.0009,
+              "max": 0.00636
+            },
+            "acquire_ms": {
+              "p50": 0.0095,
+              "p99": 0.02598,
+              "max": 0.03311
+            },
+            "present_ms": {
+              "p50": 20.260898,
+              "p99": 29.376369,
+              "max": 33.192623
+            },
+            "callback_ms": {
+              "p50": 20.44435,
+              "p99": 29.866271,
+              "max": 33.363124
+            }
+          },
+          "first_useful_ms": 391.602941,
+          "max_visible": 4,
+          "max_detailed": 4,
+          "peak_gpu_payload": 26542080,
+          "peak_cpu_payload": 26705920,
+          "peak_pending": 8,
+          "peak_queued": 6,
+          "cpu_evictions": 0,
+          "discarded": 0,
+          "reprioritized": 0,
+          "source_bytes": 180711,
+          "container_bytes": 889730,
+          "metadata_ms": 10.198475,
+          "gpu_ms_p99": 1.10736
+        }
+      ]
+    },
+    "1-current": {
+      "binary_sha256": "56ffdaf83a6f4678e20127c887cf2b64788b7ce03cb87bbc2fe34a5facc4ab90",
+      "harness_sha256": "4e0f044d9209d8a8e15873b42ee501d8ee517cf6b8f726932cc7f313bf2c903c",
+      "window_size_requested": "800x600",
+      "seconds": 9,
+      "scope": "generated shared-source fixtures, warm OS caches, isolated X11; epochs censored if unfinished; no human/monitor latency claim",
+      "runs": [
+        {
+          "name": "5k",
+          "board_sha256": "69578491c82c633925611d8da7ba52989035c2a6bc0997b82ea6ae9929571430",
+          "report_sha256": "ea8a7d4d8292586041dd83736ba12cb8414c68e915b48405040c8dfec8c66d10",
+          "peak_rss_bytes": 316645376,
+          "distribution_ms": {
+            "query_ms": {
+              "p50": 0.02484,
+              "p99": 0.04487,
+              "max": 0.550942
+            },
+            "scene_ms": {
+              "p50": 0.004550000000000002,
+              "p99": 0.012480000000000002,
+              "max": 0.014450000000000018
+            },
+            "supply_ms": {
+              "p50": 0.01504,
+              "p99": 0.35930100000000004,
+              "max": 4.031204
+            },
+            "encode_ms": {
+              "p50": 0.09381,
+              "p99": 0.171861,
+              "max": 0.289481
+            },
+            "submit_ms": {
+              "p50": 0.04108,
+              "p99": 0.06939,
+              "max": 0.082041
+            },
+            "poll_ms": {
+              "p50": 0.00038,
+              "p99": 0.0007199999999999999,
+              "max": 0.00655
+            },
+            "acquire_ms": {
+              "p50": 0.0106,
+              "p99": 0.021650000000000003,
+              "max": 0.02375
+            },
+            "present_ms": {
+              "p50": 20.108489,
+              "p99": 27.514774,
+              "max": 32.45049
+            },
+            "callback_ms": {
+              "p50": 20.326029,
+              "p99": 28.307136,
+              "max": 32.710521
+            }
+          },
+          "first_useful_ms": 417.63876,
+          "max_visible": 6,
+          "max_detailed": 6,
+          "peak_gpu_payload": 50298880,
+          "peak_cpu_payload": 50544640,
+          "peak_pending": 13,
+          "peak_queued": 11,
+          "cpu_evictions": 0,
+          "discarded": 0,
+          "reprioritized": 0,
+          "source_bytes": 289236,
+          "container_bytes": 982369,
+          "metadata_ms": 7.645555,
+          "gpu_ms_p99": 1.146624
+        },
+        {
+          "name": "50k",
+          "board_sha256": "d540b97deaf9ab3a73b5bd2dfdda60ace0869d97039fa42e07752feb4981597b",
+          "report_sha256": "3b51b15f637884ce2a167bb01350605928bb1ee43a0ab45e1af1c8688292bb17",
+          "peak_rss_bytes": 342233088,
+          "distribution_ms": {
+            "query_ms": {
+              "p50": 0.253961,
+              "p99": 0.40527199999999997,
+              "max": 10.011404
+            },
+            "scene_ms": {
+              "p50": 0.006159999999999954,
+              "p99": 0.012909999999999984,
+              "max": 0.03452000000000002
+            },
+            "supply_ms": {
+              "p50": 0.022600000000000002,
+              "p99": 0.319421,
+              "max": 4.306815
+            },
+            "encode_ms": {
+              "p50": 0.1051,
+              "p99": 0.187141,
+              "max": 0.290731
+            },
+            "submit_ms": {
+              "p50": 0.0392,
+              "p99": 0.09534000000000001,
+              "max": 0.14476
+            },
+            "poll_ms": {
+              "p50": 0.00043,
+              "p99": 0.0009,
+              "max": 0.00725
+            },
+            "acquire_ms": {
+              "p50": 0.01044,
+              "p99": 0.02505,
+              "max": 0.051109999999999996
+            },
+            "present_ms": {
+              "p50": 20.224879,
+              "p99": 27.141921999999997,
+              "max": 29.733841
+            },
+            "callback_ms": {
+              "p50": 20.69238,
+              "p99": 28.704057000000002,
+              "max": 32.070419
+            }
+          },
+          "first_useful_ms": 440.83362900000003,
+          "max_visible": 6,
+          "max_detailed": 6,
+          "peak_gpu_payload": 50298880,
+          "peak_cpu_payload": 50544640,
+          "peak_pending": 13,
+          "peak_queued": 11,
+          "cpu_evictions": 0,
+          "discarded": 0,
+          "reprioritized": 0,
+          "source_bytes": 289325,
+          "container_bytes": 7059578,
+          "metadata_ms": 65.00246,
+          "gpu_ms_p99": 1.077248
+        },
+        {
+          "name": "sparse",
+          "board_sha256": "c23f6c9d38c364d9fd30a9c2a91f9b6976401a4a08763fb57ef02f9a802a9c14",
+          "report_sha256": "4b9899a8c55d4e7b26de0350ce8efc2c4d39f58d70809c6356d5ebfb658e805a",
+          "peak_rss_bytes": 291225600,
+          "distribution_ms": {
+            "query_ms": {
+              "p50": 0.023960000000000002,
+              "p99": 0.05117,
+              "max": 0.5300520000000001
+            },
+            "scene_ms": {
+              "p50": 0.004360000000000001,
+              "p99": 0.009650000000000006,
+              "max": 0.016170000000000018
+            },
+            "supply_ms": {
+              "p50": 0.01337,
+              "p99": 0.314451,
+              "max": 3.8180430000000003
+            },
+            "encode_ms": {
+              "p50": 0.07499,
+              "p99": 0.17568,
+              "max": 0.306771
+            },
+            "submit_ms": {
+              "p50": 0.034069999999999996,
+              "p99": 0.07062,
+              "max": 0.24717100000000003
+            },
+            "poll_ms": {
+              "p50": 0.00051,
+              "p99": 0.0009599999999999999,
+              "max": 0.00553
+            },
+            "acquire_ms": {
+              "p50": 0.009120000000000001,
+              "p99": 0.02581,
+              "max": 0.08148999999999999
+            },
+            "present_ms": {
+              "p50": 19.984678,
+              "p99": 28.109686,
+              "max": 32.26272
+            },
+            "callback_ms": {
+              "p50": 20.179728,
+              "p99": 28.279916,
+              "max": 32.444889999999994
+            }
+          },
+          "first_useful_ms": 370.13777799999997,
+          "max_visible": 4,
+          "max_detailed": 4,
+          "peak_gpu_payload": 26542080,
+          "peak_cpu_payload": 26705920,
+          "peak_pending": 8,
+          "peak_queued": 6,
+          "cpu_evictions": 0,
+          "discarded": 0,
+          "reprioritized": 0,
+          "source_bytes": 180711,
+          "container_bytes": 889730,
+          "metadata_ms": 6.366181,
+          "gpu_ms_p99": 1.089824
+        }
+      ]
+    }
+  },
+  "idle": {
+    "prior": {
+      "context_menu": "none",
+      "baseline": true,
+      "note_editing": false,
+      "display": ":97",
+      "isolated_no_wm": true,
+      "binary_sha256": "4d21e4ea6322f9898abf82682513d9339cd9b0f1abd15ac894d1d76a697af6ee",
+      "harness_sha256": "6b36441063760cf348a3e88cf8d9ec7a26e73d4cf99d84eb9b875904cd5ee678",
+      "board_sha256": "09cd2239ce32f36dafd421a98e227dde77a1b7db3926d57a7a352738fbaf63c2",
+      "application_timer": "none; ordinary open has no --seconds/--interaction/tour",
+      "network": "Tack has no network client; socket_count includes native X11/driver IPC, not a network-byte counter",
+      "wakeups": "per-thread voluntary/involuntary context switches; total event-loop waits include startup/shutdown, not exact idle wakeups",
+      "gpu": "redraw submissions observed; nvidia-smi global utilization is not per-process attribution",
+      "runs": [
+        {
+          "grid": "hidden",
+          "interval_seconds": 5.006564712006366,
+          "cpu_ticks": 2,
+          "cpu_percent_of_one_core": 0.39947551166246803,
+          "rss_initial_bytes": 246042624,
+          "rss_final_bytes": 246042624,
+          "idle_redraws": 0,
+          "idle_gpu_submissions": 0,
+          "total_redraws": 3,
+          "total_waits": 9,
+          "threads": [
+            {
+              "name": "tack",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "cpu_ticks": 0,
+              "voluntary_switches": 3,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkcf] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkrt] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 50,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkps] Update",
+              "cpu_ticks": 2,
+              "voluntary_switches": 20,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "cpu_ticks": 0,
+              "voluntary_switches": 498,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            }
+          ],
+          "new_threads": [],
+          "departed_threads": [],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          },
+          "socket_count": 3,
+          "source_bytes": 0,
+          "report_sha256": "2205d65dce989a116a41a7aadab099aee4ecb3237485aca08b4b99b651420594",
+          "observed_title": "Tack \u2014 empty.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+        }
+      ]
+    },
+    "current": {
+      "context_menu": "none",
+      "baseline": true,
+      "note_editing": false,
+      "display": ":97",
+      "isolated_no_wm": true,
+      "binary_sha256": "56ffdaf83a6f4678e20127c887cf2b64788b7ce03cb87bbc2fe34a5facc4ab90",
+      "harness_sha256": "6b36441063760cf348a3e88cf8d9ec7a26e73d4cf99d84eb9b875904cd5ee678",
+      "board_sha256": "09cd2239ce32f36dafd421a98e227dde77a1b7db3926d57a7a352738fbaf63c2",
+      "application_timer": "none; ordinary open has no --seconds/--interaction/tour",
+      "network": "Tack has no network client; socket_count includes native X11/driver IPC, not a network-byte counter",
+      "wakeups": "per-thread voluntary/involuntary context switches; total event-loop waits include startup/shutdown, not exact idle wakeups",
+      "gpu": "redraw submissions observed; nvidia-smi global utilization is not per-process attribution",
+      "runs": [
+        {
+          "grid": "hidden",
+          "interval_seconds": 5.006158386007883,
+          "cpu_ticks": 3,
+          "cpu_percent_of_one_core": 0.5992619027765768,
+          "rss_initial_bytes": 245641216,
+          "rss_final_bytes": 245641216,
+          "idle_redraws": 0,
+          "idle_gpu_submissions": 0,
+          "total_redraws": 3,
+          "total_waits": 9,
+          "threads": [
+            {
+              "name": "tack",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "cpu_ticks": 0,
+              "voluntary_switches": 3,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkcf] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkrt] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 50,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkps] Update",
+              "cpu_ticks": 2,
+              "voluntary_switches": 20,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "cpu_ticks": 1,
+              "voluntary_switches": 499,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            }
+          ],
+          "new_threads": [],
+          "departed_threads": [],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          },
+          "socket_count": 3,
+          "source_bytes": 0,
+          "report_sha256": "caf66c8d77b8b48fc555311556523a0e3c3c7aa9b3b3421da5d9c25c72875ee6",
+          "observed_title": "Tack \u2014 empty.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+        }
+      ]
+    },
+    "menu": {
+      "context_menu": "application",
+      "baseline": true,
+      "note_editing": false,
+      "display": ":97",
+      "isolated_no_wm": true,
+      "binary_sha256": "56ffdaf83a6f4678e20127c887cf2b64788b7ce03cb87bbc2fe34a5facc4ab90",
+      "harness_sha256": "6b36441063760cf348a3e88cf8d9ec7a26e73d4cf99d84eb9b875904cd5ee678",
+      "board_sha256": "09cd2239ce32f36dafd421a98e227dde77a1b7db3926d57a7a352738fbaf63c2",
+      "application_timer": "none; ordinary open has no --seconds/--interaction/tour",
+      "network": "Tack has no network client; socket_count includes native X11/driver IPC, not a network-byte counter",
+      "wakeups": "per-thread voluntary/involuntary context switches; total event-loop waits include startup/shutdown, not exact idle wakeups",
+      "gpu": "redraw submissions observed; nvidia-smi global utilization is not per-process attribution",
+      "runs": [
+        {
+          "grid": "hidden",
+          "interval_seconds": 5.006838804984,
+          "cpu_ticks": 2,
+          "cpu_percent_of_one_core": 0.3994536428872292,
+          "rss_initial_bytes": 245805056,
+          "rss_final_bytes": 245805056,
+          "idle_redraws": 0,
+          "idle_gpu_submissions": 0,
+          "total_redraws": 5,
+          "total_waits": 13,
+          "threads": [
+            {
+              "name": "tack",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "cpu_ticks": 0,
+              "voluntary_switches": 3,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkcf] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkrt] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 50,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkps] Update",
+              "cpu_ticks": 1,
+              "voluntary_switches": 20,
+              "involuntary_switches": 1
+            },
+            {
+              "name": "tack",
+              "cpu_ticks": 1,
+              "voluntary_switches": 496,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            }
+          ],
+          "new_threads": [],
+          "departed_threads": [],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          },
+          "socket_count": 3,
+          "source_bytes": 0,
+          "report_sha256": "9fbffd9739b3a34c3f77ec45ef4a96b0d7f0efaa1cfdc5fab18851a7c69d9a0d",
+          "observed_title": "Tack \u2014 empty.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+        }
+      ]
+    },
+    "closed": {
+      "context_menu": "closed",
+      "baseline": true,
+      "note_editing": false,
+      "display": ":97",
+      "isolated_no_wm": true,
+      "binary_sha256": "56ffdaf83a6f4678e20127c887cf2b64788b7ce03cb87bbc2fe34a5facc4ab90",
+      "harness_sha256": "6b36441063760cf348a3e88cf8d9ec7a26e73d4cf99d84eb9b875904cd5ee678",
+      "board_sha256": "09cd2239ce32f36dafd421a98e227dde77a1b7db3926d57a7a352738fbaf63c2",
+      "application_timer": "none; ordinary open has no --seconds/--interaction/tour",
+      "network": "Tack has no network client; socket_count includes native X11/driver IPC, not a network-byte counter",
+      "wakeups": "per-thread voluntary/involuntary context switches; total event-loop waits include startup/shutdown, not exact idle wakeups",
+      "gpu": "redraw submissions observed; nvidia-smi global utilization is not per-process attribution",
+      "runs": [
+        {
+          "grid": "hidden",
+          "interval_seconds": 5.006501004972961,
+          "cpu_ticks": 2,
+          "cpu_percent_of_one_core": 0.3994805949331477,
+          "rss_initial_bytes": 246104064,
+          "rss_final_bytes": 246104064,
+          "idle_redraws": 0,
+          "idle_gpu_submissions": 0,
+          "total_redraws": 5,
+          "total_waits": 14,
+          "threads": [
+            {
+              "name": "tack",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "cpu_ticks": 0,
+              "voluntary_switches": 3,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkcf] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkrt] Analysis",
+              "cpu_ticks": 0,
+              "voluntary_switches": 50,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "[vkps] Update",
+              "cpu_ticks": 1,
+              "voluntary_switches": 20,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "cpu_ticks": 1,
+              "voluntary_switches": 498,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "cpu_ticks": 0,
+              "voluntary_switches": 0,
+              "involuntary_switches": 0
+            }
+          ],
+          "new_threads": [],
+          "departed_threads": [],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          },
+          "socket_count": 3,
+          "source_bytes": 0,
+          "report_sha256": "d303e70d6a76a40a20e7fc8f1874e5d247de61e692deb0db096ad504f55a4f62",
+          "observed_title": "Tack \u2014 empty.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+        }
+      ]
+    }
+  },
+  "quality": {
+    "rust_workspace_and_doc_passes": 153,
+    "python_passes": 9,
+    "gpu_smoke_passes": 1,
+    "product_gpu_passes": 7,
+    "gpu_count_note": "two product tests also run in workspace; not eight additional distinct tests",
+    "local_status": "PASS",
+    "quality_log_sha256": "0cdaf6b4f337ec556ddbcc7b3d57fda75f4e42a91238ba778a11a730093417ac"
+  },
+  "ci": {
+    "sha": "fd687d31789d9528d090eabe1aca0eee9ea1f066",
+    "runs": [
+      {
+        "id": 37429790856,
+        "name": "Quality",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/gurppt/tack/actions/runs/37429790856",
+        "jobs": [
+          {
+            "name": "dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "current_step": null,
+            "steps": []
+          },
+          {
+            "name": "rust (windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "current_step": null,
+            "steps": []
+          },
+          {
+            "name": "rust (ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "current_step": null,
+            "steps": []
+          }
+        ]
+      }
+    ]
+  },
+  "redraw_10k": {
+    "binary_sha256": "56ffdaf83a6f4678e20127c887cf2b64788b7ce03cb87bbc2fe34a5facc4ab90",
+    "input_fixture_sha256": "65670bb1b50a24a316783fb2a714a1c533baac9720aa6207a232c3bc12028954",
+    "harness_sha256": "14c9c9b188b863f509a4ba6e1be6df2f1272a82215ae5ca6e372d72d6017fa4c",
+    "report_sha256": "08c98497f978e3d2087c582e5bf95e5d1abb507f69814cf2a6bf858d28e50438",
+    "checks": "10000 units arranged, exact native Undo/Redo, no renderer errors",
+    "scope": "one trace-disabled native 800x600 run; last saved-arrangement redraw includes selection; not isolated keyboard latency or per-count GPU benchmark",
+    "last_saved_arrangement_frame": {
+      "acquire_ms": 0.01436,
+      "annotations": {
+        "build_ms": 2.85858,
+        "glyphs": 0,
+        "layout_ms": 0.0,
+        "omitted": 0,
+        "primitives": 4
+      },
+      "callback_ms": 24.47808,
+      "camera": [
+        0.0,
+        0.0
+      ],
+      "cpu_ms": 5.109687,
+      "desired_detail": 0,
+      "detail_reserved": 0,
+      "detailed": 0,
+      "elapsed_ms": 2733.711381,
+      "encode_ms": 0.08993,
+      "gpu_bytes": 0,
+      "in_flight": 1,
+      "overview_edge": 128,
+      "poll_ms": 0.00052,
+      "present_ms": 19.337543,
+      "quality_resolved": 0,
+      "query_ms": 0.7981130000000001,
+      "recognizable": 0,
+      "scene_ms": 1.3196640000000002,
+      "submit_ms": 0.0334,
+      "supply": {
+        "container_bytes": 0,
+        "cpu_bytes": 0,
+        "decode_count": 0,
+        "decode_ms": 0.0,
+        "discarded": 0,
+        "evictions": 0,
+        "pending": 0,
+        "queued": 0,
+        "source_bytes": 0
+      },
+      "supply_ms": 0.00311,
+      "upload_bytes": 0,
+      "upload_cpu_ms": 0.0,
+      "uploads": 0,
+      "visible": 0,
+      "window_size": [
+        800,
+        600
+      ],
+      "zoom": 1.875
+    },
+    "gpu_samples_tail": [
+      {
+        "pass_ms": 0.018432
+      },
+      {
+        "pass_ms": 0.019904
+      },
+      {
+        "pass_ms": 0.02
+      },
+      {
+        "pass_ms": 0.019904
+      },
+      {
+        "pass_ms": 0.019808
+      }
+    ],
+    "window_size": [
+      800,
+      600
+    ],
+    "redraw_count": 25
+  },
+  "raw_evidence": {
+    "location": "ignored benchmark-results/phase1i/; accepted subsets only, earlier failed/exploratory runs excluded",
+    "files": {
+      "gpu_smoke.log": {
+        "bytes": 315,
+        "sha256": "e92374ef5812ebc1fd7cf89ec19cf8aec8a8ace2cb4efa6a30c10832c759b0d3"
+      },
+      "idle-closed/hidden.json": {
+        "bytes": 7807,
+        "sha256": "d303e70d6a76a40a20e7fc8f1874e5d247de61e692deb0db096ad504f55a4f62"
+      },
+      "idle-closed/hidden.log": {
+        "bytes": 259,
+        "sha256": "d9a40bc136149828f0cdc18769e1cdef5c785bdb2cc0442913d79f7bde2a6aef"
+      },
+      "idle-closed/observations.json": {
+        "bytes": 1965,
+        "sha256": "34ed9af560c5c7ac29fda30b5df694a45f3980d85cc9b42ae4039a3252aa3980"
+      },
+      "idle-closed/summary.json": {
+        "bytes": 2954,
+        "sha256": "22dfb99c48054ed7f3c1ca907898f221f9db8e2849800a500d8a98c91b4710b8"
+      },
+      "idle-current/hidden.json": {
+        "bytes": 5328,
+        "sha256": "caf66c8d77b8b48fc555311556523a0e3c3c7aa9b3b3421da5d9c25c72875ee6"
+      },
+      "idle-current/hidden.log": {
+        "bytes": 259,
+        "sha256": "e2c124bcfc5b0697318d5dbc900ca0b6befbd14019e958a543ef8507c1a45d21"
+      },
+      "idle-current/observations.json": {
+        "bytes": 1964,
+        "sha256": "fb792741f316049712e479f57c75e04ef3cfd7575373dea1cea8e2b0a48d139c"
+      },
+      "idle-current/summary.json": {
+        "bytes": 2951,
+        "sha256": "83c88454baae2fe3a711107d511bb865ac14d267dcc9db12c250c2e1a453a604"
+      },
+      "idle-menu/hidden.json": {
+        "bytes": 7698,
+        "sha256": "9fbffd9739b3a34c3f77ec45ef4a96b0d7f0efaa1cfdc5fab18851a7c69d9a0d"
+      },
+      "idle-menu/hidden.log": {
+        "bytes": 259,
+        "sha256": "256a9ddb1d8e045bad734bc26d6ef4308ad47f9a79c78b8e3bc571e2f1119340"
+      },
+      "idle-menu/observations.json": {
+        "bytes": 1962,
+        "sha256": "30e2d714d7debd02ca6a15bb609b5519226c7c73a569296ff7b11c12c2f5df9a"
+      },
+      "idle-menu/summary.json": {
+        "bytes": 2956,
+        "sha256": "78a113da064c806689654b682c235681fc615ded425ed72325f0ab1a475846a9"
+      },
+      "idle-prior/hidden.json": {
+        "bytes": 5261,
+        "sha256": "2205d65dce989a116a41a7aadab099aee4ecb3237485aca08b4b99b651420594"
+      },
+      "idle-prior/hidden.log": {
+        "bytes": 259,
+        "sha256": "fcc9b2062c34fa517479d9a93fd6857756f33921ac173e434f2134926dc8f68e"
+      },
+      "idle-prior/observations.json": {
+        "bytes": 1965,
+        "sha256": "d935d6da446163851da737b03348be0ea763ab45fe0bd26d9101197fc861446a"
+      },
+      "idle-prior/summary.json": {
+        "bytes": 2952,
+        "sha256": "a34c4e044648a45fb07ece63cfbfbbf6e606bc2bc8240cb0a4cad501a781f926"
+      },
+      "layout-final-checked/10-baseline-allocator.log": {
+        "bytes": 1433,
+        "sha256": "5585d28e0a51baf73f005a0a037b66b727dce27c269bcd5948ca18f4045fe846"
+      },
+      "layout-final-checked/10-baseline.json": {
+        "bytes": 357,
+        "sha256": "a528230b2a6c3f39b637c3454ed8b70de819535236d5beff5b58aa3200c3df76"
+      },
+      "layout-final-checked/10-full-allocator.log": {
+        "bytes": 1755,
+        "sha256": "38c863e7e59dfb0d4f6a7b766a91d3b8d3348cc6fd66a75fcb4ce817fca68f86"
+      },
+      "layout-final-checked/10-full.json": {
+        "bytes": 343,
+        "sha256": "749804e7b54464df0d513d2723933d8080a2d222f7b0487207033f4bcb1f3e10"
+      },
+      "layout-final-checked/10-plan-allocator.log": {
+        "bytes": 1704,
+        "sha256": "96d0189ab57e2da5171c93f3d1436003c65e555ab3f35037decce89309cd58f7"
+      },
+      "layout-final-checked/10-plan.json": {
+        "bytes": 353,
+        "sha256": "41a3c33c66578aa3aaceb0540753b84e0b31af71acbc40a19dfc6851c05c8293"
+      },
+      "layout-final-checked/100-baseline-allocator.log": {
+        "bytes": 1590,
+        "sha256": "cd754c4464d3341d99f5d90de79d966e72ef34820936db59f3bb51891a84043b"
+      },
+      "layout-final-checked/100-baseline.json": {
+        "bytes": 360,
+        "sha256": "ea5003f8e578acf8a8cfbe376ba534acbf5ed3990ce51e10bace4964b91c8d05"
+      },
+      "layout-final-checked/100-full-allocator.log": {
+        "bytes": 1959,
+        "sha256": "e418bd389af5932d60238fdb128e6c70707aabd502d2ead126f8373820f9bdab"
+      },
+      "layout-final-checked/100-full.json": {
+        "bytes": 374,
+        "sha256": "24b6504d5761ea626e59518725676c29fea22ee307a8fd208ffcb93854d86221"
+      },
+      "layout-final-checked/100-plan-allocator.log": {
+        "bytes": 1914,
+        "sha256": "9056f8d8e8dac5dc577ba5fbffa13e32cba34f63a311d5b171d3af7bc49653aa"
+      },
+      "layout-final-checked/100-plan.json": {
+        "bytes": 343,
+        "sha256": "ed2002cde0cbeda206ccac8343f3bd06e6e07c4c1456a388559c56fcafa6771f"
+      },
+      "layout-final-checked/1000-baseline-allocator.log": {
+        "bytes": 1600,
+        "sha256": "8134f78687d51fb02a37b83e7b5daf497dca57422dd0f8b3f56a03de6e7b7755"
+      },
+      "layout-final-checked/1000-baseline.json": {
+        "bytes": 378,
+        "sha256": "add405f6b555c6d96cf59c33a3f79812d53586fd8102ec5f5ae664d2e2db12b2"
+      },
+      "layout-final-checked/1000-full-allocator.log": {
+        "bytes": 2131,
+        "sha256": "b2d726db10cd9c8a4282e84c2f10136f31e7e85594af69661e086f055ad5f5ac"
+      },
+      "layout-final-checked/1000-full.json": {
+        "bytes": 387,
+        "sha256": "b64cd33954814b3fc98c688a852227ee699dc8cae9b98452b51f998d63918310"
+      },
+      "layout-final-checked/1000-plan-allocator.log": {
+        "bytes": 2087,
+        "sha256": "4f6d65ee6939772d57033335d4196689c74145a8caf22789b4087bcfcc4b3b3d"
+      },
+      "layout-final-checked/1000-plan.json": {
+        "bytes": 355,
+        "sha256": "d21e6798532a0896d458bd4819fd6d4fbdf42563363be80f0f25db5e3315f26f"
+      },
+      "layout-final-checked/10000-baseline-allocator.log": {
+        "bytes": 2081,
+        "sha256": "8b8ee5383d918521551de4d5b79160d8da881a297e8884fc38ae0ef0714e153b"
+      },
+      "layout-final-checked/10000-baseline.json": {
+        "bytes": 370,
+        "sha256": "8fb6bae2f95d0c02469719995fcce2d24fcce8897a4d687d03dcd0465f8ee661"
+      },
+      "layout-final-checked/10000-full-allocator.log": {
+        "bytes": 2530,
+        "sha256": "d9d2aad562031c8d3a69ec4fd6cc7e6b3635b1b939b0aae8dae31d54eab01a34"
+      },
+      "layout-final-checked/10000-full.json": {
+        "bytes": 364,
+        "sha256": "59afe90f2034dd67a3c569bc1e81ae67e748eba72f859875d0092a3ae5e266a4"
+      },
+      "layout-final-checked/10000-plan-allocator.log": {
+        "bytes": 2485,
+        "sha256": "11ed39fe6bc816e95f93c78e593f5723381ffa9d57a68f1c87689eb7fb69e67c"
+      },
+      "layout-final-checked/10000-plan.json": {
+        "bytes": 387,
+        "sha256": "fc4a4550f12a9788616f6d894ee34d9228da4cd62a39614dd9caa1aa970ad89a"
+      },
+      "layout-final-checked/summary.json": {
+        "bytes": 16739,
+        "sha256": "8dd5f58481f0d16690a9c775c141ed095469d23ef34dcf08ddf5cb6de74c2f6e"
+      },
+      "native-final/1024x768-fr/checks.json": {
+        "bytes": 3513,
+        "sha256": "905f1bec2dd08c2ffcc5d959349c2169804a1381bb30dfedde2d464a0e337fac"
+      },
+      "native-final/1024x768-fr/image-0.png": {
+        "bytes": 317,
+        "sha256": "4426264c3fbfc8b0d3dfceb81853d85929713b7b267ac8d2be98b749a1087e01"
+      },
+      "native-final/1024x768-fr/image-1.png": {
+        "bytes": 263,
+        "sha256": "d1afe7e9b162001be441340dc52e04f28eb4851de5e532b152981aebc174eb02"
+      },
+      "native-final/1024x768-fr/image-2.png": {
+        "bytes": 290,
+        "sha256": "e3c27eb67182cc1858425ea15f66627d4f9e42397d3321b5fc509da28766cfbf"
+      },
+      "native-final/1024x768-fr/image-3.png": {
+        "bytes": 333,
+        "sha256": "396e90564fda660881b38b8028801c148ae600fab88b62d9830b7b5f6b42af05"
+      },
+      "native-final/1024x768-fr/image-4.png": {
+        "bytes": 293,
+        "sha256": "13f4c3da77f9a1754c746fbf6cdc6c8d11e1f9e5cf971c440d2eb46a4ab0f5af"
+      },
+      "native-final/1024x768-fr/image-5.png": {
+        "bytes": 337,
+        "sha256": "7f3603ebf7b3c52a646a84862849d0d8c7f2d505f21fbd756e907075d2188264"
+      },
+      "native-final/1024x768-fr/input-arrange-menu-0.png": {
+        "bytes": 4972,
+        "sha256": "1d917099e430d64665ad65f4fb1ae4901236d1ae30ec54eb62e342109e02a334"
+      },
+      "native-final/1024x768-fr/input-arrange-menu-1.png": {
+        "bytes": 12421,
+        "sha256": "3e8c82c928d58146233d1620f0b620425339ba349364f98e81fd2fffcf996ea5"
+      },
+      "native-final/1024x768-fr/input-image-location.png": {
+        "bytes": 11998,
+        "sha256": "a999fbf1643d956cb340e4fd5dbd91848ff11d1fa8537f8a99e6ad48fafa7303"
+      },
+      "native-final/1024x768-fr/input-keymap-conflict.png": {
+        "bytes": 12085,
+        "sha256": "7fa2a31a44522f2e9d41822a95049db64d28356e17b21e59e9e24db8e1603bdc"
+      },
+      "native-final/1024x768-fr/input-keymap-remapped.png": {
+        "bytes": 11945,
+        "sha256": "47f85db8227de317e477608b6d4aa279d7bff690f0fc9f283003ef3594fdbb39"
+      },
+      "native-final/1024x768-fr/input-keymap.png": {
+        "bytes": 14384,
+        "sha256": "adbb3c358a2f7a1b8c97a67bde442a098cfd0ccae7215c8d93a94ca3b91fabfa"
+      },
+      "native-final/1024x768-fr/input.json": {
+        "bytes": 428202,
+        "sha256": "7ff29f34b7018bc6a4244bb3dc6a3e61776eec777c306384d5c8af9cc074cfd0"
+      },
+      "native-final/1024x768-fr/input.log": {
+        "bytes": 93633,
+        "sha256": "e819ca5ebc7503073150869d29937886f69abd20d8ea9dead99deef326709cf3"
+      },
+      "native-final/1024x768-fr/reopen.json": {
+        "bytes": 14055,
+        "sha256": "d1450f7fec487bc222bdcdb9efb6f497dfcdf0ab5c06d7f302db885ad5788acc"
+      },
+      "native-final/1024x768-fr/reopen.log": {
+        "bytes": 1224,
+        "sha256": "44f4547a5beac33037bd8dc194dc4d9ee325ca47b87806dcee158b37882530c1"
+      },
+      "native-final/1024x768-us/checks.json": {
+        "bytes": 3423,
+        "sha256": "04a8608bc244acdacb4a43e9a301bc42a406ee0eacfdad9b775988c71387b552"
+      },
+      "native-final/1024x768-us/image-0.png": {
+        "bytes": 317,
+        "sha256": "4426264c3fbfc8b0d3dfceb81853d85929713b7b267ac8d2be98b749a1087e01"
+      },
+      "native-final/1024x768-us/image-1.png": {
+        "bytes": 263,
+        "sha256": "d1afe7e9b162001be441340dc52e04f28eb4851de5e532b152981aebc174eb02"
+      },
+      "native-final/1024x768-us/image-2.png": {
+        "bytes": 290,
+        "sha256": "e3c27eb67182cc1858425ea15f66627d4f9e42397d3321b5fc509da28766cfbf"
+      },
+      "native-final/1024x768-us/image-3.png": {
+        "bytes": 333,
+        "sha256": "396e90564fda660881b38b8028801c148ae600fab88b62d9830b7b5f6b42af05"
+      },
+      "native-final/1024x768-us/image-4.png": {
+        "bytes": 293,
+        "sha256": "13f4c3da77f9a1754c746fbf6cdc6c8d11e1f9e5cf971c440d2eb46a4ab0f5af"
+      },
+      "native-final/1024x768-us/image-5.png": {
+        "bytes": 337,
+        "sha256": "7f3603ebf7b3c52a646a84862849d0d8c7f2d505f21fbd756e907075d2188264"
+      },
+      "native-final/1024x768-us/input-arrange-menu-0.png": {
+        "bytes": 4972,
+        "sha256": "1d917099e430d64665ad65f4fb1ae4901236d1ae30ec54eb62e342109e02a334"
+      },
+      "native-final/1024x768-us/input-arrange-menu-1.png": {
+        "bytes": 12421,
+        "sha256": "3e8c82c928d58146233d1620f0b620425339ba349364f98e81fd2fffcf996ea5"
+      },
+      "native-final/1024x768-us/input-image-location.png": {
+        "bytes": 11998,
+        "sha256": "a999fbf1643d956cb340e4fd5dbd91848ff11d1fa8537f8a99e6ad48fafa7303"
+      },
+      "native-final/1024x768-us/input-keymap-conflict.png": {
+        "bytes": 12085,
+        "sha256": "7fa2a31a44522f2e9d41822a95049db64d28356e17b21e59e9e24db8e1603bdc"
+      },
+      "native-final/1024x768-us/input-keymap-remapped.png": {
+        "bytes": 11945,
+        "sha256": "47f85db8227de317e477608b6d4aa279d7bff690f0fc9f283003ef3594fdbb39"
+      },
+      "native-final/1024x768-us/input-keymap.png": {
+        "bytes": 14384,
+        "sha256": "adbb3c358a2f7a1b8c97a67bde442a098cfd0ccae7215c8d93a94ca3b91fabfa"
+      },
+      "native-final/1024x768-us/input.json": {
+        "bytes": 429273,
+        "sha256": "467a1a08592e19cd922f4260f14c63b09f351810b13eedbaf17ca81af3db5259"
+      },
+      "native-final/1024x768-us/input.log": {
+        "bytes": 93613,
+        "sha256": "201c83eb9c0b6b8e63b96283ead027f31166167802f7deb2e653e20f8d9151d6"
+      },
+      "native-final/1024x768-us/reopen.json": {
+        "bytes": 13916,
+        "sha256": "7a5ce96e9e6f009472c5812253e5007f69239b9d4005017c70200a1a8cf2a98e"
+      },
+      "native-final/1024x768-us/reopen.log": {
+        "bytes": 1224,
+        "sha256": "f478e96da1ce8ca341b95e79bdde036a72c9f9062ff077b2313e139b585abb3b"
+      },
+      "native-final/800x600-fr/checks.json": {
+        "bytes": 3513,
+        "sha256": "905f1bec2dd08c2ffcc5d959349c2169804a1381bb30dfedde2d464a0e337fac"
+      },
+      "native-final/800x600-fr/image-0.png": {
+        "bytes": 317,
+        "sha256": "4426264c3fbfc8b0d3dfceb81853d85929713b7b267ac8d2be98b749a1087e01"
+      },
+      "native-final/800x600-fr/image-1.png": {
+        "bytes": 263,
+        "sha256": "d1afe7e9b162001be441340dc52e04f28eb4851de5e532b152981aebc174eb02"
+      },
+      "native-final/800x600-fr/image-2.png": {
+        "bytes": 290,
+        "sha256": "e3c27eb67182cc1858425ea15f66627d4f9e42397d3321b5fc509da28766cfbf"
+      },
+      "native-final/800x600-fr/image-3.png": {
+        "bytes": 333,
+        "sha256": "396e90564fda660881b38b8028801c148ae600fab88b62d9830b7b5f6b42af05"
+      },
+      "native-final/800x600-fr/image-4.png": {
+        "bytes": 293,
+        "sha256": "13f4c3da77f9a1754c746fbf6cdc6c8d11e1f9e5cf971c440d2eb46a4ab0f5af"
+      },
+      "native-final/800x600-fr/image-5.png": {
+        "bytes": 337,
+        "sha256": "7f3603ebf7b3c52a646a84862849d0d8c7f2d505f21fbd756e907075d2188264"
+      },
+      "native-final/800x600-fr/input-arrange-menu-0.png": {
+        "bytes": 5694,
+        "sha256": "270cd98d039ea9e6dc523fb980022e7abb4a0098a0ad5f82187b2f6ddf32b3aa"
+      },
+      "native-final/800x600-fr/input-arrange-menu-1.png": {
+        "bytes": 8201,
+        "sha256": "7d39682730f5c816eb793150ede227c6dd7d9e447bfbd0966ac4b821053a5c7a"
+      },
+      "native-final/800x600-fr/input-image-location.png": {
+        "bytes": 8719,
+        "sha256": "e38d4e6876849b6c65d9c130da44fb81773053df61c4447b894ad22a8543f1c5"
+      },
+      "native-final/800x600-fr/input-keymap-conflict.png": {
+        "bytes": 8762,
+        "sha256": "3e6b57be88d438b72bfcdd210f64813e15231f441c8b39e8dad3876edca165c3"
+      },
+      "native-final/800x600-fr/input-keymap-remapped.png": {
+        "bytes": 8636,
+        "sha256": "6bd64830f76afaac88a3ef9b2f35e97a5762c50a85f1cfe2aa4795d7280e115e"
+      },
+      "native-final/800x600-fr/input-keymap.png": {
+        "bytes": 10998,
+        "sha256": "8794e9d436dd1f05dd3febd6d84caefcbf8ecceb4fb155bef4c1122c165ea70c"
+      },
+      "native-final/800x600-fr/input.json": {
+        "bytes": 446603,
+        "sha256": "a431da72e6b489825ae1a55b0d402fecf6fa00d6a3a4bd3cda95808c76d1bdad"
+      },
+      "native-final/800x600-fr/input.log": {
+        "bytes": 93633,
+        "sha256": "d52be9bd96e94228e38e91dc3ad7af8f6242509a6847dce3248f583b7fce4b94"
+      },
+      "native-final/800x600-fr/reopen.json": {
+        "bytes": 12387,
+        "sha256": "9327af042fcefe65f3e0039ce6ffb9da230d308764e8f2c34e3e635d728ae9c8"
+      },
+      "native-final/800x600-fr/reopen.log": {
+        "bytes": 1224,
+        "sha256": "8694d7e759374fe1685f1c64eb6a6204bb5b41893d958912ca7eec14c1d54e85"
+      },
+      "native-final/800x600-us/checks.json": {
+        "bytes": 3423,
+        "sha256": "04a8608bc244acdacb4a43e9a301bc42a406ee0eacfdad9b775988c71387b552"
+      },
+      "native-final/800x600-us/image-0.png": {
+        "bytes": 317,
+        "sha256": "4426264c3fbfc8b0d3dfceb81853d85929713b7b267ac8d2be98b749a1087e01"
+      },
+      "native-final/800x600-us/image-1.png": {
+        "bytes": 263,
+        "sha256": "d1afe7e9b162001be441340dc52e04f28eb4851de5e532b152981aebc174eb02"
+      },
+      "native-final/800x600-us/image-2.png": {
+        "bytes": 290,
+        "sha256": "e3c27eb67182cc1858425ea15f66627d4f9e42397d3321b5fc509da28766cfbf"
+      },
+      "native-final/800x600-us/image-3.png": {
+        "bytes": 333,
+        "sha256": "396e90564fda660881b38b8028801c148ae600fab88b62d9830b7b5f6b42af05"
+      },
+      "native-final/800x600-us/image-4.png": {
+        "bytes": 293,
+        "sha256": "13f4c3da77f9a1754c746fbf6cdc6c8d11e1f9e5cf971c440d2eb46a4ab0f5af"
+      },
+      "native-final/800x600-us/image-5.png": {
+        "bytes": 337,
+        "sha256": "7f3603ebf7b3c52a646a84862849d0d8c7f2d505f21fbd756e907075d2188264"
+      },
+      "native-final/800x600-us/input-arrange-menu-0.png": {
+        "bytes": 5694,
+        "sha256": "270cd98d039ea9e6dc523fb980022e7abb4a0098a0ad5f82187b2f6ddf32b3aa"
+      },
+      "native-final/800x600-us/input-arrange-menu-1.png": {
+        "bytes": 8201,
+        "sha256": "7d39682730f5c816eb793150ede227c6dd7d9e447bfbd0966ac4b821053a5c7a"
+      },
+      "native-final/800x600-us/input-image-location.png": {
+        "bytes": 8719,
+        "sha256": "e38d4e6876849b6c65d9c130da44fb81773053df61c4447b894ad22a8543f1c5"
+      },
+      "native-final/800x600-us/input-keymap-conflict.png": {
+        "bytes": 8762,
+        "sha256": "3e6b57be88d438b72bfcdd210f64813e15231f441c8b39e8dad3876edca165c3"
+      },
+      "native-final/800x600-us/input-keymap-remapped.png": {
+        "bytes": 8636,
+        "sha256": "6bd64830f76afaac88a3ef9b2f35e97a5762c50a85f1cfe2aa4795d7280e115e"
+      },
+      "native-final/800x600-us/input-keymap.png": {
+        "bytes": 10998,
+        "sha256": "8794e9d436dd1f05dd3febd6d84caefcbf8ecceb4fb155bef4c1122c165ea70c"
+      },
+      "native-final/800x600-us/input.json": {
+        "bytes": 454649,
+        "sha256": "af0d6b02f9e0182f8a6280f2289fa00b46f18a915d3ac8ca0511bb6eeac85de0"
+      },
+      "native-final/800x600-us/input.log": {
+        "bytes": 93613,
+        "sha256": "e3a06055dbd522216f4d13dfc99ae340b492b3d445441b2183019b047296257f"
+      },
+      "native-final/800x600-us/reopen.json": {
+        "bytes": 12596,
+        "sha256": "4154fd388faad8587b21a1295fba5a06c16b7c49c839ebae16f0621a3e4995d5"
+      },
+      "native-final/800x600-us/reopen.log": {
+        "bytes": 1224,
+        "sha256": "339d4125355bb90d97495953e4bbe6592b6f7c62fcf11afa1c28bd8d5dd9d81b"
+      },
+      "native-final/summary.json": {
+        "bytes": 31072,
+        "sha256": "7d23521010efa5d638e3047074b92994be2e70f0255cb30a0fda598253366166"
+      },
+      "perf-0-current/50k-rss.json": {
+        "bytes": 26858,
+        "sha256": "593226975ad6f57fb0914d67263c3468fbfd1efe6836e0cd52a78e251d9c143f"
+      },
+      "perf-0-current/50k.json": {
+        "bytes": 490031,
+        "sha256": "2cac2c129fc8842628d38995a7cc789805553db3f65245c425110c89ef065bcb"
+      },
+      "perf-0-current/50k.log": {
+        "bytes": 259,
+        "sha256": "a8ecd61eb6131fb4814e70eb713183043e4cfd42268a80adb78dbb50dc585820"
+      },
+      "perf-0-current/5k-rss.json": {
+        "bytes": 26627,
+        "sha256": "22b280cbecbc395d937804851d156f7e0b0d7784bb7f24f1ec4673c1e667040d"
+      },
+      "perf-0-current/5k.json": {
+        "bytes": 496550,
+        "sha256": "c0d6a849848092e4e5dbbd12e1481223ba6e98c1765454e7e266d2d4313723fe"
+      },
+      "perf-0-current/5k.log": {
+        "bytes": 259,
+        "sha256": "6b29b8e228b3652b6323abbee190c14e84c917e2386498e634dadeb9326779b7"
+      },
+      "perf-0-current/profile-50k/preferences.json": {
+        "bytes": 16131,
+        "sha256": "2b4f0f6019dd58fa39e5bcf4b246a943cfaf17d51425e7515b802c44ef728df3"
+      },
+      "perf-0-current/profile-5k/preferences.json": {
+        "bytes": 16119,
+        "sha256": "5355ced193a511aee1a41681a37ce8ad8f25c1345b3b43a4f0cd8e8742af895c"
+      },
+      "perf-0-current/profile-sparse/preferences.json": {
+        "bytes": 16082,
+        "sha256": "4d4787fe4fda4316c754fd1907c4210e99985fab334e557971c380c35538d3e1"
+      },
+      "perf-0-current/sparse-rss.json": {
+        "bytes": 26916,
+        "sha256": "638d2079dad57dec922dd520cdf743a2419d9e564acfbd2e428fc6b74f2132a7"
+      },
+      "perf-0-current/sparse.json": {
+        "bytes": 494737,
+        "sha256": "1e87c144cb1a592beab1d6c8fbd22e3023b2c97a6dab6ace957dee50de1b314d"
+      },
+      "perf-0-current/sparse.log": {
+        "bytes": 259,
+        "sha256": "613b90c3ec221b51f60c4f1fe00ffea45f51ed38565165498d55d5a3539d20d3"
+      },
+      "perf-0-current/summary.json": {
+        "bytes": 7969,
+        "sha256": "2cb03bd2af482ee73e71ca7654a6f60f18ee4adc30e87e1aaa08c7493d963844"
+      },
+      "perf-0-prior/50k-rss.json": {
+        "bytes": 26850,
+        "sha256": "e16afb8525b28b315fd80ec51c12443801b7d5e0935cfd52cce2ca5c04e3fd1c"
+      },
+      "perf-0-prior/50k.json": {
+        "bytes": 488672,
+        "sha256": "3ea230cacaeb81cf2c0fbf65049caed82f87ffccab04d0c2a501a6c85a75c38e"
+      },
+      "perf-0-prior/50k.log": {
+        "bytes": 259,
+        "sha256": "62ba134b69f9e441eeedfe2ef06d718b0c8e86d82935c45196f6f1d482cf577a"
+      },
+      "perf-0-prior/5k-rss.json": {
+        "bytes": 27044,
+        "sha256": "8c998e3cca0cb3135255f8470cef71984d930b08a63544d9d8752e399c47dd9e"
+      },
+      "perf-0-prior/5k.json": {
+        "bytes": 494981,
+        "sha256": "c687e97c630831298c986218b61b3e5db6683290dc97b7b844969342da7bb824"
+      },
+      "perf-0-prior/5k.log": {
+        "bytes": 259,
+        "sha256": "5b05e66c971ac5edd278db15f25265d3cd42c467ec82533adf439cf7dbb80313"
+      },
+      "perf-0-prior/profile-50k/preferences.json": {
+        "bytes": 15649,
+        "sha256": "28252942fe2a630685524801f5560e7c3435cf5508aa77d0221ec7191410d708"
+      },
+      "perf-0-prior/profile-5k/preferences.json": {
+        "bytes": 15637,
+        "sha256": "184fc4c3c4e2fa19c3bcfc31585eaa30eeed7b34397eb0ba87e21b106ddd6693"
+      },
+      "perf-0-prior/profile-sparse/preferences.json": {
+        "bytes": 15600,
+        "sha256": "bdca1f78f571e6eb5ac2b0dc2f29c5be8f25fb4c0aa1e5e4b0cd0d1b41dc23ad"
+      },
+      "perf-0-prior/sparse-rss.json": {
+        "bytes": 26868,
+        "sha256": "8a69455e4fd82b864c4835c78e0fbc317d817d993c1553304eb198fcced9f557"
+      },
+      "perf-0-prior/sparse.json": {
+        "bytes": 493933,
+        "sha256": "a66680ac2f3038c064b4bd17d0bce1081a5fe82c2f3f5263e70c0223d03b0bed"
+      },
+      "perf-0-prior/sparse.log": {
+        "bytes": 259,
+        "sha256": "fa0801f1c011e9f0c9d1640ada9ab771f8e6a6ddde2d92b68d2715157df36fd2"
+      },
+      "perf-0-prior/summary.json": {
+        "bytes": 8017,
+        "sha256": "ddacdb169ff993cae652fa72eb2d61a27d97a0f560e6d6e65ee803e8a07fae51"
+      },
+      "perf-1-current/50k-rss.json": {
+        "bytes": 26859,
+        "sha256": "d9bece58ffc42354c6c8856069dedc519692765dc9fddfc8d7a176f227513183"
+      },
+      "perf-1-current/50k.json": {
+        "bytes": 485841,
+        "sha256": "3b51b15f637884ce2a167bb01350605928bb1ee43a0ab45e1af1c8688292bb17"
+      },
+      "perf-1-current/50k.log": {
+        "bytes": 259,
+        "sha256": "f7b2aa90b68ba5bd7bc77a92073169edaac72f97fd8cc0a323950e1a83eed511"
+      },
+      "perf-1-current/5k-rss.json": {
+        "bytes": 26916,
+        "sha256": "bd1599cfafdf2e65148a2f5f7c3fd4ff94ee0f687130ec3b6b8a81fc6547df01"
+      },
+      "perf-1-current/5k.json": {
+        "bytes": 497519,
+        "sha256": "ea8a7d4d8292586041dd83736ba12cb8414c68e915b48405040c8dfec8c66d10"
+      },
+      "perf-1-current/5k.log": {
+        "bytes": 259,
+        "sha256": "2195b88db7d9e6aa0ddc26331c2781624acaa498993614aed7bdea1c398fd954"
+      },
+      "perf-1-current/profile-50k/preferences.json": {
+        "bytes": 16131,
+        "sha256": "2b4f0f6019dd58fa39e5bcf4b246a943cfaf17d51425e7515b802c44ef728df3"
+      },
+      "perf-1-current/profile-5k/preferences.json": {
+        "bytes": 16119,
+        "sha256": "5355ced193a511aee1a41681a37ce8ad8f25c1345b3b43a4f0cd8e8742af895c"
+      },
+      "perf-1-current/profile-sparse/preferences.json": {
+        "bytes": 16082,
+        "sha256": "4d4787fe4fda4316c754fd1907c4210e99985fab334e557971c380c35538d3e1"
+      },
+      "perf-1-current/sparse-rss.json": {
+        "bytes": 26859,
+        "sha256": "4b23ee054dcacd90cb90cffe11e9be2a73420a74aafc8af2173c576b8a417a2f"
+      },
+      "perf-1-current/sparse.json": {
+        "bytes": 499682,
+        "sha256": "4b9899a8c55d4e7b26de0350ce8efc2c4d39f58d70809c6356d5ebfb658e805a"
+      },
+      "perf-1-current/sparse.log": {
+        "bytes": 259,
+        "sha256": "6adbef1ff9824aebc010cf94dd588cf189726b16b7e9870e6e139969905145ed"
+      },
+      "perf-1-current/summary.json": {
+        "bytes": 7993,
+        "sha256": "733b3cd51fa4b6b143b8f4e66d60f0d8bc9758b65e873f8d90a346e6f8f5e6a6"
+      },
+      "perf-1-prior/50k-rss.json": {
+        "bytes": 26867,
+        "sha256": "a47dc41330c32d0b9b39a0b239ba4820537aec0ba10faef00507dd517a05ce46"
+      },
+      "perf-1-prior/50k.json": {
+        "bytes": 490906,
+        "sha256": "68eeed6d99c6eb3ce49cb67238fd752466e3157753f94417b2ba91859256f23c"
+      },
+      "perf-1-prior/50k.log": {
+        "bytes": 259,
+        "sha256": "12ee3fe4f23cdd8213a728288ffb0f367f4f5a8df1e8460760d1b9a62d7ea5d3"
+      },
+      "perf-1-prior/5k-rss.json": {
+        "bytes": 27137,
+        "sha256": "c1054435a3cbc4eef51fe73d09c9030993fc2e1cf382e49b0fe43f7c703e2776"
+      },
+      "perf-1-prior/5k.json": {
+        "bytes": 494876,
+        "sha256": "ecef671fb121cceb01893914b787d74030617cff090a1b911e5d894d563fcfbc"
+      },
+      "perf-1-prior/5k.log": {
+        "bytes": 259,
+        "sha256": "02d7965b07cbc81f29a405fd4abcc2f30772febb617ed2363e292be3e9a233d1"
+      },
+      "perf-1-prior/profile-50k/preferences.json": {
+        "bytes": 15649,
+        "sha256": "28252942fe2a630685524801f5560e7c3435cf5508aa77d0221ec7191410d708"
+      },
+      "perf-1-prior/profile-5k/preferences.json": {
+        "bytes": 15637,
+        "sha256": "184fc4c3c4e2fa19c3bcfc31585eaa30eeed7b34397eb0ba87e21b106ddd6693"
+      },
+      "perf-1-prior/profile-sparse/preferences.json": {
+        "bytes": 15600,
+        "sha256": "bdca1f78f571e6eb5ac2b0dc2f29c5be8f25fb4c0aa1e5e4b0cd0d1b41dc23ad"
+      },
+      "perf-1-prior/sparse-rss.json": {
+        "bytes": 26877,
+        "sha256": "636f24d1c9fdee229ca5e8ddf77882c51334931c2a816fa1bbdbd4d6183a9280"
+      },
+      "perf-1-prior/sparse.json": {
+        "bytes": 491583,
+        "sha256": "032b06ef01e0867d12c170b3db4df17c618f936031e37590c3c68b89900f1a90"
+      },
+      "perf-1-prior/sparse.log": {
+        "bytes": 259,
+        "sha256": "a9ae63ea3c369577aac3d7795986d709b60d3ee0a6086b2c621e0cb13990bc41"
+      },
+      "perf-1-prior/summary.json": {
+        "bytes": 7938,
+        "sha256": "99cb57edc427d7077b6229ad6d6b14c3ad0374c8ed237aaaad71850a17216b16"
+      },
+      "product_gpu.log": {
+        "bytes": 763,
+        "sha256": "6f0549ff7a3ebb2a1a2058829dc71326a7ab60976e22c8638b58080bc64ec926"
+      },
+      "quality.log": {
+        "bytes": 67687,
+        "sha256": "0cdaf6b4f337ec556ddbcc7b3d57fda75f4e42a91238ba778a11a730093417ac"
+      },
+      "redraw-10k-accepted/arrange-result.png": {
+        "bytes": 1195,
+        "sha256": "f56031461074475ef0f5cb8901de2fcdbc73c86295ecc47a928b8c1a27e32d2a"
+      },
+      "redraw-10k-accepted/arrange.json": {
+        "bytes": 34188,
+        "sha256": "08c98497f978e3d2087c582e5bf95e5d1abb507f69814cf2a6bf858d28e50438"
+      },
+      "redraw-10k-accepted/arrange.log": {
+        "bytes": 259,
+        "sha256": "0ccbbcfaad958421ef4af18590afe902a687936b7273cd4243b663117274b7cf"
+      },
+      "redraw-10k-accepted/summary.json": {
+        "bytes": 1986,
+        "sha256": "4d49dc10dd9df541eab89d1a2333bd29ec2f99f1bc95edc5aca0f21229301f2f"
+      },
+      "redraw_probe.py": {
+        "bytes": 1965,
+        "sha256": "14c9c9b188b863f509a4ba6e1be6df2f1272a82215ae5ca6e372d72d6017fa4c"
+      },
+      "reproduction/fr/image.png": {
+        "bytes": 317,
+        "sha256": "4426264c3fbfc8b0d3dfceb81853d85929713b7b267ac8d2be98b749a1087e01"
+      },
+      "reproduction/fr/repro-before.png": {
+        "bytes": 836,
+        "sha256": "f60ae4cd79f4d33b7183840c70af5fb1649023f6a085393ae90ae80765b601ae"
+      },
+      "reproduction/fr/repro.json": {
+        "bytes": 34865,
+        "sha256": "e608825181d6483577068a8944a5270e5e3aa45c1ed400cd9016341e1986b924"
+      },
+      "reproduction/fr/repro.log": {
+        "bytes": 259,
+        "sha256": "35ab4a94c43b207e12cdb0888fbfc43e34cd7903ca435bd3d9c7d37f5d063b0b"
+      },
+      "reproduction/summary.json": {
+        "bytes": 2950,
+        "sha256": "a6cbf759518df16ab95cdad4c75ed874b321ae95c7aa01fbf0011a7ed379d105"
+      },
+      "reproduction/us/image.png": {
+        "bytes": 317,
+        "sha256": "4426264c3fbfc8b0d3dfceb81853d85929713b7b267ac8d2be98b749a1087e01"
+      },
+      "reproduction/us/repro-before.png": {
+        "bytes": 836,
+        "sha256": "f60ae4cd79f4d33b7183840c70af5fb1649023f6a085393ae90ae80765b601ae"
+      },
+      "reproduction/us/repro.json": {
+        "bytes": 42327,
+        "sha256": "d2038d244d93733cf556bd1693497a76357ad88c1a8ed7c17cb36c5f131ba819"
+      },
+      "reproduction/us/repro.log": {
+        "bytes": 259,
+        "sha256": "85f5c04d003489fdb6693632507d98af715cda1717c01cd875165324ec09b644"
+      },
+      "reproduction-traced/fr/image.png": {
+        "bytes": 317,
+        "sha256": "4426264c3fbfc8b0d3dfceb81853d85929713b7b267ac8d2be98b749a1087e01"
+      },
+      "reproduction-traced/fr/repro-before.png": {
+        "bytes": 836,
+        "sha256": "f60ae4cd79f4d33b7183840c70af5fb1649023f6a085393ae90ae80765b601ae"
+      },
+      "reproduction-traced/fr/repro.json": {
+        "bytes": 34769,
+        "sha256": "2f5824193b6d7d199015f2cd58d58684bdc4cc3286ea4339d9f2a932ead415a2"
+      },
+      "reproduction-traced/fr/repro.log": {
+        "bytes": 5187,
+        "sha256": "86d6c8eef5a11ef3303f7c8a543f7bb86a2668b77985b7b4a59d0b8d7b3ad4a7"
+      },
+      "reproduction-traced/summary.json": {
+        "bytes": 2956,
+        "sha256": "f0decca51b130ad9f0f6d573e9a14713e19ebc953b50e6879cd57e16c4ecdcb2"
+      },
+      "reproduction-traced/us/image.png": {
+        "bytes": 317,
+        "sha256": "4426264c3fbfc8b0d3dfceb81853d85929713b7b267ac8d2be98b749a1087e01"
+      },
+      "reproduction-traced/us/repro-before.png": {
+        "bytes": 836,
+        "sha256": "f60ae4cd79f4d33b7183840c70af5fb1649023f6a085393ae90ae80765b601ae"
+      },
+      "reproduction-traced/us/repro.json": {
+        "bytes": 42315,
+        "sha256": "b4fa7abe29271916b50fe2841db4409f26f3703c6339557a97df588af545d6f6"
+      },
+      "reproduction-traced/us/repro.log": {
+        "bytes": 7357,
+        "sha256": "541f7a50f61b94947f75191e985f3d740d51b43580dc0717bd6ebc2ec2c86850"
+      },
+      "source.zip": {
+        "bytes": 3388706,
+        "sha256": "2803c4177c91562bb663839b4ff525cf46c31860f6e492a91a26d03f2790acef"
+      }
+    }
+  }
+}

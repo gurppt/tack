@@ -1,16 +1,21 @@
-# Current feature inventory — Mission 1H
+# Current feature inventory — Phase 1I
 
-Code audit of the local prototype on 2026-10-05, based on `Action::ALL`,
+Code audit of the local prototype on 2026-10-06, based on `Action::ALL`,
 `product_bindings`, `ImageInput`, annotation/spatial input, local file workers,
 storage/recovery and tests. This inventories shipped and reachable code, not a roadmap.
-Native/human validation of the 1H UI is pending; “implemented” describes the code
-and deterministic coverage, not a completed usability acceptance test.
+Phase 1I has 170 automated native assertions on US and French XKB layouts at
+800×600 and 1024×768. Owner comfort/discovery review and real Windows desktop
+validation remain pending; “implemented” does not imply human acceptance.
 
-Every semantic catalog entry is listed below (89 actions). Shortcuts are the
-**default physical-key bindings** exported by `context_ui`; the actual menu
+Every semantic catalog entry is listed below (91 actions). Shortcuts are the
+**default logical, layout-aware keyboard bindings** exported by `context_ui`; the actual menu
 reads the active user keymap. An em dash means no default press shortcut.
 All actions can be inspected/remapped in Tack → Edit → Keymap. This exposure
-does not make experimental tool modes fully operational.
+does not make experimental tool modes fully operational. Version-2 imports may
+explicitly bind physical positions; labels show `pos:Code(KeyZ)` for those.
+Version-1 advertised key names migrate to logical keys; unsupported legacy
+positions fail safely without overwriting the profile. See the
+[keyboard policy](design/keyboard_shortcuts.md).
 
 `Board` means the committed result is saved in `.tack`; `profile` means local
 preferences; `session` means transient state only. “Undo after commit” excludes
@@ -34,7 +39,7 @@ selection, tool choice, camera and text drafts. Menu paths are one submenu deep.
 | Scale image (`ScaleImage`) | implemented | selection | Ctrl+Alt+left drag | canvas gesture / handles | No | Yes after drag | Board | Uniform scaling; frames keep their core limits. |
 | Adjust image opacity (`AdjustOpacity`) | implemented | images | Ctrl+Alt+Shift+left drag | canvas gesture / handles | No | Yes after drag | Board | Continuous alpha preview is a single transaction. |
 | Pan or resize handle about center (`CenterPointer`) | implemented | camera / selection | Alt+left drag | canvas gesture / handles | No | Yes for centred handle resize | Board result; camera session | Pans away from a handle; resize around centre on a handle. |
-| Cancel interaction (`CancelInteraction`) | implemented | interaction | Esc (any modifiers) | canvas / draft | No | No | session | Cancels preview/draft; while a popup is active Escape dismisses that popup. |
+| Cancel interaction (`CancelInteraction`) | implemented | interaction | Esc (any modifiers) | canvas / draft | No | No | session | Cancels preview/draft and resets Pointer; while a popup is active Escape dismisses that popup. |
 | Crop gizmo (`CropMode`) | implemented | one image | Ctrl+Shift+Alt+C | crop handles | image | Yes after crop drag | Board crop; mode session | Toggles crop gizmo; the crop drag, not the mode toggle, is undoable. |
 | Select all (`SelectAll`) | implemented | all object kinds | Ctrl+A | Tack → Edit | canvas | No | session | Selection only; no document mutation. |
 | Delete selection (`DeleteSelection`) | implemented | all object kinds | Del | Tack → Edit | all object menus | Yes | Board | Atomic batch; removes corresponding group membership. |
@@ -56,28 +61,30 @@ selection, tool choice, camera and text drafts. Menu paths are one submenu deep.
 | Toggle dotted grid (`ToggleGrid`) | implemented | view | G | Tack → View / Preferences default | No | No | session | Session toggle; persistent initial value is changed in Preferences. |
 | Toggle snapping (`ToggleSnapping`) | implemented | view | Shift+G | Tack → View | No | No | session | Bounded axis/grid snapping and guides; no document edit by itself. |
 | Temporarily disable snapping (`SnapDisable`) | implemented | snapping | hold X | canvas gesture / handles | No | No | session | Temporarily suppresses current snapping. |
-| Align left (`Layout(Left)`) | implemented | independent selection units | Ctrl+Left | keyboard / keymap | multiple → Align | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
-| Align horizontal center (`Layout(HorizontalCenter)`) | implemented | independent selection units | Ctrl+Shift+Left | keyboard / keymap | multiple → Align | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
-| Align right (`Layout(Right)`) | implemented | independent selection units | Ctrl+Right | keyboard / keymap | multiple → Align | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
-| Align top (`Layout(Top)`) | implemented | independent selection units | Ctrl+Up | keyboard / keymap | multiple → Align | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
-| Align vertical center (`Layout(VerticalCenter)`) | implemented | independent selection units | Ctrl+Shift+Up | keyboard / keymap | multiple → Align | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
-| Align bottom (`Layout(Bottom)`) | implemented | independent selection units | Ctrl+Down | keyboard / keymap | multiple → Align | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
-| Distribute horizontally (`Layout(DistributeHorizontal)`) | implemented | independent selection units | Ctrl+Shift+Alt+Up | keyboard / keymap | multiple → Align | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
-| Distribute vertically (`Layout(DistributeVertical)`) | implemented | independent selection units | Ctrl+Shift+Alt+Down | keyboard / keymap | multiple → Align | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
-| Pack horizontally (`Layout(PackHorizontal)`) | implemented | independent selection units | Ctrl+P | keyboard / keymap | multiple → Align | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
-| Pack vertically (`Layout(PackVertical)`) | implemented | independent selection units | Ctrl+Shift+P | keyboard / keymap | multiple → Align | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
+| Arrange in Grid (`Layout(Grid)`) | implemented | independent selection units | — | keymap catalog | multiple → Arrange (first row) | Yes, one batch | Board | Repositions AABB units into deterministic rows/columns, 16 world-unit gaps, preserves size/rotation/group internals. At least two units. |
+| Snap Selection to Grid (`Layout(SnapToGrid)`) | implemented | independent selection units | — | keymap catalog | multiple → Arrange (second row) | Yes, one batch | Board | Each unit AABB top-left snaps independently to the base 64 world-unit lattice; single unit allowed via remap. No overlap prevention or adaptive-dot spacing. |
+| Align left (`Layout(Left)`) | implemented | independent selection units | Ctrl+Left | keyboard / keymap | multiple → Arrange | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
+| Align horizontal center (`Layout(HorizontalCenter)`) | implemented | independent selection units | Ctrl+Shift+Left | keyboard / keymap | multiple → Arrange | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
+| Align right (`Layout(Right)`) | implemented | independent selection units | Ctrl+Right | keyboard / keymap | multiple → Arrange | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
+| Align top (`Layout(Top)`) | implemented | independent selection units | Ctrl+Up | keyboard / keymap | multiple → Arrange | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
+| Align vertical center (`Layout(VerticalCenter)`) | implemented | independent selection units | Ctrl+Shift+Up | keyboard / keymap | multiple → Arrange | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
+| Align bottom (`Layout(Bottom)`) | implemented | independent selection units | Ctrl+Down | keyboard / keymap | multiple → Arrange | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
+| Distribute horizontally (`Layout(DistributeHorizontal)`) | implemented | independent selection units | Ctrl+Shift+Alt+Up | keyboard / keymap | multiple → Arrange | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
+| Distribute vertically (`Layout(DistributeVertical)`) | implemented | independent selection units | Ctrl+Shift+Alt+Down | keyboard / keymap | multiple → Arrange | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
+| Pack horizontally (`Layout(PackHorizontal)`) | implemented | independent selection units | Ctrl+P | keyboard / keymap | multiple → Arrange | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
+| Pack vertically (`Layout(PackVertical)`) | implemented | independent selection units | Ctrl+Shift+P | keyboard / keymap | multiple → Arrange | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
 | Group selection (`GroupSelection`) | implemented | image groups | Ctrl+G | keyboard / keymap | image / multiple | Yes | Board | Groups are images only; mixed selections cannot group. Ungroup removes touched image groups. |
 | Ungroup selection (`UngroupSelection`) | implemented | image groups | Ctrl+Shift+G | keyboard / keymap | image / multiple | Yes | Board | Groups are images only; mixed selections cannot group. Ungroup removes touched image groups. |
-| Create frame (`CreateFrame`) | implemented | frame | Ctrl+Shift+F | Tack → Tools | canvas | Yes | Board | Selection bounds +32 or 60% viewport; frame is a labelled spatial region, not membership/container. |
+| Create frame (`CreateFrame`) | implemented | frame | Ctrl+Shift+F | Tack → Tools | canvas | Yes | Board | Returns Pointer after creation. Selection bounds +32 or 60% viewport; frame is a labelled spatial region, not membership/container. |
 | Rename frame (`RenameFrame`) | implemented | frame / note | F2 | inline text editor | frame → Rename / note → Edit | Yes after commit | Board | F2 and double click edit existing text; frame Enter / note Ctrl+Enter commit; Escape discards. |
 | Focus selected frame (`FocusFrame`) | implemented | frame / camera | Space | Tack → View | frame → Focus | No | session | Camera/selection navigation; unavailable if no applicable frame. |
 | Focus next frame (`NextFrame`) | implemented | frame / camera | PgDn | Tack → View | No | No | session | Camera/selection navigation; unavailable if no applicable frame. |
 | Focus previous frame (`PreviousFrame`) | implemented | frame / camera | PgUp | Tack → View | No | No | session | Camera/selection navigation; unavailable if no applicable frame. |
-| Text (`SelectTool(Text)`) | implemented | note | T | Tack → Tools | canvas → New note | No | session | Click/drag, release, then type and Ctrl+Enter. |
-| Rectangle (`SelectTool(Rectangle)`) | implemented | annotation | R | Tack → Tools | No | No | session | Click/drag with selected tool; release commits once. |
-| Line (`SelectTool(Line)`) | implemented | annotation | L | Tack → Tools | No | No | session | Click/drag with selected tool; release commits once. |
-| Arrow (`SelectTool(Arrow)`) | implemented | annotation | A | Tack → Tools | No | No | session | Click/drag with selected tool; release commits once. |
-| Scribble (`SelectTool(Scribble)`) | implemented | annotation | P | Tack → Tools | No | No | session | Click/drag with selected tool; release commits once. |
+| Text (`SelectTool(Text)`) | implemented | note | T | Tack → Tools | canvas → New note | No | session | Click/drag, release, then type and Ctrl+Enter. One-shot: Pointer base restored on draft entry and after commit/cancel; no local text Undo. |
+| Rectangle (`SelectTool(Rectangle)`) | implemented | annotation | R | Tack → Tools | No | No | session | Click/drag with selected tool; release commits once and returns Pointer. Escape/focus cancellation adds no history. |
+| Line (`SelectTool(Line)`) | implemented | annotation | L | Tack → Tools | No | No | session | Click/drag with selected tool; release commits once and returns Pointer. Escape/focus cancellation adds no history. |
+| Arrow (`SelectTool(Arrow)`) | implemented | annotation | A | Tack → Tools | No | No | session | Click/drag with selected tool; release commits once and returns Pointer. Escape/focus cancellation adds no history. |
+| Scribble (`SelectTool(Scribble)`) | implemented | annotation | P | Tack → Tools | No | No | session | Click/drag with selected tool; release commits once; remains active for repeated strokes. Escape/V restores Pointer. |
 | Text (`TemporaryTool(Text)`) | experimental | tool state | — | keymap hold binding only | No | No | session | Generic held-tool restoration tested; no default binding or menu; complete native tool combinations not validated. |
 | Rectangle (`TemporaryTool(Rectangle)`) | experimental | tool state | — | keymap hold binding only | No | No | session | Generic held-tool restoration tested; no default binding or menu; complete native tool combinations not validated. |
 | Line (`TemporaryTool(Line)`) | experimental | tool state | — | keymap hold binding only | No | No | session | Generic held-tool restoration tested; no default binding or menu; complete native tool combinations not validated. |
@@ -141,11 +148,11 @@ selection, tool choice, camera and text drafts. Menu paths are one submenu deep.
 
 Duplicate, add-selection-to-frame membership, ellipse, rich text, layer panel,
 collaboration and online services are not implemented authoring features. There
-is no context item pretending to perform them. The new eight catalog entries
-are compact ordering/opacity adapters to existing core commands, not a second
-command or history architecture.
+is no context item pretending to perform them. Ordering/opacity and the two new layout actions adapt existing core commands.
+There is one document history and no persistent arrangement engine. Tidy and
+equal-size normalization are deferred. See [arrangement policy](design/board_arrangement.md).
 
-Mixed selections expose only supported grouping/alignment/order/delete paths.
+Mixed selections expose only supported grouping/arrangement/order/delete paths.
 Image-specific sampling/opacity menus are intentionally limited to the single
 image menu; the corresponding keyboard/custom actions retain their existing
 multi-image semantics. Canvas New note selects the existing Text tool and labels
@@ -157,3 +164,8 @@ frames into filled layers or change frame membership.
 
 The repository's broader “128 MB / Pentium III” direction is a UI design target.
 This inventory makes no claim that current wgpu/native process RSS satisfies it.
+
+One-shot completion clears the existing temporary-tool stack. Modal entry
+additionally resets held-input state. Temporary Pan/RotateView remain experimental; there is no
+second restoration stack. Nested Pan/Text commit/cancel/focus paths have
+owner tests, but complete native experimental combinations are not claimed.
