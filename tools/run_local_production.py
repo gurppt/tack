@@ -27,6 +27,7 @@ def wait(predicate, description, seconds=8):
 class Session:
     def __init__(self, binary, root, name, arguments, env):
         self.root, self.name = root, name
+        self.pickers = []
         self.report = root / f'{name}.json'
         self.log = (root / f'{name}.log').open('w')
         requested_size = env.get('TACK_TEST_WINDOW_SIZE')
@@ -64,12 +65,28 @@ class Session:
     def shot(self, name):
         subprocess.run(['import', '-window', self.window, str(self.root / f'{self.name}-{name}.png')], check=True, timeout=4)
 
+    def picker_window(self):
+        result = subprocess.run(['xdotool', 'search', '--onlyvisible', '--name', '^Tack$'], capture_output=True, text=True, timeout=3)
+        for window in reversed(result.stdout.splitlines()):
+            try:
+                pid = command('xdotool', 'getwindowpid', window).strip()
+                parents = Path(f'/proc/{pid}/status').read_text().splitlines()
+                parent = next(int(line.split()[1]) for line in parents if line.startswith('PPid:'))
+                if parent == self.process.pid:
+                    return window
+            except (FileNotFoundError, ProcessLookupError, subprocess.CalledProcessError):
+                continue
+        return None
+
     def picker(self, key, path):
         self.key(key)
-        def dialog():
-            result = subprocess.run(['xdotool', 'search', '--onlyvisible', '--name', '^Tack$'], capture_output=True, text=True, timeout=3)
-            return result.stdout.splitlines()[-1] if result.stdout.strip() else None
-        window = wait(dialog, 'real zenity picker')
+        dialog = self.picker_window
+        window = wait(dialog, 'real owned zenity picker')
+        geometry = dict(line.split('=', 1) for line in command('xdotool', 'getwindowgeometry', '--shell', window).splitlines() if '=' in line)
+        capture = self.root / f'{self.name}-picker-{len(self.pickers)}.png'
+        subprocess.run(['import', '-window', window, str(capture)], check=True, timeout=4)
+        self.pickers.append({'key': key, 'geometry': geometry, 'capture': capture.name})
+        (self.root / f'{self.name}-pickers.json').write_text(json.dumps(self.pickers, indent=2) + '\n')
         command('xdotool', 'windowfocus', '--sync', window)
         self.key('ctrl+l', 'ctrl+a')
         selects_file = key in ('ctrl+i', 'ctrl+shift+r', 'ctrl+o')
@@ -208,7 +225,7 @@ def main():
         record('native reset action restores defaults', True)
         s.key('ctrl+comma', *(['Down'] * 8), 'Return')
         # Export action opened the picker; fill it directly.
-        dialog = wait(lambda: subprocess.run(['xdotool', 'search', '--onlyvisible', '--name', '^Tack$'], capture_output=True, text=True).stdout.strip(), 'export picker').splitlines()[-1]
+        dialog = wait(s.picker_window, 'owned export picker')
         command('xdotool', 'windowfocus', '--sync', dialog)
         s.key('ctrl+l', 'ctrl+a')
         s.text(str(root / 'keymap.json'))
