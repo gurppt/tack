@@ -34,7 +34,7 @@ in [the phase report](MISSION_1I_REPORT.md) and [JSON evidence](../benchmarks/ph
   resulting-redraw probe passes exact native Undo/Redo and has four visible
   annotation primitives; it is not 10k-visible GPU cost.
 - Budget/provenance: 276 locked packages unchanged; stripped +103,616 bytes
-  (+0.581956%). 191 source-file hashes and all 189 accepted raw-evidence hashes
+  (+0.581956%). 191 source-file hashes and all 190 accepted raw-evidence hashes
   match the current artifacts. Verified native/runtime SHA is `56ffdaf83a6f4678e20127c887cf2b64788b7ce03cb87bbc2fe34a5facc4ab90`.
 
 ## Findings corrected during review
@@ -60,3 +60,13 @@ No shipping code was edited by the verifier. Earlier exploratory failures and
 older native binaries are excluded from final acceptance evidence. The owner
 should run [the human checklist](HUMAN_TEST_1I.md); native Windows desktop,
 legacy hardware readiness and the final global performance pass remain separate.
+
+The later CI-only provisioning change was independently reviewed: maximum three
+NASM installation attempts/two 15-second pauses, success only on successful
+installer exit, failure retained after persistent errors. This bounds attempts,
+not individual network duration. The initial HTTP 504 log precedes Rust.
+`source-final.zip` has 191 exact source files, SHA `7db53c99f15282cc75a4a3793d4d8f79ba7af0370cfc43e6a2ce87531e709342`;
+only `quality.yml` changed from the original runtime snapshot. No additional
+GPU/performance runs are needed for this workflow-only change. [Quality 37431921123](https://github.com/gurppt/tack/actions/runs/37431921123)
+is **success** for `f6d2806ab7da8f0daa0b7b5d83de9022980e0eed` on Linux,
+Windows and dependencies.

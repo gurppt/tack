@@ -183,8 +183,10 @@ statistics, idle threads/I/O, binary budget and exact CI. Raw generated evidence
 is locally retained under ignored `benchmark-results/phase1i/`. Accepted subsets
 are explicitly listed; exploratory failures/earlier binaries are not acceptance
 measurements. Source snapshot SHA256:
-`2803c4177c91562bb663839b4ff525cf46c31860f6e492a91a26d03f2790acef`
-(191 tracked source/config/tools/assets/CI files; docs/receipts/user gfx excluded).
+`7db53c99f15282cc75a4a3793d4d8f79ba7af0370cfc43e6a2ce87531e709342`
+(191 tracked source/config/tools/assets/CI files at `f6d2806`; docs/receipts/user
+gfx excluded). The original runtime snapshot (`2803c417…`, `source.zip`) is also
+retained: only `quality.yml` differs, for the Windows provisioning retry below.
 
 [Independent review](VERIFICATION_1I.md) audits non-US falsification, owner/history,
 tools, complexity, 800×600, idle/performance and budget. Its two concrete findings
@@ -199,3 +201,18 @@ overlap GPU cost still real, final global max-performance pass still pending,
 128 MB/Pentium III still aspirational, retained container/history disk cost and
 platform presentation tails still known. No collaboration, cloud, media or final
 global optimization was started. Stop here for human review as required by 1I.
+
+## CI provisioning incident
+
+The documentation-only `58c9ab6` run failed before Rust: Chocolatey returned
+HTTP 504 fetching pinned NASM 2.16.03, and matrix fail-fast cancelled Linux.
+The implementation `fd687d3` and report `f910cc3` runs were already green.
+GitHub API rerun returned 403 with the current credential; ordinary authorized
+Git push remains available. `f6d2806` adds three installation attempts, at most
+two 15-second pauses, with explicit failure after persistent errors. The
+individual install/network duration is not newly bounded. Stub checks prove
+immediate success, second-attempt recovery and third-attempt failure.
+This changes CI provisioning only, preserving the pinned dependency and verified
+runtime binary. [Quality 37431921123](https://github.com/gurppt/tack/actions/runs/37431921123)
+is **success** for `f6d2806ab7da8f0daa0b7b5d83de9022980e0eed` on Linux,
+Windows and dependencies.

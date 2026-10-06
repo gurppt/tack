@@ -1,8 +1,8 @@
 {
   "status": "B \u2014 automated gates passed; owner comfort/discovery and real Windows desktop review pending",
   "provenance": {
-    "commit": "fd687d31789d9528d090eabe1aca0eee9ea1f066",
-    "source_snapshot_sha256": "2803c4177c91562bb663839b4ff525cf46c31860f6e492a91a26d03f2790acef",
+    "commit": "f6d2806ab7da8f0daa0b7b5d83de9022980e0eed",
+    "source_snapshot_sha256": "7db53c99f15282cc75a4a3793d4d8f79ba7af0370cfc43e6a2ce87531e709342",
     "source_files": 191,
     "scope": "tracked crates/tools/CI/assets/Cargo/config; excludes docs, receipts, ignored raw evidence and user untracked gfx"
   },
@@ -10,7 +10,7 @@
     ".cargo/config.toml": "04e169797aaf9f4a2f9d4a7c02b11478a3de0371714147ea0f61408b5e205983",
     ".github/pull_request_template.md": "e5ca1dd4e9bb1680952bc07d1ec5aa17c28d019df83e741429c02ef99a553b22",
     ".github/workflows/advisories.yml": "816d8e621d5ed25a3e399a68ce5d8dabc568023524c67aac5919d16f4d0df980",
-    ".github/workflows/quality.yml": "768c379ec6cc3bb1e0947cc967de090a8ff52d561e1d56491935298ee36a9af8",
+    ".github/workflows/quality.yml": "800e38c4ee4e1080ce15bc68d8cba69bc8e3187255190b9e3e61a6899e8c390a",
     ".gitignore": "176839d7bdfec34ba6d83db7ba0bd9840ac27cf85ca7c27bc3d3696e9e581c14",
     "Cargo.lock": "a61b60ab6a25970422e17e912db677a97c1bd0bf63deeabab74f8866ab207fee",
     "Cargo.toml": "7b4ae2860bc70ede203ef65a734f79e10e1088fc1b32df20140666cc53ee2822",
@@ -202,6 +202,7 @@
   "runtime": {
     "sha256": "56ffdaf83a6f4678e20127c887cf2b64788b7ce03cb87bbc2fe34a5facc4ab90",
     "baseline_sha256": "4d21e4ea6322f9898abf82682513d9339cd9b0f1abd15ac894d1d76a697af6ee",
+    "code_commit": "fd687d31789d9528d090eabe1aca0eee9ea1f066",
     "platform": "Linux-7.1.5-76070105-generic-x86_64-with-glibc2.39",
     "cpu": "AMD Ryzen 7 2700X",
     "gpu": "NVIDIA GeForce RTX 2060",
@@ -2802,6 +2803,48 @@
       }
     ]
   },
+  "ci_pipeline": {
+    "sha": "f6d2806ab7da8f0daa0b7b5d83de9022980e0eed",
+    "runs": [
+      {
+        "id": 37431921123,
+        "name": "Quality",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/gurppt/tack/actions/runs/37431921123",
+        "jobs": [
+          {
+            "name": "dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "current_step": null,
+            "steps": []
+          },
+          {
+            "name": "rust (windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "current_step": null,
+            "steps": []
+          },
+          {
+            "name": "rust (ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "current_step": null,
+            "steps": []
+          }
+        ]
+      }
+    ]
+  },
+  "ci_incident": {
+    "commit": "58c9ab6a315a82d3063fabc4ac86dd70c55fe2d2",
+    "run": 37431424130,
+    "reason": "Chocolatey HTTP504 fetching pinned NASM, before Rust; Linux cancelled by matrix fail-fast",
+    "fix": "maximum3attempts and2x15second pauses; individual network timeout unchanged; CI only, runtime unchanged",
+    "log_sha256": "f201377b87ecc2affccd8bf3d864a82dd18ae4f454f393cc484d608bd9793b5e"
+  },
   "redraw_10k": {
     "binary_sha256": "56ffdaf83a6f4678e20127c887cf2b64788b7ce03cb87bbc2fe34a5facc4ab90",
     "input_fixture_sha256": "65670bb1b50a24a316783fb2a714a1c533baac9720aa6207a232c3bc12028954",
@@ -3638,6 +3681,10 @@
       "reproduction-traced/us/repro.log": {
         "bytes": 7357,
         "sha256": "541f7a50f61b94947f75191e985f3d740d51b43580dc0717bd6ebc2ec2c86850"
+      },
+      "source-final.zip": {
+        "bytes": 3388776,
+        "sha256": "7db53c99f15282cc75a4a3793d4d8f79ba7af0370cfc43e6a2ce87531e709342"
       },
       "source.zip": {
         "bytes": 3388706,
