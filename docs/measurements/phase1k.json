@@ -1,0 +1,3275 @@
+{
+  "implementation_commit": "e85d0e4b84a72968a3d3b0500c2c7355beb2a5b1",
+  "baseline_commit": "9109cb52b2d9ca4bc041188153a003b0df395a5d",
+  "scope": "Ryzen2700X/RTX2060 Vulkan native isolatedX11, serialized GPU, generated boards, CPU submission clocks, warm OS cache; no low-end or monitor latency claim",
+  "binary_audit": {
+    "baseline": {
+      "bytes": 17954152,
+      "sha256": "0b6c12a16fa1c6062366a763b5d9057bcad412c9a619e40e0be2abf0bf150faa",
+      "text_sha256": "ebdf5af1e96e003839780cf0ea1be1dfc57431fa068d4e565acf4dd62a0424f7"
+    },
+    "counter-baseline": {
+      "bytes": 17955432,
+      "sha256": "36a51481f3bd1d0406490d9e72bf35fb50a7e2c0e8f27690b398fac72e8c638f",
+      "text_sha256": "7742961594fe4996f19e2fb8666176f68d3c31dff1b9dae141f30b21e942b550"
+    },
+    "current": {
+      "bytes": 18028136,
+      "sha256": "20c8f368f51898e2a676a9e9be3192b0e2f0144c8bc1a46d0919ba7bee9ff45f",
+      "text_sha256": "6ea0ba339c1dccec4821af05d3a23fb15c634d668aafffcf65b48fe21a7c0422"
+    },
+    "unstripped_current": {
+      "bytes": 116030544,
+      "sha256": "f974402403a0e3b0c46d860b677d99c326ec0ce2db07078ed3c42b1703b9fc18",
+      "text_sha256": "6ea0ba339c1dccec4821af05d3a23fb15c634d668aafffcf65b48fe21a7c0422"
+    },
+    "packages": {
+      "before": 276,
+      "after": 276,
+      "new_external_dependencies": 0,
+      "direct_dependency_note": "Existing transitive tracing reused directly for clipboard DEBUG logging"
+    },
+    "delta_bytes": 73984,
+    "delta_percent": 0.4120718149205822
+  },
+  "filter_cost": [
+    {
+      "actions": 92,
+      "iterations": 10000,
+      "ns_per_scan": 3442,
+      "query": ""
+    },
+    {
+      "actions": 92,
+      "iterations": 10000,
+      "ns_per_scan": 27465,
+      "query": "Undo"
+    },
+    {
+      "actions": 92,
+      "iterations": 10000,
+      "ns_per_scan": 25456,
+      "query": "pointer"
+    },
+    {
+      "actions": 92,
+      "iterations": 10000,
+      "ns_per_scan": 26906,
+      "query": "ctrl+z"
+    },
+    {
+      "actions": 92,
+      "iterations": 10000,
+      "ns_per_scan": 25992,
+      "query": "View"
+    },
+    {
+      "actions": 92,
+      "iterations": 10000,
+      "ns_per_scan": 25445,
+      "query": "NO-MATCH"
+    }
+  ],
+  "supply": [
+    {
+      "name": "5k",
+      "board_sha256": "69578491c82c633925611d8da7ba52989035c2a6bc0997b82ea6ae9929571430",
+      "report_sha256": "1bb9105fde308723cca2e8e59ff9ae0624614b9c883769865f2d72beb6e467b4",
+      "peak_rss_bytes": 379002880,
+      "distribution_ms": {
+        "query_ms": {
+          "p50": 0.029580000000000002,
+          "p99": 0.05174,
+          "max": 0.504501
+        },
+        "scene_ms": {
+          "p50": 0.0031899999999999984,
+          "p99": 0.009039999999999992,
+          "max": 0.011319999999999993
+        },
+        "supply_ms": {
+          "p50": 0.01984,
+          "p99": 0.372381,
+          "max": 3.866301
+        },
+        "encode_ms": {
+          "p50": 0.10933999999999999,
+          "p99": 0.197001,
+          "max": 1.028763
+        },
+        "submit_ms": {
+          "p50": 0.045340000000000005,
+          "p99": 0.08348,
+          "max": 0.10637999999999999
+        },
+        "poll_ms": {
+          "p50": 0.00049,
+          "p99": 0.00097,
+          "max": 0.00566
+        },
+        "acquire_ms": {
+          "p50": 0.01357,
+          "p99": 0.023010000000000003,
+          "max": 0.03326
+        },
+        "present_ms": {
+          "p50": 19.816788,
+          "p99": 26.299087,
+          "max": 31.584713
+        },
+        "callback_ms": {
+          "p50": 20.206999,
+          "p99": 26.534057999999998,
+          "max": 31.818183
+        }
+      },
+      "episodes": [
+        {
+          "epoch": 0,
+          "entered_ms": 451.423386,
+          "useful_delay_ms": 43.027116000000035,
+          "quality_delay_ms": 167.66873000000004
+        },
+        {
+          "epoch": 1,
+          "entered_ms": 3005.9143879999997,
+          "useful_delay_ms": 39.630106000000524,
+          "quality_delay_ms": 160.24957800000038
+        },
+        {
+          "epoch": 2,
+          "entered_ms": 5019.701223,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 129.1155659999995
+        }
+      ],
+      "first_useful_ms": 494.45050200000003,
+      "max_visible": 6,
+      "max_detailed": 6,
+      "peak_gpu_payload": 29327360,
+      "peak_cpu_payload": 29573120,
+      "peak_pending": 13,
+      "peak_queued": 11,
+      "codec_requests": 32,
+      "decoded_bytes": 29573120,
+      "cpu_evictions": 0,
+      "discarded": 0,
+      "reprioritized": 0,
+      "source_bytes": 253080,
+      "container_bytes": 982369,
+      "metadata_ms": 5.615526,
+      "gpu_ms_p99": 0.98288,
+      "window_size": "800x600",
+      "binary": "counter-baseline",
+      "decode_count": 32,
+      "uploads": 26,
+      "upload_bytes": 29327360
+    },
+    {
+      "name": "sparse",
+      "board_sha256": "c23f6c9d38c364d9fd30a9c2a91f9b6976401a4a08763fb57ef02f9a802a9c14",
+      "report_sha256": "3783a2f27780e53f58f196cdd83571479b9b969607ce9cdbdd7c101070c8c4d2",
+      "peak_rss_bytes": 357482496,
+      "distribution_ms": {
+        "query_ms": {
+          "p50": 0.02127,
+          "p99": 0.031900000000000005,
+          "max": 0.5276620000000001
+        },
+        "scene_ms": {
+          "p50": 0.0021200000000000004,
+          "p99": 0.004050000000000026,
+          "max": 0.004719999999999974
+        },
+        "supply_ms": {
+          "p50": 0.011219999999999999,
+          "p99": 0.237971,
+          "max": 3.8313409999999997
+        },
+        "encode_ms": {
+          "p50": 0.074501,
+          "p99": 0.154301,
+          "max": 1.0526929999999999
+        },
+        "submit_ms": {
+          "p50": 0.03456,
+          "p99": 0.05897,
+          "max": 0.08199000000000001
+        },
+        "poll_ms": {
+          "p50": 0.00047999999999999996,
+          "p99": 0.00083,
+          "max": 0.00636
+        },
+        "acquire_ms": {
+          "p50": 0.008961,
+          "p99": 0.01469,
+          "max": 0.02435
+        },
+        "present_ms": {
+          "p50": 19.929228000000002,
+          "p99": 26.828438,
+          "max": 28.144772
+        },
+        "callback_ms": {
+          "p50": 20.257289,
+          "p99": 27.003919,
+          "max": 31.070821
+        }
+      },
+      "episodes": [
+        {
+          "epoch": 0,
+          "entered_ms": 424.136867,
+          "useful_delay_ms": 21.99353400000001,
+          "quality_delay_ms": 102.88203000000004
+        },
+        {
+          "epoch": 1,
+          "entered_ms": 3004.2934039999996,
+          "useful_delay_ms": 19.687867000000097,
+          "quality_delay_ms": 100.06326200000058
+        },
+        {
+          "epoch": 2,
+          "entered_ms": 5014.085507,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 132.9897579999997
+        }
+      ],
+      "first_useful_ms": 446.130401,
+      "max_visible": 4,
+      "max_detailed": 4,
+      "peak_gpu_payload": 16056320,
+      "peak_cpu_payload": 16220160,
+      "peak_pending": 8,
+      "peak_queued": 6,
+      "codec_requests": 21,
+      "decoded_bytes": 16220160,
+      "cpu_evictions": 0,
+      "discarded": 0,
+      "reprioritized": 0,
+      "source_bytes": 162649,
+      "container_bytes": 889730,
+      "metadata_ms": 10.126649,
+      "gpu_ms_p99": 1.021088,
+      "window_size": "800x600",
+      "binary": "counter-baseline",
+      "decode_count": 21,
+      "uploads": 17,
+      "upload_bytes": 16056320
+    },
+    {
+      "name": "5k",
+      "board_sha256": "69578491c82c633925611d8da7ba52989035c2a6bc0997b82ea6ae9929571430",
+      "report_sha256": "1cc3247d995fe363398bbaed0b698017ac22906caacc0830d64d45bc50c0b4be",
+      "peak_rss_bytes": 380575744,
+      "distribution_ms": {
+        "query_ms": {
+          "p50": 0.0283,
+          "p99": 0.054060000000000004,
+          "max": 0.551862
+        },
+        "scene_ms": {
+          "p50": 0.002359999999999994,
+          "p99": 0.006250000000000033,
+          "max": 0.00879000000000002
+        },
+        "supply_ms": {
+          "p50": 0.0208,
+          "p99": 0.34774099999999997,
+          "max": 3.960972
+        },
+        "encode_ms": {
+          "p50": 0.08744,
+          "p99": 0.214751,
+          "max": 0.947043
+        },
+        "submit_ms": {
+          "p50": 0.039741,
+          "p99": 0.091681,
+          "max": 0.13155999999999998
+        },
+        "poll_ms": {
+          "p50": 0.00043,
+          "p99": 0.00091,
+          "max": 0.00637
+        },
+        "acquire_ms": {
+          "p50": 0.011420000000000001,
+          "p99": 0.032209999999999996,
+          "max": 0.04367
+        },
+        "present_ms": {
+          "p50": 19.489497,
+          "p99": 25.381994000000002,
+          "max": 31.408691
+        },
+        "callback_ms": {
+          "p50": 19.779017,
+          "p99": 25.584665,
+          "max": 32.796006000000006
+        }
+      },
+      "episodes": [
+        {
+          "epoch": 0,
+          "entered_ms": 418.714871,
+          "useful_delay_ms": 41.767402000000004,
+          "quality_delay_ms": 164.98885099999995
+        },
+        {
+          "epoch": 1,
+          "entered_ms": 3007.923124,
+          "useful_delay_ms": 39.517215000000306,
+          "quality_delay_ms": 161.89966300000015
+        },
+        {
+          "epoch": 2,
+          "entered_ms": 5011.317208,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 132.95877800000017
+        }
+      ],
+      "first_useful_ms": 460.482273,
+      "max_visible": 6,
+      "max_detailed": 6,
+      "peak_gpu_payload": 29327360,
+      "peak_cpu_payload": 29573120,
+      "peak_pending": 13,
+      "peak_queued": 11,
+      "codec_requests": 32,
+      "decoded_bytes": 29573120,
+      "cpu_evictions": 0,
+      "discarded": 0,
+      "reprioritized": 0,
+      "source_bytes": 253080,
+      "container_bytes": 982369,
+      "metadata_ms": 10.258750000000001,
+      "gpu_ms_p99": 0.924288,
+      "window_size": "800x600",
+      "binary": "current",
+      "decode_count": 32,
+      "uploads": 26,
+      "upload_bytes": 29327360
+    },
+    {
+      "name": "sparse",
+      "board_sha256": "c23f6c9d38c364d9fd30a9c2a91f9b6976401a4a08763fb57ef02f9a802a9c14",
+      "report_sha256": "58c27749e9e9bb414b776b63b07c93d1b07a087783be635dde96d5ed1d8c2f4a",
+      "peak_rss_bytes": 357609472,
+      "distribution_ms": {
+        "query_ms": {
+          "p50": 0.03012,
+          "p99": 0.04152,
+          "max": 0.517041
+        },
+        "scene_ms": {
+          "p50": 0.002939999999999998,
+          "p99": 0.005919999999999981,
+          "max": 0.008511000000000001
+        },
+        "supply_ms": {
+          "p50": 0.01782,
+          "p99": 0.2914,
+          "max": 3.851632
+        },
+        "encode_ms": {
+          "p50": 0.11098,
+          "p99": 0.18782,
+          "max": 0.974183
+        },
+        "submit_ms": {
+          "p50": 0.046619999999999995,
+          "p99": 0.074961,
+          "max": 0.08483
+        },
+        "poll_ms": {
+          "p50": 0.00054,
+          "p99": 0.00116,
+          "max": 0.00615
+        },
+        "acquire_ms": {
+          "p50": 0.014769999999999998,
+          "p99": 0.0239,
+          "max": 0.031139999999999998
+        },
+        "present_ms": {
+          "p50": 19.633437,
+          "p99": 24.326971,
+          "max": 26.863929000000002
+        },
+        "callback_ms": {
+          "p50": 19.909968,
+          "p99": 24.586851,
+          "max": 30.909091
+        }
+      },
+      "episodes": [
+        {
+          "epoch": 0,
+          "entered_ms": 419.200743,
+          "useful_delay_ms": 21.967464000000007,
+          "quality_delay_ms": 83.24617300000006
+        },
+        {
+          "epoch": 1,
+          "entered_ms": 3016.825141,
+          "useful_delay_ms": 19.71455700000024,
+          "quality_delay_ms": 101.77339700000039
+        },
+        {
+          "epoch": 2,
+          "entered_ms": 5006.249814000001,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 130.5443609999993
+        }
+      ],
+      "first_useful_ms": 441.168207,
+      "max_visible": 4,
+      "max_detailed": 4,
+      "peak_gpu_payload": 16056320,
+      "peak_cpu_payload": 16220160,
+      "peak_pending": 8,
+      "peak_queued": 6,
+      "codec_requests": 21,
+      "decoded_bytes": 16220160,
+      "cpu_evictions": 0,
+      "discarded": 0,
+      "reprioritized": 0,
+      "source_bytes": 162649,
+      "container_bytes": 889730,
+      "metadata_ms": 8.472923999999999,
+      "gpu_ms_p99": 0.90944,
+      "window_size": "800x600",
+      "binary": "current",
+      "decode_count": 21,
+      "uploads": 17,
+      "upload_bytes": 16056320
+    },
+    {
+      "name": "5k",
+      "board_sha256": "69578491c82c633925611d8da7ba52989035c2a6bc0997b82ea6ae9929571430",
+      "report_sha256": "35fae2c272c659a6ef1346010de2778210c8a5dca94b808304594cde79b40a7d",
+      "peak_rss_bytes": 385118208,
+      "distribution_ms": {
+        "query_ms": {
+          "p50": 0.04514,
+          "p99": 0.06851,
+          "max": 0.598742
+        },
+        "scene_ms": {
+          "p50": 0.004970000000000002,
+          "p99": 0.01039000000000001,
+          "max": 0.01156
+        },
+        "supply_ms": {
+          "p50": 0.03859,
+          "p99": 1.528275,
+          "max": 3.953482
+        },
+        "encode_ms": {
+          "p50": 0.160781,
+          "p99": 0.324681,
+          "max": 1.101883
+        },
+        "submit_ms": {
+          "p50": 0.05934,
+          "p99": 0.14167,
+          "max": 0.15705999999999998
+        },
+        "poll_ms": {
+          "p50": 0.00053,
+          "p99": 0.00104,
+          "max": 0.00557
+        },
+        "acquire_ms": {
+          "p50": 0.02086,
+          "p99": 0.028571000000000003,
+          "max": 0.03275
+        },
+        "present_ms": {
+          "p50": 31.10339,
+          "p99": 38.891633,
+          "max": 40.907818999999996
+        },
+        "callback_ms": {
+          "p50": 31.891693,
+          "p99": 39.297225,
+          "max": 43.049596
+        }
+      },
+      "episodes": [
+        {
+          "epoch": 0,
+          "entered_ms": 416.866306,
+          "useful_delay_ms": 126.51417900000001,
+          "quality_delay_ms": 479.1285879999999
+        },
+        {
+          "epoch": 1,
+          "entered_ms": 3014.8195050000004,
+          "useful_delay_ms": 124.02184199999965,
+          "quality_delay_ms": 410.8950979999995
+        },
+        {
+          "epoch": 2,
+          "entered_ms": 5023.647745,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 138.29417300000023
+        }
+      ],
+      "first_useful_ms": 543.380485,
+      "max_visible": 9,
+      "max_detailed": 9,
+      "peak_gpu_payload": 33505280,
+      "peak_cpu_payload": 34078720,
+      "peak_pending": 16,
+      "peak_queued": 14,
+      "codec_requests": 52,
+      "decoded_bytes": 34078720,
+      "cpu_evictions": 0,
+      "discarded": 0,
+      "reprioritized": 0,
+      "source_bytes": 361587,
+      "container_bytes": 1211969,
+      "metadata_ms": 5.3156159999999995,
+      "gpu_ms_p99": 1.20832,
+      "window_size": "1024x768",
+      "binary": "counter-baseline",
+      "decode_count": 52,
+      "uploads": 38,
+      "upload_bytes": 33505280
+    },
+    {
+      "name": "sparse",
+      "board_sha256": "c23f6c9d38c364d9fd30a9c2a91f9b6976401a4a08763fb57ef02f9a802a9c14",
+      "report_sha256": "909d50e0b6145b7a70f27aabc0b9964a30f863bb1387ba049b44b0f0ac40f2c6",
+      "peak_rss_bytes": 365424640,
+      "distribution_ms": {
+        "query_ms": {
+          "p50": 0.040299999999999996,
+          "p99": 0.06631,
+          "max": 0.5374209999999999
+        },
+        "scene_ms": {
+          "p50": 0.004679999999999993,
+          "p99": 0.00873999999999997,
+          "max": 0.011229999999999962
+        },
+        "supply_ms": {
+          "p50": 0.02792,
+          "p99": 0.44681099999999996,
+          "max": 6.1645270000000005
+        },
+        "encode_ms": {
+          "p50": 0.14067100000000002,
+          "p99": 0.27780099999999996,
+          "max": 1.053153
+        },
+        "submit_ms": {
+          "p50": 0.06047,
+          "p99": 0.14803,
+          "max": 0.22107100000000002
+        },
+        "poll_ms": {
+          "p50": 0.00047,
+          "p99": 0.00108,
+          "max": 0.005901
+        },
+        "acquire_ms": {
+          "p50": 0.01848,
+          "p99": 0.0312,
+          "max": 0.04686
+        },
+        "present_ms": {
+          "p50": 31.718672000000005,
+          "p99": 37.527089,
+          "max": 41.683871999999994
+        },
+        "callback_ms": {
+          "p50": 32.137764,
+          "p99": 37.802931,
+          "max": 46.319395
+        }
+      },
+      "episodes": [
+        {
+          "epoch": 0,
+          "entered_ms": 402.990486,
+          "useful_delay_ms": 96.611381,
+          "quality_delay_ms": 289.18300300000004
+        },
+        {
+          "epoch": 1,
+          "entered_ms": 3016.867131,
+          "useful_delay_ms": 94.2852039999998,
+          "quality_delay_ms": 287.64158899999984
+        },
+        {
+          "epoch": 2,
+          "entered_ms": 5017.195866,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 142.27858500000002
+        }
+      ],
+      "first_useful_ms": 499.60186699999997,
+      "max_visible": 6,
+      "max_detailed": 6,
+      "peak_gpu_payload": 18841600,
+      "peak_cpu_payload": 19005440,
+      "peak_pending": 14,
+      "peak_queued": 12,
+      "codec_requests": 29,
+      "decoded_bytes": 19005440,
+      "cpu_evictions": 0,
+      "discarded": 0,
+      "reprioritized": 0,
+      "source_bytes": 234953,
+      "container_bytes": 953187,
+      "metadata_ms": 9.131797,
+      "gpu_ms_p99": 1.256192,
+      "window_size": "1024x768",
+      "binary": "counter-baseline",
+      "decode_count": 29,
+      "uploads": 25,
+      "upload_bytes": 18841600
+    },
+    {
+      "name": "5k",
+      "board_sha256": "69578491c82c633925611d8da7ba52989035c2a6bc0997b82ea6ae9929571430",
+      "report_sha256": "7976636cbddbac39f882e8f934d0586466ba124fed07ead84079f689f7668c57",
+      "peak_rss_bytes": 385024000,
+      "distribution_ms": {
+        "query_ms": {
+          "p50": 0.031560000000000005,
+          "p99": 0.060781,
+          "max": 0.559831
+        },
+        "scene_ms": {
+          "p50": 0.003330000000000055,
+          "p99": 0.008619999999999961,
+          "max": 0.03830999999999998
+        },
+        "supply_ms": {
+          "p50": 0.0292,
+          "p99": 1.476484,
+          "max": 4.292173
+        },
+        "encode_ms": {
+          "p50": 0.13795,
+          "p99": 0.28169099999999997,
+          "max": 0.954103
+        },
+        "submit_ms": {
+          "p50": 0.055611,
+          "p99": 0.11572,
+          "max": 0.17383099999999999
+        },
+        "poll_ms": {
+          "p50": 0.00045,
+          "p99": 0.00074,
+          "max": 0.0058000000000000005
+        },
+        "acquire_ms": {
+          "p50": 0.01279,
+          "p99": 0.029580000000000002,
+          "max": 0.0441
+        },
+        "present_ms": {
+          "p50": 30.83942,
+          "p99": 37.042477999999996,
+          "max": 44.106208
+        },
+        "callback_ms": {
+          "p50": 31.505772,
+          "p99": 37.350709,
+          "max": 46.309574999999995
+        }
+      },
+      "episodes": [
+        {
+          "epoch": 0,
+          "entered_ms": 449.28948099999997,
+          "useful_delay_ms": 127.69842200000011,
+          "quality_delay_ms": 478.7936660000001
+        },
+        {
+          "epoch": 1,
+          "entered_ms": 3027.834733,
+          "useful_delay_ms": 124.82600400000001,
+          "quality_delay_ms": 411.8228709999994
+        },
+        {
+          "epoch": 2,
+          "entered_ms": 5011.936981,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 140.0040280000003
+        }
+      ],
+      "first_useful_ms": 576.9879030000001,
+      "max_visible": 9,
+      "max_detailed": 9,
+      "peak_gpu_payload": 33505280,
+      "peak_cpu_payload": 34078720,
+      "peak_pending": 16,
+      "peak_queued": 14,
+      "codec_requests": 52,
+      "decoded_bytes": 34078720,
+      "cpu_evictions": 0,
+      "discarded": 0,
+      "reprioritized": 0,
+      "source_bytes": 361587,
+      "container_bytes": 1211969,
+      "metadata_ms": 5.4563060000000005,
+      "gpu_ms_p99": 1.189312,
+      "window_size": "1024x768",
+      "binary": "current",
+      "decode_count": 52,
+      "uploads": 38,
+      "upload_bytes": 33505280
+    },
+    {
+      "name": "sparse",
+      "board_sha256": "c23f6c9d38c364d9fd30a9c2a91f9b6976401a4a08763fb57ef02f9a802a9c14",
+      "report_sha256": "5dc52ab7572ab7e851c27de92037ab693bf66b8f06f810f41f5ad51c6d3e7624",
+      "peak_rss_bytes": 361922560,
+      "distribution_ms": {
+        "query_ms": {
+          "p50": 0.039509999999999997,
+          "p99": 0.06469000000000001,
+          "max": 0.516772
+        },
+        "scene_ms": {
+          "p50": 0.003980000000000004,
+          "p99": 0.007989999999999997,
+          "max": 0.010619999999999997
+        },
+        "supply_ms": {
+          "p50": 0.0304,
+          "p99": 0.458121,
+          "max": 4.085191999999999
+        },
+        "encode_ms": {
+          "p50": 0.14568099999999998,
+          "p99": 0.26266100000000003,
+          "max": 0.9435030000000001
+        },
+        "submit_ms": {
+          "p50": 0.05784,
+          "p99": 0.14451,
+          "max": 0.14862999999999998
+        },
+        "poll_ms": {
+          "p50": 0.00047,
+          "p99": 0.00099,
+          "max": 0.02619
+        },
+        "acquire_ms": {
+          "p50": 0.018179999999999998,
+          "p99": 0.02793,
+          "max": 0.04254
+        },
+        "present_ms": {
+          "p50": 30.94604,
+          "p99": 34.782832,
+          "max": 39.141884000000005
+        },
+        "callback_ms": {
+          "p50": 31.740333000000003,
+          "p99": 35.091493,
+          "max": 43.429626
+        }
+      },
+      "episodes": [
+        {
+          "epoch": 0,
+          "entered_ms": 412.457703,
+          "useful_delay_ms": 95.41333800000007,
+          "quality_delay_ms": 351.590136
+        },
+        {
+          "epoch": 1,
+          "entered_ms": 3018.378765,
+          "useful_delay_ms": 93.49713199999997,
+          "quality_delay_ms": 285.1664820000001
+        },
+        {
+          "epoch": 2,
+          "entered_ms": 5007.392167,
+          "useful_delay_ms": 0.0,
+          "quality_delay_ms": 108.0766249999997
+        }
+      ],
+      "first_useful_ms": 507.87104100000005,
+      "max_visible": 6,
+      "max_detailed": 6,
+      "peak_gpu_payload": 18841600,
+      "peak_cpu_payload": 19005440,
+      "peak_pending": 14,
+      "peak_queued": 12,
+      "codec_requests": 29,
+      "decoded_bytes": 19005440,
+      "cpu_evictions": 0,
+      "discarded": 0,
+      "reprioritized": 0,
+      "source_bytes": 234953,
+      "container_bytes": 953187,
+      "metadata_ms": 10.31521,
+      "gpu_ms_p99": 0.479104,
+      "window_size": "1024x768",
+      "binary": "current",
+      "decode_count": 29,
+      "uploads": 25,
+      "upload_bytes": 18841600
+    }
+  ],
+  "zoom": [
+    {
+      "binary_sha256": "36a51481f3bd1d0406490d9e72bf35fb50a7e2c0e8f27690b398fac72e8c638f",
+      "board_sha256": "e2b72f6dd979800b33665aa0b9c1e22c7eb64bdb40a2895fd199d9a910b1199c",
+      "stages": [
+        {
+          "name": "open",
+          "elapsed_ms": 2563.4261060040444
+        },
+        {
+          "name": "strong-in",
+          "elapsed_ms": 3688.0257059819996
+        },
+        {
+          "name": "partial-out",
+          "elapsed_ms": 4958.631537971087
+        },
+        {
+          "name": "further-out",
+          "elapsed_ms": 6259.821925952565
+        },
+        {
+          "name": "back-in",
+          "elapsed_ms": 7590.524639002979
+        },
+        {
+          "name": "rapid-alternation",
+          "elapsed_ms": 8776.410467980895
+        },
+        {
+          "name": "progressive-out",
+          "elapsed_ms": 10910.813469963614
+        },
+        {
+          "name": "progressive-in",
+          "elapsed_ms": 13042.780299962033
+        },
+        {
+          "name": "pan-and-settle",
+          "elapsed_ms": 16245.177280972712
+        }
+      ],
+      "final_quality": 2,
+      "visible": 2,
+      "idle_ticks": 0,
+      "idle_io": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "idle_seconds": 2.011209380987566,
+      "trace_frames": 0,
+      "decode_count": 21,
+      "peak_cpu_bytes": 42467328,
+      "peak_gpu_bytes": 42467328,
+      "uploads": 18,
+      "upload_bytes": 42467328,
+      "codec_requests": 21,
+      "decoded_bytes": 61341696,
+      "max_pending": 6,
+      "total_frames": 94,
+      "scope": "ordinary untimed native input, bounded external settle/idle watchdog; 8 mixed/grouped/rotated generated sources",
+      "case": "counts-zoom-1024x768-counter-baseline",
+      "wheel_samples": 280,
+      "wheel_ms": {
+        "p50": 0.00041,
+        "p99": 0.005263599999999997,
+        "max": 0.01292
+      },
+      "discarded": 3
+    },
+    {
+      "binary_sha256": "20c8f368f51898e2a676a9e9be3192b0e2f0144c8bc1a46d0919ba7bee9ff45f",
+      "board_sha256": "e2b72f6dd979800b33665aa0b9c1e22c7eb64bdb40a2895fd199d9a910b1199c",
+      "stages": [
+        {
+          "name": "open",
+          "elapsed_ms": 2564.8970670299605
+        },
+        {
+          "name": "strong-in",
+          "elapsed_ms": 3690.865021024365
+        },
+        {
+          "name": "partial-out",
+          "elapsed_ms": 4961.679209023714
+        },
+        {
+          "name": "further-out",
+          "elapsed_ms": 6262.600603047758
+        },
+        {
+          "name": "back-in",
+          "elapsed_ms": 7543.906579026952
+        },
+        {
+          "name": "rapid-alternation",
+          "elapsed_ms": 8721.695481042843
+        },
+        {
+          "name": "progressive-out",
+          "elapsed_ms": 10854.250358010177
+        },
+        {
+          "name": "progressive-in",
+          "elapsed_ms": 12988.539714016952
+        },
+        {
+          "name": "pan-and-settle",
+          "elapsed_ms": 16191.53109000763
+        }
+      ],
+      "final_quality": 2,
+      "visible": 2,
+      "idle_ticks": 0,
+      "idle_io": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "idle_seconds": 2.0071018019807525,
+      "trace_frames": 0,
+      "decode_count": 21,
+      "peak_cpu_bytes": 42467328,
+      "peak_gpu_bytes": 42467328,
+      "uploads": 18,
+      "upload_bytes": 42467328,
+      "codec_requests": 21,
+      "decoded_bytes": 61341696,
+      "max_pending": 6,
+      "total_frames": 88,
+      "scope": "ordinary untimed native input, bounded external settle/idle watchdog; 8 mixed/grouped/rotated generated sources",
+      "case": "counts-zoom-1024x768-current",
+      "wheel_samples": 280,
+      "wheel_ms": {
+        "p50": 0.00039000000000000005,
+        "p99": 0.004677299999999998,
+        "max": 0.01196
+      },
+      "discarded": 3
+    },
+    {
+      "binary_sha256": "36a51481f3bd1d0406490d9e72bf35fb50a7e2c0e8f27690b398fac72e8c638f",
+      "board_sha256": "e2b72f6dd979800b33665aa0b9c1e22c7eb64bdb40a2895fd199d9a910b1199c",
+      "stages": [
+        {
+          "name": "open",
+          "elapsed_ms": 2556.168606970459
+        },
+        {
+          "name": "strong-in",
+          "elapsed_ms": 3689.999154943507
+        },
+        {
+          "name": "partial-out",
+          "elapsed_ms": 4910.946305957623
+        },
+        {
+          "name": "further-out",
+          "elapsed_ms": 6211.717660946306
+        },
+        {
+          "name": "back-in",
+          "elapsed_ms": 7543.612205947284
+        },
+        {
+          "name": "rapid-alternation",
+          "elapsed_ms": 8735.118531971239
+        },
+        {
+          "name": "progressive-out",
+          "elapsed_ms": 10898.799643968232
+        },
+        {
+          "name": "progressive-in",
+          "elapsed_ms": 13125.69653999526
+        },
+        {
+          "name": "pan-and-settle",
+          "elapsed_ms": 16328.792892978527
+        }
+      ],
+      "final_quality": 1,
+      "visible": 1,
+      "idle_ticks": 1,
+      "idle_io": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "idle_seconds": 2.0123689909814857,
+      "trace_frames": 0,
+      "decode_count": 17,
+      "peak_cpu_bytes": 23592960,
+      "peak_gpu_bytes": 23592960,
+      "uploads": 15,
+      "upload_bytes": 23592960,
+      "codec_requests": 17,
+      "decoded_bytes": 25690112,
+      "max_pending": 5,
+      "total_frames": 90,
+      "scope": "ordinary untimed native input, bounded external settle/idle watchdog; 8 mixed/grouped/rotated generated sources",
+      "case": "counts-zoom-800x600-counter-baseline",
+      "wheel_samples": 280,
+      "wheel_ms": {
+        "p50": 0.0005700000000000001,
+        "p99": 0.016118889999999986,
+        "max": 0.04918
+      },
+      "discarded": 2
+    },
+    {
+      "binary_sha256": "20c8f368f51898e2a676a9e9be3192b0e2f0144c8bc1a46d0919ba7bee9ff45f",
+      "board_sha256": "e2b72f6dd979800b33665aa0b9c1e22c7eb64bdb40a2895fd199d9a910b1199c",
+      "stages": [
+        {
+          "name": "open",
+          "elapsed_ms": 2560.5081699904986
+        },
+        {
+          "name": "strong-in",
+          "elapsed_ms": 3686.9659060030244
+        },
+        {
+          "name": "partial-out",
+          "elapsed_ms": 4907.575565972365
+        },
+        {
+          "name": "further-out",
+          "elapsed_ms": 6206.84528700076
+        },
+        {
+          "name": "back-in",
+          "elapsed_ms": 7488.065393990837
+        },
+        {
+          "name": "rapid-alternation",
+          "elapsed_ms": 8664.095034997445
+        },
+        {
+          "name": "progressive-out",
+          "elapsed_ms": 10796.348454954568
+        },
+        {
+          "name": "progressive-in",
+          "elapsed_ms": 12932.242556009442
+        },
+        {
+          "name": "pan-and-settle",
+          "elapsed_ms": 16132.294390990864
+        }
+      ],
+      "final_quality": 1,
+      "visible": 1,
+      "idle_ticks": 2,
+      "idle_io": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "idle_seconds": 2.011015729047358,
+      "trace_frames": 0,
+      "decode_count": 18,
+      "peak_cpu_bytes": 23592960,
+      "peak_gpu_bytes": 23592960,
+      "uploads": 15,
+      "upload_bytes": 23592960,
+      "codec_requests": 18,
+      "decoded_bytes": 42467328,
+      "max_pending": 5,
+      "total_frames": 102,
+      "scope": "ordinary untimed native input, bounded external settle/idle watchdog; 8 mixed/grouped/rotated generated sources",
+      "case": "counts-zoom-800x600-current",
+      "wheel_samples": 280,
+      "wheel_ms": {
+        "p50": 0.00054,
+        "p99": 0.010506299999999979,
+        "max": 0.027719999999999998
+      },
+      "discarded": 3
+    },
+    {
+      "binary_sha256": "20c8f368f51898e2a676a9e9be3192b0e2f0144c8bc1a46d0919ba7bee9ff45f",
+      "board_sha256": "e2b72f6dd979800b33665aa0b9c1e22c7eb64bdb40a2895fd199d9a910b1199c",
+      "stages": [
+        {
+          "name": "open",
+          "elapsed_ms": 2559.311495977454
+        },
+        {
+          "name": "strong-in",
+          "elapsed_ms": 3685.2076330105774
+        },
+        {
+          "name": "partial-out",
+          "elapsed_ms": 4905.526490998454
+        },
+        {
+          "name": "further-out",
+          "elapsed_ms": 6206.423652998637
+        },
+        {
+          "name": "back-in",
+          "elapsed_ms": 7488.01791400183
+        },
+        {
+          "name": "rapid-alternation",
+          "elapsed_ms": 8658.712935983203
+        },
+        {
+          "name": "progressive-out",
+          "elapsed_ms": 10793.275213974994
+        },
+        {
+          "name": "progressive-in",
+          "elapsed_ms": 12926.464601012412
+        },
+        {
+          "name": "pan-and-settle",
+          "elapsed_ms": 16129.287433985155
+        }
+      ],
+      "final_quality": 1,
+      "visible": 1,
+      "idle_ticks": 2,
+      "idle_io": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "idle_seconds": 2.008189185988158,
+      "trace_frames": 96,
+      "decode_count": 17,
+      "peak_cpu_bytes": 23592960,
+      "peak_gpu_bytes": 23592960,
+      "uploads": 15,
+      "upload_bytes": 23592960,
+      "codec_requests": 17,
+      "decoded_bytes": 25690112,
+      "max_pending": 5,
+      "total_frames": 96,
+      "scope": "ordinary untimed native input, bounded external settle/idle watchdog; 8 mixed/grouped/rotated generated sources",
+      "case": "counts-zoom-diagnostics",
+      "wheel_samples": 280,
+      "wheel_ms": {
+        "p50": 0.00045,
+        "p99": 0.0042161999999999955,
+        "max": 0.00958
+      },
+      "discarded": 2
+    },
+    {
+      "binary_sha256": "36a51481f3bd1d0406490d9e72bf35fb50a7e2c0e8f27690b398fac72e8c638f",
+      "board_sha256": "e2b72f6dd979800b33665aa0b9c1e22c7eb64bdb40a2895fd199d9a910b1199c",
+      "stages": [
+        {
+          "name": "open",
+          "elapsed_ms": 2507.694243977312
+        },
+        {
+          "name": "strong-in",
+          "elapsed_ms": 3633.593540987931
+        },
+        {
+          "name": "partial-out",
+          "elapsed_ms": 4854.283708962612
+        },
+        {
+          "name": "further-out",
+          "elapsed_ms": 6155.243716959376
+        },
+        {
+          "name": "back-in",
+          "elapsed_ms": 7436.703182989731
+        },
+        {
+          "name": "rapid-alternation",
+          "elapsed_ms": 8629.6185629908
+        },
+        {
+          "name": "progressive-out",
+          "elapsed_ms": 10764.820301963482
+        },
+        {
+          "name": "progressive-in",
+          "elapsed_ms": 12900.485003949143
+        },
+        {
+          "name": "pan-and-settle",
+          "elapsed_ms": 16102.91870299261
+        }
+      ],
+      "final_quality": 1,
+      "visible": 1,
+      "idle_ticks": 2,
+      "idle_io": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "idle_seconds": 2.0031468929955736,
+      "trace_frames": 0,
+      "decode_count": 18,
+      "peak_cpu_bytes": 23592960,
+      "peak_gpu_bytes": 23592960,
+      "uploads": 15,
+      "upload_bytes": 23592960,
+      "codec_requests": 18,
+      "decoded_bytes": 42467328,
+      "max_pending": 5,
+      "total_frames": 104,
+      "scope": "ordinary untimed native input, bounded external settle/idle watchdog; 8 mixed/grouped/rotated generated sources",
+      "case": "counts-zoom-repeat-counter-baseline",
+      "wheel_samples": 280,
+      "wheel_ms": {
+        "p50": 0.00047999999999999996,
+        "p99": 0.004418399999999999,
+        "max": 0.008950000000000001
+      },
+      "discarded": 3
+    },
+    {
+      "binary_sha256": "20c8f368f51898e2a676a9e9be3192b0e2f0144c8bc1a46d0919ba7bee9ff45f",
+      "board_sha256": "e2b72f6dd979800b33665aa0b9c1e22c7eb64bdb40a2895fd199d9a910b1199c",
+      "stages": [
+        {
+          "name": "open",
+          "elapsed_ms": 2506.8635800271295
+        },
+        {
+          "name": "strong-in",
+          "elapsed_ms": 3632.588398992084
+        },
+        {
+          "name": "partial-out",
+          "elapsed_ms": 4853.147406014614
+        },
+        {
+          "name": "further-out",
+          "elapsed_ms": 6154.007682984229
+        },
+        {
+          "name": "back-in",
+          "elapsed_ms": 7434.891192999203
+        },
+        {
+          "name": "rapid-alternation",
+          "elapsed_ms": 8623.022478015628
+        },
+        {
+          "name": "progressive-out",
+          "elapsed_ms": 10757.650266983546
+        },
+        {
+          "name": "progressive-in",
+          "elapsed_ms": 12890.784906980116
+        },
+        {
+          "name": "pan-and-settle",
+          "elapsed_ms": 16092.515428026672
+        }
+      ],
+      "final_quality": 1,
+      "visible": 1,
+      "idle_ticks": 0,
+      "idle_io": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "idle_seconds": 2.0037136370083317,
+      "trace_frames": 0,
+      "decode_count": 17,
+      "peak_cpu_bytes": 23592960,
+      "peak_gpu_bytes": 23592960,
+      "uploads": 15,
+      "upload_bytes": 23592960,
+      "codec_requests": 17,
+      "decoded_bytes": 25690112,
+      "max_pending": 5,
+      "total_frames": 101,
+      "scope": "ordinary untimed native input, bounded external settle/idle watchdog; 8 mixed/grouped/rotated generated sources",
+      "case": "counts-zoom-repeat-current",
+      "wheel_samples": 280,
+      "wheel_ms": {
+        "p50": 0.00045,
+        "p99": 0.003998899999999998,
+        "max": 0.01056
+      },
+      "discarded": 2
+    }
+  ],
+  "idle": {
+    "baseline_sha256": "0b6c12a16fa1c6062366a763b5d9057bcad412c9a619e40e0be2abf0bf150faa",
+    "current_sha256": "20c8f368f51898e2a676a9e9be3192b0e2f0144c8bc1a46d0919ba7bee9ff45f",
+    "heavy_sha256": "69578491c82c633925611d8da7ba52989035c2a6bc0997b82ea6ae9929571430",
+    "interval_seconds": 2,
+    "rows": [
+      {
+        "binary": "baseline",
+        "case": "empty",
+        "session": "empty",
+        "begin_ms": 3502.724295016378,
+        "end_ms": 5509.23463300569,
+        "rss_bytes": 242982912,
+        "rss_delta": 0,
+        "threads": 8,
+        "thread_delta": 0,
+        "ticks": 0,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "binary": "baseline",
+        "case": "menu-open",
+        "session": "empty",
+        "begin_ms": 8826.364309992641,
+        "end_ms": 10832.44371402543,
+        "rss_bytes": 243019776,
+        "rss_delta": 0,
+        "threads": 8,
+        "thread_delta": 0,
+        "ticks": 1,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "binary": "baseline",
+        "case": "menu-closed",
+        "session": "empty",
+        "begin_ms": 14149.461994005833,
+        "end_ms": 16155.460516980384,
+        "rss_bytes": 243036160,
+        "rss_delta": 0,
+        "threads": 8,
+        "thread_delta": 0,
+        "ticks": 0,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "binary": "baseline",
+        "case": "heavy",
+        "session": "heavy",
+        "begin_ms": 3496.7148870346136,
+        "end_ms": 5503.048521990422,
+        "rss_bytes": 302063616,
+        "rss_delta": 0,
+        "threads": 8,
+        "thread_delta": 0,
+        "ticks": 1,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "binary": "baseline",
+        "case": "heavy-menu-open",
+        "session": "heavy",
+        "begin_ms": 8819.685847032815,
+        "end_ms": 10825.673301005736,
+        "rss_bytes": 302096384,
+        "rss_delta": 0,
+        "threads": 8,
+        "thread_delta": 0,
+        "ticks": 0,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "binary": "baseline",
+        "case": "two-boards",
+        "session": "heavy",
+        "begin_ms": 14644.98335000826,
+        "end_ms": 16657.278461032547,
+        "rss_bytes": 302108672,
+        "rss_delta": 0,
+        "threads": 8,
+        "thread_delta": 0,
+        "ticks": 2,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "binary": "baseline",
+        "case": "two-boards",
+        "session": "second",
+        "begin_ms": 3502.6616160175763,
+        "end_ms": 5514.956727041863,
+        "rss_bytes": 274145280,
+        "rss_delta": 0,
+        "threads": 8,
+        "thread_delta": 0,
+        "ticks": 0,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "binary": "current",
+        "case": "empty",
+        "session": "empty",
+        "begin_ms": 3497.9892070405185,
+        "end_ms": 5504.419064032845,
+        "rss_bytes": 242565120,
+        "rss_delta": 0,
+        "threads": 8,
+        "thread_delta": 0,
+        "ticks": 1,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "binary": "current",
+        "case": "menu-open",
+        "session": "empty",
+        "begin_ms": 8821.334186010063,
+        "end_ms": 10827.97532301629,
+        "rss_bytes": 242606080,
+        "rss_delta": 0,
+        "threads": 8,
+        "thread_delta": 0,
+        "ticks": 0,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "binary": "current",
+        "case": "menu-closed",
+        "session": "empty",
+        "begin_ms": 14145.198103040457,
+        "end_ms": 16151.603855018038,
+        "rss_bytes": 242622464,
+        "rss_delta": 0,
+        "threads": 8,
+        "thread_delta": 0,
+        "ticks": 2,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "binary": "current",
+        "case": "heavy",
+        "session": "heavy",
+        "begin_ms": 3445.520791981835,
+        "end_ms": 5451.947825029492,
+        "rss_bytes": 301432832,
+        "rss_delta": 0,
+        "threads": 8,
+        "thread_delta": 0,
+        "ticks": 1,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "binary": "current",
+        "case": "heavy-menu-open",
+        "session": "heavy",
+        "begin_ms": 8768.984088033903,
+        "end_ms": 10775.638992025051,
+        "rss_bytes": 301469696,
+        "rss_delta": 0,
+        "threads": 8,
+        "thread_delta": 0,
+        "ticks": 0,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "binary": "current",
+        "case": "two-boards",
+        "session": "heavy",
+        "begin_ms": 14595.243857998867,
+        "end_ms": 16607.351794023998,
+        "rss_bytes": 301486080,
+        "rss_delta": 0,
+        "threads": 8,
+        "thread_delta": 0,
+        "ticks": 1,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "binary": "current",
+        "case": "two-boards",
+        "session": "second",
+        "begin_ms": 3502.1932689705864,
+        "end_ms": 5514.301204995718,
+        "rss_bytes": 268312576,
+        "rss_delta": 0,
+        "threads": 8,
+        "thread_delta": 0,
+        "ticks": 0,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      }
+    ]
+  },
+  "settings": {
+    "binary_sha256": "20c8f368f51898e2a676a9e9be3192b0e2f0144c8bc1a46d0919ba7bee9ff45f",
+    "idle": [
+      {
+        "case": "VeryDark-1x",
+        "state": "preferences",
+        "begin_ms": 4667.496985988691,
+        "end_ms": 5474.020184017718,
+        "rss_delta": 0,
+        "rss_bytes": 243408896,
+        "thread_count": 8,
+        "thread_delta": 0,
+        "ticks": 2,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "case": "VeryDark-1x",
+        "state": "keymap",
+        "begin_ms": 12370.50217599608,
+        "end_ms": 13176.62395699881,
+        "rss_delta": 0,
+        "rss_bytes": 243732480,
+        "thread_count": 8,
+        "thread_delta": 0,
+        "ticks": 0,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "case": "VeryDark-1x",
+        "state": "closed",
+        "begin_ms": 15493.647004012018,
+        "end_ms": 16299.823086010292,
+        "rss_delta": 0,
+        "rss_bytes": 243740672,
+        "thread_count": 8,
+        "thread_delta": 0,
+        "ticks": 0,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "case": "VeryDark-2x",
+        "state": "preferences",
+        "begin_ms": 4620.259872986935,
+        "end_ms": 5426.803395035677,
+        "rss_delta": 0,
+        "rss_bytes": 243372032,
+        "thread_count": 8,
+        "thread_delta": 0,
+        "ticks": 0,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "case": "VeryDark-2x",
+        "state": "keymap",
+        "begin_ms": 12318.752366991248,
+        "end_ms": 13124.927228025626,
+        "rss_delta": 0,
+        "rss_bytes": 243695616,
+        "thread_count": 8,
+        "thread_delta": 0,
+        "ticks": 0,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "case": "VeryDark-2x",
+        "state": "closed",
+        "begin_ms": 15441.903161990922,
+        "end_ms": 16248.21760400664,
+        "rss_delta": 0,
+        "rss_bytes": 243695616,
+        "thread_count": 8,
+        "thread_delta": 0,
+        "ticks": 0,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "case": "NeutralGray-1x",
+        "state": "preferences",
+        "begin_ms": 4620.317517023068,
+        "end_ms": 5426.772227976471,
+        "rss_delta": 0,
+        "rss_bytes": 243286016,
+        "thread_count": 8,
+        "thread_delta": 0,
+        "ticks": 1,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "case": "NeutralGray-1x",
+        "state": "keymap",
+        "begin_ms": 12315.315235988237,
+        "end_ms": 13121.380769007374,
+        "rss_delta": 0,
+        "rss_bytes": 243601408,
+        "thread_count": 8,
+        "thread_delta": 0,
+        "ticks": 0,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "case": "NeutralGray-1x",
+        "state": "closed",
+        "begin_ms": 15438.54826001916,
+        "end_ms": 16244.627311010845,
+        "rss_delta": 0,
+        "rss_bytes": 243609600,
+        "thread_count": 8,
+        "thread_delta": 0,
+        "ticks": 0,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "case": "NeutralGray-2x",
+        "state": "preferences",
+        "begin_ms": 4631.296383973677,
+        "end_ms": 5437.778819992673,
+        "rss_delta": 0,
+        "rss_bytes": 243372032,
+        "thread_count": 8,
+        "thread_delta": 0,
+        "ticks": 1,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "case": "NeutralGray-2x",
+        "state": "keymap",
+        "begin_ms": 12330.134139978327,
+        "end_ms": 13136.254383949563,
+        "rss_delta": 0,
+        "rss_bytes": 243687424,
+        "thread_count": 8,
+        "thread_delta": 0,
+        "ticks": 0,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "case": "NeutralGray-2x",
+        "state": "closed",
+        "begin_ms": 15453.544289979618,
+        "end_ms": 16260.04500297131,
+        "rss_delta": 0,
+        "rss_bytes": 243687424,
+        "thread_count": 8,
+        "thread_delta": 0,
+        "ticks": 1,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "case": "Light-1x",
+        "state": "preferences",
+        "begin_ms": 4667.048590024933,
+        "end_ms": 5473.529626033269,
+        "rss_delta": 0,
+        "rss_bytes": 243273728,
+        "thread_count": 8,
+        "thread_delta": 0,
+        "ticks": 0,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "case": "Light-1x",
+        "state": "keymap",
+        "begin_ms": 12361.395509040449,
+        "end_ms": 13167.57328103995,
+        "rss_delta": 0,
+        "rss_bytes": 243589120,
+        "thread_count": 8,
+        "thread_delta": 0,
+        "ticks": 1,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "case": "Light-1x",
+        "state": "closed",
+        "begin_ms": 15484.50890503591,
+        "end_ms": 16290.66281201085,
+        "rss_delta": 0,
+        "rss_bytes": 243597312,
+        "thread_count": 8,
+        "thread_delta": 0,
+        "ticks": 1,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "case": "Light-2x",
+        "state": "preferences",
+        "begin_ms": 4675.652641977649,
+        "end_ms": 5482.110226992518,
+        "rss_delta": 0,
+        "rss_bytes": 243273728,
+        "thread_count": 8,
+        "thread_delta": 0,
+        "ticks": 1,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "case": "Light-2x",
+        "state": "keymap",
+        "begin_ms": 12380.952443985734,
+        "end_ms": 13187.029491993599,
+        "rss_delta": 0,
+        "rss_bytes": 243576832,
+        "thread_count": 8,
+        "thread_delta": 0,
+        "ticks": 1,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      },
+      {
+        "case": "Light-2x",
+        "state": "closed",
+        "begin_ms": 15504.45441599004,
+        "end_ms": 16310.57166698156,
+        "rss_delta": 0,
+        "rss_bytes": 243576832,
+        "thread_count": 8,
+        "thread_delta": 0,
+        "ticks": 0,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "idle_frames": 0
+      }
+    ],
+    "cases_completed": 6
+  },
+  "verification": {
+    "rust_tests_passed": 176,
+    "ordinary_gpu_tests_ignored": 10,
+    "python_tests_passed": 13,
+    "explicit_gpu_tests_passed": 10,
+    "explicit_suite_cases_passed": 12,
+    "cargo_deny": "advisories/bans/licenses/sources ok",
+    "settings_checks_passed": 62,
+    "ci": {
+      "sha": "e85d0e4b84a72968a3d3b0500c2c7355beb2a5b1",
+      "runs": [
+        {
+          "id": 37594215458,
+          "name": "Quality",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/gurppt/tack/actions/runs/37594215458",
+          "jobs": [
+            {
+              "name": "rust (ubuntu-latest)",
+              "status": "completed",
+              "conclusion": "success",
+              "current_step": null,
+              "steps": []
+            },
+            {
+              "name": "rust (windows-latest)",
+              "status": "completed",
+              "conclusion": "success",
+              "current_step": null,
+              "steps": []
+            },
+            {
+              "name": "dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "current_step": null,
+              "steps": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "background": {
+    "scope": "paired native empty-board user-driven pan; startup frames excluded, warm caches, serialized GPU ownership; GPU timestamp pass cost distinct from CPU submit/present",
+    "baseline_sha256": "0b6c12a16fa1c6062366a763b5d9057bcad412c9a619e40e0be2abf0bf150faa",
+    "current_sha256": "20c8f368f51898e2a676a9e9be3192b0e2f0144c8bc1a46d0919ba7bee9ff45f",
+    "board_sha256": "75bad9616b4506811e7fb980ae16a8fba4982e5e3975a92adecb8fd678696292",
+    "runs": [
+      {
+        "pair": 0,
+        "size": "800x600",
+        "grid": false,
+        "binary": "baseline",
+        "report": "0-800x600-grid-0-baseline.json",
+        "report_sha256": "24a09193fc0c35d1b598f9ff4ecb899fe7aa777c927733a1ca249cb346608bf8",
+        "frames": 161,
+        "gpu_samples": 161,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0012200000000000006,
+            "p99": 0.0028,
+            "max": 0.007949999999999999
+          },
+          "encode_ms": {
+            "p50": 0.0856,
+            "p99": 0.136921,
+            "max": 0.16075
+          },
+          "submit_ms": {
+            "p50": 0.03886,
+            "p99": 0.0678,
+            "max": 0.070101
+          },
+          "cpu_ms": {
+            "p50": 0.13621999999999998,
+            "p99": 0.217471,
+            "max": 0.22904
+          },
+          "present_ms": {
+            "p50": 19.510087,
+            "p99": 20.620099999999997,
+            "max": 21.798984
+          },
+          "callback_ms": {
+            "p50": 19.698957,
+            "p99": 20.882421,
+            "max": 21.965344
+          },
+          "gpu_pass_ms": {
+            "p50": 0.011872,
+            "p99": 0.012992,
+            "max": 0.013504
+          }
+        }
+      },
+      {
+        "pair": 0,
+        "size": "800x600",
+        "grid": false,
+        "binary": "current",
+        "report": "0-800x600-grid-0-current.json",
+        "report_sha256": "2549f3e0ec3a18a92aa7d59c769dca2db77e05d6e8848f5956577d9e45ddbbb5",
+        "frames": 159,
+        "gpu_samples": 159,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.001429999999999999,
+            "p99": 0.0027799999999999978,
+            "max": 0.0029599999999999982
+          },
+          "encode_ms": {
+            "p50": 0.10224,
+            "p99": 0.169931,
+            "max": 0.18823
+          },
+          "submit_ms": {
+            "p50": 0.04634,
+            "p99": 0.07069,
+            "max": 0.08951100000000001
+          },
+          "cpu_ms": {
+            "p50": 0.165161,
+            "p99": 0.24460099999999999,
+            "max": 0.29801099999999997
+          },
+          "present_ms": {
+            "p50": 19.262795999999998,
+            "p99": 21.589383,
+            "max": 22.508216
+          },
+          "callback_ms": {
+            "p50": 19.467417,
+            "p99": 21.858934,
+            "max": 22.736045999999998
+          },
+          "gpu_pass_ms": {
+            "p50": 0.011424,
+            "p99": 0.032704,
+            "max": 0.0328
+          }
+        }
+      },
+      {
+        "pair": 0,
+        "size": "800x600",
+        "grid": true,
+        "binary": "baseline",
+        "report": "0-800x600-grid-1-baseline.json",
+        "report_sha256": "4eb81b081c044f9cc25318d4f5cafc7d5e8f5dfed027bd7418af34279566393d",
+        "frames": 157,
+        "gpu_samples": 157,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.00251,
+            "p99": 0.004580000000000001,
+            "max": 0.006010000000000001
+          },
+          "encode_ms": {
+            "p50": 0.11083,
+            "p99": 0.16403,
+            "max": 0.184771
+          },
+          "submit_ms": {
+            "p50": 0.0475,
+            "p99": 0.07223,
+            "max": 0.07253
+          },
+          "cpu_ms": {
+            "p50": 0.17335,
+            "p99": 0.25455,
+            "max": 0.278881
+          },
+          "present_ms": {
+            "p50": 19.399827000000002,
+            "p99": 20.604680000000002,
+            "max": 22.546506
+          },
+          "callback_ms": {
+            "p50": 19.607267,
+            "p99": 20.78994,
+            "max": 22.791696
+          },
+          "gpu_pass_ms": {
+            "p50": 0.01216,
+            "p99": 0.03488,
+            "max": 0.036096
+          }
+        }
+      },
+      {
+        "pair": 0,
+        "size": "800x600",
+        "grid": true,
+        "binary": "current",
+        "report": "0-800x600-grid-1-current.json",
+        "report_sha256": "34ff0e1c87729f1e6aa747dea04c4c67f0f97b1a89f53213dd95406422c412a7",
+        "frames": 164,
+        "gpu_samples": 164,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.002060000000000001,
+            "p99": 0.007020000000000001,
+            "max": 0.02538
+          },
+          "encode_ms": {
+            "p50": 0.10133099999999999,
+            "p99": 0.15482100000000001,
+            "max": 0.189511
+          },
+          "submit_ms": {
+            "p50": 0.042969999999999994,
+            "p99": 0.06808,
+            "max": 0.07794000000000001
+          },
+          "cpu_ms": {
+            "p50": 0.15754,
+            "p99": 0.23619099999999998,
+            "max": 0.289881
+          },
+          "present_ms": {
+            "p50": 19.447457,
+            "p99": 23.463518999999998,
+            "max": 24.629872
+          },
+          "callback_ms": {
+            "p50": 19.643858,
+            "p99": 23.657749,
+            "max": 24.826642
+          },
+          "gpu_pass_ms": {
+            "p50": 0.011744,
+            "p99": 0.034464,
+            "max": 0.034784
+          }
+        }
+      },
+      {
+        "pair": 0,
+        "size": "1024x768",
+        "grid": false,
+        "binary": "baseline",
+        "report": "0-1024x768-grid-0-baseline.json",
+        "report_sha256": "8aa9d4dfcfb58275c4e78a47252027930bd074274ac518b7e2457e88a5f5a1ec",
+        "frames": 107,
+        "gpu_samples": 107,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0021999999999999997,
+            "p99": 0.0037500000000000016,
+            "max": 0.008940000000000003
+          },
+          "encode_ms": {
+            "p50": 0.1634,
+            "p99": 0.203891,
+            "max": 0.2187
+          },
+          "submit_ms": {
+            "p50": 0.06255100000000001,
+            "p99": 0.09134,
+            "max": 0.10336999999999999
+          },
+          "cpu_ms": {
+            "p50": 0.25216099999999997,
+            "p99": 0.323271,
+            "max": 0.32808099999999996
+          },
+          "present_ms": {
+            "p50": 30.843059999999998,
+            "p99": 31.457832,
+            "max": 32.997966
+          },
+          "callback_ms": {
+            "p50": 31.130961,
+            "p99": 31.726623000000004,
+            "max": 33.378597000000006
+          },
+          "gpu_pass_ms": {
+            "p50": 0.0168,
+            "p99": 0.018144,
+            "max": 0.018432
+          }
+        }
+      },
+      {
+        "pair": 0,
+        "size": "1024x768",
+        "grid": false,
+        "binary": "current",
+        "report": "0-1024x768-grid-0-current.json",
+        "report_sha256": "83d6e75bd4bcb4c8c84b65f2b19495e7d02de6cb446471211b11aa08133ff593",
+        "frames": 111,
+        "gpu_samples": 111,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0020499999999999997,
+            "p99": 0.003089999999999999,
+            "max": 0.0033099999999999987
+          },
+          "encode_ms": {
+            "p50": 0.15607,
+            "p99": 0.2039,
+            "max": 0.23981100000000002
+          },
+          "submit_ms": {
+            "p50": 0.06198,
+            "p99": 0.07926,
+            "max": 0.10235
+          },
+          "cpu_ms": {
+            "p50": 0.23965,
+            "p99": 0.30035100000000003,
+            "max": 0.379431
+          },
+          "present_ms": {
+            "p50": 30.767570000000003,
+            "p99": 31.997894,
+            "max": 32.531945
+          },
+          "callback_ms": {
+            "p50": 31.04311,
+            "p99": 32.271634,
+            "max": 32.823926
+          },
+          "gpu_pass_ms": {
+            "p50": 0.016384,
+            "p99": 0.04848,
+            "max": 0.048864
+          }
+        }
+      },
+      {
+        "pair": 0,
+        "size": "1024x768",
+        "grid": true,
+        "binary": "baseline",
+        "report": "0-1024x768-grid-1-baseline.json",
+        "report_sha256": "f1eda83c2d7638085409db5c7a2b4bc0baf443d2b7d60175f2d3a76a23ae3ac1",
+        "frames": 114,
+        "gpu_samples": 114,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0038909999999999995,
+            "p99": 0.0050999999999999995,
+            "max": 0.005449999999999998
+          },
+          "encode_ms": {
+            "p50": 0.164491,
+            "p99": 0.19979000000000002,
+            "max": 0.208001
+          },
+          "submit_ms": {
+            "p50": 0.06154,
+            "p99": 0.07889,
+            "max": 0.085401
+          },
+          "cpu_ms": {
+            "p50": 0.252241,
+            "p99": 0.300771,
+            "max": 0.31204
+          },
+          "present_ms": {
+            "p50": 30.75565,
+            "p99": 33.341858,
+            "max": 33.856139
+          },
+          "callback_ms": {
+            "p50": 31.048121000000002,
+            "p99": 33.635138000000005,
+            "max": 34.16084
+          },
+          "gpu_pass_ms": {
+            "p50": 0.017504,
+            "p99": 0.054688,
+            "max": 0.059296
+          }
+        }
+      },
+      {
+        "pair": 0,
+        "size": "1024x768",
+        "grid": true,
+        "binary": "current",
+        "report": "0-1024x768-grid-1-current.json",
+        "report_sha256": "c999cc5a2d21ab5104762cda8e5997089b665aad492398811c9866ac33bffe7d",
+        "frames": 117,
+        "gpu_samples": 117,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.003280000000000001,
+            "p99": 0.004780000000000001,
+            "max": 0.01121
+          },
+          "encode_ms": {
+            "p50": 0.15854000000000001,
+            "p99": 0.19195099999999998,
+            "max": 0.19793100000000002
+          },
+          "submit_ms": {
+            "p50": 0.06292,
+            "p99": 0.08764,
+            "max": 0.09484000000000001
+          },
+          "cpu_ms": {
+            "p50": 0.24346,
+            "p99": 0.294241,
+            "max": 0.301231
+          },
+          "present_ms": {
+            "p50": 30.436249,
+            "p99": 33.753418,
+            "max": 34.44757
+          },
+          "callback_ms": {
+            "p50": 30.70668,
+            "p99": 34.05521,
+            "max": 34.678131
+          },
+          "gpu_pass_ms": {
+            "p50": 0.016608,
+            "p99": 0.041536,
+            "max": 0.043008
+          }
+        }
+      },
+      {
+        "pair": 0,
+        "size": "1600x900",
+        "grid": false,
+        "binary": "baseline",
+        "report": "0-1600x900-grid-0-baseline.json",
+        "report_sha256": "07e28e3584088840aa9c5fe30f1b11f98275f56a9d50743fc0070006b39c400a",
+        "frames": 63,
+        "gpu_samples": 63,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0016899999999999997,
+            "p99": 0.003009999999999999,
+            "max": 0.0030799999999999994
+          },
+          "encode_ms": {
+            "p50": 0.09631,
+            "p99": 0.12644,
+            "max": 0.13398100000000002
+          },
+          "submit_ms": {
+            "p50": 0.03894,
+            "p99": 0.05039,
+            "max": 0.06434
+          },
+          "cpu_ms": {
+            "p50": 0.15114999999999998,
+            "p99": 0.187921,
+            "max": 0.18975
+          },
+          "present_ms": {
+            "p50": 55.790662,
+            "p99": 56.335834,
+            "max": 56.619035999999994
+          },
+          "callback_ms": {
+            "p50": 56.004222999999996,
+            "p99": 56.563055,
+            "max": 56.811676
+          },
+          "gpu_pass_ms": {
+            "p50": 0.028576,
+            "p99": 0.029152,
+            "max": 0.029728
+          }
+        }
+      },
+      {
+        "pair": 0,
+        "size": "1600x900",
+        "grid": false,
+        "binary": "current",
+        "report": "0-1600x900-grid-0-current.json",
+        "report_sha256": "968316035691bab529f36c94a7beba18690cb76bbbb0df34b10ba604fbd56f2d",
+        "frames": 59,
+        "gpu_samples": 59,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0015300000000000001,
+            "p99": 0.0023,
+            "max": 0.0023799999999999993
+          },
+          "encode_ms": {
+            "p50": 0.09612,
+            "p99": 0.125681,
+            "max": 0.13004
+          },
+          "submit_ms": {
+            "p50": 0.03893,
+            "p99": 0.055099999999999996,
+            "max": 0.05605
+          },
+          "cpu_ms": {
+            "p50": 0.15317,
+            "p99": 0.189061,
+            "max": 0.191551
+          },
+          "present_ms": {
+            "p50": 56.392714,
+            "p99": 56.828966,
+            "max": 56.908566
+          },
+          "callback_ms": {
+            "p50": 56.587795,
+            "p99": 57.033416,
+            "max": 57.087786
+          },
+          "gpu_pass_ms": {
+            "p50": 0.027488,
+            "p99": 0.02864,
+            "max": 0.028672
+          }
+        }
+      },
+      {
+        "pair": 0,
+        "size": "1600x900",
+        "grid": true,
+        "binary": "baseline",
+        "report": "0-1600x900-grid-1-baseline.json",
+        "report_sha256": "fa388a8c1e97ca52cf82fa4bef325c1668319467e545cbc1f1c773fe2909de3c",
+        "frames": 63,
+        "gpu_samples": 63,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0027600000000000003,
+            "p99": 0.004809999999999999,
+            "max": 0.00632
+          },
+          "encode_ms": {
+            "p50": 0.094431,
+            "p99": 0.13698000000000002,
+            "max": 0.14975
+          },
+          "submit_ms": {
+            "p50": 0.038439999999999995,
+            "p99": 0.0741,
+            "max": 0.08446999999999999
+          },
+          "cpu_ms": {
+            "p50": 0.149661,
+            "p99": 0.22603,
+            "max": 0.25029
+          },
+          "present_ms": {
+            "p50": 55.957253,
+            "p99": 57.948358999999996,
+            "max": 58.831691
+          },
+          "callback_ms": {
+            "p50": 56.139853,
+            "p99": 58.16059,
+            "max": 59.031123
+          },
+          "gpu_pass_ms": {
+            "p50": 0.028704,
+            "p99": 0.078976,
+            "max": 0.081792
+          }
+        }
+      },
+      {
+        "pair": 0,
+        "size": "1600x900",
+        "grid": true,
+        "binary": "current",
+        "report": "0-1600x900-grid-1-current.json",
+        "report_sha256": "2be0591c926f842b6201fb9743df6817c05243d64cc5d88139ef11cd86f0f7d0",
+        "frames": 63,
+        "gpu_samples": 63,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0032400000000000007,
+            "p99": 0.004639999999999999,
+            "max": 0.00784
+          },
+          "encode_ms": {
+            "p50": 0.10048,
+            "p99": 0.16184,
+            "max": 0.16341
+          },
+          "submit_ms": {
+            "p50": 0.0382,
+            "p99": 0.062061,
+            "max": 0.072301
+          },
+          "cpu_ms": {
+            "p50": 0.15686,
+            "p99": 0.245241,
+            "max": 0.25418100000000005
+          },
+          "present_ms": {
+            "p50": 56.468095000000005,
+            "p99": 57.242397,
+            "max": 57.558188
+          },
+          "callback_ms": {
+            "p50": 56.648666,
+            "p99": 57.420016999999994,
+            "max": 57.762428
+          },
+          "gpu_pass_ms": {
+            "p50": 0.02832,
+            "p99": 0.028672,
+            "max": 0.028832
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "800x600",
+        "grid": false,
+        "binary": "current",
+        "report": "1-800x600-grid-0-current.json",
+        "report_sha256": "9042308bee206020dd848421540aded3a71b95a810eaf99c2186dde0c98e1806",
+        "frames": 162,
+        "gpu_samples": 162,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.00133,
+            "p99": 0.0029400000000000008,
+            "max": 0.003060000000000002
+          },
+          "encode_ms": {
+            "p50": 0.10805,
+            "p99": 0.15609099999999998,
+            "max": 0.1665
+          },
+          "submit_ms": {
+            "p50": 0.04772,
+            "p99": 0.07438,
+            "max": 0.084901
+          },
+          "cpu_ms": {
+            "p50": 0.17213,
+            "p99": 0.233351,
+            "max": 0.279971
+          },
+          "present_ms": {
+            "p50": 19.318666,
+            "p99": 21.082701999999998,
+            "max": 23.008157
+          },
+          "callback_ms": {
+            "p50": 19.537796999999998,
+            "p99": 21.346853,
+            "max": 23.186377
+          },
+          "gpu_pass_ms": {
+            "p50": 0.011456,
+            "p99": 0.032736,
+            "max": 0.0328
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "800x600",
+        "grid": false,
+        "binary": "baseline",
+        "report": "1-800x600-grid-0-baseline.json",
+        "report_sha256": "de0abcdc89bb04c057389f40f03a9a36402481ed90f4e7f8456f8ccc91fa610d",
+        "frames": 162,
+        "gpu_samples": 162,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0013099999999999987,
+            "p99": 0.0026699999999999996,
+            "max": 0.0029200000000000007
+          },
+          "encode_ms": {
+            "p50": 0.09092,
+            "p99": 0.15442,
+            "max": 0.15966
+          },
+          "submit_ms": {
+            "p50": 0.043900999999999996,
+            "p99": 0.07103,
+            "max": 0.08881
+          },
+          "cpu_ms": {
+            "p50": 0.14869,
+            "p99": 0.23328,
+            "max": 0.24434100000000003
+          },
+          "present_ms": {
+            "p50": 19.397655999999998,
+            "p99": 19.887868,
+            "max": 20.801371
+          },
+          "callback_ms": {
+            "p50": 19.594147,
+            "p99": 20.165288999999998,
+            "max": 21.042320999999998
+          },
+          "gpu_pass_ms": {
+            "p50": 0.011872,
+            "p99": 0.012288,
+            "max": 0.013472
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "800x600",
+        "grid": true,
+        "binary": "current",
+        "report": "1-800x600-grid-1-current.json",
+        "report_sha256": "d4ab5bf57975de2b6fc95e7bae531771eb482ffcc8680a7e5cabb438f011cd95",
+        "frames": 161,
+        "gpu_samples": 161,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.00238,
+            "p99": 0.004100000000000001,
+            "max": 0.0071400000000000005
+          },
+          "encode_ms": {
+            "p50": 0.11777,
+            "p99": 0.15905,
+            "max": 0.16792
+          },
+          "submit_ms": {
+            "p50": 0.048510000000000005,
+            "p99": 0.064731,
+            "max": 0.06806
+          },
+          "cpu_ms": {
+            "p50": 0.182381,
+            "p99": 0.244831,
+            "max": 0.249331
+          },
+          "present_ms": {
+            "p50": 19.460406,
+            "p99": 19.900888,
+            "max": 20.998491
+          },
+          "callback_ms": {
+            "p50": 19.686987,
+            "p99": 20.104668999999998,
+            "max": 21.242991999999997
+          },
+          "gpu_pass_ms": {
+            "p50": 0.011552,
+            "p99": 0.012544,
+            "max": 0.013696
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "800x600",
+        "grid": true,
+        "binary": "baseline",
+        "report": "1-800x600-grid-1-baseline.json",
+        "report_sha256": "59616ed5a76b2596742c309caaf1956c5ba1e23e4ef22e74bc3714a5254310bc",
+        "frames": 162,
+        "gpu_samples": 162,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.00232,
+            "p99": 0.004670000000000002,
+            "max": 0.00681
+          },
+          "encode_ms": {
+            "p50": 0.11495999999999999,
+            "p99": 0.176071,
+            "max": 0.190071
+          },
+          "submit_ms": {
+            "p50": 0.04944,
+            "p99": 0.0772,
+            "max": 0.12167
+          },
+          "cpu_ms": {
+            "p50": 0.183591,
+            "p99": 0.272031,
+            "max": 0.293501
+          },
+          "present_ms": {
+            "p50": 19.455706,
+            "p99": 22.024064,
+            "max": 22.829607
+          },
+          "callback_ms": {
+            "p50": 19.669437000000002,
+            "p99": 22.233075000000003,
+            "max": 23.008988000000002
+          },
+          "gpu_pass_ms": {
+            "p50": 0.012288,
+            "p99": 0.036672,
+            "max": 0.042528
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "1024x768",
+        "grid": false,
+        "binary": "current",
+        "report": "1-1024x768-grid-0-current.json",
+        "report_sha256": "28865d3f5034404ffdcbee91c0f8881093b4f8395a3496c9ed00b0d443054b46",
+        "frames": 112,
+        "gpu_samples": 112,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.00196,
+            "p99": 0.003230000000000002,
+            "max": 0.0033100000000000004
+          },
+          "encode_ms": {
+            "p50": 0.16315000000000002,
+            "p99": 0.21023099999999997,
+            "max": 0.2461
+          },
+          "submit_ms": {
+            "p50": 0.06359000000000001,
+            "p99": 0.09509,
+            "max": 0.10230099999999999
+          },
+          "cpu_ms": {
+            "p50": 0.25504,
+            "p99": 0.31084100000000003,
+            "max": 0.342051
+          },
+          "present_ms": {
+            "p50": 30.7986,
+            "p99": 33.244886,
+            "max": 34.216080000000005
+          },
+          "callback_ms": {
+            "p50": 31.0782,
+            "p99": 33.550048,
+            "max": 34.523410999999996
+          },
+          "gpu_pass_ms": {
+            "p50": 0.016384,
+            "p99": 0.050464,
+            "max": 0.050752
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "1024x768",
+        "grid": false,
+        "binary": "baseline",
+        "report": "1-1024x768-grid-0-baseline.json",
+        "report_sha256": "4cfc8f7b4c9b7083f217d700d7026976789d38eb4950b415abf18124a516bc68",
+        "frames": 115,
+        "gpu_samples": 115,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0024400000000000003,
+            "p99": 0.0036099999999999995,
+            "max": 0.003989999999999999
+          },
+          "encode_ms": {
+            "p50": 0.161631,
+            "p99": 0.208031,
+            "max": 0.222271
+          },
+          "submit_ms": {
+            "p50": 0.062169999999999996,
+            "p99": 0.08093,
+            "max": 0.083811
+          },
+          "cpu_ms": {
+            "p50": 0.24750100000000003,
+            "p99": 0.3059,
+            "max": 0.319361
+          },
+          "present_ms": {
+            "p50": 30.467559,
+            "p99": 33.005766,
+            "max": 33.446667
+          },
+          "callback_ms": {
+            "p50": 30.76472,
+            "p99": 33.266837,
+            "max": 33.754669
+          },
+          "gpu_pass_ms": {
+            "p50": 0.016992,
+            "p99": 0.045024,
+            "max": 0.050432
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "1024x768",
+        "grid": true,
+        "binary": "current",
+        "report": "1-1024x768-grid-1-current.json",
+        "report_sha256": "d9f02f56946f7624fbab03015b0ff88b3db051e43e898bd50981428a7524d54b",
+        "frames": 115,
+        "gpu_samples": 115,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0034300000000000008,
+            "p99": 0.004830000000000001,
+            "max": 0.005110000000000001
+          },
+          "encode_ms": {
+            "p50": 0.15268,
+            "p99": 0.1913,
+            "max": 0.21077100000000001
+          },
+          "submit_ms": {
+            "p50": 0.05927,
+            "p99": 0.07757,
+            "max": 0.087541
+          },
+          "cpu_ms": {
+            "p50": 0.233081,
+            "p99": 0.28756099999999996,
+            "max": 0.314781
+          },
+          "present_ms": {
+            "p50": 30.716129,
+            "p99": 33.452068000000004,
+            "max": 34.599129999999995
+          },
+          "callback_ms": {
+            "p50": 31.004261000000003,
+            "p99": 33.713438,
+            "max": 34.892381
+          },
+          "gpu_pass_ms": {
+            "p50": 0.0168,
+            "p99": 0.042976,
+            "max": 0.046496
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "1024x768",
+        "grid": true,
+        "binary": "baseline",
+        "report": "1-1024x768-grid-1-baseline.json",
+        "report_sha256": "0815faa64f7affcf5d8cc4a06b1664132ea3806ef2ce84033b30dda3499474df",
+        "frames": 116,
+        "gpu_samples": 116,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.00364,
+            "p99": 0.004899999999999999,
+            "max": 0.00587
+          },
+          "encode_ms": {
+            "p50": 0.15686,
+            "p99": 0.19809100000000002,
+            "max": 0.24186100000000002
+          },
+          "submit_ms": {
+            "p50": 0.06022,
+            "p99": 0.08335000000000001,
+            "max": 0.094941
+          },
+          "cpu_ms": {
+            "p50": 0.239291,
+            "p99": 0.29303100000000004,
+            "max": 0.349071
+          },
+          "present_ms": {
+            "p50": 30.369998,
+            "p99": 31.597462,
+            "max": 32.550813999999995
+          },
+          "callback_ms": {
+            "p50": 30.65041,
+            "p99": 31.896003,
+            "max": 32.819115000000004
+          },
+          "gpu_pass_ms": {
+            "p50": 0.017376,
+            "p99": 0.047488,
+            "max": 0.04944
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "1600x900",
+        "grid": false,
+        "binary": "current",
+        "report": "1-1600x900-grid-0-current.json",
+        "report_sha256": "c751e0c33b64e33eaa6631b7c25ecbfde09abed46cd3583624992993077dd850",
+        "frames": 62,
+        "gpu_samples": 62,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0013299999999999996,
+            "p99": 0.00315,
+            "max": 0.00356
+          },
+          "encode_ms": {
+            "p50": 0.091,
+            "p99": 0.12423999999999999,
+            "max": 0.15289
+          },
+          "submit_ms": {
+            "p50": 0.03739,
+            "p99": 0.050269999999999995,
+            "max": 0.05314
+          },
+          "cpu_ms": {
+            "p50": 0.14575,
+            "p99": 0.18346099999999999,
+            "max": 0.217851
+          },
+          "present_ms": {
+            "p50": 56.208964,
+            "p99": 58.16478,
+            "max": 60.300975
+          },
+          "callback_ms": {
+            "p50": 56.409735000000005,
+            "p99": 58.35568,
+            "max": 60.476727000000004
+          },
+          "gpu_pass_ms": {
+            "p50": 0.028064,
+            "p99": 0.086464,
+            "max": 0.087104
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "1600x900",
+        "grid": false,
+        "binary": "baseline",
+        "report": "1-1600x900-grid-0-baseline.json",
+        "report_sha256": "8da4faf4b2e3c8790ae01a8a1503ae4949eceee14b436ecb154b3dcf3da31637",
+        "frames": 60,
+        "gpu_samples": 60,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0017800000000000003,
+            "p99": 0.0027800000000000012,
+            "max": 0.0027800000000000012
+          },
+          "encode_ms": {
+            "p50": 0.09882,
+            "p99": 0.13275,
+            "max": 0.135961
+          },
+          "submit_ms": {
+            "p50": 0.03604,
+            "p99": 0.052899999999999996,
+            "max": 0.05482
+          },
+          "cpu_ms": {
+            "p50": 0.154451,
+            "p99": 0.18970099999999998,
+            "max": 0.195761
+          },
+          "present_ms": {
+            "p50": 55.735983000000004,
+            "p99": 56.867166,
+            "max": 57.757479000000004
+          },
+          "callback_ms": {
+            "p50": 55.972383,
+            "p99": 57.089076000000006,
+            "max": 57.939729
+          },
+          "gpu_pass_ms": {
+            "p50": 0.028288,
+            "p99": 0.028672,
+            "max": 0.029856
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "1600x900",
+        "grid": true,
+        "binary": "current",
+        "report": "1-1600x900-grid-1-current.json",
+        "report_sha256": "a8f7facb1e40bfe6e45c5132983a24891a462c1b4a91b7a1a89bda231d6373c7",
+        "frames": 63,
+        "gpu_samples": 63,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.0021999999999999997,
+            "p99": 0.004570000000000001,
+            "max": 0.02919
+          },
+          "encode_ms": {
+            "p50": 0.09347,
+            "p99": 0.1204,
+            "max": 0.12458999999999999
+          },
+          "submit_ms": {
+            "p50": 0.0385,
+            "p99": 0.06577100000000001,
+            "max": 0.06609999999999999
+          },
+          "cpu_ms": {
+            "p50": 0.15428,
+            "p99": 0.18700999999999998,
+            "max": 0.18772
+          },
+          "present_ms": {
+            "p50": 56.593075,
+            "p99": 58.820202,
+            "max": 59.199413
+          },
+          "callback_ms": {
+            "p50": 56.830786,
+            "p99": 58.992902,
+            "max": 59.405162999999995
+          },
+          "gpu_pass_ms": {
+            "p50": 0.02832,
+            "p99": 0.078848,
+            "max": 0.079808
+          }
+        }
+      },
+      {
+        "pair": 1,
+        "size": "1600x900",
+        "grid": true,
+        "binary": "baseline",
+        "report": "1-1600x900-grid-1-baseline.json",
+        "report_sha256": "ec55512771203ad75b96abfd28225706e25d8e32eae6330e90ec7cf0c9be6bfb",
+        "frames": 64,
+        "gpu_samples": 64,
+        "adapter": "NVIDIA GeForce RTX 2060",
+        "backend": "Vulkan",
+        "metrics": {
+          "scene_ms": {
+            "p50": 0.003080000000000001,
+            "p99": 0.004200000000000001,
+            "max": 0.00838
+          },
+          "encode_ms": {
+            "p50": 0.09259,
+            "p99": 0.14917,
+            "max": 0.16343
+          },
+          "submit_ms": {
+            "p50": 0.03746,
+            "p99": 0.048029999999999996,
+            "max": 0.05009
+          },
+          "cpu_ms": {
+            "p50": 0.14672000000000002,
+            "p99": 0.207121,
+            "max": 0.23353
+          },
+          "present_ms": {
+            "p50": 56.293715,
+            "p99": 56.809014999999995,
+            "max": 58.033479
+          },
+          "callback_ms": {
+            "p50": 56.493645,
+            "p99": 56.991906,
+            "max": 58.22242
+          },
+          "gpu_pass_ms": {
+            "p50": 0.028672,
+            "p99": 0.030016,
+            "max": 0.081088
+          }
+        }
+      }
+    ]
+  }
+}
