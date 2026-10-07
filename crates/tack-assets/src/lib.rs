@@ -7,10 +7,12 @@ mod preparation;
 mod product;
 mod profile;
 mod representation;
+mod ui_image;
 pub use product::{
     PreparedOverview, ProductAssetStats, ProductAssets, ProductDemand, SourceState, SupplyLimits,
 };
 pub use representation::{image_metadata, source_fingerprint};
+pub use ui_image::decode_ui_png;
 
 pub use board::{BenchmarkBoard, BenchmarkImage};
 pub use loader::{AssetKey, DecodeRequest, Decoded, Loader, LoaderStats, MAX_PENDING_PER_WORKER};

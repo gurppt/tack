@@ -59,7 +59,7 @@ def main():
     parser.add_argument('--seconds',type=float,default=10)
     parser.add_argument('--no-wm',action='store_true',help='Isolated X11 display: direct focus and scoped WM_DELETE, no desktop shortcuts')
     parser.add_argument('--edit-note',action='store_true',help='Observe transient new note editing without a caret timer')
-    parser.add_argument('--context-menu',choices=('none','canvas','application','closed'),default='none',help='Mission 1H: observe an open static popup or the settled state after closing it')
+    parser.add_argument('--context-menu',choices=('none','canvas','application','closed','about','about-closed'),default='none',help='Mission 1H: observe an open static popup or the settled state after closing it')
     parser.add_argument('--baseline',action='store_true',help='One hidden-grid observation for older binaries without spatial telemetry')
     args=parser.parse_args()
     if args.context_menu!='none' and (not args.no_wm or os.environ.get('DISPLAY') in (None,':0',':0.0')):parser.error('context-menu checks require an explicitly owned isolated X11 display and --no-wm')
@@ -91,7 +91,11 @@ def main():
                 if args.edit_note:
                     command('xdotool','key','t');command('xdotool','mousemove','--window',window,30,30);command('xdotool','click','1')
                 if args.context_menu!='none':
-                    if args.context_menu=='application':command('xdotool','key','F10')
+                    if args.context_menu in ('about','about-closed'):
+                        command('xdotool','key','F10','Up','Return')
+                        time.sleep(.3)
+                        if args.context_menu=='about-closed':command('xdotool','key','Escape')
+                    elif args.context_menu=='application':command('xdotool','key','F10')
                     else:
                         command('xdotool','mousemove','--window',window,250,180);command('xdotool','click','3')
                     if args.context_menu=='closed':command('xdotool','key','Escape')
@@ -101,7 +105,7 @@ def main():
                     raise AssertionError('note editor did not become active')
                 begin=time.monotonic();initial=observe(process.pid);time.sleep(args.seconds);final=observe(process.pid);end=time.monotonic()
                 if args.edit_note:command('xdotool','key','Escape')
-                if args.context_menu in ('canvas','application'):command('xdotool','key','Escape')
+                if args.context_menu in ('canvas','application','about'):command('xdotool','key','Escape')
                 if args.no_wm:close_owned_window(window)
                 else:command('xdotool','key','alt+F4')
                 process.wait(timeout=5)
@@ -111,7 +115,10 @@ def main():
                     try:process.wait(timeout=2)
                     except subprocess.TimeoutExpired:process.kill();process.wait()
         if process.returncode:raise RuntimeError(f'idle exit {process.returncode}')
-        data=json.loads(report.read_text());frames=[f for f in data['frames'] if (begin-started)*1000<=f['elapsed_ms']<=(end-started)*1000]
+        data=json.loads(report.read_text())
+        if args.context_menu in ('about','about-closed') and (data.get('about',{}).get('requests') != 1 or data['about']['image_gpu_bytes'] != 0):
+            raise AssertionError('About action or resource release not observed')
+        frames=[f for f in data['frames'] if (begin-started)*1000<=f['elapsed_ms']<=(end-started)*1000]
         if data.get('spatial',{}).get('grid',visible)!=visible:
             raise AssertionError('requested grid state not observed')
         delta_tasks=[]

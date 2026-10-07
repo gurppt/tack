@@ -1,0 +1,11 @@
+# Owner-editable About text. Rebuild to apply changes.
+# Cargo's package version is authoritative; an explicit version must match it.
+name = "Tack"
+version = "0.0.1"
+author = "Captain Cool - Suspicious Sausage Records"
+website = "https://github.com/gurppt/tack"
+contact = ""
+license = "Undecided"
+copyright = ""
+tagline = ""
+source = ""

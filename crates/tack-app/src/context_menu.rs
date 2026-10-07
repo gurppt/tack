@@ -450,6 +450,7 @@ fn context_items(context: Context, submenu: Option<Group>, keymap: &Keymap) -> V
             group("Tools", Group::Tools, true),
             a("Preferences...", Preferences),
             a("Keymap...", KeymapEditor),
+            a("About Tack", About),
         ];
     }
     if context.kind == ContextKind::Canvas {

@@ -91,10 +91,11 @@ fn context_resolution_and_real_available_commands_are_specific() -> R {
         );
         assert_eq!(rows[app_rows.len()].command, MenuCommand::Heading);
         if kind == ContextKind::Canvas {
-            assert_eq!(rows.len(), 13);
+            assert_eq!(rows.len(), 14);
             assert!(contains(Action::ImportImages));
             assert!(contains(Action::Preferences));
             assert!(contains(Action::KeymapEditor));
+            assert!(contains(Action::About));
             assert!(!contains(Action::Save));
         }
         if kind == ContextKind::Image {
@@ -551,6 +552,36 @@ fn compact_submenus_leave_parent_preferences_reachable_by_pointer() -> R {
                 MenuResult::Action(Action::Preferences)
             );
         }
+    }
+    Ok(())
+}
+
+#[test]
+fn about_uses_same_semantic_action_in_f10_and_context_menu() -> R {
+    let editor = fixture()?;
+    let map = tack_app::image_input::product_keymap()?;
+    let camera = Camera::new([800, 600]);
+    let context = context(&editor, &[])?;
+    for mut menu in [
+        ContextMenu::application(context, &camera, &map),
+        ContextMenu::new(context, [10., 10.], &camera, &map),
+    ] {
+        let index = menu
+            .root_items()
+            .iter()
+            .position(|row| row.command == MenuCommand::Action(Action::About))
+            .ok_or("About absent")?;
+        for _ in 0..menu.root_items()[..=index]
+            .iter()
+            .filter(|row| row.command != MenuCommand::Heading)
+            .count()
+        {
+            menu.key(KeyCode::ArrowDown, &map, &camera);
+        }
+        assert_eq!(
+            menu.key(KeyCode::Enter, &map, &camera),
+            MenuResult::Action(Action::About)
+        );
     }
     Ok(())
 }

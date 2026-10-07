@@ -669,3 +669,60 @@ fn integer_logical_pixels_preserve_all_bitmap_rows_without_aa() -> Result<(), As
     }
     Ok(())
 }
+
+#[test]
+#[ignore = "requires a working GPU adapter"]
+fn lazy_ui_artwork_is_nearest_above_overlay_and_released_after_close() -> Result<(), AssetError> {
+    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::from_env_or_default());
+    let mut gpu = pollster::block_on(Gpu::new(
+        &instance,
+        None,
+        wgpu::TextureFormat::Rgba8UnormSrgb,
+        1024 * 1024,
+    ))?;
+    assert_eq!(gpu.ui_image_bytes(), 0);
+    let d = data();
+    let key = ProductKey {
+        asset: None,
+        source: SourceId::new(2)?,
+        lod: Lod::Medium,
+        edge: 512,
+        revision: 1,
+    };
+    let overlay = [OverlayQuad {
+        bitmap: None,
+        points: [[0., 0.], [0., 64.], [64., 0.], [64., 64.]],
+        color: [0., 1., 0., 1.],
+    }];
+    let image = Decoded {
+        width: 2,
+        height: 1,
+        rgba: vec![255, 0, 0, 255, 0, 0, 255, 255],
+    };
+    assert!(
+        gpu.set_ui_image(&Decoded {
+            width: 257,
+            height: 1,
+            rgba: vec![]
+        })
+        .is_err()
+    );
+    assert_eq!(gpu.ui_image_bytes(), 0);
+    for _ in 0..20 {
+        gpu.set_ui_image(&image)?;
+        assert_eq!(gpu.ui_image_bytes(), 128);
+        gpu.set_ui_image_rect([16., 16., 32., 16.]);
+        for scale in [1., 2.] {
+            let bytes = pixels_scene_scale(&mut gpu, d, key, &overlay, None, None, scale)?;
+            assert_eq!(pixel(&bytes, 15, 20), [0, 255, 0, 255]);
+            assert_eq!(pixel(&bytes, 31, 20), [255, 0, 0, 255]);
+            assert_eq!(pixel(&bytes, 32, 20), [0, 0, 255, 255]);
+            assert_eq!(pixel(&bytes, 48, 20), [0, 255, 0, 255]);
+        }
+        gpu.clear_ui_image();
+        assert_eq!(gpu.ui_image_bytes(), 0);
+    }
+    let bytes = pixels_overlay(&mut gpu, d, key, &overlay)?;
+    assert_eq!(pixel(&bytes, 32, 20), [0, 255, 0, 255]);
+    Ok(())
+}

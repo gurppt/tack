@@ -36,11 +36,14 @@ The renderer loads image detail progressively and uses bounded caches. See the
 
 Tack is an actively developed prototype, currently distributed as source.
 Build requirements: **Rust 1.95.0** (pinned by the repository), **Python 3.12+**,
-**CMake**, **NASM**, a C compiler and a supported desktop graphics driver.
+**Pillow 10.2.0** (build only), **CMake**, **NASM**, a C compiler and a supported desktop graphics driver.
 
 ```bash
 git clone https://github.com/gurppt/tack.git
 cd tack
+python3 -m venv .venv
+. .venv/bin/activate
+python3 -m pip install Pillow==10.2.0
 python3 tools/prepare_turbojpeg.py
 cargo run --release --locked -p tack-app
 ```

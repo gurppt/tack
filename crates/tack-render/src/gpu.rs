@@ -10,6 +10,8 @@ use tack_core::{
     AssetId, ByteCache, Camera, ImageFiltering, ImageRenderData, Lod, SourceId, WorldRect,
 };
 use wgpu::util::DeviceExt;
+#[path = "ui_image.rs"]
+mod ui_image;
 
 const MAX_OBJECTS: usize = 10000;
 pub const UPLOAD_BUDGET_BYTES: usize = 16 * 1024 * 1024;
@@ -146,6 +148,7 @@ pub struct RenderStats {
 
 /// Texture ownership and GPU submission only; no file access or codec calls.
 pub struct Gpu {
+    ui_image: Option<Box<ui_image::UiImage>>,
     pub device: wgpu::Device,
     pub queue: wgpu::Queue,
     pub adapter_info: wgpu::AdapterInfo,
@@ -338,6 +341,7 @@ impl Gpu {
             encode_ms: 0.,
             submit_ms: 0.,
             poll_ms: 0.,
+            ui_image: None,
             upload_budget: UPLOAD_BUDGET_BYTES,
             max_uploads: MAX_UPLOADS,
         })
@@ -595,6 +599,9 @@ impl Gpu {
         }
         self.overlay
             .prepare(&self.device, &self.queue, camera, overlay)?;
+        if let Some(image) = &self.ui_image {
+            image.prepare(&self.queue, camera);
+        }
         let mut encoder = self.device.create_command_encoder(&Default::default());
         let timing_slot = self
             .timings
@@ -663,6 +670,9 @@ impl Gpu {
                 pass.draw(first..first + 6, 0..1);
             }
             self.overlay.draw(&mut pass);
+            if let Some(image) = &self.ui_image {
+                image.draw(&mut pass, &self.pipeline);
+            }
         }
         if let Some(index) = timing_slot
             && let Some(timings) = &self.timings

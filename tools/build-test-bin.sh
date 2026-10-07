@@ -13,10 +13,12 @@ fi
 cargo build --release --locked -p tack-app
 binary=$(mktemp bin/.tack.XXXXXX)
 stamp=$(mktemp bin/.BUILD.XXXXXX)
-trap 'rm -f "$binary" "$stamp"' EXIT
+artwork=$(mktemp bin/.about.XXXXXX)
+trap 'rm -f "$binary" "$stamp" "$artwork"' EXIT
 target_dir=$(cargo metadata --locked --offline --no-deps --format-version 1 | python3 -c 'import json,sys; print(json.load(sys.stdin)["target_directory"])')
 cp "$target_dir/release/tack-app" "$binary"
 chmod 755 "$binary"
+cp "$target_dir/release/tack-about.png" "$artwork"
 dirty=false
 if [ -n "$(git status --porcelain)" ]; then dirty=true; fi
 {
@@ -24,8 +26,10 @@ if [ -n "$(git status --porcelain)" ]; then dirty=true; fi
     printf 'commit: %s\n' "$(git rev-parse HEAD)"
     printf 'profile: release\nbuilt_utc: %s\nbinary: ./bin/tack\nworktree_dirty: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$dirty"
     printf 'sha256: %s\n' "$(sha256sum "$binary" | cut -d ' ' -f 1)"
+    printf 'about_asset_sha256: %s\n' "$(sha256sum "$artwork" | cut -d ' ' -f 1)"
     printf 'checkpoint: %s\n' "${1:-current workspace}"
 } > "$stamp"
+mv -f "$artwork" bin/tack-about.png
 mv -f "$binary" bin/tack
 mv -f "$stamp" bin/BUILD.txt
 cat bin/BUILD.txt

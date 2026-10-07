@@ -46,4 +46,5 @@ pub mod visibility;
 
 pub mod ui_theme;
 
+pub mod about;
 pub mod clipboard;

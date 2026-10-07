@@ -19,6 +19,10 @@ use std::{
 use tack_assets::AssetError;
 use tack_core::{ObjectId, Source};
 pub enum LocalUpdate {
+    About {
+        ticket: u64,
+        result: Result<tack_assets::Decoded, String>,
+    },
     Picked(Action, Result<Vec<PathBuf>, String>),
     Imported(ImportUpdate),
     Relinked(Result<RelinkReady, String>),
@@ -34,6 +38,9 @@ pub enum LocalUpdate {
     Done(Result<(), String>),
 }
 pub enum Operation {
+    About {
+        ticket: u64,
+    },
     Pick(Action, Picker, PathBuf),
     Import(ImportRequest),
     Relink(Source, PathBuf),
@@ -125,6 +132,14 @@ impl LocalWorker {
                 };
                 let result = (|| -> Result<(), AssetError> {
                     match operation {
+                        Operation::About { ticket } => {
+                            if !stop.load(Ordering::Relaxed) {
+                                let result = crate::about::load_image().map_err(|e| e.to_string());
+                                if !stop.load(Ordering::Relaxed) {
+                                    emit(LocalUpdate::About { ticket, result });
+                                }
+                            }
+                        }
                         Operation::Pick(action, picker, work) => {
                             emit(LocalUpdate::Picked(
                                 action,

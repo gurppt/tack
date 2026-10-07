@@ -19,6 +19,7 @@ pub(super) struct LoadedBoard {
     pub warning: Option<String>,
 }
 pub(super) struct LocalState {
+    pub about_ticket: u64,
     pub lease: Option<Arc<tack_storage::BoardLease>>,
     pub worker: LocalWorker,
     pub queued: Option<Operation>,
@@ -75,6 +76,7 @@ impl LocalState {
             Box::new(ui)
         });
         Ok(Self {
+            about_ticket: 0,
             lease: None,
             worker: LocalWorker::default(),
             queued: None,
@@ -110,6 +112,7 @@ impl LocalState {
 }
 impl App {
     pub(super) fn fail_load(&mut self) {
+        self.release_about();
         // The empty editor used to draw the error window has no writable board.
         // Keep this separate from recoverable errors in an opened document.
         self.load_failed = true;
@@ -137,6 +140,7 @@ impl App {
         self.local.close_after_discard = false;
     }
     pub(super) fn local_error(&mut self, message: impl Into<String>) {
+        self.release_about();
         self.context = None;
         let message = message.into();
         eprintln!(
@@ -151,6 +155,7 @@ impl App {
     }
     pub(super) fn panel(&mut self, panel: Panel) {
         self.context = None;
+        self.release_about();
         if let Some(editor) = &mut self.editor {
             let _ = self.input.physical(
                 tack_app::input::PhysicalEvent::FocusLost,
@@ -160,6 +165,14 @@ impl App {
         }
         self.local.ui = Some(Box::new(LocalUi::new(panel)));
         self.dirty = true;
+    }
+    pub(super) fn release_about(&mut self) {
+        if let Some(gpu) = &mut self.gpu {
+            gpu.clear_ui_image();
+        }
+        if matches!(self.local.queued, Some(Operation::About { .. })) {
+            self.local.queued = None;
+        }
     }
     fn operation(&mut self, operation: Operation) -> Result<(), AssetError> {
         if self.load_failed {
@@ -247,8 +260,20 @@ impl App {
             self.input.commit_drafts(editor)?;
         }
         self.local.ui = None;
+        self.release_about();
         match action {
             ApplicationMenu => self.open_application_menu()?,
+            About => {
+                self.local.about_ticket = self
+                    .local
+                    .about_ticket
+                    .checked_add(1)
+                    .ok_or("About request counter exhausted")?;
+                self.panel(Panel::About);
+                self.operation(Operation::About {
+                    ticket: self.local.about_ticket,
+                })?;
+            }
             Preferences => self.panel(Panel::Preferences),
             KeymapEditor => self.panel(Panel::Keymap),
             RecentBoards => self.panel(Panel::Recent),
@@ -303,6 +328,7 @@ impl App {
                     self.apply_preferences()?;
                 }
                 UiResult::Dismiss => {
+                    self.release_about();
                     if self.load_failed {
                         self.local.close_ready = true;
                         return Ok(true);
@@ -412,6 +438,28 @@ impl App {
     }
     fn local_update(&mut self, update: LocalUpdate) -> Result<(), AssetError> {
         match update {
+            LocalUpdate::About { ticket, result } => {
+                if ticket == self.local.about_ticket
+                    && let Some(ui) = self.local.ui.as_mut().filter(|ui| ui.panel == Panel::About)
+                {
+                    match result.and_then(|image| {
+                        self.gpu
+                            .as_mut()
+                            .ok_or("About renderer unavailable")?
+                            .set_ui_image(&image)
+                            .map_err(|e| e.to_string())
+                    }) {
+                        Ok(()) => {
+                            ui.about_image = true;
+                            ui.message.clear();
+                        }
+                        Err(error) => {
+                            ui.about_image = false;
+                            ui.message = error;
+                        }
+                    }
+                }
+            }
             LocalUpdate::Picked(action, result) => {
                 if result.is_err() && action == Action::SaveAs {
                     // Cancellation must keep an unsaved Untitled board open.

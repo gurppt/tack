@@ -83,6 +83,7 @@ pub enum Action {
     RevealSource,
     CopySourcePath,
     ApplicationMenu,
+    About,
     NewBoard,
     OpenBoard,
     ImportImages,
@@ -97,7 +98,7 @@ pub enum Action {
 }
 impl Action {
     /// Enumerable action catalog, including currently unassigned actions.
-    pub const ALL: [Self; 91] = [
+    pub const ALL: [Self; 92] = [
         Self::SelectTool(Tool::Pointer),
         Self::SelectTool(Tool::Pan),
         Self::SelectTool(Tool::RotateView),
@@ -178,6 +179,7 @@ impl Action {
         Self::RevealSource,
         Self::CopySourcePath,
         Self::ApplicationMenu,
+        Self::About,
         Self::NewBoard,
         Self::OpenBoard,
         Self::ImportImages,
@@ -201,6 +203,7 @@ impl Action {
         matches!(
             self,
             Self::ApplicationMenu
+                | Self::About
                 | Self::NewBoard
                 | Self::OpenBoard
                 | Self::ImportImages
@@ -331,6 +334,7 @@ impl Action {
             Self::RevealSource => "Reveal linked image source",
             Self::CopySourcePath => "Copy linked source path",
             Self::ApplicationMenu => "Local menu",
+            Self::About => "About Tack",
             Self::NewBoard => "New board",
             Self::OpenBoard => "Open board",
             Self::ImportImages => "Import images",

@@ -1,13 +1,13 @@
-# Current feature inventory — Phase 1J
+# Current feature inventory — Phase 1J + About
 
-Code audit of the local prototype on 2026-10-06, based on `Action::ALL`,
+Code audit of the local prototype on 2026-10-07, based on `Action::ALL`,
 `product_bindings`, `ImageInput`, annotation/spatial input, local file workers,
 storage/recovery and tests. This inventories shipped and reachable code, not a roadmap.
 Historical Phase 1I evidence has 170 automated native assertions on US and French XKB layouts at
 800×600 and 1024×768. Owner comfort/discovery review and real Windows desktop
 validation remain pending; “implemented” does not imply human acceptance.
 
-Every semantic catalog entry is listed below (91 actions). Shortcuts are the
+Every semantic catalog entry is listed below (92 actions). Shortcuts are the
 **default logical, layout-aware keyboard bindings** exported by `context_ui`; the actual menu
 reads the active user keymap. An em dash means no default press shortcut.
 All actions can be inspected/remapped in Tack → Edit → Keymap. This exposure
@@ -143,6 +143,7 @@ runtime remain pending. See [Phase 1J](MISSION_1J_REPORT.md).
 | UI scale / handle size / hit radius | implemented | Preferences | direct scale chooser; handles/radius cycle | No | profile | Auto or 1–4 selectable in either direction; Auto uses rounded system DPI bounded 1–8. Native 800×600 1×/2× tested. Very large scale on small screens still truncates labels. |
 | Background theme | implemented | Preferences → Background | three direct choices | No | profile only | Very Dark / Neutral Gray / Light, nearby-color screen-space gradient in existing grid pass. Bitmap UI and immutable cyan/magenta/yellow palette; no board/schema changes. Old profiles default Neutral Gray; unknown future themes rejected without overwriting profile. |
 | Keymap search/capture | implemented | Tack → Edit → Keymap; type, Enter, F6; Delete; F5 / Shift+F5 / Ctrl+F5 | temporary panel | No | profile | Press/release/hold/wheel, bounded capture/conflict validation, action/category/all resets. Menu labels follow actual configured press bindings. |
+| About Tack | implemented | right-click Tack / F10 | temporary flat bitmap modal | No | `gfx/about.toml` and artwork, compiled into package | Owner text editable; Cargo version checked; compact artwork decoded only on opening, texture released on dismissal; readable links, 800×600 at 1×/2×. |
 | Close confirmation | implemented | OS close button / window manager | Save / Discard / Cancel panel | No | normal Save if selected | No new Quit action; closing stays in the existing native lifecycle. |
 | Recovery restore/discard | implemented | open board with newer valid recovery | bounded modal; choice required before import | restored document starts dirty | recovery/normal file authority | Normal save remains distinct; document history itself is not serialized. |
 | Read-only board lock conflict | implemented | second writer to same board | errors/status; Save As | No | lock file / new identity if Save As | Separate board windows work independently; no collaboration. |

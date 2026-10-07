@@ -6,7 +6,8 @@ Start with the [public overview](../README.md) for features and everyday control
 
 - [Build, troubleshooting and developer checks](DEVELOPMENT.md)
 - [Feature inventory](FEATURE_INVENTORY.md)
-- [Current manual test checklist](HUMAN_TEST_1J.md)
+- [Current UI/clipboard checklist](HUMAN_TEST_1J.md)
+- [About checklist](HUMAN_TEST_1K_ABOUT.md)
 - [Contribution guidelines](../CONTRIBUTING.md)
 - [Dependency and font notices](THIRD_PARTY_NOTICES.md)
 
@@ -21,6 +22,7 @@ Start with the [public overview](../README.md) for features and everyday control
 - [Board arrangement](design/board_arrangement.md)
 - [Keyboard shortcuts](design/keyboard_shortcuts.md)
 - [Native UI polish and clipboard policy](design/ui_polish.md)
+- [About modal and package](design/about_modal.md)
 - [Progressive image supply](design/local_image_supply.md)
 
 ## Development reports

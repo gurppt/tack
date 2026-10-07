@@ -13,6 +13,7 @@ use winit::{
 };
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Panel {
+    About,
     Menu,
     Preferences,
     Scale,
@@ -34,6 +35,8 @@ pub enum UiResult {
     Dismiss,
 }
 pub struct LocalUi {
+    pub about_image: bool,
+    pub about_layout: Option<crate::about::Layout>,
     pub panel: Panel,
     selected: usize,
     search: String,
@@ -49,6 +52,8 @@ pub struct LocalUi {
 impl LocalUi {
     pub fn new(panel: Panel) -> Self {
         Self {
+            about_image: false,
+            about_layout: None,
             panel,
             selected: 0,
             search: String::new(),
@@ -86,7 +91,7 @@ impl LocalUi {
             Panel::Recent => profile.recent.len(),
             Panel::Close => 3,
             Panel::Recovery => 2,
-            Panel::Error => 1,
+            Panel::Error | Panel::About => 1,
         }
     }
     fn capture_binding(
@@ -140,6 +145,32 @@ impl LocalUi {
         if let WindowEvent::Focused(false) = event {
             self.capture = false;
             self.modifiers = Modifiers::NONE;
+        }
+        if self.panel == Panel::About {
+            match event {
+                WindowEvent::CursorMoved { position, .. } => self.cursor = [position.x, position.y],
+                WindowEvent::MouseInput {
+                    state: ElementState::Pressed,
+                    button: winit::event::MouseButton::Left,
+                    ..
+                } if self
+                    .about_layout
+                    .is_some_and(|layout| layout.close_hit(self.cursor)) =>
+                {
+                    return Some(UiResult::Dismiss);
+                }
+                WindowEvent::KeyboardInput { event, .. }
+                    if event.state == ElementState::Pressed
+                        && matches!(
+                            event.physical_key,
+                            PhysicalKey::Code(KeyCode::Escape | KeyCode::Enter)
+                        ) =>
+                {
+                    return Some(UiResult::Dismiss);
+                }
+                _ => {}
+            }
+            return None;
         }
         if self.capture {
             let control = match event {
@@ -354,7 +385,7 @@ impl LocalUi {
             } else {
                 UiResult::DiscardRecovery
             }),
-            Panel::Error => Some(UiResult::Dismiss),
+            Panel::Error | Panel::About => Some(UiResult::Dismiss),
             Panel::Scale | Panel::Theme => {
                 let scale = self.panel == Panel::Scale;
                 if scale {
@@ -422,6 +453,16 @@ impl LocalUi {
         profile: &Preferences,
     ) {
         let palette = profile.theme.palette();
+        if self.panel == Panel::About {
+            self.about_layout = Some(crate::about::draw(
+                gizmo,
+                camera,
+                palette,
+                self.about_image,
+                !self.message.is_empty(),
+            ));
+            return;
+        }
         let scale = camera.ui_scale();
         let mut budget = 900;
         let screen = camera.screen_size();
@@ -460,6 +501,7 @@ impl LocalUi {
             Panel::Close => "Unsaved work - save before closing?",
             Panel::Recovery => "Newer recovery available - normal save is unchanged",
             Panel::Error => "Tack - local operation error",
+            Panel::About => "About Tack",
         };
         gizmo.ui_text(
             camera,
@@ -544,7 +586,7 @@ impl LocalUi {
                 "Restore recovery as unsaved work".into(),
                 "Discard recovery and keep normal save".into(),
             ],
-            Panel::Error => vec!["Close this message".into()],
+            Panel::Error | Panel::About => vec!["Close this message".into()],
         };
         let first = self
             .selected

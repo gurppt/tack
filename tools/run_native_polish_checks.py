@@ -70,8 +70,8 @@ def main():
             if by_menu:
                 command('xdotool', 'mousemove', '--window', s.window, '700', '500')
                 command('xdotool', 'click', '3')
-                # Six application entries + first canvas row (headings skipped).
-                s.key(*(['Down'] * 7), 'Return')
+                # Seven application entries + first canvas row (headings skipped).
+                s.key(*(['Down'] * 8), 'Return')
             else:
                 s.key('ctrl+v')
             wait(lambda: 'modified' in s.title() and 'Import ' not in s.title(), name + ' admitted')

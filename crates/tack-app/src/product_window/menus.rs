@@ -25,6 +25,7 @@ impl App {
         ))
     }
     fn prepare_menu(&mut self) -> Result<(), AssetError> {
+        self.release_about();
         if let Some(editor) = &mut self.editor {
             self.input.suspend_for_menu(editor, &mut self.camera)?;
             self.input
