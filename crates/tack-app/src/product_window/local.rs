@@ -302,6 +302,9 @@ impl App {
                     ImportKeymap => Picker::ImportKeymap,
                     _ => Picker::ExportKeymap,
                 };
+                if matches!(action, ImportKeymap | ExportKeymap) {
+                    self.panel(Panel::Keymap);
+                }
                 self.operation(Operation::Pick(action, kind, self.work.join("helpers")))?;
             }
             _ => {}
@@ -573,13 +576,21 @@ impl App {
             LocalUpdate::Profile(result) => {
                 self.local.profile_base = Some(result.map_err(AssetError::from)?);
             }
-            LocalUpdate::Keymap(_, result) => {
+            LocalUpdate::Keymap(action, result) => {
                 if let Some(profile) = result.map_err(AssetError::from)? {
                     self.local.profile.keymap = profile.keymap;
                     self.local.profile_pending = true;
                     self.local.profile_changed = true;
                     self.apply_preferences()?;
                     self.panel(Panel::Keymap);
+                }
+                if let Some(ui) = &mut self.local.ui {
+                    ui.message = if action == Action::ImportKeymap {
+                        "Keymap imported"
+                    } else {
+                        "Keymap exported"
+                    }
+                    .into();
                 }
             }
             LocalUpdate::Discarded(result) => {

@@ -10,8 +10,7 @@ pub enum Theme {
 }
 #[derive(Clone, Copy, Debug)]
 pub struct Palette {
-    pub background_a: Color,
-    pub background_b: Color,
+    pub background: Color,
     pub menu_bg: Color,
     pub menu_border: Color,
     pub text_primary: Color,
@@ -42,8 +41,7 @@ impl Theme {
         let c = |r, g, b| [r, g, b, 1.];
         if self == Self::Light {
             return Palette {
-                background_a: c(0.69, 0.70, 0.71),
-                background_b: c(0.72, 0.73, 0.74),
+                background: c(0.69, 0.70, 0.71),
                 menu_bg: c(0.85, 0.86, 0.87),
                 menu_border: c(0.16, 0.19, 0.21),
                 text_primary: c(0.012, 0.016, 0.021),
@@ -57,22 +55,13 @@ impl Theme {
                 guide: c(0.015, 0.18, 0.22),
             };
         }
-        let (a, b, menu) = if self == Self::VeryDark {
-            (
-                c(0.008, 0.010, 0.014),
-                c(0.011, 0.013, 0.018),
-                c(0.019, 0.024, 0.032),
-            )
+        let (background, menu) = if self == Self::VeryDark {
+            (c(0.008, 0.010, 0.014), c(0.019, 0.024, 0.032))
         } else {
-            (
-                c(0.035, 0.040, 0.050),
-                c(0.041, 0.046, 0.056),
-                c(0.030, 0.038, 0.046),
-            )
+            (c(0.035, 0.040, 0.050), c(0.030, 0.038, 0.046))
         };
         Palette {
-            background_a: a,
-            background_b: b,
+            background,
             menu_bg: menu,
             menu_border: c(0.27, 0.34, 0.38),
             text_primary: c(0.87, 0.89, 0.91),

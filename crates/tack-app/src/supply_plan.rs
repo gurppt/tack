@@ -65,6 +65,21 @@ pub fn plan(needs: &[Need], gpu_bytes: usize, max_lod: Lod) -> Plan {
         detail_reserved: gpu_bytes / 2 - remaining,
     }
 }
+/// Choose from the actual post-upload inventory, without discarding useful detail.
+pub fn displayed_lod(desired: Lod, resident: impl Fn(Lod) -> bool) -> Option<Lod> {
+    Lod::ALL
+        .into_iter()
+        .filter(|lod| *lod >= desired)
+        .find(|lod| resident(*lod))
+        .or_else(|| {
+            Lod::ALL
+                .into_iter()
+                .rev()
+                .filter(|lod| *lod < desired)
+                .find(|lod| resident(*lod))
+        })
+}
+
 #[cfg(test)]
 mod tests {
     #![allow(clippy::unwrap_used)]
@@ -126,5 +141,56 @@ mod tests {
             plan(&n, 128 * 1024 * 1024, Lod::Detail).lods[&n[0].source],
             Lod::Thumbnail
         );
+    }
+}
+
+#[cfg(test)]
+mod convergence_tests {
+    use super::*;
+    #[test]
+    fn resident_detail_bridges_unloaded_medium_on_monotone_dezoom() {
+        let resident = |lod| lod != Lod::Medium;
+        for edge in [2048., 513., 512., 500., 129., 128., 32.] {
+            let desired = Lod::for_projected_edge(edge);
+            let displayed = displayed_lod(desired, resident);
+            assert!(
+                displayed.is_some_and(|lod| lod >= desired),
+                "under-resolved at {edge}px: desired {desired:?}, displayed {displayed:?}"
+            );
+        }
+    }
+    #[test]
+    fn smallest_adequate_resident_wins_and_missing_detail_keeps_fallback() {
+        assert_eq!(displayed_lod(Lod::Medium, |_| true), Some(Lod::Medium));
+        assert_eq!(
+            displayed_lod(Lod::Detail, |l| l != Lod::Detail),
+            Some(Lod::Medium)
+        );
+        assert_eq!(displayed_lod(Lod::Thumbnail, |_| false), None);
+    }
+    #[test]
+    fn single_source_admission_has_no_quality_holes_in_either_direction()
+    -> Result<(), tack_assets::AssetError> {
+        let mut n = Need {
+            asset: AssetId::new(1)?,
+            source: SourceId::new(2)?,
+            projected: 0.,
+            source_edge: 4096,
+            crop: [1.; 2],
+        };
+        let mut previous = Lod::Thumbnail;
+        for edge in 1..=4096 {
+            n.projected = f64::from(edge);
+            let current = plan(&[n], 128 * 1024 * 1024, Lod::Detail).lods[&n.source];
+            assert!(current >= previous);
+            previous = current;
+        }
+        for edge in (1..=4096).rev() {
+            n.projected = f64::from(edge);
+            let current = plan(&[n], 128 * 1024 * 1024, Lod::Detail).lods[&n.source];
+            assert!(current <= previous);
+            previous = current;
+        }
+        Ok(())
     }
 }

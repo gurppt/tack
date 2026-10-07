@@ -268,12 +268,6 @@ mod linux {
             )?)?
         };
         let chosen = choose_mime(&types, text_only);
-        eprintln!(
-            "clipboard backend={} advertised={:?} chosen={}",
-            backend.helper(),
-            types.lines().collect::<Vec<_>>(),
-            chosen.unwrap_or("none")
-        );
         let mime = chosen.ok_or(
             "Unsupported clipboard format: copy local image files, a PNG/JPEG screenshot, or text",
         )?;
@@ -289,13 +283,8 @@ mod linux {
             Duration::from_secs(10),
         )?;
         // Format/provenance only; never log clipboard text, URI paths or image bytes.
-        eprintln!(
-            "clipboard backend={} advertised={:?} chosen={} bytes={}",
-            backend.helper(),
-            types.lines().collect::<Vec<_>>(),
-            mime,
-            bytes.len()
-        );
+        tracing::debug!(backend = backend.helper(), advertised = %types, chosen = mime,
+            bytes = bytes.len(), "clipboard negotiation");
         if bytes.is_empty() {
             return Err("No supported clipboard content; copy again".into());
         }

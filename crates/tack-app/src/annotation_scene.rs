@@ -54,7 +54,7 @@ impl AnnotationScene {
         }
         let luminance = |c: [f32; 4]| c[0] * 0.2126 + c[1] * 0.7152 + c[2] * 0.0722;
         let text = luminance(style.stroke().rgba(Opacity::OPAQUE));
-        let background = luminance(self.palette.background_a);
+        let background = luminance(self.palette.background);
         let contrast = (text.max(background) + 0.05) / (text.min(background) + 0.05);
         if contrast >= 3. {
             return style;

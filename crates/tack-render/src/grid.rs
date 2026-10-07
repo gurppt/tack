@@ -21,15 +21,13 @@ impl GridView {
 /// Screen-space local presentation; independent of board geometry/storage.
 #[derive(Clone, Copy, Debug)]
 pub struct Background {
-    pub start: [f32; 4],
-    pub end: [f32; 4],
+    pub fill: [f32; 4],
     pub grid: [f32; 4],
 }
 impl Default for Background {
     fn default() -> Self {
         Self {
-            start: [0.035, 0.04, 0.05, 1.],
-            end: [0.041, 0.046, 0.056, 1.],
+            fill: [0.035, 0.04, 0.05, 1.],
             grid: [0.095, 0.12, 0.15, 1.],
         }
     }
@@ -72,7 +70,7 @@ impl Grid {
         });
         let buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("grid parameters"),
-            contents: &[0; 80],
+            contents: &[0; 64],
             usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
         });
         let binding = device.create_bind_group(&wgpu::BindGroupDescriptor {
@@ -99,8 +97,7 @@ impl Grid {
         let size = camera.screen_size();
         let parameters = [
             view.map_or([0., 0., 1., 1.], |v| v.parameters(camera)),
-            background.start,
-            background.end,
+            background.fill,
             background.grid,
             [
                 size[0] as f32,

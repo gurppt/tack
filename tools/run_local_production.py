@@ -34,6 +34,7 @@ class Session:
         reporting = ['--output', str(self.report)] if arguments else []
         if arguments and requested_size:
             reporting += ['--window-size', requested_size]
+        self.started = time.monotonic()
         self.process = subprocess.Popen([str(binary), *map(str, arguments), *reporting], env=env, stdout=self.log, stderr=subprocess.STDOUT)
         def mapped():
             if self.process.poll() is not None:

@@ -40,6 +40,7 @@ def summarize(data):
             'peak_gpu_payload': max((f['gpu_bytes'] for f in frames), default=0),
             'peak_cpu_payload': data['cpu_payload_peak'],
             'peak_pending': data['peak_pending'], 'peak_queued': data['peak_queued'],
+            'codec_requests': data.get('codec_requests'), 'decoded_bytes': data.get('decoded_bytes'),
             'cpu_evictions': data['cpu_evictions'], 'discarded': data['discarded'],
             'reprioritized': data['reprioritized'], 'source_bytes': data['source_bytes_before_detail'],
             'container_bytes': data['container_bytes'], 'metadata_ms': data['metadata_load_ms'],

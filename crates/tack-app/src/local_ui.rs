@@ -1,7 +1,7 @@
-//! Lazy compact bitmap panels over the existing canvas; no retained widget tree.
+//! Temporary bitmap panels: bounded hit regions, one catalog/profile path.
 use crate::{
     actions::Action,
-    bindings::{Binding, Keymap, ModifierMatch, Trigger},
+    bindings::{Binding, BindingError, Keymap, ModifierMatch, Trigger},
     image_gizmo::ImageGizmo,
     input::{Modifiers, PhysicalControl, PointerButton},
     preferences::{BindingRecord, Preferences},
@@ -11,6 +11,11 @@ use winit::{
     event::{ElementState, WindowEvent},
     keyboard::{KeyCode, PhysicalKey},
 };
+mod draw;
+mod events;
+mod settings;
+#[cfg(test)]
+mod tests;
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Panel {
     About,
@@ -34,6 +39,38 @@ pub enum UiResult {
     Open(std::path::PathBuf),
     Dismiss,
 }
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Command {
+    Search,
+    Change,
+    Unassign,
+    Reset,
+    Import,
+    Export,
+    ResetAll,
+    Trigger,
+    Close,
+    Decrement(usize),
+    Increment(usize),
+    ConfirmReset,
+    Cancel,
+}
+#[derive(Clone, Copy)]
+struct Hit {
+    rect: [f64; 4],
+    command: Command,
+    enabled: bool,
+}
+impl Hit {
+    fn contains(self, p: [f64; 2]) -> bool {
+        p[0] >= self.rect[0] && p[0] < self.rect[2] && p[1] >= self.rect[1] && p[1] < self.rect[3]
+    }
+}
+#[derive(Clone, Copy)]
+enum ResetScope {
+    All,
+    Category(Action),
+}
 pub struct LocalUi {
     pub about_image: bool,
     pub about_layout: Option<crate::about::Layout>,
@@ -48,6 +85,9 @@ pub struct LocalUi {
     layout: [f64; 4],
     first: usize,
     visible: usize,
+    hits: Vec<Hit>,
+    focus: Option<Command>,
+    confirm_reset: Option<ResetScope>,
 }
 impl LocalUi {
     pub fn new(panel: Panel) -> Self {
@@ -65,26 +105,24 @@ impl LocalUi {
             layout: [1., 600., 405., 60.],
             first: 0,
             visible: 12,
+            hits: Vec::new(),
+            focus: None,
+            confirm_reset: None,
         }
     }
-    fn actions(&self) -> Vec<Action> {
-        Action::ALL
-            .into_iter()
-            .filter(|a| {
-                if self.panel == Panel::Menu {
-                    a.is_local() && *a != Action::ApplicationMenu
-                } else {
-                    let needle = self.search.to_lowercase();
-                    a.label().to_lowercase().contains(&needle)
-                        || a.id().to_lowercase().contains(&needle)
-                        || a.category().to_lowercase().contains(&needle)
-                }
-            })
-            .collect()
+    fn actions(&self, keymap: &Keymap) -> Vec<Action> {
+        if self.panel == Panel::Menu {
+            Action::ALL
+                .into_iter()
+                .filter(|a| a.is_local() && *a != Action::ApplicationMenu)
+                .collect()
+        } else {
+            filtered_actions(&self.search, keymap)
+        }
     }
-    fn count(&self, profile: &Preferences) -> usize {
+    fn count(&self, keymap: &Keymap, profile: &Preferences) -> usize {
         match self.panel {
-            Panel::Menu | Panel::Keymap => self.actions().len(),
+            Panel::Menu | Panel::Keymap => self.actions(keymap).len(),
             Panel::Preferences => 11,
             Panel::Scale => 5,
             Panel::Theme => 3,
@@ -94,13 +132,21 @@ impl LocalUi {
             Panel::Error | Panel::About => 1,
         }
     }
+    fn persist(&mut self, keymap: &Keymap, profile: &mut Preferences) -> Option<UiResult> {
+        profile.keymap = keymap
+            .bindings()
+            .iter()
+            .map(BindingRecord::from_binding)
+            .collect();
+        Some(UiResult::PreferencesChanged)
+    }
     fn capture_binding(
         &mut self,
         control: PhysicalControl,
         keymap: &mut Keymap,
         profile: &mut Preferences,
     ) -> Option<UiResult> {
-        let action = *self.actions().get(self.selected)?;
+        let action = *self.actions(keymap).get(self.selected)?;
         let trigger = if matches!(control, PhysicalControl::Wheel(_)) {
             Trigger::Wheel
         } else if action.captured_hold() || action == Action::PanView {
@@ -116,255 +162,153 @@ impl LocalUi {
             trigger,
             modifiers: ModifierMatch::Exact(self.modifiers),
         };
-        match keymap.bind(binding) {
+        // Change is atomic: conflict leaves both the old assignment and profile intact.
+        let mut candidate = keymap.clone();
+        candidate.unassign(action);
+        match candidate.bind(binding) {
             Ok(()) => {
+                *keymap = candidate;
                 self.capture = false;
-                self.message = "Binding added".into();
-                profile.keymap = keymap
-                    .bindings()
-                    .iter()
-                    .map(BindingRecord::from_binding)
-                    .collect();
-                Some(UiResult::PreferencesChanged)
+                self.focus = None;
+                self.message = format!("Changed {}", action.label());
+                self.persist(keymap, profile)
             }
             Err(error) => {
-                self.message = error.to_string();
+                self.message = if let BindingError::Conflict { existing } = error {
+                    format!(
+                        "{} is used by {}. Refused; choose another or Cancel.",
+                        crate::context_menu::binding_label(&binding),
+                        candidate.bindings()[existing].action.label()
+                    )
+                } else {
+                    format!(
+                        "{}: {error}. Cancel or choose another.",
+                        crate::context_menu::binding_label(&binding)
+                    )
+                };
                 None
             }
         }
     }
-    pub fn handle(
+    fn reset(
         &mut self,
-        event: &WindowEvent,
+        keymap: &mut Keymap,
+        profile: &mut Preferences,
+        scope: Option<ResetScope>,
+    ) -> Option<UiResult> {
+        let selected = self.actions(keymap).get(self.selected).copied();
+        let includes = |a: Action| match scope {
+            Some(ResetScope::All) => true,
+            Some(ResetScope::Category(s)) => s.category() == a.category(),
+            None => selected == Some(a),
+        };
+        let defaults = crate::image_input::product_keymap().ok()?;
+        let mut candidate = keymap.clone();
+        for action in Action::ALL {
+            if includes(action) {
+                candidate.unassign(action);
+            }
+        }
+        for binding in defaults.bindings().iter().filter(|b| includes(b.action)) {
+            if let Err(error) = candidate.bind(*binding) {
+                self.message = if let BindingError::Conflict { existing } = error {
+                    format!(
+                        "Reset refused: {} is used by {}.",
+                        crate::context_menu::binding_label(binding),
+                        candidate.bindings()[existing].action.label()
+                    )
+                } else {
+                    error.to_string()
+                };
+                return None;
+            }
+        }
+        *keymap = candidate;
+        self.message = "Defaults restored".into();
+        self.confirm_reset = None;
+        self.persist(keymap, profile)
+    }
+    fn command(
+        &mut self,
+        command: Command,
         keymap: &mut Keymap,
         profile: &mut Preferences,
     ) -> Option<UiResult> {
-        if let WindowEvent::ModifiersChanged(m) = event {
-            self.modifiers = m.state().into();
-        }
-        if let WindowEvent::Focused(false) = event {
-            self.capture = false;
-            self.modifiers = Modifiers::NONE;
-        }
-        if self.panel == Panel::About {
-            match event {
-                WindowEvent::CursorMoved { position, .. } => self.cursor = [position.x, position.y],
-                WindowEvent::MouseInput {
-                    state: ElementState::Pressed,
-                    button: winit::event::MouseButton::Left,
-                    ..
-                } if self
-                    .about_layout
-                    .is_some_and(|layout| layout.close_hit(self.cursor)) =>
-                {
-                    return Some(UiResult::Dismiss);
-                }
-                WindowEvent::KeyboardInput { event, .. }
-                    if event.state == ElementState::Pressed
-                        && matches!(
-                            event.physical_key,
-                            PhysicalKey::Code(KeyCode::Escape | KeyCode::Enter)
-                        ) =>
-                {
-                    return Some(UiResult::Dismiss);
-                }
-                _ => {}
-            }
-            return None;
-        }
-        if self.capture {
-            let control = match event {
-                WindowEvent::KeyboardInput { event, .. }
-                    if event.state == ElementState::Pressed && !event.repeat =>
-                {
-                    match event.physical_key {
-                        PhysicalKey::Code(KeyCode::Escape) => {
-                            self.capture = false;
-                            return None;
-                        }
-                        PhysicalKey::Code(
-                            KeyCode::ControlLeft
-                            | KeyCode::ControlRight
-                            | KeyCode::ShiftLeft
-                            | KeyCode::ShiftRight
-                            | KeyCode::AltLeft
-                            | KeyCode::AltRight
-                            | KeyCode::SuperLeft
-                            | KeyCode::SuperRight,
-                        ) => None,
-                        _ => crate::input::logical_key(event).map(PhysicalControl::LogicalKey),
-                    }
-                }
-                WindowEvent::MouseInput {
-                    state: ElementState::Pressed,
-                    button,
-                    ..
-                } => Some(PhysicalControl::Pointer(PointerButton::Mouse(*button))),
-                WindowEvent::MouseWheel { delta, .. } => {
-                    let steps = crate::input::wheel_steps(*delta);
-                    Some(PhysicalControl::Wheel(if steps[0].abs() > steps[1].abs() {
-                        crate::input::WheelAxis::Horizontal
-                    } else {
-                        crate::input::WheelAxis::Vertical
-                    }))
-                }
-                _ => None,
-            };
-            return control.and_then(|c| self.capture_binding(c, keymap, profile));
-        }
-        match event {
-            WindowEvent::CursorMoved { position, .. } => {
-                self.cursor = [position.x, position.y];
-                return None;
-            }
-            WindowEvent::MouseInput {
-                state: ElementState::Pressed,
-                button: winit::event::MouseButton::Left,
-                ..
-            } => {
-                let [scale, width, _, top] = self.layout;
-                let x = self.cursor[0] / scale;
-                let y = self.cursor[1] / scale;
-                if x >= 20. && x < width - 8. && y >= top && y < top + self.visible as f64 * 22. {
-                    let selected = self.first + ((y - top) / 22.).floor() as usize;
-                    if selected < self.count(profile) {
-                        self.selected = selected;
-                        return self.activate(keymap, profile);
-                    }
-                }
-                return None;
-            }
-            WindowEvent::MouseWheel { delta, .. } => {
-                let dy = crate::input::wheel_steps(*delta)[1];
-                let count = self.count(profile);
-                if count > 0 && dy != 0. {
-                    self.selected = if dy > 0. {
-                        self.selected.saturating_sub(1)
-                    } else {
-                        (self.selected + 1).min(count - 1)
-                    };
-                }
-                return None;
-            }
-            _ => {}
-        }
-        let WindowEvent::KeyboardInput { event, .. } = event else {
-            return None;
-        };
-        if event.state != ElementState::Pressed {
-            return None;
-        }
-        let count = self.count(profile);
-        match event.physical_key {
-            PhysicalKey::Code(KeyCode::Escape)
-                if matches!(self.panel, Panel::Scale | Panel::Theme) =>
-            {
-                self.selected = if self.panel == Panel::Scale { 3 } else { 4 };
-                self.panel = Panel::Preferences;
+        self.focus = None;
+        match command {
+            Command::Search => {
+                self.focus = Some(Command::Search);
                 None
             }
-            PhysicalKey::Code(KeyCode::Escape) => Some(UiResult::Dismiss),
-            PhysicalKey::Code(KeyCode::ArrowDown) => {
-                if count > 0 {
-                    self.selected = (self.selected + 1) % count;
+            Command::Change => {
+                if self.actions(keymap).get(self.selected).is_some() {
+                    self.capture = true;
+                    self.message.clear();
                 }
                 None
             }
-            PhysicalKey::Code(KeyCode::ArrowUp) => {
-                if count > 0 {
-                    self.selected = (self.selected + count - 1) % count;
-                }
+            Command::Unassign => {
+                let action = *self.actions(keymap).get(self.selected)?;
+                keymap.unassign(action);
+                self.message = format!("Unassigned {}", action.label());
+                self.persist(keymap, profile)
+            }
+            Command::Reset => self.reset(keymap, profile, None),
+            Command::ResetAll => {
+                self.confirm_reset = Some(ResetScope::All);
+                self.message = "Reset all shortcuts? Confirm or Cancel.".into();
                 None
             }
-            PhysicalKey::Code(KeyCode::Enter) => self.activate(keymap, profile),
-            PhysicalKey::Code(KeyCode::Backspace) if self.panel == Panel::Keymap => {
-                self.search.pop();
-                self.selected = 0;
-                None
-            }
-            PhysicalKey::Code(KeyCode::Delete) if self.panel == Panel::Keymap => {
-                if let Some(action) = self.actions().get(self.selected) {
-                    keymap.unassign(*action);
-                    profile.keymap = keymap
-                        .bindings()
-                        .iter()
-                        .map(BindingRecord::from_binding)
-                        .collect();
-                    return Some(UiResult::PreferencesChanged);
-                }
-                None
-            }
-            PhysicalKey::Code(KeyCode::F6) if self.panel == Panel::Keymap => {
-                self.release = !self.release;
-                None
-            }
-            PhysicalKey::Code(KeyCode::F5) if self.panel == Panel::Keymap => {
-                let selected = self.actions().get(self.selected).copied();
-                let defaults = crate::image_input::product_keymap().ok()?;
-                let mut candidate = keymap.clone();
-                for action in Action::ALL {
-                    if self.modifiers.contains(Modifiers::CONTROL)
-                        || selected.is_some_and(|s| {
-                            if self.modifiers.contains(Modifiers::SHIFT) {
-                                s.category() == action.category()
-                            } else {
-                                s == action
-                            }
-                        })
-                    {
-                        candidate.unassign(action);
-                    }
-                }
-                for binding in defaults.bindings() {
-                    let reset = self.modifiers.contains(Modifiers::CONTROL)
-                        || selected.is_some_and(|s| {
-                            if self.modifiers.contains(Modifiers::SHIFT) {
-                                s.category() == binding.action.category()
-                            } else {
-                                s == binding.action
-                            }
-                        });
-                    if reset && let Err(error) = candidate.bind(*binding) {
-                        self.message = error.to_string();
-                        return None;
-                    }
-                }
-                *keymap = candidate;
-                profile.keymap = keymap
-                    .bindings()
-                    .iter()
-                    .map(BindingRecord::from_binding)
-                    .collect();
-                Some(UiResult::PreferencesChanged)
-            }
-            _ if self.panel == Panel::Keymap
-                && !self.modifiers.contains(Modifiers::CONTROL)
-                && !self.modifiers.contains(Modifiers::ALT) =>
-            {
-                if let Some(text) = &event.text
-                    && self.search.len() + text.len() <= 128
-                    && !text.chars().any(char::is_control)
-                {
-                    self.search.push_str(text);
-                    self.selected = 0;
-                }
-                None
-            }
-            _ => None,
-        }
-    }
-    fn activate(&mut self, _keymap: &mut Keymap, profile: &mut Preferences) -> Option<UiResult> {
-        match self.panel {
-            Panel::Menu => self
-                .actions()
-                .get(self.selected)
-                .copied()
-                .map(UiResult::Action),
-            Panel::Keymap => {
-                self.capture = true;
+            Command::ConfirmReset => self.reset(keymap, profile, self.confirm_reset),
+            Command::Cancel => {
+                self.capture = false;
+                self.confirm_reset = None;
                 self.message.clear();
                 None
             }
+            Command::Trigger => {
+                self.release = !self.release;
+                None
+            }
+            Command::Import => Some(UiResult::Action(Action::ImportKeymap)),
+            Command::Export => Some(UiResult::Action(Action::ExportKeymap)),
+            Command::Close => Some(UiResult::Dismiss),
+            Command::Decrement(row) => {
+                self.selected = row;
+                self.adjust(profile, false)
+            }
+            Command::Increment(row) => {
+                self.selected = row;
+                self.adjust(profile, true)
+            }
+        }
+    }
+    fn adjust(&mut self, profile: &mut Preferences, increment: bool) -> Option<UiResult> {
+        let value = match self.selected {
+            5 => &mut profile.handle_size,
+            6 => &mut profile.hit_radius,
+            _ => return None,
+        };
+        let (min, max) = if self.selected == 5 { (3, 21) } else { (5, 32) };
+        let next = if increment {
+            value.saturating_add(1).min(max)
+        } else {
+            value.saturating_sub(1).max(min)
+        };
+        if next == *value {
+            return None;
+        }
+        *value = next;
+        Some(UiResult::PreferencesChanged)
+    }
+    fn activate(&mut self, keymap: &mut Keymap, profile: &mut Preferences) -> Option<UiResult> {
+        match self.panel {
+            Panel::Menu => self
+                .actions(keymap)
+                .get(self.selected)
+                .copied()
+                .map(UiResult::Action),
+            Panel::Keymap => self.command(Command::Change, keymap, profile),
             Panel::Recent => profile
                 .recent
                 .get(self.selected)
@@ -422,20 +366,7 @@ impl LocalUi {
                             .unwrap_or(1);
                         return None;
                     }
-                    5 => {
-                        profile.handle_size = if profile.handle_size >= 21 {
-                            3
-                        } else {
-                            profile.handle_size + 2
-                        }
-                    }
-                    6 => {
-                        profile.hit_radius = if profile.hit_radius >= 31 {
-                            5
-                        } else {
-                            profile.hit_radius + 2
-                        }
-                    }
+                    5 | 6 => return self.adjust(profile, true),
                     7 => return Some(UiResult::Action(Action::KeymapEditor)),
                     8 => return Some(UiResult::Action(Action::ImportKeymap)),
                     9 => return Some(UiResult::Action(Action::ExportKeymap)),
@@ -445,246 +376,30 @@ impl LocalUi {
             }
         }
     }
-    pub fn draw(
-        &mut self,
-        gizmo: &mut ImageGizmo,
-        camera: &Camera,
-        keymap: &Keymap,
-        profile: &Preferences,
-    ) {
-        let palette = profile.theme.palette();
-        if self.panel == Panel::About {
-            self.about_layout = Some(crate::about::draw(
-                gizmo,
-                camera,
-                palette,
-                self.about_image,
-                !self.message.is_empty(),
-            ));
-            return;
-        }
-        let scale = camera.ui_scale();
-        let mut budget = 900;
-        let screen = camera.screen_size();
-        let width = (f64::from(screen[0]) / scale - 24.).clamp(1., 600.);
-        let height = (f64::from(screen[1]) / scale - 24.).clamp(1., 405.);
-        let top = if height < 100. {
-            34.
-        } else if height < 240. {
-            46.
-        } else {
-            60.
-        };
-        let footer = if height >= 180. {
-            66.
-        } else if height >= 100. {
-            24.
-        } else {
-            0.
-        };
-        self.layout = [scale, width, height, top];
-        self.visible = ((height + 8. - top - footer) / 22.).floor().clamp(1., 12.) as usize;
-        gizmo.pixel_rect(
-            camera,
-            [12. * scale, 12. * scale],
-            [(12. + width) * scale, (12. + height) * scale],
-            palette.menu_bg,
-            None,
-        );
-        let heading = match self.panel {
-            Panel::Menu => "Tack - local files",
-            Panel::Preferences => "Preferences",
-            Panel::Scale => "UI Scale - choose directly",
-            Panel::Theme => "Background - choose directly",
-            Panel::Keymap => "Keymap - type to search",
-            Panel::Recent => "Recent boards - open in another window",
-            Panel::Close => "Unsaved work - save before closing?",
-            Panel::Recovery => "Newer recovery available - normal save is unchanged",
-            Panel::Error => "Tack - local operation error",
-            Panel::About => "About Tack",
-        };
-        gizmo.ui_text(
-            camera,
-            [24. * scale, if height < 100. { 14. } else { 22. } * scale],
-            width - 24.,
-            heading,
-            palette.accent_primary,
-            &mut budget,
-        );
-        let rows: Vec<String> = match self.panel {
-            Panel::Menu => self.actions().iter().map(|a| a.label().into()).collect(),
-            Panel::Keymap => self
-                .actions()
-                .iter()
-                .map(|a| {
-                    format!(
-                        "{} ({}) {}",
-                        a.label(),
-                        keymap.for_action(*a).count(),
-                        keymap
-                            .for_action(*a)
-                            .map(|b| format!(
-                                "{} {:?}",
-                                crate::context_menu::binding_label(b),
-                                b.trigger
-                            ))
-                            .collect::<Vec<_>>()
-                            .join("; ")
-                    )
-                })
-                .collect(),
-            Panel::Preferences => vec![
-                format!("Grid default: {}", profile.grid),
-                format!("Image sampling default: {}", profile.sampling),
-                format!(
-                    "Import: {}",
-                    if profile.embedded_import {
-                        "Embedded"
-                    } else {
-                        "Linked"
-                    }
-                ),
-                format!(
-                    "UI scale: {} >",
-                    if profile.ui_scale == 0 {
-                        "Auto/System".into()
-                    } else {
-                        format!("{}x", profile.ui_scale)
-                    }
-                ),
-                format!("Background: {} >", profile.theme.label()),
-                format!("Handle size: {}", profile.handle_size),
-                format!("Hit radius: {}", profile.hit_radius),
-                "Edit keymap".into(),
-                "Import keymap".into(),
-                "Export preferences/keymap".into(),
-                "Close".into(),
-            ],
-            Panel::Scale => ["Auto/System", "1x", "2x", "3x", "4x"]
-                .into_iter()
-                .map(String::from)
-                .collect(),
-            Panel::Theme => crate::ui_theme::Theme::ALL
-                .into_iter()
-                .map(|t| t.label().into())
-                .collect(),
-            Panel::Recent => profile
-                .recent
-                .iter()
-                .map(|p| {
-                    p.path()
-                        .map(|p| p.display().to_string())
-                        .unwrap_or_else(|e| e.to_string())
-                })
-                .collect(),
-            Panel::Close => vec![
-                "Save and close".into(),
-                "Discard edits and recovery".into(),
-                "Cancel".into(),
-            ],
-            Panel::Recovery => vec![
-                "Restore recovery as unsaved work".into(),
-                "Discard recovery and keep normal save".into(),
-            ],
-            Panel::Error | Panel::About => vec!["Close this message".into()],
-        };
-        let first = self
-            .selected
-            .saturating_sub(self.visible / 2)
-            .min(rows.len().saturating_sub(self.visible));
-        self.first = first;
-        for (index, row) in rows.iter().enumerate().skip(first).take(self.visible) {
-            let y = top + (index - first) as f64 * 22.;
-            if index == self.selected {
-                gizmo.pixel_rect(
-                    camera,
-                    [20. * scale, y * scale],
-                    [(width + 4.) * scale, (y + 20.) * scale],
-                    palette.selection,
-                    None,
-                );
-            }
-            gizmo.ui_text(
-                camera,
-                [24. * scale, (y + 2.) * scale],
-                width - 24.,
-                row,
-                palette.text_primary,
-                &mut budget,
-            );
-        }
-        let hint = if self.capture {
-            "Press a key, mouse button or wheel. Escape cancels capture."
-        } else if self.panel == Panel::Keymap {
-            "Enter add; Delete unassign; F5 reset; Shift+F5 category; Ctrl+F5 all"
-        } else {
-            "Up/Down choose; Enter confirm; Escape close"
-        };
-        if height >= 180. {
-            gizmo.ui_text(
-                camera,
-                [24. * scale, (height - 66.) * scale],
-                width - 24.,
-                hint,
-                palette.text_secondary,
-                &mut budget,
-            );
-        }
-        if self.panel == Panel::Keymap && height >= 210. {
-            gizmo.ui_text(
-                camera,
-                [24. * scale, (height - 48.) * scale],
-                width - 24.,
-                &format!(
-                    "Search: {} | F6 binding trigger: {}",
-                    self.search,
-                    if self.release { "Release" } else { "Press" }
-                ),
-                palette.text_secondary,
-                &mut budget,
-            );
-        }
-        if height >= 100. {
-            gizmo.ui_text(
-                camera,
-                [24. * scale, (height - 8.) * scale],
-                width - 24.,
-                &self.message,
-                palette.accent_attention,
-                &mut budget,
-            );
-        }
-    }
 }
-
-#[cfg(test)]
-mod choice_tests {
-    use super::*;
-    #[test]
-    fn scale_and_theme_are_direct_reversible_choices() -> Result<(), tack_assets::AssetError> {
-        let mut profile = Preferences::defaults()?;
-        let mut keymap = profile.keymap()?;
-        let mut ui = LocalUi::new(Panel::Preferences);
-        for scale in [2, 1, 4, 0] {
-            ui.selected = 3;
-            assert!(ui.activate(&mut keymap, &mut profile).is_none());
-            assert_eq!(ui.panel, Panel::Scale);
-            ui.selected = scale;
-            assert!(matches!(
-                ui.activate(&mut keymap, &mut profile),
-                Some(UiResult::PreferencesChanged)
-            ));
-            assert_eq!(profile.ui_scale, scale as u8);
-            assert_eq!(ui.panel, Panel::Preferences);
+/// Bounded event/draw-time scan; no retained action widgets or search index.
+pub fn filtered_actions(search: &str, keymap: &Keymap) -> Vec<Action> {
+    let needle = search.to_lowercase();
+    let matches = |text: &str| {
+        if needle.is_empty() {
+            true
+        } else if text.is_ascii() && needle.is_ascii() {
+            text.as_bytes()
+                .windows(needle.len())
+                .any(|s| s.eq_ignore_ascii_case(needle.as_bytes()))
+        } else {
+            text.to_lowercase().contains(&needle)
         }
-        for (index, theme) in crate::ui_theme::Theme::ALL.into_iter().enumerate() {
-            ui.selected = 4;
-            ui.activate(&mut keymap, &mut profile);
-            assert_eq!(ui.panel, Panel::Theme);
-            ui.selected = index;
-            ui.activate(&mut keymap, &mut profile);
-            assert_eq!(profile.theme, theme);
-        }
-        Ok(())
-    }
+    };
+    Action::ALL
+        .into_iter()
+        .filter(|a| {
+            matches(a.label())
+                || matches(&a.id())
+                || matches(a.category())
+                || keymap
+                    .for_action(*a)
+                    .any(|b| matches(&crate::context_menu::binding_label(b)))
+        })
+        .collect()
 }

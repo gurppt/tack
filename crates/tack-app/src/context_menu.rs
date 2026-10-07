@@ -237,7 +237,27 @@ pub fn binding_label(b: &crate::bindings::Binding) -> String {
             label.push_str(name);
         }
         PhysicalControl::Key(key) => label.push_str(&format!("pos:{key:?}")),
-        other => label.push_str(&format!("{other:?}")),
+        PhysicalControl::Pointer(crate::input::PointerButton::Mouse(button)) => {
+            let text = match button {
+                winit::event::MouseButton::Left => "Mouse1",
+                winit::event::MouseButton::Middle => "Mouse2",
+                winit::event::MouseButton::Right => "Mouse3",
+                winit::event::MouseButton::Back => "Mouse4",
+                winit::event::MouseButton::Forward => "Mouse5",
+                winit::event::MouseButton::Other(n) => {
+                    label.push_str(&format!("Mouse({n})"));
+                    ""
+                }
+            };
+            label.push_str(text);
+        }
+        PhysicalControl::Pointer(crate::input::PointerButton::Stylus(n)) => {
+            label.push_str(&format!("Stylus({n})"))
+        }
+        PhysicalControl::Wheel(axis) => label.push_str(match axis {
+            crate::input::WheelAxis::Horizontal => "WheelX",
+            crate::input::WheelAxis::Vertical => "WheelY",
+        }),
     }
     label.push_str(qualifier);
     label

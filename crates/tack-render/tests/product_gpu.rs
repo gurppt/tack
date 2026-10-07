@@ -726,3 +726,48 @@ fn lazy_ui_artwork_is_nearest_above_overlay_and_released_after_close() -> Result
     assert_eq!(pixel(&bytes, 32, 20), [0, 255, 0, 255]);
     Ok(())
 }
+#[test]
+#[ignore = "explicit native GPU flat background readback"]
+fn flat_background_has_identical_top_and_bottom_pixels_in_all_three_fills() -> Result<(), AssetError>
+{
+    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::from_env_or_default());
+    let mut gpu = pollster::block_on(Gpu::new(
+        &instance,
+        None,
+        wgpu::TextureFormat::Rgba8UnormSrgb,
+        1024 * 1024,
+    ))?;
+    let mut d = data();
+    d.opacity = Opacity::new(0.)?;
+    let key = ProductKey {
+        asset: Some(d.asset_id),
+        source: SourceId::new(1)?,
+        revision: 1,
+        lod: Lod::Thumbnail,
+        edge: 128,
+    };
+    assert!(gpu.begin_frame()?);
+    assert!(gpu.upload_product(
+        key,
+        &Decoded {
+            width: 1,
+            height: 1,
+            rgba: vec![255; 4]
+        }
+    ));
+    for fill in [
+        [0.008, 0.010, 0.014, 1.],
+        [0.035, 0.040, 0.050, 1.],
+        [0.69, 0.70, 0.71, 1.],
+    ] {
+        gpu.set_background(tack_render::Background {
+            fill,
+            grid: [0.1, 0.2, 0.3, 1.],
+        });
+        let image = pixels(&mut gpu, d, key)?;
+        let top = pixel(&image, 1, 1);
+        assert_eq!(top, pixel(&image, 32, 32));
+        assert_eq!(top, pixel(&image, 62, 62));
+    }
+    Ok(())
+}

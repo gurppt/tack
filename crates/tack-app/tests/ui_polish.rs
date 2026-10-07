@@ -80,14 +80,12 @@ fn mixed_local_list_keeps_valid_entries_order_and_rejects_remote() -> R {
     Ok(())
 }
 #[test]
-fn three_palettes_have_subtle_nearby_endpoints_and_legible_ui_states() {
+fn three_flat_palettes_have_legible_ui_states() {
     for theme in Theme::ALL {
         let p = theme.palette();
         for channel in 0..3 {
-            assert!((p.background_a[channel] - p.background_b[channel]).abs() <= 0.031);
-            assert!(p.background_a[channel] > 0. && p.background_b[channel] < 1.);
+            assert!(p.background[channel] > 0. && p.background[channel] < 1.);
         }
-        assert_ne!(p.background_a, p.background_b);
         for background in [p.menu_bg, p.selection] {
             for text in [
                 p.text_primary,

@@ -9,7 +9,8 @@ mod profile;
 mod representation;
 mod ui_image;
 pub use product::{
-    PreparedOverview, ProductAssetStats, ProductAssets, ProductDemand, SourceState, SupplyLimits,
+    PreparedOverview, ProductAssetStats, ProductAssets, ProductDemand, RepTrace, SourceState,
+    SupplyLimits,
 };
 pub use representation::{image_metadata, source_fingerprint};
 pub use ui_image::decode_ui_png;

@@ -446,6 +446,15 @@ impl Gpu {
             self.textures.contains(TextureKey::Product(key))
         }
     }
+    /// Protect the admitted current working set before inserting new textures.
+    /// Touch exact demand only; optional higher-quality fallbacks remain evictable.
+    pub fn touch_product(&mut self, key: ProductKey) {
+        if key.lod == Lod::Thumbnail {
+            self.thumbnails.get(TextureKey::Product(key));
+        } else {
+            self.textures.get(TextureKey::Product(key));
+        }
+    }
     pub fn upload_product(&mut self, key: ProductKey, image: &Decoded) -> bool {
         self.upload_key(TextureKey::Product(key), image)
     }

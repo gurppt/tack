@@ -1743,6 +1743,7 @@ dependencies = [
  "tack-core",
  "tack-render",
  "tack-storage",
+ "tracing",
  "tracing-subscriber",
  "wgpu",
  "winit",

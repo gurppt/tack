@@ -30,6 +30,7 @@ struct OpenOptions {
     annotation_benchmark: bool,
     potato: bool,
     supply_stress: bool,
+    lod_debug: bool,
     immediate: bool,
     dense: bool,
     window_size: [u32; 2],
@@ -81,11 +82,13 @@ struct App {
     redraws: u64,
     wakeups: u64,
     event_samples: Vec<f64>,
+    wheel_samples: Vec<f64>,
     supply_pending: bool,
     visibility: tack_app::visibility::Visibility,
     context: Option<Box<tack_app::context_menu::ContextMenu>>,
     pointer: [f64; 2],
     cursor_icon: winit::window::CursorIcon,
+    lod_trace: Option<tack_app::lod_diagnostics::LodDiagnostics>,
 }
 impl App {
     fn initialize(&mut self, event_loop: &ActiveEventLoop) -> Result<(), AssetError> {
@@ -182,6 +185,11 @@ impl App {
                 SupplyLimits::default()
             },
         )?);
+        if self.options.lod_debug
+            && let Some(assets) = &mut self.assets
+        {
+            assets.enable_lod_diagnostics();
+        }
         self.visibility.invalidate();
         self.editor = Some(DocumentEditor::new(board.document.clone(), 200));
         self.board = Some(board);
@@ -386,6 +394,25 @@ impl App {
             }
             // Background work is never proactively requested at rest (class 4).
             demands.sort_by_key(|d| d.priority);
+            // The plan fits each partition. Make all admitted residents newer than
+            // obsolete textures before any insertion can evict them.
+            for demand in &demands {
+                if demand.priority == 3 {
+                    continue;
+                }
+                if let Some(source) = document
+                    .asset(demand.asset)
+                    .and_then(|a| document.source(a.source_id()))
+                {
+                    gpu.touch_product(ProductKey {
+                        asset: (demand.lod == Lod::Thumbnail).then_some(demand.asset),
+                        source: source.id(),
+                        revision: source.revision(),
+                        lod: demand.lod,
+                        edge: demand.edge,
+                    });
+                }
+            }
             assets.replace_view(&demands, document, &self.local.originals);
             assets.poll();
             assets.schedule();
@@ -415,25 +442,39 @@ impl App {
                         gpu.upload_product(k, image);
                     }
                 }
-                draw.key = [Lod::Detail, Lod::Medium, Lod::Thumbnail]
-                    .into_iter()
-                    .filter(|lod| *lod <= desired)
-                    .map(key)
-                    .find(|k| gpu.contains_product(*k));
+            }
+            // Select and account only after all uploads/evictions. Earlier draws
+            // must not advertise quality that later insertions have removed.
+            for draw in &mut self.draws {
+                let s = document
+                    .asset(draw.data.asset_id)
+                    .and_then(|a| document.source(a.source_id()))
+                    .ok_or("render source reference")?;
+                let desired = plan.lods[&s.id()];
+                let key = |lod| ProductKey {
+                    asset: (lod == Lod::Thumbnail).then_some(draw.data.asset_id),
+                    source: s.id(),
+                    revision: s.revision(),
+                    lod,
+                    edge: if lod == Lod::Thumbnail {
+                        plan.overview_edge
+                    } else {
+                        lod.edge()
+                    },
+                };
+                draw.key = tack_app::supply_plan::displayed_lod(desired, |lod| {
+                    gpu.contains_product(key(lod))
+                })
+                .map(key);
+                recognizable += usize::from(draw.key.is_some());
                 detailed += usize::from(draw.key.is_some_and(|k| k.lod != Lod::Thumbnail));
                 desired_count += usize::from(desired != Lod::Thumbnail);
-                resolved_count += usize::from(gpu.contains_product(key(desired)));
+                resolved_count += usize::from(draw.key.is_some_and(|k| k.lod >= desired));
                 self.supply_pending |= !gpu.contains_product(key(desired))
                     && !assets.failed_rep(draw.data.asset_id, desired, key(desired).edge);
             }
         }
-
         let supply_ms = supply_start.elapsed().as_secs_f64() * 1000.;
-        // A later upload may evict an earlier visible texture.
-        for draw in &mut self.draws {
-            draw.key = draw.key.filter(|key| gpu.contains_product(*key));
-            recognizable += usize::from(draw.key.is_some());
-        }
         if let Some(editor) = &self.editor {
             self.input.build_overlay(editor, &self.camera);
         }
@@ -467,8 +508,7 @@ impl App {
         }
         let palette = self.local.profile.theme.palette();
         gpu.set_background(tack_render::Background {
-            start: palette.background_a,
-            end: palette.background_b,
+            fill: palette.background,
             grid: palette.grid,
         });
         let grid = self.input.grid_visible.then(|| tack_render::GridView {
@@ -547,7 +587,7 @@ impl App {
         frame.present();
         let present_ms = present_start.elapsed().as_secs_f64() * 1000.;
         if self.options.output.is_some() && self.frames.len() < 7200 {
-            self.frames.push(json!({"window_size":self.camera.screen_size(),"annotations":self.annotations.as_ref().map(|a|json!({"primitives":a.primitives.len(),"glyphs":a.glyphs,"omitted":a.omitted,"layout_ms":a.layout_ms,"build_ms":a.build_ms})),"camera":self.camera.screen_to_world(self.camera.screen_size().map(|v|f64::from(v)/2.)),"zoom":self.camera.zoom(),"overview_edge":overview_edge,"detail_reserved":detail_reserved,"desired_detail":desired_count,"quality_resolved":resolved_count,"scene_ms":scene_ms,"query_ms":query_ms,"supply_ms":supply_ms,"detailed":detailed,"supply":self.assets.as_ref().map(|a| {let s=a.stats();json!({"pending":s.pending,"queued":s.queued,"cpu_bytes":s.cpu_bytes,"evictions":s.evictions,"source_bytes":s.source_bytes,"container_bytes":s.container_bytes,"decode_count":s.decode_count,"decode_ms":s.decode_ms,"discarded":s.discarded})}),"encode_ms":stats.encode_ms,"submit_ms":stats.submit_ms,"poll_ms":stats.poll_ms,"elapsed_ms":elapsed_ms,"cpu_ms":cpu_ms,"visible":self.draws.len(),"recognizable":recognizable,"upload_cpu_ms":stats.upload_cpu_ms,"upload_bytes":stats.upload_bytes,"uploads":stats.uploads,"gpu_bytes":stats.gpu_bytes,"in_flight":stats.in_flight,"acquire_ms":acquire_ms,"present_ms":present_ms,"callback_ms":start.elapsed().as_secs_f64()*1000.}));
+            self.frames.push(json!({"window_size":self.camera.screen_size(),"lod_trace":self.lod_trace.as_mut().and_then(|trace| trace.record(&self.camera, &self.draws, self.editor.as_ref().map(|e|e.document()), self.assets.as_ref(), gpu, overview_edge)),"annotations":self.annotations.as_ref().map(|a|json!({"primitives":a.primitives.len(),"glyphs":a.glyphs,"omitted":a.omitted,"layout_ms":a.layout_ms,"build_ms":a.build_ms})),"camera":self.camera.screen_to_world(self.camera.screen_size().map(|v|f64::from(v)/2.)),"zoom":self.camera.zoom(),"overview_edge":overview_edge,"detail_reserved":detail_reserved,"desired_detail":desired_count,"quality_resolved":resolved_count,"scene_ms":scene_ms,"query_ms":query_ms,"supply_ms":supply_ms,"detailed":detailed,"supply":self.assets.as_ref().map(|a| {let s=a.stats();json!({"pending":s.pending,"queued":s.queued,"cpu_bytes":s.cpu_bytes,"evictions":s.evictions,"source_bytes":s.source_bytes,"container_bytes":s.container_bytes,"decode_count":s.decode_count,"codec_requests":s.codec_requests,"decoded_bytes":s.decoded_bytes,"decode_ms":s.decode_ms,"discarded":s.discarded})}),"encode_ms":stats.encode_ms,"submit_ms":stats.submit_ms,"poll_ms":stats.poll_ms,"elapsed_ms":elapsed_ms,"cpu_ms":cpu_ms,"visible":self.draws.len(),"recognizable":recognizable,"upload_cpu_ms":stats.upload_cpu_ms,"upload_bytes":stats.upload_bytes,"uploads":stats.uploads,"gpu_bytes":stats.gpu_bytes,"in_flight":stats.in_flight,"acquire_ms":acquire_ms,"present_ms":present_ms,"callback_ms":start.elapsed().as_secs_f64()*1000.}));
         }
         self.dirty = self.supply_pending;
         Ok(())
@@ -637,7 +677,7 @@ impl App {
             .map(|s| s.iter().map(|s| json!({"pass_ms":s.pass_ms})).collect())
             .unwrap_or_default();
         let mut report = json!({"about":{"requests":self.local.about_ticket,"image_gpu_bytes":gpu.map_or(0, |g| g.ui_image_bytes()),"version":tack_app::about::METADATA.version},"window_size":self.camera.screen_size(),"load_failed":self.load_failed,"local":{"operations":self.local.worker.operations,"recoveries":self.save.recoveries,"recovery_generation":self.save.recovery_generation,"recovery_bytes":self.save.recovery_bytes,"last_storage_worker_ms":self.save.last_worker_ms,"ui_scale":self.camera.ui_scale(),"discarded_asset_results":stats.discarded},"first_frame_ms":self.first_frame_ms,"gpu_setup_ms":self.gpu_setup_ms,"annotation_resources":gpu.map(|g|g.annotation_bytes()),"annotations":self.editor.as_ref().map(|e|e.document().annotation_count()).unwrap_or(0),"spatial":{"grid":self.input.grid_visible,"snapping":self.input.snap.enabled,"frames":self.editor.as_ref().map(|e|e.document().objects().filter(|o|matches!(o.kind(),tack_core::ObjectKind::Frame(_))).count()).unwrap_or(0),"groups":self.editor.as_ref().map(|e|e.document().groups().count()).unwrap_or(0)},"redraw_count":self.redraws,"wait_count":self.wakeups,"operation":"open","editing":self.editor.as_ref().map(|e|json!({"dirty":e.is_dirty(),"generation":e.generation(),"undo_entries":e.undo_len(),"redo_entries":e.redo_len(),"selected":self.input.images.selection.len(),"save_completed":self.save.completed})),"interaction":self.benchmark.as_ref().map(|b|json!({"scenario":b.name(),"input_ms":b.samples,"snap_query_ms":b.snap_queries,"commits":b.commits,"cancels":b.cancels,"invariants":b.invariants})),"native_startup_ms":self.native_startup_ms,"camera_clamped":self.camera_clamped,"navigation_end_pending":self.navigation_end_pending,"drain_ms":self.drain_ms,"state_counts_scope":"requested sources only","recognizable_clock":"CPU submission before present","metadata_load_ms":self.metadata_ms,"metadata_bytes":self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"first_recognizable_ms":self.first_content_ms,"ordinary_view_80_percent_ms":self.useful_ms,"source_bytes_before_detail":stats.source_bytes,"container_bytes":stats.container_bytes+self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"overview_reused":stats.reused,"overview_regenerated":stats.regenerated,"errors":stats.errors,"source_missing":counts(SourceState::Missing),"source_changed":counts(SourceState::Changed),"source_foreign":counts(SourceState::Foreign),"peak_pending":stats.peak_pending,"cpu_payload_bytes":stats.cpu_bytes,"adapter":gpu.map(|g|g.adapter_info.name.clone()),"backend":gpu.map(|g|format!("{:?}",g.adapter_info.backend)),"frames":self.frames,"gpu_samples":samples,"detail":"bounded projected 128/512/2048 display supply"});
-        let supply_receipt = json!({"potato":self.options.potato,"present_mode":self.config.as_ref().map(|c|format!("{:?}",c.present_mode)),"event_samples_ms":self.event_samples,"cpu_payload_peak":stats.cpu_peak,"cpu_evictions":stats.evictions,"reprioritized":stats.reprioritized,"discarded":stats.discarded,"peak_queued":stats.peak_queued,"visibility_memo_bytes":self.visibility.bytes()});
+        let supply_receipt = json!({"potato":self.options.potato,"present_mode":self.config.as_ref().map(|c|format!("{:?}",c.present_mode)),"event_samples_ms":self.event_samples,"wheel_samples_ms":self.wheel_samples,"codec_requests":stats.codec_requests,"decoded_bytes":stats.decoded_bytes,"cpu_payload_peak":stats.cpu_peak,"cpu_evictions":stats.evictions,"reprioritized":stats.reprioritized,"discarded":stats.discarded,"peak_queued":stats.peak_queued,"visibility_memo_bytes":self.visibility.bytes()});
         if let Some(obj) = report.as_object_mut()
             && let Some(extra) = supply_receipt.as_object()
         {
@@ -717,11 +757,17 @@ impl ApplicationHandler<Event> for App {
     }
     fn window_event(&mut self, e: &ActiveEventLoop, id: WindowId, event: WindowEvent) {
         let started = self.options.output.is_some().then(Instant::now);
+        let wheel =
+            self.options.output.is_some() && matches!(&event, WindowEvent::MouseWheel { .. });
         self.handle_window_event(e, id, event);
         if let Some(t) = started
             && self.event_samples.len() < 7200
         {
-            self.event_samples.push(t.elapsed().as_secs_f64() * 1000.);
+            let ms = t.elapsed().as_secs_f64() * 1000.;
+            self.event_samples.push(ms);
+            if wheel && self.wheel_samples.len() < 7200 {
+                self.wheel_samples.push(ms);
+            }
         }
     }
 

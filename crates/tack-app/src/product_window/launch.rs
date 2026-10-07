@@ -29,6 +29,7 @@ fn run_mode(args: Vec<OsString>, started: Instant, new: bool) -> Result<(), Asse
         annotation_benchmark: false,
         potato: false,
         supply_stress: false,
+        lod_debug: false,
         immediate: false,
         dense: false,
         window_size: [1280, 720],
@@ -51,6 +52,7 @@ fn run_mode(args: Vec<OsString>, started: Instant, new: bool) -> Result<(), Asse
             Some("--output") => {
                 options.output = Some(PathBuf::from(it.next().ok_or("output path")?))
             }
+            Some("--lod-debug") => options.lod_debug = true,
             Some("--dense-view") => options.dense = true,
             Some("--potato") => options.potato = true,
             Some("--supply-stress") => options.supply_stress = true,
@@ -79,6 +81,12 @@ fn run_mode(args: Vec<OsString>, started: Instant, new: bool) -> Result<(), Asse
     if options.annotation_benchmark && (options.seconds.is_none() || options.output.is_none()) {
         return Err("annotation benchmark requires --seconds and --output".into());
     }
+    if options.lod_debug && options.output.is_none() {
+        return Err("--lod-debug requires --output REPORT".into());
+    }
+    let lod_trace = options
+        .lod_debug
+        .then(tack_app::lod_diagnostics::LodDiagnostics::default);
     let benchmark = options
         .interaction
         .clone()
@@ -183,6 +191,7 @@ fn run_mode(args: Vec<OsString>, started: Instant, new: bool) -> Result<(), Asse
     let window_size = options.window_size;
     let mut app = App {
         options,
+        lod_trace,
         local: Box::new(local),
         proxy,
         source_active: false,
@@ -223,6 +232,7 @@ fn run_mode(args: Vec<OsString>, started: Instant, new: bool) -> Result<(), Asse
         redraws: 0,
         wakeups: 0,
         event_samples: Vec::new(),
+        wheel_samples: Vec::new(),
         supply_pending: false,
         visibility: Default::default(),
         context: None,

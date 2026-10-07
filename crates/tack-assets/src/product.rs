@@ -17,6 +17,8 @@ use std::{
 };
 use tack_core::{AssetId, ByteCache, Document, ImageAsset, Lod, Source, SourceId, SourceLocation};
 use tack_storage::{Payload, RangeReader, TackFile};
+mod trace;
+pub use trace::RepTrace;
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 struct Key {
     asset: Option<AssetId>,
@@ -133,6 +135,8 @@ pub struct ProductAssetStats {
     pub evictions: u64,
     pub decode_ms: f64,
     pub decode_count: usize,
+    pub codec_requests: usize,
+    pub decoded_bytes: u64,
     pub reprioritized: usize,
 }
 struct Outcome {
@@ -156,6 +160,7 @@ struct Worker {
 }
 pub struct ProductAssets {
     board: Arc<TackFile>,
+    trace: Option<Box<trace::Trace>>,
     workers: Vec<Worker>,
     pending: HashMap<Key, usize>,
     failed: HashSet<Key>,
@@ -247,6 +252,7 @@ impl ProductAssets {
         Ok(Self {
             board,
             workers,
+            trace: None,
             pending: HashMap::new(),
             failed: HashSet::new(),
             cache: ByteCache::new(overview),
@@ -422,6 +428,10 @@ impl ProductAssets {
                 let key = job.key();
                 if self.workers[i].sender.try_send(job).is_ok() {
                     self.pending.insert(key, i);
+                    self.stats.codec_requests += 1;
+                    if let Some(trace) = &mut self.trace {
+                        trace.started(key);
+                    }
                 }
             }
         }
@@ -448,15 +458,24 @@ impl ProductAssets {
             self.pending.remove(&o.key);
             self.stats.completed += 1;
             self.stats.decode_count += 1;
+            if let Ok(image) = &o.result {
+                self.stats.decoded_bytes = self
+                    .stats
+                    .decoded_bytes
+                    .saturating_add(image.rgba.len() as u64);
+            }
             self.stats.decode_ms += o.decode_ms;
             self.stats.container_bytes += o.container_bytes;
             self.stats.source_bytes += o.source_bytes;
             self.stats.derived_bytes += o.derived_bytes;
             self.stats.repair_cache_bytes += o.repair_cache_bytes;
-            if self.current.get(&o.asset) != Some(&o.key.revision)
+            let stale = self.current.get(&o.asset) != Some(&o.key.revision)
                 || self.sources.get(&o.asset) != Some(&o.key.source)
-                || (self.view_mode && !self.wanted.contains(&o.key))
-            {
+                || (self.view_mode && !self.wanted.contains(&o.key));
+            if stale {
+                if let Some(trace) = &mut self.trace {
+                    trace.completed(o.key, false);
+                }
                 self.stats.discarded += 1;
                 continue;
             }
@@ -472,6 +491,7 @@ impl ProductAssets {
             } else if o.result.is_ok() {
                 self.stats.reused += 1;
             }
+            let mut accepted = false;
             match o.result {
                 Ok(image) => {
                     let bytes = image.rgba.len();
@@ -480,7 +500,8 @@ impl ProductAssets {
                     } else {
                         &mut self.details
                     };
-                    if !cache.insert(o.key, Arc::new(image), bytes) {
+                    accepted = cache.insert(o.key, Arc::new(image), bytes);
+                    if !accepted {
                         self.failed.insert(o.key);
                     }
                 }
@@ -488,6 +509,9 @@ impl ProductAssets {
                     self.stats.errors += 1;
                     self.failed.insert(o.key);
                 }
+            }
+            if let Some(trace) = &mut self.trace {
+                trace.completed(o.key, accepted);
             }
         }
         // The native caller replaces view demand before dispatching more jobs;

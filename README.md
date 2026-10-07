@@ -25,9 +25,8 @@ Built in Rust, with a native GPU-rendered canvas. Boards are saved locally as
   completed recovery snapshots after an interrupted session.
 - **Choose how images are stored.** Embed originals for portable boards or link
   to external files. Relink missing sources when files move.
-- **Make the workspace yours.** Very Dark, Neutral Gray and Light backgrounds,
-  subtle gradients, crisp bitmap UI, direct integer scaling and editable
-  shortcuts. Right-click keeps application and contextual commands together.
+- **Make the workspace yours.** Flat Very Dark, Neutral Gray and Light themes,
+  crisp bitmap UI, direct integer scaling and editable shortcuts. Right-click keeps application and contextual commands together.
 
 The renderer loads image detail progressively and uses bounded caches. See the
 [feature inventory](docs/FEATURE_INVENTORY.md) for exact behavior and limits.

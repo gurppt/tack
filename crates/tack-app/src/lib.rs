@@ -48,3 +48,5 @@ pub mod ui_theme;
 
 pub mod about;
 pub mod clipboard;
+
+pub mod lod_diagnostics;

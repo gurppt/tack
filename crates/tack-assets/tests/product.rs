@@ -767,3 +767,78 @@ fn repeated_expensive_source_leaves_admission_for_small_visible_source() {
             .all(|id| a.get_rep(*id, 1, Lod::Thumbnail, 128).is_some())
     );
 }
+#[test]
+fn delayed_zoom_result_cannot_suppress_the_new_tier_or_return_to_detail() {
+    use tack_assets::ProductDemand;
+    let f = Fixture::sized(false, [900, 600]);
+    f.seed();
+    let (_, mut a) = f.load("seed.tack");
+    a.enable_lod_diagnostics();
+    let demand = |lod| {
+        [ProductDemand {
+            asset: f.asset,
+            lod,
+            edge: lod.edge(),
+            priority: 2,
+            resident: false,
+        }]
+    };
+    a.replace_view(&demand(Lod::Detail), &f.document, &Default::default());
+    let first = a.rep_trace(f.asset, 1, Lod::Detail, 2048).unwrap();
+    assert!(first.request_generation.is_some());
+    // Explicitly withhold publication across the camera's tier change. Production
+    // workers have no camera epoch ownership; wanted keys control relevance.
+    std::thread::sleep(Duration::from_millis(20));
+    a.replace_view(&demand(Lod::Medium), &f.document, &Default::default());
+    let deadline = Instant::now() + Duration::from_secs(10);
+    while a.stats().discarded == 0 {
+        a.poll();
+        assert!(Instant::now() < deadline);
+        std::thread::sleep(Duration::from_millis(1));
+    }
+    assert_eq!(a.stats().discarded, 1);
+    let stale = a.rep_trace(f.asset, 1, Lod::Detail, 2048).unwrap();
+    assert!(stale.publication.is_some_and(|(_, accepted)| !accepted));
+    assert!(a.get_lod(f.asset, 1, Lod::Detail).is_none());
+    // Admission remains live after rejecting the obsolete worker result.
+    a.replace_view(&demand(Lod::Medium), &f.document, &Default::default());
+    a.schedule();
+    settle_view(&mut a);
+    assert_eq!(a.get_lod(f.asset, 1, Lod::Medium).unwrap().width, 512);
+    a.replace_view(&demand(Lod::Detail), &f.document, &Default::default());
+    a.schedule();
+    settle_view(&mut a);
+    assert_eq!(a.get_lod(f.asset, 1, Lod::Detail).unwrap().width, 2048);
+    assert_eq!(a.stats().pending, 0);
+    assert!(a.stats().peak_pending <= a.limits().requests);
+    assert!(a.stats().cpu_peak <= a.limits().cpu_bytes);
+}
+#[test]
+fn revision_change_rejects_delayed_pixels_then_admits_current_revision() {
+    use tack_assets::ProductDemand;
+    let f = Fixture::sized(false, [600, 400]);
+    f.seed();
+    let (_, mut assets) = f.load("seed.tack");
+    let demand = [ProductDemand {
+        asset: f.asset,
+        lod: Lod::Medium,
+        edge: 512,
+        priority: 2,
+        resident: false,
+    }];
+    assets.replace_view(&demand, &f.document, &Default::default());
+    let mut document = f.document.clone();
+    let old = document.source(f.source).unwrap();
+    let source =
+        Source::from_descriptor(f.source, old.location().clone(), 2, old.fingerprint()).unwrap();
+    document.apply(Command::SetSource(source)).unwrap();
+    assets.replace_view(&demand, &document, &Default::default());
+    settle_view(&mut assets);
+    assert_eq!(assets.stats().discarded, 1);
+    assert!(assets.get_rep(f.asset, 1, Lod::Medium, 512).is_none());
+    assert!(assets.get_rep(f.asset, 2, Lod::Medium, 512).is_some());
+    assert_eq!(assets.stats().codec_requests, 2);
+    assert_eq!(assets.stats().decode_count, 2);
+    assert!(assets.stats().decoded_bytes > 0);
+    assert_eq!(assets.stats().pending, 0);
+}

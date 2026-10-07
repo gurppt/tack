@@ -25,8 +25,10 @@ with coincident size/mtime are not conflated. No new content-hashing preload.
 
 Only schema-compatible 128px derived previews enter PreparedOverview/Save.
 Higher tiers and adaptive tiny previews are derived cache data, never document
-or recovery authority. On zoom-out, an obsolete larger image is not selected
-instead of the currently admitted smaller tier.
+or recovery authority. An appropriate smaller resident tier is preferred. During
+its asynchronous arrival, a valid larger resident tier remains eligible, avoiding
+a 513→512px quality hole. If no adequate tier is resident, the best lower fallback
+is shown while current demand stays admissible.
 
 ## Fairness and distant jumps
 
@@ -126,3 +128,43 @@ optional report/frame records it. Ordinary launch remains 1280x720. Native
 800x600, 1024x768 and 1600x900 receipts distinguish viewport size from Xvfb's
 1600x1000 desktop and from UI integer scale. No benchmark timer or dimensions
 reporting is added to an ordinary untimed launch.
+
+## Phase 1K convergence repair
+
+Before insertion, touch only exact admitted GPU keys. The plan reserves enough
+space for every unique wanted refinement and adaptive preview in its partition.
+LRU therefore evicts older, obsolete entries before wanted residents. Optional
+higher fallbacks are deliberately not protected, so memory pressure can reclaim
+them. This changes neither budgets nor worker/queue/upload limits.
+
+Upload all ready representations before selecting draws or computing resolved
+quality. Selection prefers the smallest adequate resident tier, then the best
+lower fallback. Recompute retry eligibility from the final GPU inventory. The
+previous per-image accounting could declare a texture satisfied before a later
+upload evicted it, then sleep with no refinement path.
+
+Demand relevance uses source/revision/tier/edge, not camera epochs. A rejected
+old completion cannot overwrite current pixels or clear a different successor.
+Production keeps the existing active-supply wake path and sleeps after settle;
+there is no new polling watchdog or global refresh/cache flush.
+
+`open BOARD --lod-debug --output REPORT.json` opts into one debug source (the
+first visible source, held for that receipt), physical projected width/height,
+camera epoch, admitted/displayed/resident tiers, CPU hits, queued/active codec
+worker, request generation, recent accepted/stale publication and suppression
+reason. History is bounded to sixteen publication records and 7200 frame
+receipts. Diagnostics have no file, timer, worker or heap allocation when off.
+Normal supply statistics also count actually dispatched codec requests and
+successful decoded RGBA bytes, including discarded outcomes, so measurements
+count work rather than only the final cache payload. Wheel callback samples
+are collected only by explicitly requested output receipts.
+
+`tools/run_lod_zoom.py` owns the test-only convergence watchdog. It tests normal
+untimed windows, progressive sweeps, rapid crossings, small pan and final idle.
+Comparison runs use `--no-diagnostics` for equal instrumentation; diagnostic runs
+are kept separate. Native generated fixture creation is the finite developer
+example `lod_fixture`, with eight caller-owned 2048px PNGs; geometry includes a
+group, rotation and alternating Smooth/Nearest. CPU tests sweep 1..4096 pixels
+in both directions. Actual GPU tests recreate late eviction and reuse higher
+residents while a lower refinement is delayed; ProductAssets tests withhold real
+worker publication across demand and source revision changes.
