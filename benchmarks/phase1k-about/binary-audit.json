@@ -1,0 +1,62 @@
+{
+  "baseline": {
+    "path": "benchmark-results/phase1k/baseline/tack",
+    "bytes": 17931688,
+    "sha256": "ffc84555f2d443447c5674dcf6158649093a27156db1ee707b04471d7505432d",
+    "sections": {
+      ".rodata": {
+        "bytes": 5295660,
+        "sha256": "6c6a4e6656684ef8f8d9413383480c5b1a2814bf8bd42c6317b889cf21ff5a2a"
+      },
+      ".text": {
+        "bytes": 9792768,
+        "sha256": "39a94466807dd4e6f5a71ff8167bc77182834a0a36dd1207fb898284938ed5b9"
+      }
+    },
+    "contains_compact_png": false,
+    "contains_full_source_png": false
+  },
+  "current_stripped": {
+    "path": "benchmark-results/phase1k/current/tack",
+    "bytes": 17954152,
+    "sha256": "0b6c12a16fa1c6062366a763b5d9057bcad412c9a619e40e0be2abf0bf150faa",
+    "sections": {
+      ".rodata": {
+        "bytes": 5297004,
+        "sha256": "3cdad3d22bb3e3dce7e2862253bd9a03529fd61e817c6390527b3dcaef84275c"
+      },
+      ".text": {
+        "bytes": 9810112,
+        "sha256": "ebdf5af1e96e003839780cf0ea1be1dfc57431fa068d4e565acf4dd62a0424f7"
+      }
+    },
+    "contains_compact_png": false,
+    "contains_full_source_png": false
+  },
+  "current_release": {
+    "path": "bin/tack",
+    "bytes": 115552744,
+    "sha256": "6fa6623ce3a7977323e692442894c84f57220c8c42852b2b97b4a3735d3c665e",
+    "sections": {
+      ".rodata": {
+        "bytes": 5297004,
+        "sha256": "3cdad3d22bb3e3dce7e2862253bd9a03529fd61e817c6390527b3dcaef84275c"
+      },
+      ".text": {
+        "bytes": 9810112,
+        "sha256": "ebdf5af1e96e003839780cf0ea1be1dfc57431fa068d4e565acf4dd62a0424f7"
+      }
+    },
+    "contains_compact_png": false,
+    "contains_full_source_png": false
+  },
+  "delta": {
+    "stripped_binary_bytes": 22464,
+    "release_binary_bytes": 134072,
+    "packaged_asset_bytes": 38426,
+    "encoded_asset_resident_before_open": 0,
+    "rgba_bytes_while_open": 185472,
+    "gpu_payload_bytes_while_open": 185592,
+    "new_rust_dependencies": 0
+  }
+}

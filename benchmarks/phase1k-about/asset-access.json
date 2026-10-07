@@ -1,0 +1,11 @@
+{
+  "binary_sha256": "6fa6623ce3a7977323e692442894c84f57220c8c42852b2b97b4a3735d3c665e",
+  "harness": "strace -D -f -e trace=openat, ordinary owned window; before/opened/closed snapshots",
+  "packaged_image_openat_counts": [
+    0,
+    1,
+    1
+  ],
+  "full_source_access": false,
+  "trace_sha256": "74e5f46d07480a1572b461a6572c02bde31047d7e6d7ca043a247220fd57265b"
+}

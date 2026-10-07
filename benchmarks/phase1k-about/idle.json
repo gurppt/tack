@@ -1,0 +1,188 @@
+{
+  "baseline": {
+    "binary_sha256": "ffc84555f2d443447c5674dcf6158649093a27156db1ee707b04471d7505432d",
+    "harness_sha256": "ab5be78943d484caf0baabfef28504a6291b3f92a9d50e60e9f33c7d5f969d8c",
+    "context": "none",
+    "scope": "ordinary untimed window, 5-second external observation; GPU-driver CPU is included",
+    "runs": [
+      {
+        "grid": "hidden",
+        "interval_seconds": 5.023183952027466,
+        "cpu_ticks": 2,
+        "cpu_percent_of_one_core": 0.39815384407587867,
+        "rss_initial_bytes": 331218944,
+        "rss_final_bytes": 331218944,
+        "idle_redraws": 0,
+        "idle_gpu_submissions": 0,
+        "new_threads": [],
+        "departed_threads": [],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "report_sha256": "c585ad92d5056cd1c9a31a15184c9b602cbae75bc374e4674dc81e06125399f8"
+      }
+    ]
+  },
+  "unused": {
+    "binary_sha256": "0b6c12a16fa1c6062366a763b5d9057bcad412c9a619e40e0be2abf0bf150faa",
+    "harness_sha256": "ab5be78943d484caf0baabfef28504a6291b3f92a9d50e60e9f33c7d5f969d8c",
+    "context": "none",
+    "scope": "ordinary untimed window, 5-second external observation; GPU-driver CPU is included",
+    "runs": [
+      {
+        "grid": "hidden",
+        "interval_seconds": 5.024564783030655,
+        "cpu_ticks": 3,
+        "cpu_percent_of_one_core": 0.597066637518901,
+        "rss_initial_bytes": 331243520,
+        "rss_final_bytes": 331243520,
+        "idle_redraws": 0,
+        "idle_gpu_submissions": 0,
+        "new_threads": [],
+        "departed_threads": [],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "report_sha256": "995a2710d68d8f39ceca9b0998c6fd36a7aad6b358f48804e9c2a1e778818b2b"
+      },
+      {
+        "grid": "visible",
+        "interval_seconds": 5.023791660962161,
+        "cpu_ticks": 2,
+        "cpu_percent_of_one_core": 0.39810568092247645,
+        "rss_initial_bytes": 331464704,
+        "rss_final_bytes": 331464704,
+        "idle_redraws": 0,
+        "idle_gpu_submissions": 0,
+        "new_threads": [],
+        "departed_threads": [],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "report_sha256": "bc24c6fdb62061375817176bf2cd6c98df292e0ee2be6ec33e2edad3119cd120"
+      }
+    ]
+  },
+  "open": {
+    "binary_sha256": "0b6c12a16fa1c6062366a763b5d9057bcad412c9a619e40e0be2abf0bf150faa",
+    "harness_sha256": "ab5be78943d484caf0baabfef28504a6291b3f92a9d50e60e9f33c7d5f969d8c",
+    "context": "about",
+    "scope": "ordinary untimed window, 5-second external observation; GPU-driver CPU is included",
+    "runs": [
+      {
+        "grid": "hidden",
+        "interval_seconds": 5.0205317179788835,
+        "cpu_ticks": 2,
+        "cpu_percent_of_one_core": 0.39836417980148536,
+        "rss_initial_bytes": 332062720,
+        "rss_final_bytes": 332062720,
+        "idle_redraws": 0,
+        "idle_gpu_submissions": 0,
+        "new_threads": [],
+        "departed_threads": [],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "report_sha256": "988ff10a313ad7011208d031b409ac8d4d00a97a7d0878cf35278b663899ae32"
+      },
+      {
+        "grid": "visible",
+        "interval_seconds": 5.025577938999049,
+        "cpu_ticks": 2,
+        "cpu_percent_of_one_core": 0.3979641792996136,
+        "rss_initial_bytes": 332222464,
+        "rss_final_bytes": 332222464,
+        "idle_redraws": 0,
+        "idle_gpu_submissions": 0,
+        "new_threads": [],
+        "departed_threads": [],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "report_sha256": "374d70117870ab2597bad6bfbb5fabc222caa5a6fdb062c1387b7d9b263340eb"
+      }
+    ]
+  },
+  "closed": {
+    "binary_sha256": "0b6c12a16fa1c6062366a763b5d9057bcad412c9a619e40e0be2abf0bf150faa",
+    "harness_sha256": "ab5be78943d484caf0baabfef28504a6291b3f92a9d50e60e9f33c7d5f969d8c",
+    "context": "about-closed",
+    "scope": "ordinary untimed window, 5-second external observation; GPU-driver CPU is included",
+    "runs": [
+      {
+        "grid": "hidden",
+        "interval_seconds": 5.0231326289940625,
+        "cpu_ticks": 3,
+        "cpu_percent_of_one_core": 0.5972368682211727,
+        "rss_initial_bytes": 332013568,
+        "rss_final_bytes": 332013568,
+        "idle_redraws": 0,
+        "idle_gpu_submissions": 0,
+        "new_threads": [],
+        "departed_threads": [],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "report_sha256": "5da380418f26f67a16e372f18fc46b9d49fed3e2beb1946a61d381f0efb180d1"
+      },
+      {
+        "grid": "visible",
+        "interval_seconds": 5.024472310033161,
+        "cpu_ticks": 2,
+        "cpu_percent_of_one_core": 0.3980517508288945,
+        "rss_initial_bytes": 332120064,
+        "rss_final_bytes": 332120064,
+        "idle_redraws": 0,
+        "idle_gpu_submissions": 0,
+        "new_threads": [],
+        "departed_threads": [],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "report_sha256": "0290a0c1e6ee94b79cbfc436acde2e62598abb94e030887c4059c481500a8009"
+      }
+    ]
+  }
+}

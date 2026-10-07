@@ -1,0 +1,353 @@
+{
+  "binary_sha256": "0b6c12a16fa1c6062366a763b5d9057bcad412c9a619e40e0be2abf0bf150faa",
+  "harness_sha256": "642b33428c221ca35d918e708e9f84e69ccebf4ecd3e7be7b4f22e7b20e727db",
+  "board_sha256": "1ce0be03dfe22de25689de4bec52052408455a5f4d5775f507967a0cb3c210d5",
+  "image_sha256": "d22641555380426ad6567153edca7b83548ad964acdc9c3fbdb70b59ac7759ee",
+  "scope": "automated owned X11; owner visual review pending",
+  "checks": [
+    {
+      "name": "VeryDark-1 artwork and aspect",
+      "observed": true,
+      "detail": {
+        "matching_fraction": 1.0,
+        "rect": [
+          481,
+          188,
+          688,
+          412
+        ]
+      }
+    },
+    {
+      "name": "VeryDark-1 Escape",
+      "observed": true,
+      "detail": "canvas restored"
+    },
+    {
+      "name": "VeryDark-1 same modal through context",
+      "observed": true,
+      "detail": "pixel-identical About from shared Tack entry"
+    },
+    {
+      "name": "VeryDark-1 Enter",
+      "observed": true,
+      "detail": "canvas restored"
+    },
+    {
+      "name": "VeryDark-1 Close button",
+      "observed": true,
+      "detail": {
+        "point": [
+          656,
+          426
+        ]
+      }
+    },
+    {
+      "name": "VeryDark-1 resources retired",
+      "observed": true,
+      "detail": {
+        "image_gpu_bytes": 0,
+        "requests": 3,
+        "version": "0.0.1"
+      }
+    },
+    {
+      "name": "NeutralGray-1 artwork and aspect",
+      "observed": true,
+      "detail": {
+        "matching_fraction": 1.0,
+        "rect": [
+          481,
+          188,
+          688,
+          412
+        ]
+      }
+    },
+    {
+      "name": "NeutralGray-1 Escape",
+      "observed": true,
+      "detail": "canvas restored"
+    },
+    {
+      "name": "NeutralGray-1 same modal through context",
+      "observed": true,
+      "detail": "pixel-identical About from shared Tack entry"
+    },
+    {
+      "name": "NeutralGray-1 Enter",
+      "observed": true,
+      "detail": "canvas restored"
+    },
+    {
+      "name": "NeutralGray-1 Close button",
+      "observed": true,
+      "detail": {
+        "point": [
+          656,
+          426
+        ]
+      }
+    },
+    {
+      "name": "NeutralGray-1 resources retired",
+      "observed": true,
+      "detail": {
+        "image_gpu_bytes": 0,
+        "requests": 3,
+        "version": "0.0.1"
+      }
+    },
+    {
+      "name": "Light-1 artwork and aspect",
+      "observed": true,
+      "detail": {
+        "matching_fraction": 1.0,
+        "rect": [
+          481,
+          188,
+          688,
+          412
+        ]
+      }
+    },
+    {
+      "name": "Light-1 Escape",
+      "observed": true,
+      "detail": "canvas restored"
+    },
+    {
+      "name": "Light-1 same modal through context",
+      "observed": true,
+      "detail": "pixel-identical About from shared Tack entry"
+    },
+    {
+      "name": "Light-1 Enter",
+      "observed": true,
+      "detail": "canvas restored"
+    },
+    {
+      "name": "Light-1 Close button",
+      "observed": true,
+      "detail": {
+        "point": [
+          656,
+          426
+        ]
+      }
+    },
+    {
+      "name": "Light-1 resources retired",
+      "observed": true,
+      "detail": {
+        "image_gpu_bytes": 0,
+        "requests": 3,
+        "version": "0.0.1"
+      }
+    },
+    {
+      "name": "VeryDark-2 artwork and aspect",
+      "observed": true,
+      "detail": {
+        "matching_fraction": 0.9952348864073931,
+        "rect": [
+          360,
+          88,
+          752,
+          512
+        ]
+      }
+    },
+    {
+      "name": "VeryDark-2 Escape",
+      "observed": true,
+      "detail": "canvas restored"
+    },
+    {
+      "name": "VeryDark-2 same modal through context",
+      "observed": true,
+      "detail": "pixel-identical About from shared Tack entry"
+    },
+    {
+      "name": "VeryDark-2 Enter",
+      "observed": true,
+      "detail": "canvas restored"
+    },
+    {
+      "name": "VeryDark-2 Close button",
+      "observed": true,
+      "detail": {
+        "point": [
+          688,
+          540
+        ]
+      }
+    },
+    {
+      "name": "VeryDark-2 resources retired",
+      "observed": true,
+      "detail": {
+        "image_gpu_bytes": 0,
+        "requests": 3,
+        "version": "0.0.1"
+      }
+    },
+    {
+      "name": "NeutralGray-2 artwork and aspect",
+      "observed": true,
+      "detail": {
+        "matching_fraction": 0.9952348864073931,
+        "rect": [
+          360,
+          88,
+          752,
+          512
+        ]
+      }
+    },
+    {
+      "name": "NeutralGray-2 Escape",
+      "observed": true,
+      "detail": "canvas restored"
+    },
+    {
+      "name": "NeutralGray-2 same modal through context",
+      "observed": true,
+      "detail": "pixel-identical About from shared Tack entry"
+    },
+    {
+      "name": "NeutralGray-2 Enter",
+      "observed": true,
+      "detail": "canvas restored"
+    },
+    {
+      "name": "NeutralGray-2 Close button",
+      "observed": true,
+      "detail": {
+        "point": [
+          688,
+          540
+        ]
+      }
+    },
+    {
+      "name": "40 additional cycles bounded RSS",
+      "observed": true,
+      "detail": {
+        "rss": [
+          329232384,
+          331669504,
+          332013568,
+          332091392
+        ],
+        "local_workers": [
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "name": "NeutralGray-2 resources retired",
+      "observed": true,
+      "detail": {
+        "image_gpu_bytes": 0,
+        "requests": 43,
+        "version": "0.0.1"
+      }
+    },
+    {
+      "name": "Light-2 artwork and aspect",
+      "observed": true,
+      "detail": {
+        "matching_fraction": 0.9952348864073931,
+        "rect": [
+          360,
+          88,
+          752,
+          512
+        ]
+      }
+    },
+    {
+      "name": "Light-2 Escape",
+      "observed": true,
+      "detail": "canvas restored"
+    },
+    {
+      "name": "Light-2 same modal through context",
+      "observed": true,
+      "detail": "pixel-identical About from shared Tack entry"
+    },
+    {
+      "name": "Light-2 Enter",
+      "observed": true,
+      "detail": "canvas restored"
+    },
+    {
+      "name": "Light-2 Close button",
+      "observed": true,
+      "detail": {
+        "point": [
+          688,
+          540
+        ]
+      }
+    },
+    {
+      "name": "Light-2 resources retired",
+      "observed": true,
+      "detail": {
+        "image_gpu_bytes": 0,
+        "requests": 3,
+        "version": "0.0.1"
+      }
+    },
+    {
+      "name": "packaged artwork missing",
+      "observed": true,
+      "detail": {
+        "metadata_modal_close_canvas_resume": true,
+        "report": {
+          "image_gpu_bytes": 0,
+          "requests": 1,
+          "version": "0.0.1"
+        },
+        "capture_sha256": "e11c94798120faa3c8e478eac4f307d846ca771c1e61c5892fc7596785f6da8c"
+      }
+    },
+    {
+      "name": "packaged artwork corrupt",
+      "observed": true,
+      "detail": {
+        "metadata_modal_close_canvas_resume": true,
+        "report": {
+          "image_gpu_bytes": 0,
+          "requests": 1,
+          "version": "0.0.1"
+        },
+        "capture_sha256": "e11c94798120faa3c8e478eac4f307d846ca771c1e61c5892fc7596785f6da8c"
+      }
+    },
+    {
+      "name": "packaged artwork oversized",
+      "observed": true,
+      "detail": {
+        "metadata_modal_close_canvas_resume": true,
+        "report": {
+          "image_gpu_bytes": 0,
+          "requests": 1,
+          "version": "0.0.1"
+        },
+        "capture_sha256": "e11c94798120faa3c8e478eac4f307d846ca771c1e61c5892fc7596785f6da8c"
+      }
+    },
+    {
+      "name": "board untouched",
+      "observed": true,
+      "detail": "1ce0be03dfe22de25689de4bec52052408455a5f4d5775f507967a0cb3c210d5"
+    }
+  ]
+}

@@ -36,7 +36,8 @@ The renderer loads image detail progressively and uses bounded caches. See the
 
 Tack is an actively developed prototype, currently distributed as source.
 Build requirements: **Rust 1.95.0** (pinned by the repository), **Python 3.12+**,
-**Pillow 10.2.0** (build only), **CMake**, **NASM**, a C compiler and a supported desktop graphics driver.
+**Pillow 10.2.0** (build only), **CMake**, **NASM**, a C compiler and a supported
+desktop graphics driver.
 
 ```bash
 git clone https://github.com/gurppt/tack.git
@@ -92,7 +93,8 @@ yet been validated. Current image import supports PNG/JPEG up to 6000×4500 pixe
 and 64 MiB per encoded image. Boards use Tack's own format; `.pur` import is not
 implemented.
 
-See the [latest development report](docs/MISSION_1J_REPORT.md) and
+See the [UI/clipboard report](docs/MISSION_1J_REPORT.md),
+[About report](docs/MISSION_1K_ABOUT_REPORT.md) and
 [manual test checklist](docs/HUMAN_TEST_1J.md) for validation details.
 
 ## Documentation

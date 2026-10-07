@@ -32,6 +32,7 @@ reports supersede earlier feature status, limitations and stop conditions.
 
 | Checkpoint | Focus |
 | --- | --- |
+| [1K About](MISSION_1K_ABOUT_REPORT.md) | Editable metadata, compact on-demand modal and package |
 | [1J](MISSION_1J_REPORT.md) · [independent verification](VERIFICATION_1J.md) | Clipboard, unified menus, UI scale and themes |
 | [1I](MISSION_1I_REPORT.md) · [independent verification](VERIFICATION_1I.md) | Layout-aware shortcuts, one-shot tools and arrangement |
 | [1H](MISSION_1H_REPORT.md) | Contextual UI and history integration |

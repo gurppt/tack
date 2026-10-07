@@ -1,0 +1,35 @@
+{
+  "sha": "785cbf79ebdedc3716c999f91b48ec49c1873425",
+  "runs": [
+    {
+      "id": 37581135771,
+      "name": "Quality",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/gurppt/tack/actions/runs/37581135771",
+      "jobs": [
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "current_step": null,
+          "steps": []
+        },
+        {
+          "name": "rust (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "current_step": null,
+          "steps": []
+        },
+        {
+          "name": "rust (ubuntu-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "current_step": null,
+          "steps": []
+        }
+      ]
+    }
+  ]
+}
