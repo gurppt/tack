@@ -46,7 +46,7 @@ index 0b9a677..c50f079 100644
 +            }
          }
      }
- 
+
 diff --git a/crates/tack-app/src/product_window/launch.rs b/crates/tack-app/src/product_window/launch.rs
 index 17f9a86..bd21557 100644
 --- a/crates/tack-app/src/product_window/launch.rs
