@@ -5583,5 +5583,285 @@
     "total_frames": 104,
     "scope": "ordinary untimed native input, bounded external settle/idle watchdog; 8 mixed/grouped/rotated generated sources"
   },
-  "source_snapshot_sha256": "78c2203260f94e12f605e1df810fe98452c87e3cab0d4e29a21fd3800f97cc72"
+  "source_snapshot_sha256": "78c2203260f94e12f605e1df810fe98452c87e3cab0d4e29a21fd3800f97cc72",
+  "implementation_commit": "57dea005b398c4fccd3f2f09b3f385c4223b311b",
+  "cleanup": {
+    "reason": "Superseded screenshots; current checkpoint screenshots and all raw frame/sample/summary receipts retained. JPEG quality trial summary retained, encoded trial inputs disposable. Keep combined phase data below512MiB.",
+    "paths": [
+      {
+        "path": "benchmark-results/phase1l/perf-current-mixed1000/supply-cold.png",
+        "bytes": 114945
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-axis-50000-jpeg/supply-cold.png",
+        "bytes": 284
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-huge-multiple/supply-overview.png",
+        "bytes": 108032
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-huge-multiple/supply-detail.png",
+        "bytes": 1354522
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-huge-multiple/supply-cold.png",
+        "bytes": 108032
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-huge-tiled-potato/supply-overview.png",
+        "bytes": 3138
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-huge-tiled-potato/supply-detail.png",
+        "bytes": 1252498
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-huge-tiled-potato/supply-cold.png",
+        "bytes": 3138
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-axis-12000-jpeg/supply-cold.png",
+        "bytes": 312
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-axis-24000-jpeg/supply-cold.png",
+        "bytes": 291
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-realish/supply-cold.png",
+        "bytes": 722834
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-crossover-1024/supply-overview.png",
+        "bytes": 396124
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-crossover-1024/supply-detail.png",
+        "bytes": 314794
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-crossover-1024/supply-cold.png",
+        "bytes": 396124
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-mixed1000-potato/supply-cold.png",
+        "bytes": 89591
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-axis-6000-jpeg/supply-cold.png",
+        "bytes": 203915
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-axis-8192-png/supply-cold.png",
+        "bytes": 393591
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-axis-32000-jpeg/supply-cold.png",
+        "bytes": 289
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-axis-32000-png/supply-cold.png",
+        "bytes": 72548
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-empty/supply-cold.png",
+        "bytes": 213
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-axis-16000-png/supply-cold.png",
+        "bytes": 277132
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-huge-tiled/supply-overview.png",
+        "bytes": 87829
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-huge-tiled/supply-detail.png",
+        "bytes": 1352464
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-huge-tiled/supply-cold.png",
+        "bytes": 87829
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-axis-24000-png/supply-cold.png",
+        "bytes": 97618
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-unique250/supply-cold.png",
+        "bytes": 22380
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-axis-4096-jpeg/supply-cold.png",
+        "bytes": 481744
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-axis-12000-png/supply-cold.png",
+        "bytes": 186825
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-axis-16000-jpeg/supply-cold.png",
+        "bytes": 302
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-axis-6000-png/supply-cold.png",
+        "bytes": 536853
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-axis-50000-png/supply-cold.png",
+        "bytes": 94297
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-stress1000/supply-cold.png",
+        "bytes": 85066
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-axis-4096-png/supply-cold.png",
+        "bytes": 413206
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-crossover-3072/supply-overview.png",
+        "bytes": 426922
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-crossover-3072/supply-detail.png",
+        "bytes": 469997
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-crossover-3072/supply-cold.png",
+        "bytes": 426922
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-axis-8192-jpeg/supply-cold.png",
+        "bytes": 371
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-mixed-visible/supply-overview.png",
+        "bytes": 87769
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-mixed-visible/supply-detail.png",
+        "bytes": 987528
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-mixed-visible/supply-cold.png",
+        "bytes": 87769
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-huge-mixed/supply-overview.png",
+        "bytes": 87829
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-huge-mixed/supply-detail.png",
+        "bytes": 1352464
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-huge-mixed/supply-cold.png",
+        "bytes": 87829
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-huge-multiple-potato/supply-overview.png",
+        "bytes": 3430
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-huge-multiple-potato/supply-detail.png",
+        "bytes": 1063091
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-huge-multiple-potato/supply-cold.png",
+        "bytes": 3430
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-mixed-visible-potato/supply-overview.png",
+        "bytes": 5923
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-mixed-visible-potato/supply-detail.png",
+        "bytes": 919575
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-mixed-visible-potato/supply-cold.png",
+        "bytes": 5923
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-crossover-2048/supply-overview.png",
+        "bytes": 253361
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-crossover-2048/supply-detail.png",
+        "bytes": 488008
+      },
+      {
+        "path": "benchmark-results/phase1l/perf-current-crossover-2048/supply-cold.png",
+        "bytes": 253361
+      },
+      {
+        "path": "benchmark-results/phase1l/jpeg-quality-trial/source-q55.jpg",
+        "bytes": 1159850
+      },
+      {
+        "path": "benchmark-results/phase1l/jpeg-quality-trial/source-q60.jpg",
+        "bytes": 1231690
+      },
+      {
+        "path": "benchmark-results/phase1l/jpeg-quality-trial/source-q50.jpg",
+        "bytes": 1098815
+      },
+      {
+        "path": "benchmark-results/phase1l/jpeg-quality-trial/source-q70.jpg",
+        "bytes": 1436058
+      },
+      {
+        "path": "benchmark-results/phase1l/jpeg-quality-trial/source-q45.jpg",
+        "bytes": 1035701
+      },
+      {
+        "path": "benchmark-results/phase1l/jpeg-quality-trial/source-q65.jpg",
+        "bytes": 1331324
+      }
+    ],
+    "freed_bytes": 23563700
+  },
+  "human_build": {
+    "sha256": "a9a44778aa66ff53ba57b42d10dc4cc6aa1d73519fa9360b8c0fae4693f3a1de",
+    "about_asset_sha256": "d22641555380426ad6567153edca7b83548ad964acdc9c3fbdb70b59ac7759ee",
+    "worktree_dirty_reason": "unrelated untracked owner/director files preserved",
+    "initial_prepared_commit": "57dea005b398c4fccd3f2f09b3f385c4223b311b"
+  },
+  "ci": {
+    "sha": "57dea005b398c4fccd3f2f09b3f385c4223b311b",
+    "runs": [
+      {
+        "id": 37715102154,
+        "name": "Quality",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/gurppt/tack/actions/runs/37715102154",
+        "jobs": [
+          {
+            "name": "dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "current_step": null,
+            "steps": []
+          },
+          {
+            "name": "rust (windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "current_step": null,
+            "steps": []
+          },
+          {
+            "name": "rust (ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "current_step": null,
+            "steps": []
+          }
+        ]
+      }
+    ]
+  }
 }

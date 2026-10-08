@@ -3,10 +3,10 @@
 2026-10-08. Finalization of the existing 1L implementation after interruption;
 Phase 1K baseline: `ef7a5e3085d495429c8e4ee6c38a3223aec3bee4`.
 
-**Checkpoint: local technical PASS for the delivered scope.** Local feature
+**Checkpoint: technical PASS for the delivered scope.** Local feature
 fixes and the bounded static PNG path pass the final gate, native/GPU checks and
 33 final-binary scenarios. Regional tiles remain explicitly experimental and
-opt-in (`--huge-tiles`). Remote CI status is recorded separately below.
+opt-in (`--huge-tiles`). The exact implementation CI is green on Linux and Windows, recorded below.
 No LAN, media playback or Phase 2A implementation was started.
 
 ## Delivered local behavior
@@ -303,11 +303,20 @@ The baseline ELF text/data/bss are17,585,862/438,680/8,072 bytes; final values a
 
 ## Checkpoint and publication
 
-Implementation commit and remote CI receipt will be recorded at publication.
+Implementation checkpoint [`57dea005`](https://github.com/gurppt/tack/commit/57dea005b398c4fccd3f2f09b3f385c4223b311b)
+is committed and pushed. Its exact
+[Quality CI run](https://github.com/gurppt/tack/actions/runs/37715102154)
+completed successfully: Linux Rust/Python/software-Vulkan tests, Windows
+Rust check/Clippy/tests/docs, and dependency checks. This validates the compiled/
+automated Windows scope; it does not assert Windows desktop interaction.
+The closing documentation commit records this observed result without changing
+any hashed source/build/test file or the measured executable.
 Earlier user authorization to commit/push at phase completion remains in force;
 the closeout addendum itself supplies no additional publication authorization.
 The human executable is prepared atomically with `tools/build-test-bin.sh` and
-its About sidecar. `bin/BUILD.txt` identifies commit, SHA and checkpoint.
+its About sidecar. `bin/BUILD.txt` identifies commit, SHA and checkpoint;
+its documentation-only commit may advance while the tested binary SHA remains
+unchanged. The preparation receipt at the implementation commit is also retained.
 Unrelated untracked owner/director files make its whole-worktree dirty flag true;
 the source manifest and final binary SHA identify the tested implementation.
 
