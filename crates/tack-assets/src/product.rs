@@ -10,6 +10,7 @@ use std::{
     path::{Path, PathBuf},
     sync::{
         Arc, Mutex,
+        atomic::{AtomicBool, Ordering},
         mpsc::{self, Receiver, SyncSender},
     },
     thread,
@@ -35,6 +36,7 @@ struct Job {
     original: Option<Payload>,
     lod: Lod,
     edge: u32,
+    cancel: Option<Arc<AtomicBool>>,
 }
 impl Job {
     fn key(&self) -> Key {
@@ -152,11 +154,14 @@ struct Outcome {
     repair_cache_bytes: u64,
     repair_cache_hit: bool,
     decode_ms: f64,
+    cancelled: bool,
+    streamed_png: bool,
 }
 struct Worker {
     sender: SyncSender<Job>,
     receiver: Receiver<Outcome>,
     handle: thread::JoinHandle<()>,
+    cancel: Option<Arc<AtomicBool>>,
 }
 pub struct ProductAssets {
     board: Arc<TackFile>,
@@ -175,6 +180,7 @@ pub struct ProductAssets {
     stats: ProductAssetStats,
     current: HashMap<AssetId, u64>,
     sources: HashMap<AssetId, SourceId>,
+    streamed_png: HashSet<(SourceId, u64)>,
 }
 impl ProductAssets {
     pub fn new(
@@ -242,6 +248,7 @@ impl ProductAssets {
                 sender: tx,
                 receiver: done_rx,
                 handle,
+                cancel: None,
             });
         }
         let overview = if limits.cpu_bytes < 1024 * 1024 {
@@ -266,12 +273,15 @@ impl ProductAssets {
             stats: Default::default(),
             current: HashMap::new(),
             sources: HashMap::new(),
+            streamed_png: HashSet::new(),
         })
     }
     pub fn limits(&self) -> SupplyLimits {
         self.limits
     }
     pub fn sync_document(&mut self, doc: &Document) {
+        self.streamed_png
+            .retain(|(id, rev)| doc.source(*id).is_some_and(|s| s.revision() == *rev));
         self.current.retain(|id, rev| {
             if let Some(s) = doc.asset(*id).and_then(|a| doc.source(a.source_id())) {
                 if *rev != s.revision() {
@@ -318,6 +328,9 @@ impl ProductAssets {
             original: original.cloned(),
             lod,
             edge,
+            cancel: (crate::huge_image::classify_png(asset.pixel_size()).ok()
+                == Some(crate::huge_image::ImageClass::HugeTiled))
+            .then(|| Arc::new(AtomicBool::new(false))),
         })
     }
     fn cached(&self, k: Key) -> bool {
@@ -369,11 +382,14 @@ impl ProductAssets {
                 continue;
             };
             let lod = d.lod.min(self.limits.max_lod);
-            let edge = if lod == Lod::Thumbnail {
-                d.edge.clamp(8, 128).next_power_of_two()
-            } else {
-                lod.edge()
-            };
+            let edge =
+                if crate::huge_image::Tile::from_tag(d.edge).is_some() && lod != Lod::Thumbnail {
+                    d.edge
+                } else if lod == Lod::Thumbnail {
+                    d.edge.clamp(8, 128).next_power_of_two()
+                } else {
+                    lod.edge()
+                };
             let k = Key {
                 asset: (lod == Lod::Thumbnail).then_some(d.asset),
                 source: s.id(),
@@ -406,6 +422,13 @@ impl ProductAssets {
             }
         }
         self.stats.reprioritized += previous.iter().filter(|k| !self.wanted.contains(k)).count();
+        for (key, index) in &self.pending {
+            if !self.wanted.contains(key)
+                && let Some(cancel) = &self.workers[*index].cancel
+            {
+                cancel.store(true, Ordering::Relaxed);
+            }
+        }
         self.dispatch();
     }
     pub fn schedule(&mut self) {
@@ -426,6 +449,7 @@ impl ProductAssets {
             if let Some(pos) = pos {
                 let job = self.queue.remove(pos);
                 let key = job.key();
+                self.workers[i].cancel = job.cancel.clone();
                 if self.workers[i].sender.try_send(job).is_ok() {
                     self.pending.insert(key, i);
                     self.stats.codec_requests += 1;
@@ -455,7 +479,9 @@ impl ProductAssets {
         }
         let changed = !outcomes.is_empty();
         for o in outcomes {
-            self.pending.remove(&o.key);
+            if let Some(index) = self.pending.remove(&o.key) {
+                self.workers[index].cancel = None;
+            }
             self.stats.completed += 1;
             self.stats.decode_count += 1;
             if let Ok(image) = &o.result {
@@ -472,12 +498,15 @@ impl ProductAssets {
             let stale = self.current.get(&o.asset) != Some(&o.key.revision)
                 || self.sources.get(&o.asset) != Some(&o.key.source)
                 || (self.view_mode && !self.wanted.contains(&o.key));
-            if stale {
+            if stale || o.cancelled {
                 if let Some(trace) = &mut self.trace {
                     trace.completed(o.key, false);
                 }
                 self.stats.discarded += 1;
                 continue;
+            }
+            if o.streamed_png {
+                self.streamed_png.insert((o.key.source, o.key.revision));
             }
             if let Some(source) = o.source {
                 self.states.insert(source, o.state);
@@ -568,11 +597,23 @@ impl ProductAssets {
         self.view_mode = true;
         self.wanted.clear();
         self.queue.clear();
+        for w in &self.workers {
+            if let Some(cancel) = &w.cancel {
+                cancel.store(true, Ordering::Relaxed);
+            }
+        }
         self.poll();
         self.update_stats();
     }
     pub fn stats(&self) -> ProductAssetStats {
         self.stats
+    }
+    pub fn supports_tiles(&self, source: SourceId, revision: u64) -> bool {
+        self.streamed_png.contains(&(source, revision))
+            && matches!(
+                self.states.get(&source),
+                Some(SourceState::Available | SourceState::Embedded)
+            )
     }
     pub fn failed_rep(&self, id: AssetId, lod: Lod, edge: u32) -> bool {
         self.current
@@ -618,6 +659,8 @@ fn load(job: Job, base: &Path, dir: &Path, disk: &Mutex<crate::decode::DiskCache
         repair_cache_bytes: 0,
         repair_cache_hit: false,
         decode_ms: 0.,
+        cancelled: false,
+        streamed_png: false,
     };
     let result = (|| -> Result<Decoded, AssetError> {
         let source = source.ok_or("missing asset metadata")?;
@@ -684,26 +727,40 @@ fn load(job: Job, base: &Path, dir: &Path, disk: &Mutex<crate::decode::DiskCache
                 job.edge
             ))
         };
+        // Historical whole-image previews can survive an unavailable link, but
+        // tile pixels must never represent a changed source as current detail.
+        if crate::huge_image::Tile::from_tag(job.edge).is_some()
+            && !matches!(
+                outcome.state,
+                SourceState::Available | SourceState::Embedded
+            )
+        {
+            return Err("tile source missing or changed; explicit relink/revision required".into());
+        }
         {
             let _guard = disk.lock().map_err(|_| "repair cache lock poisoned")?;
-            for generator in [1, 2] {
+            let raster_edge = if crate::huge_image::Tile::from_tag(job.edge).is_some() {
+                crate::huge_image::TILE_EDGE
+            } else {
+                job.edge
+            };
+            for generator in [3, 4, 1, 2] {
                 let file = cache_path(generator);
                 if let Ok(input) = File::open(&file) {
                     use std::io::Read;
                     let mut bytes = Vec::new();
                     input
-                        .take(u64::from(job.edge).pow(2) * 5 + 1)
+                        .take(u64::from(raster_edge).pow(2) * 5 + 1)
                         .read_to_end(&mut bytes)?;
                     outcome.repair_cache_bytes += bytes.len() as u64;
-                    if let Ok(image) = representation::decode_png(&bytes, None)
-                        && image.width.max(image.height) <= job.edge
-                    {
+                    if let Ok(image) = decode_cached_png(&bytes, raster_edge) {
+                        outcome.streamed_png = generator == 3;
                         outcome.prepared = (job.lod == Lod::Thumbnail && job.edge == 128)
                             .then_some(PreparedOverview {
                                 asset: id,
                                 revision: s.revision(),
                                 size: [image.width, image.height],
-                                generator,
+                                generator: generator.min(2),
                                 path: file.clone(),
                             });
                         outcome.repair_cache_hit = true;
@@ -718,11 +775,16 @@ fn load(job: Job, base: &Path, dir: &Path, disk: &Mutex<crate::decode::DiskCache
                 return Err("source missing or changed; explicit relink/revision required".into());
             }
             let before = representation::source_fingerprint(&path)?;
-            let (pixels, generator) =
-                representation::derive_linked_edge(&path, &mut outcome.source_bytes, job.edge)?;
+            let (pixels, generator) = representation::derive_linked_edge_cancel(
+                &path,
+                &mut outcome.source_bytes,
+                job.edge,
+                job.cancel.as_deref(),
+            )?;
             if representation::source_fingerprint(&path)? != before {
                 return Err("source changed during derivation".into());
             }
+            outcome.streamed_png = generator == 3;
             (pixels, generator)
         } else if outcome.state == SourceState::Embedded {
             let mut reader = CountRead {
@@ -737,10 +799,15 @@ fn load(job: Job, base: &Path, dir: &Path, disk: &Mutex<crate::decode::DiskCache
                 },
                 count: 0,
             };
-            let result = representation::derive_stream_edge(&mut reader, job.edge);
+            let result = representation::derive_stream_edge_cancel(
+                &mut reader,
+                job.edge,
+                job.cancel.as_deref(),
+            );
             outcome.container_bytes += reader.count;
-            let pixels = result?;
-            (pixels, 2)
+            let (pixels, generator) = result?;
+            outcome.streamed_png = generator == 3;
+            (pixels, generator)
         } else {
             return Err("no available source or stored last-known preview".into());
         };
@@ -780,7 +847,7 @@ fn load(job: Job, base: &Path, dir: &Path, disk: &Mutex<crate::decode::DiskCache
                 asset: id,
                 revision: s.revision(),
                 size: [pixels.width(), pixels.height()],
-                generator,
+                generator: generator.min(2),
                 path: file,
             });
         }
@@ -794,7 +861,32 @@ fn load(job: Job, base: &Path, dir: &Path, disk: &Mutex<crate::decode::DiskCache
         tracing::warn!(asset=?id,%e,"product overview unavailable");
     }
     outcome.result = result;
+    outcome.cancelled = job
+        .cancel
+        .as_ref()
+        .is_some_and(|c| c.load(Ordering::Relaxed));
     outcome
+}
+
+fn decode_cached_png(bytes: &[u8], raster_edge: u32) -> Result<Decoded, AssetError> {
+    if !(1..=2048).contains(&raster_edge) || bytes.len() > 20 * 1024 * 1024 {
+        return Err("derived PNG cache budget".into());
+    }
+    let mut reader =
+        image::ImageReader::with_format(std::io::Cursor::new(bytes), image::ImageFormat::Png);
+    let mut limits = image::Limits::default();
+    limits.max_image_width = Some(raster_edge);
+    limits.max_image_height = Some(raster_edge);
+    // Also bound higher precision/color intermediates to this representation,
+    // rather than the whole-image decoder's 2048-pixel allowance.
+    limits.max_alloc = Some(u64::from(raster_edge).pow(2) * 8);
+    reader.limits(limits);
+    let pixels = reader.decode()?.into_rgba8();
+    Ok(Decoded {
+        width: pixels.width(),
+        height: pixels.height(),
+        rgba: pixels.into_raw(),
+    })
 }
 
 // Shutdown only: owners must drop outside native event/render callbacks. Closing
@@ -802,6 +894,9 @@ fn load(job: Job, base: &Path, dir: &Path, disk: &Mutex<crate::decode::DiskCache
 impl Drop for ProductAssets {
     fn drop(&mut self) {
         for w in std::mem::take(&mut self.workers) {
+            if let Some(cancel) = &w.cancel {
+                cancel.store(true, Ordering::Relaxed);
+            }
             drop(w.sender);
             drop(w.receiver);
             let _ = w.handle.join();
@@ -823,4 +918,40 @@ fn resize(image: Decoded, edge: u32) -> Result<Decoded, AssetError> {
         height: pixels.height(),
         rgba: pixels.into_raw(),
     })
+}
+
+#[cfg(test)]
+mod cache_limits {
+    use super::*;
+
+    #[test]
+    #[allow(clippy::unwrap_used)]
+    fn oversized_compressed_tile_is_rejected_by_decoder_limits() {
+        let mut bytes = Vec::new();
+        {
+            let mut encoder = png::Encoder::new(&mut bytes, 1024, 1024);
+            encoder.set_color(png::ColorType::Grayscale);
+            encoder.set_depth(png::BitDepth::Eight);
+            let mut writer = encoder.write_header().unwrap();
+            {
+                let mut stream = writer.stream_writer().unwrap();
+                let row = [0; 1024];
+                for _ in 0..1024 {
+                    stream.write_all(&row).unwrap();
+                }
+                stream.finish().unwrap();
+            }
+            writer.finish().unwrap();
+        }
+        // Encoded-size checks alone cannot contain highly compressible PNGs.
+        assert!(bytes.len() < (crate::huge_image::TILE_EDGE as usize).pow(2) * 5);
+        let error = decode_cached_png(&bytes, crate::huge_image::TILE_EDGE)
+            .err()
+            .unwrap();
+        assert!(matches!(
+            error.downcast_ref::<image::ImageError>(),
+            Some(image::ImageError::Limits(_))
+        ));
+        assert!(decode_cached_png(&bytes, 1024).is_ok());
+    }
 }

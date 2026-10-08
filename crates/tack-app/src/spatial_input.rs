@@ -95,7 +95,7 @@ impl ImageInput {
         let mut corrected = [world[0] + delta[0], world[1] + delta[1]];
         if let Some(crate::image_interaction::GestureKind::Resize { handle, .. }) = kind {
             let d = crate::image_geometry::HANDLE_DIRECTIONS[handle];
-            if d[0] != 0. && d[1] != 0. {
+            if d[0] != 0. && d[1] != 0. && !self.images.selected_note(editor.document()) {
                 let size = frame.size();
                 let denom = size[0] * size[0] + size[1] * size[1];
                 let response = size.map(|s| s * s / denom);

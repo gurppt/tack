@@ -90,6 +90,7 @@ pub enum Action {
     SaveAs,
     Paste,
     RelinkSource,
+    SaveOriginalAs,
     Preferences,
     KeymapEditor,
     RecentBoards,
@@ -98,7 +99,7 @@ pub enum Action {
 }
 impl Action {
     /// Enumerable action catalog, including currently unassigned actions.
-    pub const ALL: [Self; 92] = [
+    pub const ALL: [Self; 93] = [
         Self::SelectTool(Tool::Pointer),
         Self::SelectTool(Tool::Pan),
         Self::SelectTool(Tool::RotateView),
@@ -186,6 +187,7 @@ impl Action {
         Self::SaveAs,
         Self::Paste,
         Self::RelinkSource,
+        Self::SaveOriginalAs,
         Self::Preferences,
         Self::KeymapEditor,
         Self::RecentBoards,
@@ -210,6 +212,7 @@ impl Action {
                 | Self::SaveAs
                 | Self::Paste
                 | Self::RelinkSource
+                | Self::SaveOriginalAs
                 | Self::Preferences
                 | Self::KeymapEditor
                 | Self::RecentBoards
@@ -223,7 +226,9 @@ impl Action {
                 "Tools and annotations"
             }
             Self::PanView | Self::ZoomView | Self::CenterPointer => "Navigation",
-            Self::OpenSource | Self::RevealSource | Self::CopySourcePath => "Sources",
+            Self::OpenSource | Self::RevealSource | Self::CopySourcePath | Self::SaveOriginalAs => {
+                "Sources"
+            }
             _ if self.is_local() || self == Self::Save => "Local files and preferences",
             Self::Layout(_)
             | Self::GroupSelection
@@ -341,6 +346,7 @@ impl Action {
             Self::SaveAs => "Save As",
             Self::Paste => "Paste",
             Self::RelinkSource => "Relink selected source",
+            Self::SaveOriginalAs => "Save Original As...",
             Self::Preferences => "Preferences",
             Self::KeymapEditor => "Edit keymap",
             Self::RecentBoards => "Recent boards",

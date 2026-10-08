@@ -9,6 +9,7 @@ publish.workspace = true
 tack-storage.workspace = true
 tack-core.workspace = true
 image.workspace = true
+png.workspace = true
 jpeg-decoder.workspace = true
 turbojpeg.workspace = true
 serde.workspace = true

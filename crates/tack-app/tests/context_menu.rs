@@ -585,3 +585,34 @@ fn about_uses_same_semantic_action_in_f10_and_context_menu() -> R {
     }
     Ok(())
 }
+
+#[test]
+fn original_export_is_enabled_for_linked_and_embedded_single_images() -> R {
+    let mut editor = fixture()?;
+    let map = tack_app::image_input::product_keymap()?;
+    for embedded in [false, true] {
+        if embedded {
+            editor.execute(Command::SetSource(Source::from_descriptor(
+                SourceId::new(1)?,
+                SourceLocation::Embedded,
+                2,
+                None,
+            )?))?;
+        }
+        let image = context(&editor, &[1])?;
+        assert!(image.enabled(Action::SaveOriginalAs));
+        let rows = context_menu::items(image, Some(Group::Source), &map);
+        assert!(
+            rows.iter().any(
+                |row| row.command == MenuCommand::Action(Action::SaveOriginalAs) && row.enabled
+            )
+        );
+        assert_eq!(image.enabled(Action::OpenSource), !embedded);
+        assert_eq!(image.enabled(Action::RevealSource), !embedded);
+        assert_eq!(image.enabled(Action::CopySourcePath), !embedded);
+    }
+    for ids in [&[][..], &[1, 2][..], &[3][..]] {
+        assert!(!context(&editor, ids)?.enabled(Action::SaveOriginalAs));
+    }
+    Ok(())
+}

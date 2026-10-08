@@ -842,3 +842,204 @@ fn revision_change_rejects_delayed_pixels_then_admits_current_revision() {
     assert!(assets.stats().decoded_bytes > 0);
     assert_eq!(assets.stats().pending, 0);
 }
+
+fn tile_demand(asset: AssetId) -> [tack_assets::ProductDemand; 1] {
+    [tack_assets::ProductDemand {
+        asset,
+        lod: Lod::Detail,
+        edge: tack_assets::huge_image::Tile { mip: 0, x: 1, y: 0 }
+            .tag()
+            .unwrap(),
+        priority: 2,
+        resident: false,
+    }]
+}
+
+fn load_tile_cache(f: &Fixture) -> ProductAssets {
+    let path = f.root.join("ready.tack");
+    ProductAssets::new(
+        Arc::new(TackFile::open(&path).unwrap()),
+        &path,
+        f.root.join("shared-tiles"),
+    )
+    .unwrap()
+}
+
+#[test]
+fn unavailable_link_cannot_publish_warm_tiles_but_keeps_last_known_overview() {
+    for state in [
+        SourceState::Changed,
+        SourceState::Missing,
+        SourceState::Unavailable,
+    ] {
+        // Wide enough to use the streaming generator without a large fixture.
+        let f = Fixture::sized(false, [7000, 1]);
+        f.prepared();
+        let demand = tile_demand(f.asset);
+        let edge = demand[0].edge;
+        let mut assets = load_tile_cache(&f);
+        assets.replace_view(&demand, &f.document, &Default::default());
+        settle_view(&mut assets);
+        assert_eq!(
+            assets.get_rep(f.asset, 1, Lod::Detail, edge).unwrap().width,
+            256
+        );
+        assert!(assets.supports_tiles(f.source, 1));
+        assert!(assets.stats().derived_bytes > 0);
+        drop(assets);
+        let source = f.root.join("source.png");
+        match state {
+            SourceState::Changed => fs::OpenOptions::new()
+                .append(true)
+                .open(&source)
+                .unwrap()
+                .write_all(b"changed")
+                .unwrap(),
+            SourceState::Missing => fs::remove_file(&source).unwrap(),
+            SourceState::Unavailable => {
+                fs::remove_file(&source).unwrap();
+                fs::create_dir(&source).unwrap();
+            }
+            _ => unreachable!(),
+        }
+        let mut assets = load_tile_cache(&f);
+        f.wait(&mut assets);
+        assert_eq!(assets.states[&f.source], state);
+        assert!(assets.get_current(f.asset, 1).is_some());
+        assets.replace_view(&demand, &f.document, &Default::default());
+        settle_view(&mut assets);
+        assert_eq!(assets.states[&f.source], state);
+        assert!(assets.get_rep(f.asset, 1, Lod::Detail, edge).is_none());
+        assert!(assets.failed_rep(f.asset, Lod::Detail, edge));
+        assert!(!assets.supports_tiles(f.source, 1));
+        assert_eq!(assets.stats().repair_cache_bytes, 0);
+        assert_eq!(assets.stats().source_bytes, 0);
+        assert!(assets.get_current(f.asset, 1).is_some());
+    }
+}
+
+#[test]
+fn tile_capability_tracks_source_state_and_explicit_revision() {
+    let f = Fixture::sized(true, [7000, 1]);
+    f.prepared();
+    let demand = tile_demand(f.asset);
+    let mut assets = load_tile_cache(&f);
+    assets.replace_view(&demand, &f.document, &Default::default());
+    settle_view(&mut assets);
+    assert!(assets.supports_tiles(f.source, 1));
+    assert!(!assets.supports_tiles(f.source, 2));
+    for state in [
+        SourceState::Changed,
+        SourceState::Missing,
+        SourceState::Unavailable,
+        SourceState::Foreign,
+    ] {
+        assets.states.insert(f.source, state);
+        assert!(!assets.supports_tiles(f.source, 1));
+    }
+    assets.states.insert(f.source, SourceState::Embedded);
+    assert!(assets.supports_tiles(f.source, 1));
+    let mut document = f.document.clone();
+    let source = document.source(f.source).unwrap();
+    document
+        .apply(Command::SetSource(
+            Source::from_descriptor(f.source, source.location().clone(), 2, source.fingerprint())
+                .unwrap(),
+        ))
+        .unwrap();
+    assets.sync_document(&document);
+    assert!(!assets.supports_tiles(f.source, 1));
+    assert!(!assets.supports_tiles(f.source, 2));
+    drop(assets);
+    fs::remove_file(f.root.join("source.png")).unwrap();
+    let mut assets = load_tile_cache(&f);
+    assets.replace_view(&demand, &f.document, &Default::default());
+    settle_view(&mut assets);
+    assert!(
+        assets
+            .get_rep(f.asset, 1, Lod::Detail, demand[0].edge)
+            .is_some()
+    );
+    assert!(assets.supports_tiles(f.source, 1));
+    assert_eq!(assets.stats().repair_cache_hits, 1);
+    assert_eq!(assets.stats().source_bytes, 0);
+}
+
+#[test]
+fn stale_tile_completion_does_not_poison_readmission() {
+    let f = Fixture::sized(false, [7000, 1]);
+    f.prepared();
+    let demand = tile_demand(f.asset);
+    let edge = demand[0].edge;
+    let mut assets = load_tile_cache(&f);
+    assets.replace_view(&demand, &f.document, &Default::default());
+    assets.suspend();
+    settle_view(&mut assets);
+    assert_eq!(assets.stats().discarded, 1);
+    assert_eq!(assets.stats().errors, 0);
+    assert!(!assets.failed_rep(f.asset, Lod::Detail, edge));
+    assert!(assets.get_rep(f.asset, 1, Lod::Detail, edge).is_none());
+    assert!(!assets.supports_tiles(f.source, 1));
+    assets.replace_view(&demand, &f.document, &Default::default());
+    settle_view(&mut assets);
+    assert!(assets.get_rep(f.asset, 1, Lod::Detail, edge).is_some());
+    assert!(assets.supports_tiles(f.source, 1));
+    assert_eq!(assets.stats().errors, 0);
+}
+
+#[test]
+fn cancelled_huge_tile_can_be_requested_again() {
+    let mut f = Fixture::sized(false, [7000, 1]);
+    let size = [8192, 1025]; // Decoded RGBA crosses the monolithic ceiling.
+    let source_path = f.root.join("source.png");
+    {
+        let mut encoder =
+            png::Encoder::new(fs::File::create(&source_path).unwrap(), size[0], size[1]);
+        encoder.set_color(png::ColorType::Grayscale);
+        encoder.set_depth(png::BitDepth::Eight);
+        let mut writer = encoder.write_header().unwrap();
+        {
+            let mut stream = writer.stream_writer().unwrap();
+            let row = vec![93; size[0] as usize];
+            for _ in 0..size[1] {
+                stream.write_all(&row).unwrap();
+            }
+            stream.finish().unwrap();
+        }
+        writer.finish().unwrap();
+    }
+    let location = f.document.source(f.source).unwrap().location().clone();
+    f.document
+        .apply(Command::SetSource(
+            Source::from_descriptor(
+                f.source,
+                location,
+                2,
+                Some(source_fingerprint(&source_path).unwrap()),
+            )
+            .unwrap(),
+        ))
+        .unwrap();
+    f.document
+        .apply(Command::SetAsset(
+            ImageAsset::new(f.asset, f.source, size).unwrap(),
+        ))
+        .unwrap();
+    f.seed();
+    let (_, mut assets) = f.load("seed.tack");
+    let demand = tile_demand(f.asset);
+    let edge = demand[0].edge;
+    assets.replace_view(&demand, &f.document, &Default::default());
+    // Cancels the bounded running job before publication, even if its worker
+    // finishes first; this must not put the representation in the failed set.
+    assets.suspend();
+    settle_view(&mut assets);
+    assert_eq!(assets.stats().discarded, 1);
+    assert_eq!(assets.stats().errors, 0);
+    assert!(!assets.failed_rep(f.asset, Lod::Detail, edge));
+    assets.replace_view(&demand, &f.document, &Default::default());
+    settle_view(&mut assets);
+    assert!(assets.get_rep(f.asset, 2, Lod::Detail, edge).is_some());
+    assert!(assets.supports_tiles(f.source, 2));
+    assert_eq!(assets.stats().errors, 0);
+}

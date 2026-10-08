@@ -16,3 +16,6 @@ mod annotations;
 pub use annotations::{
     AnnotationDraws, AnnotationPrimitive, CanvasDraw, MAX_ANNOTATION_PRIMITIVES,
 };
+
+mod selection;
+pub use selection::{MAX_SELECTION_RECTS, SelectionRect};

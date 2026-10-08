@@ -356,6 +356,16 @@ impl ImageInput {
             if action == Action::ImagePointer && self.begin_annotation(pointer, editor, camera) {
                 return Ok(false);
             }
+            if matches!(action, Action::ImagePointer | Action::ToggleSelection)
+                && self.modifiers().contains(crate::input::Modifiers::SHIFT)
+                && self.images.selected_note(editor.document())
+                && let Some(GizmoHit::Resize(handle)) = handle
+                && handle % 2 == 0
+            {
+                self.images
+                    .begin(GestureKind::NoteScale { handle }, pointer, editor)?;
+                return Ok(false);
+            }
             if action == Action::ImagePointer
                 && let Some(handle) = handle
             {

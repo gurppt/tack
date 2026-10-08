@@ -1,13 +1,13 @@
-# Current feature inventory — Phase 1J + About
+# Current feature inventory — Phase 1L
 
-Code audit of the local prototype on 2026-10-07, based on `Action::ALL`,
+Code audit of the local prototype on 2026-10-08, based on `Action::ALL`,
 `product_bindings`, `ImageInput`, annotation/spatial input, local file workers,
 storage/recovery and tests. This inventories shipped and reachable code, not a roadmap.
 Historical Phase 1I evidence has 170 automated native assertions on US and French XKB layouts at
 800×600 and 1024×768. Owner comfort/discovery review and real Windows desktop
 validation remain pending; “implemented” does not imply human acceptance.
 
-Every semantic catalog entry is listed below (92 actions). Shortcuts are the
+Every semantic catalog entry is listed below (93 actions). Shortcuts are the
 **default logical, layout-aware keyboard bindings** exported by `context_ui`; the actual menu
 reads the active user keymap. An em dash means no default press shortcut.
 All actions can be inspected/remapped in Tack → Edit → Keymap. This exposure
@@ -107,18 +107,19 @@ selection, tool choice, camera and text drafts. Menu paths are one submenu deep.
 | Open linked image source (`OpenSource`) | implemented | one native linked image | Ctrl+Shift+O | platform helper | image → Source | No | session | Explicit local OS helper; unavailable for embedded/foreign paths. Native path passed as a single argument. |
 | Reveal linked image source (`RevealSource`) | implemented | one native linked image | Ctrl+Alt+O | platform helper | image → Source | No | session | Explicit local OS helper; unavailable for embedded/foreign paths. Native path passed as a single argument. |
 | Copy linked source path (`CopySourcePath`) | implemented | one native linked image | Ctrl+Shift+C | platform helper | image → Source | No | session | Explicit local OS helper; unavailable for embedded/foreign paths. Native path passed as a single argument. |
+| Save original as (`SaveOriginalAs`) | implemented | one linked or embedded image | — | keymap catalog | image → Source | No | new encoded file | Native picker; worker copies/extracts original bytes with a 128 KiB buffer, cancellation and atomic publication; no transform or re-encoding. |
 | Local menu (`ApplicationMenu`) | implemented | window | F10 or right-click | shared Tack block | every context root | No | session | Shared File/Edit/View/Tools/Preferences/Keymap block; no permanent Tack button or menu bar. |
 | New board (`NewBoard`) | implemented | board | Ctrl+N | Tack → File | No | No | new file/session | Starts a separate local window. |
-| Open board (`OpenBoard`) | implemented | board | Ctrl+O | Tack → File | No | No | file | Native picker; separate window; no current-board replacement. |
+| Open board (`OpenBoard`) | implemented | board | Ctrl+O | Tack → File | No | No | file | Native picker; reuses only the initial clean empty Untitled window; meaningful or dirty boards open separately. Last successful board folder is remembered. |
 | Import images (`ImportImages`) | implemented | images | Ctrl+I | Tack → File | canvas | Yes, per admitted image | Board | PNG/JPEG; native picker, bounded asynchronous import. |
-| Save As (`SaveAs`) | implemented | board | Ctrl+Shift+S | Tack → File | No | No | file | Native picker; new document identity; preserves original authority. |
+| Save As (`SaveAs`) | implemented | board | Ctrl+Shift+S | Tack → File | No | No | file | Native picker; forces a case-insensitive `.tack` suffix, appending after arbitrary dotted names; new document identity; preserves original authority. |
 | Paste (`Paste`) | implemented | clipboard | Ctrl+V | Tack → Edit | canvas | Yes after admission/commit | Board | PNG, plain text or file URI list; note draft paste does not commit immediately. |
 | Relink selected source (`RelinkSource`) | implemented | image source | Ctrl+Shift+R | native picker | image | Yes | Board | Can replace embedded, missing or changed source; shared-source revision semantics preserved. |
 | Preferences (`Preferences`) | implemented | profile | Ctrl+, | Tack root | No | No | profile | Compact temporary panel. |
 | Edit keymap (`KeymapEditor`) | implemented | keymap | — | Tack → Edit / Preferences | No | No | profile | Search, remap, unassign and reset; no permanently visible control. |
 | Recent boards (`RecentBoards`) | implemented | board paths | — | Tack → File | No | No | profile | Bounded 16 paths; selecting opens another window. |
-| Import keymap (`ImportKeymap`) | implemented | profile | — | Preferences / Keymap | No | No | profile | Validated JSON; unsupported/corrupt files rejected. |
-| Export keymap (`ExportKeymap`) | implemented | profile | — | Preferences / Keymap | No | No | profile | Exports preferences and keymap together. |
+| Import keymap (`ImportKeymap`) | implemented | profile | — | Preferences / Keymap | No | No | profile | `.tackey` exposed first; compatible legacy JSON accepted; unsupported/corrupt files rejected. |
+| Export keymap (`ExportKeymap`) | implemented | profile | — | Preferences / Keymap | No | No | profile | Exports preferences and keymap together as `.tackey`; refuses an existing destination introduced by suffix adjustment. |
 
 Phase 1J adds 27 automated native clipboard/menu/scale/theme checks, actual
 Dolphin single/multiple-image copying and owned-window screenshot paste on
@@ -129,9 +130,9 @@ runtime remain pending. See [Phase 1J](MISSION_1J_REPORT.md).
 
 | Feature | Status | Type / invocation / shortcut | UI and context exposure | Undoable? | Persisted? | Limits / notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| Resize corners/edges | implemented | selection; left drag handles, Shift constrain, Alt centred | canvas handles / platform cursors | one release = one Undo | Board | Pixel geometry shared with hit testing; no per-motion command. |
+| Resize corners/edges | implemented | selection; left drag handles, Shift constrain, Alt centred | canvas handles / platform cursors | one release = one Undo | Board | Pixel geometry shared with hit testing; no per-motion command. Note corners resize the wrapping box; Shift corners uniformly scale box/font/style. |
 | Rotate handle | implemented | images / annotations; left drag offset handle | canvas handle / crosshair | one release = one Undo | Board | Axis-aligned frames have no rotation handle. |
-| Marquee selection | implemented | empty-canvas left drag; Shift adds | outline | No | session | Includes annotations and groups under current hit rules. |
+| Marquee selection | implemented | empty-canvas left drag; Shift adds | outline | No | session | Includes annotations and groups under current hit rules. Every visible selected member gets its own derived outline, up to the existing 10,000-visible-member limit. |
 | Double-click text | implemented | existing frame or note; double left click | inline editor; Edit/Rename context equivalent | after commit | Board | Bounded plain text, no rich text / local text history. |
 | Note input / IME | partial | text editor, typing / IME / paste; Ctrl+A, Backspace, Delete; Ctrl+Enter; Escape | inline draft | document Undo after commit | Board | Bounded 16 KiB; whole-text replacement/deletion model; no arbitrary rich editor/caret navigation/local Ctrl+Z buffer. |
 | Clipboard PNG/JPEG | implemented | Ctrl+V, canvas Paste, Tack Edit Paste | native clipboard worker | admitted image | Board | PNG/JPEG payload is embedded regardless of default import mode; 64 MiB encoded cap. X11 xclip or Wayland wl-paste; actionable missing-helper errors. |
@@ -142,7 +143,7 @@ runtime remain pending. See [Phase 1J](MISSION_1J_REPORT.md).
 | Default sampling | implemented | Preferences → Image sampling | temporary preferences | No for default; image override Yes | profile / image override Board | Renderer samples Default independently from stored representation. |
 | UI scale / handle size / hit radius | implemented | Preferences | direct scale chooser; handles/radius bounded -/+ | No | profile | Auto or 1–4 selectable in either direction; Auto uses rounded system DPI bounded 1–8. Native 800×600 1×/2× tested. Very large scale on small screens still truncates labels. |
 | Background theme | implemented | Preferences → Background | three direct choices | No | profile only | Very Dark / Neutral Gray / Light, flat fill in existing grid pass. Bitmap UI and immutable cyan/magenta/yellow palette; no board/schema changes. Old profiles default Neutral Gray; unknown future themes rejected without overwriting profile. |
-| Keymap search/capture | implemented | Tack → Edit → Keymap; type, Enter, F6; Delete; F5 / Shift+F5 / Ctrl+F5 | temporary panel | No | profile | Press/release/hold/wheel, atomic capture/conflict refusal with requested shortcut and owning action; mouse Change/Unassign/Reset; confirmed category/all resets. Search also matches active shortcut labels; Escape clears search before closing. Menu labels follow actual configured press bindings. |
+| Keymap search/capture | implemented | Tack → Edit → Keymap; type, Enter, F6; Delete; F5 / Shift+F5 / Ctrl+F5 | temporary panel | No | profile | Press/release/hold/wheel, atomic capture/conflict refusal with requested shortcut and owning action; mouse Change/Unassign/Reset; confirmed category/all resets. Search also matches active shortcut labels; Escape clears search before closing. Menu labels follow actual configured press bindings. Nested Escape returns to Preferences; direct entry closes after search/capture cancellation. |
 | About Tack | implemented | right-click Tack / F10 | temporary flat bitmap modal | No | `gfx/about.toml` and artwork, compiled into package | Owner text editable; Cargo version checked; compact artwork decoded only on opening, texture released on dismissal; readable links, 800×600 at 1×/2×. |
 | Close confirmation | implemented | OS close button / window manager | Save / Discard / Cancel panel | No | normal Save if selected | No new Quit action; closing stays in the existing native lifecycle. |
 | Recovery restore/discard | implemented | open board with newer valid recovery | bounded modal; choice required before import | restored document starts dirty | recovery/normal file authority | Normal save remains distinct; document history itself is not serialized. |
@@ -181,3 +182,23 @@ One-shot completion clears the existing temporary-tool stack. Modal entry
 additionally resets held-input state. Temporary Pan/RotateView remain experimental; there is no
 second restoration stack. Nested Pan/Text commit/cancel/focus paths have
 owner tests, but complete native experimental combinations are not claimed.
+
+## Phase 1L display supply
+
+Large static noninterlaced PNG sources derive overviews by bounded scanlines.
+NORMAL/LARGE/HUGE_TILED classify checked decoded risk, with a 32 MiB monolithic
+pixel-working allowance and separate capped parser/row scratch. 16-bit precision
+and codec capability affect routing. JPEG retains the previous 6000×4500 guards.
+
+Visible 256-pixel mip tiles are an **opt-in prototype** (`open BOARD --huge-tiles`),
+not ordinary product defaults. Their CPU/GPU/disk residency uses existing budgets;
+source/revision identities and cancellation reject obsolete results. Sequential
+PNG rescans, nearest-source mip sampling and more visible sources than admitted
+tile slots remain explicit limitations. No complete full-resolution frame or
+pyramid is constructed. See the Phase 1L design note and measurement report.
+
+Preferences Theme/Scale choices stay inside their submenu for live preview;
+Escape or Back returns to Preferences. Last successful Open/Save As folder uses
+a bounded native path descriptor and worker-only fallback checks.
+
+Implementation, measured limits and validation: [Phase 1L report](MISSION_1L_REPORT.md), [huge-image design](design/huge_images.md), [owner checklist](HUMAN_TEST_1L.md).

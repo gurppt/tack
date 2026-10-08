@@ -17,6 +17,11 @@ fn run_mode(args: Vec<OsString>, started: Instant, new: bool) -> Result<(), Asse
                 .ok_or("open FILE.tack [--seconds N] [--output REPORT]")?,
         )
     };
+    let path = if new {
+        tack_app::file_names::board(path)
+    } else {
+        path
+    };
     local.untitled = untitled;
     let mut options = OpenOptions {
         path,
@@ -30,6 +35,7 @@ fn run_mode(args: Vec<OsString>, started: Instant, new: bool) -> Result<(), Asse
         potato: false,
         supply_stress: false,
         lod_debug: false,
+        huge_tiles: false,
         immediate: false,
         dense: false,
         window_size: [1280, 720],
@@ -52,6 +58,7 @@ fn run_mode(args: Vec<OsString>, started: Instant, new: bool) -> Result<(), Asse
             Some("--output") => {
                 options.output = Some(PathBuf::from(it.next().ok_or("output path")?))
             }
+            Some("--huge-tiles") => options.huge_tiles = true,
             Some("--lod-debug") => options.lod_debug = true,
             Some("--dense-view") => options.dense = true,
             Some("--potato") => options.potato = true,

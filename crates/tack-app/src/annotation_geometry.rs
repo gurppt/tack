@@ -116,3 +116,47 @@ pub fn intersects(a: &Annotation, t: Transform, r: WorldRect) -> bool {
         }
     }
 }
+
+/// Plain note resizing changes only its wrapping field, around the opposite edge.
+pub fn resize_note_box(
+    t: Transform,
+    delta: [f64; 2],
+    direction: [f64; 2],
+    center: bool,
+) -> Result<Transform, tack_core::GeometryError> {
+    let delta = crate::image_geometry::rotate(delta, -t.rotation());
+    let old = t.size();
+    let multiplier = if center { 2. } else { 1. };
+    let size = std::array::from_fn(|i| {
+        if direction[i] == 0. {
+            old[i]
+        } else {
+            (old[i] + multiplier * delta[i] * direction[i]).max(old[i] * 1e-6)
+        }
+    });
+    note_transform(t, size, if center { [0.; 2] } else { direction })
+}
+/// Global note scale keeps the opposite corner fixed, including rotated notes.
+pub fn scale_note(
+    t: Transform,
+    scale: f64,
+    direction: [f64; 2],
+) -> Result<Transform, tack_core::GeometryError> {
+    note_transform(t, t.size().map(|v| v * scale), direction)
+}
+fn note_transform(
+    t: Transform,
+    size: [f64; 2],
+    direction: [f64; 2],
+) -> Result<Transform, tack_core::GeometryError> {
+    let offset = crate::image_geometry::rotate(
+        std::array::from_fn(|i| direction[i] * (size[i] - t.size()[i]) / 2.),
+        t.rotation(),
+    );
+    Transform::new(
+        std::array::from_fn(|i| t.center()[i] + offset[i]),
+        size,
+        t.rotation(),
+        t.flips(),
+    )
+}

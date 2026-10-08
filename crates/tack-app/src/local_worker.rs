@@ -24,6 +24,7 @@ pub enum LocalUpdate {
         result: Result<tack_assets::Decoded, String>,
     },
     Picked(Action, Result<Vec<PathBuf>, String>),
+    Opened(Result<OpenedBoard, String>),
     Imported(ImportUpdate),
     Relinked(Result<RelinkReady, String>),
     Restored(Result<tack_storage::TackFile, String>),
@@ -37,11 +38,48 @@ pub enum LocalUpdate {
     Keymap(Action, Result<Option<Preferences>, String>),
     Done(Result<(), String>),
 }
+pub struct OpenedBoard {
+    pub board: tack_storage::TackFile,
+    pub lease: Arc<tack_storage::BoardLease>,
+    pub path: PathBuf,
+    pub metadata_ms: f64,
+    pub recovery: bool,
+    pub warning: Option<String>,
+}
+impl OpenedBoard {
+    pub fn read(path: &std::path::Path) -> Result<Self, AssetError> {
+        let started = std::time::Instant::now();
+        let lease = Arc::new(tack_storage::BoardLease::acquire(path)?);
+        let board = lease.open()?;
+        let (recovery, warning) = match lease.recovery(board.document.id()) {
+            Ok(candidate) => (candidate.is_some(), None),
+            Err(error) => (
+                lease.owns_recovery(board.document.id()).unwrap_or(false),
+                Some(format!(
+                    "Recovery invalid; normal file intact. Discard explicitly: {error}"
+                )),
+            ),
+        };
+        Ok(Self {
+            path: lease.path().to_owned(),
+            lease,
+            board,
+            metadata_ms: started.elapsed().as_secs_f64() * 1000.,
+            recovery,
+            warning,
+        })
+    }
+}
 pub enum Operation {
     About {
         ticket: u64,
     },
-    Pick(Action, Picker, PathBuf),
+    Pick(Action, Picker, PathBuf, native_files::PickOptions),
+    OpenBoard(PathBuf),
+    ExportOriginal {
+        request: crate::source_export::OriginalExport,
+        work: PathBuf,
+    },
     Import(ImportRequest),
     Relink(Source, PathBuf),
     Clipboard {
@@ -115,7 +153,10 @@ impl LocalWorker {
         let importing = matches!(operation, Operation::Import(_));
         let mutating = matches!(
             operation,
-            Operation::Import(_) | Operation::Relink(..) | Operation::RestoreRecovery { .. }
+            Operation::Import(_)
+                | Operation::Relink(..)
+                | Operation::RestoreRecovery { .. }
+                | Operation::OpenBoard(_)
         );
         let (tx, receiver) = mpsc::sync_channel(1);
         let cancel = Arc::new(AtomicBool::new(false));
@@ -140,11 +181,23 @@ impl LocalWorker {
                                 }
                             }
                         }
-                        Operation::Pick(action, picker, work) => {
+                        Operation::Pick(action, picker, work, options) => {
                             emit(LocalUpdate::Picked(
                                 action,
-                                native_files::pick(picker, &work, &stop).map_err(|e| e.to_string()),
+                                native_files::pick_with_options(picker, &work, &stop, &options)
+                                    .map_err(|e| e.to_string()),
                             ));
+                        }
+                        Operation::OpenBoard(path) => {
+                            let result = OpenedBoard::read(&path);
+                            if !stop.load(Ordering::Relaxed) {
+                                emit(LocalUpdate::Opened(
+                                    result.map_err(|error| error.to_string()),
+                                ));
+                            }
+                        }
+                        Operation::ExportOriginal { request, work } => {
+                            request.pick_and_save(&work, &stop)?;
                         }
                         Operation::Import(request) => {
                             let temporary = request.temporary.clone();
@@ -209,7 +262,7 @@ impl LocalWorker {
                             let result = if action == Action::ImportKeymap {
                                 preferences::read(&path).map(Some)
                             } else {
-                                preferences::write(&path, &profile).map(|_| None)
+                                preferences::export_keymap(&path, &profile).map(|_| None)
                             };
                             emit(LocalUpdate::Keymap(
                                 action,
@@ -261,6 +314,11 @@ impl LocalWorker {
             for _ in 0..4 {
                 match active.receiver.try_recv() {
                     Ok(update) => {
+                        if active.cancel.load(Ordering::Relaxed)
+                            && matches!(update, LocalUpdate::Opened(_))
+                        {
+                            continue;
+                        }
                         if let LocalUpdate::Clipboard { received, .. } = &update {
                             let _ = received.try_send(());
                             if active.cancel.load(Ordering::Relaxed) {

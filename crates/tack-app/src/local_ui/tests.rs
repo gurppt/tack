@@ -1,29 +1,62 @@
 use super::*;
 #[test]
-fn scale_and_theme_are_direct_reversible_choices() -> Result<(), tack_assets::AssetError> {
+fn live_choices_keep_submenu_and_back_returns_to_parent() -> Result<(), tack_assets::AssetError> {
     let mut profile = Preferences::defaults()?;
     let mut keymap = profile.keymap()?;
     let mut ui = LocalUi::new(Panel::Preferences);
+    ui.selected = 3;
+    ui.activate(&mut keymap, &mut profile);
     for scale in [2, 1, 4, 0] {
-        ui.selected = 3;
-        assert!(ui.activate(&mut keymap, &mut profile).is_none());
-        assert_eq!(ui.panel, Panel::Scale);
         ui.selected = scale;
         assert!(matches!(
             ui.activate(&mut keymap, &mut profile),
             Some(UiResult::PreferencesChanged)
         ));
         assert_eq!(profile.ui_scale, scale as u8);
-        assert_eq!(ui.panel, Panel::Preferences);
+        assert_eq!(ui.panel, Panel::Scale);
     }
+    assert!(ui.back().is_none());
+    assert_eq!(ui.panel, Panel::Preferences);
+    assert_eq!(ui.selected, 3);
+    ui.selected = 4;
+    ui.activate(&mut keymap, &mut profile);
     for (index, theme) in crate::ui_theme::Theme::ALL.into_iter().enumerate() {
-        ui.selected = 4;
-        ui.activate(&mut keymap, &mut profile);
-        assert_eq!(ui.panel, Panel::Theme);
         ui.selected = index;
         ui.activate(&mut keymap, &mut profile);
         assert_eq!(profile.theme, theme);
+        assert_eq!(ui.panel, Panel::Theme);
     }
+    assert!(ui.back().is_none());
+    assert_eq!(ui.panel, Panel::Preferences);
+    assert!(matches!(ui.back(), Some(UiResult::Dismiss)));
+    Ok(())
+}
+#[test]
+fn nested_keymap_back_and_direct_close_release_all_capture_state()
+-> Result<(), tack_assets::AssetError> {
+    let mut profile = Preferences::defaults()?;
+    let mut keymap = profile.keymap()?;
+    let mut ui = LocalUi::new(Panel::Preferences);
+    for _ in 0..20 {
+        ui.selected = 7;
+        assert!(ui.activate(&mut keymap, &mut profile).is_none());
+        assert_eq!(ui.panel, Panel::Keymap);
+        ui.capture = true;
+        ui.release = true;
+        ui.focus = Some(Command::Search);
+        ui.confirm_reset = Some(ResetScope::All);
+        ui.search = "Undo".into();
+        assert!(
+            ui.command(Command::Close, &mut keymap, &mut profile)
+                .is_none()
+        );
+        assert_eq!(ui.panel, Panel::Preferences);
+        assert_eq!(ui.selected, 7);
+        assert!(!ui.capture && !ui.release && ui.focus.is_none() && ui.confirm_reset.is_none());
+        assert!(ui.search.is_empty() && ui.parents.is_empty());
+    }
+    let mut direct = LocalUi::new(Panel::Keymap);
+    assert!(matches!(direct.back(), Some(UiResult::Dismiss)));
     Ok(())
 }
 #[test]

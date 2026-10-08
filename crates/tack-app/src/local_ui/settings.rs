@@ -245,7 +245,15 @@ impl LocalUi {
                     Command::Trigger,
                     true,
                 ),
-                ("Close", Command::Close, true),
+                (
+                    if self.parents.is_empty() {
+                        "Close"
+                    } else {
+                        "Back"
+                    },
+                    Command::Close,
+                    true,
+                ),
             ]
         };
         for (i, (label, command, enabled)) in buttons.drain(..).enumerate() {
@@ -448,18 +456,40 @@ impl LocalUi {
                 );
             }
         }
+        let nested = matches!(self.panel, Panel::Scale | Panel::Theme);
+        if nested {
+            self.button(
+                paint,
+                [width - 72., footer + 4., width, footer + 26.],
+                if self.parents.is_empty() {
+                    "Close"
+                } else {
+                    "Back"
+                },
+                Command::Close,
+                true,
+            );
+        }
         paint.text(
             24.,
             footer + 2.,
-            width - 24.,
-            "Click or Enter; Left/Right: -/+",
+            width - if nested { 108. } else { 24. },
+            if nested {
+                "Click/Enter: preview"
+            } else {
+                "Click or Enter; Left/Right: -/+"
+            },
             p.text_secondary,
         );
         paint.text(
             24.,
             footer + 18.,
-            width - 24.,
-            "Up/Down choose; Escape closes",
+            width - if nested { 108. } else { 24. },
+            if self.parents.is_empty() {
+                "Up/Down choose; Escape closes"
+            } else {
+                "Up/Down choose; Escape returns"
+            },
             p.text_secondary,
         );
     }

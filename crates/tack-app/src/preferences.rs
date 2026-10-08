@@ -109,6 +109,8 @@ pub struct Preferences {
     pub hit_radius: u8,
     pub keymap: Vec<BindingRecord>,
     pub recent: Vec<RecentPath>,
+    #[serde(default)]
+    pub last_board_directory: Option<RecentPath>,
 }
 impl Preferences {
     pub fn defaults() -> Result<Self, AssetError> {
@@ -127,6 +129,7 @@ impl Preferences {
                 .map(BindingRecord::from_binding)
                 .collect(),
             recent: Vec::new(),
+            last_board_directory: None,
         })
     }
     pub fn keymap(&self) -> Result<Keymap, AssetError> {
@@ -140,7 +143,7 @@ impl Preferences {
         {
             return Err("unsupported or out-of-bounds preferences".into());
         }
-        for recent in &self.recent {
+        for recent in self.recent.iter().chain(self.last_board_directory.iter()) {
             if recent.bytes.len() > tack_core::MAX_SOURCE_PATH_BYTES {
                 return Err("recent path too long".into());
             }
@@ -159,6 +162,12 @@ impl Preferences {
             keymap.bind(binding)?;
         }
         Ok(keymap)
+    }
+    pub fn remember_board_directory(&mut self, path: &Path) -> Result<(), AssetError> {
+        let path = std::path::absolute(path)?;
+        let parent = path.parent().ok_or("board directory unavailable")?;
+        self.last_board_directory = Some(RecentPath::native(parent)?);
+        Ok(())
     }
     pub fn remember(&mut self, path: &Path) -> Result<(), AssetError> {
         let path = std::path::absolute(path)?;
@@ -217,6 +226,22 @@ pub fn write(path: &Path, profile: &Preferences) -> Result<(), AssetError> {
     leaf.push(".tack-lock");
     let _lock = tack_storage::lock_sidecar(&path.with_file_name(leaf))?;
     write_locked(path, profile)
+}
+/// A suffix-added target was not confirmed by the native picker: it must be unused.
+pub fn export_keymap(path: &Path, profile: &Preferences) -> Result<(), AssetError> {
+    let target = crate::file_names::keymap(path);
+    if target == path {
+        return write(path, profile);
+    }
+    let mut leaf = target.file_name().ok_or("keymap filename")?.to_os_string();
+    leaf.push(".tack-lock");
+    let _lock = tack_storage::lock_sidecar(&target.with_file_name(leaf))?;
+    match std::fs::symlink_metadata(&target) {
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+        Err(error) => return Err(error.into()),
+        Ok(_) => return Err("keymap filename with .tackey already exists; select that full filename to confirm replacement".into()),
+    }
+    write_locked(&target, profile)
 }
 fn write_locked(path: &Path, profile: &Preferences) -> Result<(), AssetError> {
     profile.keymap()?;
@@ -302,6 +327,7 @@ pub fn save_profile(
     }
     if let Some(board) = board {
         next.remember(board)?;
+        next.remember_board_directory(board)?;
     }
     write_locked(&path, &next)?;
     fingerprint(&path)?.ok_or_else(|| "preferences publication missing".into())

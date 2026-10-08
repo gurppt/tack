@@ -50,3 +50,6 @@ pub mod about;
 pub mod clipboard;
 
 pub mod lod_diagnostics;
+
+pub mod file_names;
+pub mod source_export;

@@ -152,7 +152,9 @@ impl Context {
                 matches!(self.selection_kind, ContextKind::Note | ContextKind::Frame)
             }
             Action::FocusFrame => self.selection_kind == ContextKind::Frame,
-            Action::RelinkSource => self.selection_kind == ContextKind::Image,
+            Action::RelinkSource | Action::SaveOriginalAs => {
+                self.selection_kind == ContextKind::Image
+            }
             Action::OpenSource | Action::RevealSource | Action::CopySourcePath => {
                 self.selection_kind == ContextKind::Image && self.linked
             }
@@ -425,6 +427,8 @@ fn context_items(context: Context, submenu: Option<Group>, keymap: &Keymap) -> V
             Group::Source => vec![
                 a("Open original", OpenSource),
                 a("Reveal original", RevealSource),
+                a("Relink...", RelinkSource),
+                a("Save Original As...", SaveOriginalAs),
                 a("Copy source path", CopySourcePath),
             ],
             Group::File => vec![
@@ -511,7 +515,7 @@ fn context_items(context: Context, submenu: Option<Group>, keymap: &Keymap) -> V
     if context.kind == ContextKind::Image {
         v.extend([
             a("Relink...", RelinkSource),
-            group("Source", Group::Source, context.linked),
+            group("Source", Group::Source, true),
         ]);
     }
     v.extend([

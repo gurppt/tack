@@ -1756,6 +1756,7 @@ dependencies = [
  "crc32fast",
  "image",
  "jpeg-decoder",
+ "png",
  "serde",
  "serde_json",
  "tack-core",

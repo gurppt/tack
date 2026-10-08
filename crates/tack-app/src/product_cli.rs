@@ -74,9 +74,9 @@ fn require_repair_target(input: &Path, target: &Path) -> storage::Result<()> {
     }
 }
 fn create(args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
-    let target = PathBuf::from(args.first().ok_or(
+    let target = tack_app::file_names::board(PathBuf::from(args.first().ok_or(
         "create OUTPUT.tack --linked|--embedded IMAGE... [--manifest PATH] [--output REPORT]",
-    )?);
+    )?));
     require_new_target(&target)?;
     let mut embedded = false;
     let mut manifest = None;
@@ -258,7 +258,7 @@ fn repair(args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
         args.first()
             .ok_or("repair INPUT.tack OUTPUT.tack [REPORT.json]")?,
     );
-    let target = PathBuf::from(args.get(1).ok_or("repair output")?);
+    let target = tack_app::file_names::board(PathBuf::from(args.get(1).ok_or("repair output")?));
     let output = args.get(2).map(PathBuf::from);
     crate::report_output::preflight(output.as_deref(), Some(&target))?;
     require_repair_target(&input, &target)?;

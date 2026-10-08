@@ -15,6 +15,21 @@ pub enum Picker {
     Relink,
     ImportKeymap,
     ExportKeymap,
+    ExportOriginal,
+}
+/// Resident descriptors only; folder accessibility is checked on the picker worker.
+#[derive(Clone, Default)]
+pub struct PickOptions {
+    pub directory: Option<PathBuf>,
+    pub suggested_name: Option<std::ffi::OsString>,
+}
+/// Called only for explicit operations, never on the event/frame path.
+pub fn usable_directory(path: Option<&Path>) -> Option<PathBuf> {
+    let path = path?;
+    if !path.is_absolute() || tack_core::LinkedPath::native(path).is_err() {
+        return None;
+    }
+    std::fs::read_dir(path).ok().map(|_| path.to_owned())
 }
 #[cfg(not(target_os = "linux"))]
 use std::{io::Read, process::Stdio, sync::atomic::Ordering, time::Instant};
@@ -102,6 +117,20 @@ fn capture(
 }
 
 pub fn pick(kind: Picker, work: &Path, cancel: &AtomicBool) -> Result<Vec<PathBuf>, AssetError> {
+    pick_with_options(kind, work, cancel, &PickOptions::default())
+}
+pub fn pick_with_options(
+    kind: Picker,
+    work: &Path,
+    cancel: &AtomicBool,
+    options: &PickOptions,
+) -> Result<Vec<PathBuf>, AssetError> {
+    let directory = usable_directory(options.directory.as_deref());
+    let suggested_name = options.suggested_name.clone().or_else(|| match kind {
+        Picker::Save => Some("Untitled.tack".into()),
+        Picker::ExportKeymap => Some("keymap.tackey".into()),
+        _ => None,
+    });
     #[cfg(target_os = "linux")]
     let command = {
         let mut command = Command::new("zenity");
@@ -114,18 +143,34 @@ pub fn pick(kind: Picker, work: &Path, cancel: &AtomicBool) -> Result<Vec<PathBu
                     "--file-filter=Images | *.png *.jpg *.jpeg *.PNG *.JPG *.JPEG",
                 ]);
             }
-            Picker::Save | Picker::ExportKeymap => {
+            Picker::Save | Picker::ExportKeymap | Picker::ExportOriginal => {
                 command.args(["--save", "--confirm-overwrite"]);
             }
             Picker::Relink => {
                 command.arg("--file-filter=Images | *.png *.jpg *.jpeg *.PNG *.JPG *.JPEG");
             }
             Picker::Open => {
-                command.arg("--file-filter=Tack boards | *.tack");
+                command.arg("--file-filter=Tack boards | *.tack *.TACK");
             }
             Picker::ImportKeymap => {
-                command.arg("--file-filter=Tack preferences | *.json");
+                command.args([
+                    "--file-filter=Tack keymaps | *.tackey *.TACKEY",
+                    "--file-filter=Legacy Tack preferences | *.json *.JSON",
+                ]);
             }
+        }
+        if let Some(name) = &suggested_name {
+            let suggestion = directory
+                .as_ref()
+                .map_or_else(|| PathBuf::from(name), |dir| dir.join(name));
+            let mut argument = std::ffi::OsString::from("--filename=");
+            argument.push(suggestion);
+            command.arg(argument);
+        } else if let Some(directory) = &directory {
+            let mut argument = std::ffi::OsString::from("--filename=");
+            argument.push(directory);
+            argument.push(std::path::MAIN_SEPARATOR.to_string());
+            command.arg(argument);
         }
         command
     };
@@ -138,12 +183,18 @@ pub fn pick(kind: Picker, work: &Path, cancel: &AtomicBool) -> Result<Vec<PathBu
         command
             .args(["-NoProfile", "-NonInteractive", "-STA", "-File"])
             .arg(script)
-            .arg(format!("{kind:?}"));
+            .arg(format!("{kind:?}"))
+            .arg(directory.as_deref().unwrap_or(Path::new("")))
+            .arg(
+                suggested_name
+                    .as_deref()
+                    .unwrap_or(std::ffi::OsStr::new("")),
+            );
         command
     };
     #[cfg(not(any(target_os = "linux", windows)))]
     {
-        let _ = (kind, work, cancel);
+        let _ = (kind, work, cancel, directory, suggested_name);
         return Err("native picker unavailable on this platform; use command-line paths".into());
     }
     #[cfg(any(target_os = "linux", windows))]
@@ -173,8 +224,15 @@ pub fn pick(kind: Picker, work: &Path, cancel: &AtomicBool) -> Result<Vec<PathBu
 #[cfg(windows)]
 const WINDOWS_PICKER: &str = r#"[Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false)
 Add-Type -AssemblyName System.Windows.Forms
-if ($args[0] -eq 'Save' -or $args[0] -eq 'ExportKeymap') { $d = New-Object System.Windows.Forms.SaveFileDialog } else { $d = New-Object System.Windows.Forms.OpenFileDialog }
+if ($args[0] -eq 'Save' -or $args[0] -eq 'ExportKeymap' -or $args[0] -eq 'ExportOriginal') { $d = New-Object System.Windows.Forms.SaveFileDialog } else { $d = New-Object System.Windows.Forms.OpenFileDialog }
 $d.Title = 'Tack'
+$d.AddExtension = $false
+if ($args[1]) { $d.InitialDirectory = $args[1] }
+if ($args[2]) { $d.FileName = $args[2] }
+if ($args[0] -eq 'Open' -or $args[0] -eq 'Save') { $d.Filter = 'Tack boards (*.tack)|*.tack' }
+if ($args[0] -eq 'ImportKeymap') { $d.Filter = 'Tack keymaps (*.tackey)|*.tackey|Legacy Tack preferences (*.json)|*.json' }
+if ($args[0] -eq 'ExportKeymap') { $d.Filter = 'Tack keymaps (*.tackey)|*.tackey' }
+if ($args[0] -eq 'Import' -or $args[0] -eq 'Relink') { $d.Filter = 'Images (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg' }
 if ($args[0] -eq 'Import') { $d.Multiselect = $true }
 if ($d.ShowDialog() -ne [System.Windows.Forms.DialogResult]::OK) { exit 1 }
 foreach ($p in $d.FileNames) { [Console]::WriteLine($p) }

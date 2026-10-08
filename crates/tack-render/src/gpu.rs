@@ -155,6 +155,7 @@ pub struct Gpu {
     pub format: wgpu::TextureFormat,
     pipeline: wgpu::RenderPipeline,
     overlay: crate::overlay::Overlay,
+    selection: Option<Box<crate::selection::Selection>>,
     annotations: Option<Box<crate::annotations::Annotations>>,
     grid: Option<crate::grid::Grid>,
     background: crate::Background,
@@ -318,6 +319,7 @@ impl Gpu {
             adapter_info,
             format,
             overlay,
+            selection: None,
             annotations: None,
             grid: None,
             background: crate::Background::default(),
@@ -446,6 +448,13 @@ impl Gpu {
             self.textures.contains(TextureKey::Product(key))
         }
     }
+    /// Release document-derived textures when reusing a fresh window.
+    pub fn clear_products(&mut self) {
+        self.textures = ByteCache::new(self.textures.budget_bytes());
+        self.thumbnails = ByteCache::new(self.thumbnails.budget_bytes());
+        self.selection = None;
+        self.annotations = None;
+    }
     /// Protect the admitted current working set before inserting new textures.
     /// Touch exact demand only; optional higher-quality fallbacks remain evictable.
     pub fn touch_product(&mut self, key: ProductKey) {
@@ -507,7 +516,7 @@ impl Gpu {
         camera: &Camera,
         images: &[DrawImage],
     ) -> Result<(), AssetError> {
-        self.render_images(target, camera, images, &[], None, None)
+        self.render_images(target, camera, images, &[], None, None, &[])
     }
     pub fn render_product(
         &mut self,
@@ -515,7 +524,7 @@ impl Gpu {
         camera: &Camera,
         images: &[DrawProductImage],
     ) -> Result<(), AssetError> {
-        self.render_images(target, camera, images, &[], None, None)
+        self.render_images(target, camera, images, &[], None, None, &[])
     }
     pub fn render_product_overlay(
         &mut self,
@@ -524,7 +533,7 @@ impl Gpu {
         images: &[DrawProductImage],
         overlay: &[crate::OverlayQuad],
     ) -> Result<(), AssetError> {
-        self.render_images(target, camera, images, overlay, None, None)
+        self.render_images(target, camera, images, overlay, None, None, &[])
     }
     pub fn render_spatial(
         &mut self,
@@ -534,7 +543,18 @@ impl Gpu {
         overlay: &[crate::OverlayQuad],
         grid: Option<crate::GridView>,
     ) -> Result<(), AssetError> {
-        self.render_images(target, camera, images, overlay, grid, None)
+        self.render_images(target, camera, images, overlay, grid, None, &[])
+    }
+    pub fn render_spatial_selected(
+        &mut self,
+        target: &wgpu::TextureView,
+        camera: &Camera,
+        images: &[DrawProductImage],
+        overlay: &[crate::OverlayQuad],
+        grid: Option<crate::GridView>,
+        selection: &[crate::SelectionRect],
+    ) -> Result<(), AssetError> {
+        self.render_images(target, camera, images, overlay, grid, None, selection)
     }
     pub fn render_annotated(
         &mut self,
@@ -545,12 +565,39 @@ impl Gpu {
         grid: Option<crate::GridView>,
         scene: crate::AnnotationDraws<'_>,
     ) -> Result<(), AssetError> {
-        self.render_images(target, camera, images, overlay, grid, Some(scene))
+        self.render_images(target, camera, images, overlay, grid, Some(scene), &[])
+    }
+    /// Selection is derived by the caller and rendered after all content, before UI.
+    #[allow(clippy::too_many_arguments)]
+    pub fn render_annotated_selected(
+        &mut self,
+        target: &wgpu::TextureView,
+        camera: &Camera,
+        images: &[DrawProductImage],
+        overlay: &[crate::OverlayQuad],
+        grid: Option<crate::GridView>,
+        scene: crate::AnnotationDraws<'_>,
+        selection: &[crate::SelectionRect],
+    ) -> Result<(), AssetError> {
+        self.render_images(
+            target,
+            camera,
+            images,
+            overlay,
+            grid,
+            Some(scene),
+            selection,
+        )
+    }
+    /// Selection storage is absent without visible selection and grows with demand.
+    pub fn selection_bytes(&self) -> (usize, usize) {
+        self.selection.as_ref().map_or((0, 0), |s| s.bytes())
     }
     /// Retained instance bytes (CPU/GPU each) and fixed atlas texture payload.
     pub fn annotation_bytes(&self) -> (usize, usize) {
         self.annotations.as_ref().map_or((0, 0), |a| a.bytes())
     }
+    #[allow(clippy::too_many_arguments)]
     fn render_images<T: CanvasImage>(
         &mut self,
         target: &wgpu::TextureView,
@@ -559,8 +606,20 @@ impl Gpu {
         overlay: &[crate::OverlayQuad],
         grid: Option<crate::GridView>,
         scene: Option<crate::AnnotationDraws<'_>>,
+        selection: &[crate::SelectionRect],
     ) -> Result<(), AssetError> {
         let encode_start = self.diagnostics.then(Instant::now);
+        if selection.is_empty() {
+            self.selection = None;
+        } else {
+            if selection.len() > crate::MAX_SELECTION_RECTS {
+                return Err("too many visible selection rectangles".into());
+            }
+            let borders = self.selection.get_or_insert_with(|| {
+                Box::new(crate::selection::Selection::new(&self.device, self.format))
+            });
+            borders.prepare(&self.device, &self.queue, camera, selection)?;
+        }
         if let Some(scene) = scene {
             if scene.order.len() > crate::MAX_ANNOTATION_PRIMITIVES + MAX_OBJECTS
                 || scene.primitives.len() > crate::MAX_ANNOTATION_PRIMITIVES
@@ -677,6 +736,9 @@ impl Gpu {
                 );
                 let first = index as u32 * 6;
                 pass.draw(first..first + 6, 0..1);
+            }
+            if let Some(selection) = &self.selection {
+                selection.draw(&mut pass);
             }
             self.overlay.draw(&mut pass);
             if let Some(image) = &self.ui_image {

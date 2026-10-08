@@ -11,6 +11,8 @@ impl LocalUi {
         }
         if let WindowEvent::Focused(false) = event {
             self.capture = false;
+            self.focus = None;
+            self.release = false;
             self.modifiers = Modifiers::NONE;
         }
         if let WindowEvent::CursorMoved { position, .. } = event {
@@ -175,12 +177,8 @@ impl LocalUi {
                     self.focus = None;
                     self.message.clear();
                     None
-                } else if matches!(self.panel, Panel::Scale | Panel::Theme) {
-                    self.selected = if self.panel == Panel::Scale { 3 } else { 4 };
-                    self.panel = Panel::Preferences;
-                    None
                 } else {
-                    Some(UiResult::Dismiss)
+                    self.back()
                 }
             }
             PhysicalKey::Code(KeyCode::Tab) => {

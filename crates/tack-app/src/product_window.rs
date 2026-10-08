@@ -17,6 +17,7 @@ use winit::{
     event_loop::{ActiveEventLoop, ControlFlow, EventLoop},
     window::{Window, WindowId},
 };
+mod huge;
 mod local;
 use local::{LoadedBoard, LocalState};
 struct OpenOptions {
@@ -31,6 +32,7 @@ struct OpenOptions {
     potato: bool,
     supply_stress: bool,
     lod_debug: bool,
+    huge_tiles: bool,
     immediate: bool,
     dense: bool,
     window_size: [u32; 2],
@@ -147,58 +149,6 @@ impl App {
         self.native_startup_ms = self.started.elapsed().as_secs_f64() * 1000.;
         Ok(())
     }
-    fn loaded(&mut self, board: TackFile, ms: f64) -> Result<(), AssetError> {
-        self.metadata_ms = ms;
-        let board = Arc::new(board);
-        if let Some(id) = board.document.object_order().first() {
-            let o = board.document.object(*id).ok_or("document order")?;
-            let t = o.transform();
-            let center = t.center().map(|v| v.clamp(-1e8, 1e8));
-            self.camera_clamped = center != t.center();
-            self.camera
-                .set_view(center, (600. / t.size()[0]).clamp(0.000001, 1000.))?;
-        }
-        if self.options.annotation_benchmark {
-            self.camera.set_view([600., 300.], 1.)?;
-        }
-        for data in board
-            .document
-            .object_order()
-            .iter()
-            .filter_map(|id| board.document.object_render_data(*id))
-        {
-            let r = data.transform.bounds();
-            self.extent[0] = self.extent[0].max(r.x + r.width);
-            self.extent[1] = self.extent[1].max(r.y + r.height);
-        }
-        if self.options.dense {
-            self.camera
-                .set_view([self.extent[0] / 2., self.extent[1] / 2.], 0.02)?;
-        }
-        self.assets = Some(ProductAssets::with_limits(
-            Arc::clone(&board),
-            &self.options.path,
-            self.work.clone(),
-            if self.options.potato {
-                SupplyLimits::potato()
-            } else {
-                SupplyLimits::default()
-            },
-        )?);
-        if self.options.lod_debug
-            && let Some(assets) = &mut self.assets
-        {
-            assets.enable_lod_diagnostics();
-        }
-        self.visibility.invalidate();
-        self.editor = Some(DocumentEditor::new(board.document.clone(), 200));
-        self.board = Some(board);
-        self.dirty = true;
-        if let Some(w) = &self.window {
-            w.set_title("Tack — local board");
-        }
-        Ok(())
-    }
     fn redraw(&mut self) -> Result<(), AssetError> {
         if !self.drawable || self.occluded {
             return Ok(());
@@ -305,6 +255,8 @@ impl App {
             }
         }
         let query_ms = cpu_start.elapsed().as_secs_f64() * 1000.;
+        let logical_images = self.draws.len();
+        let mut tile_counts = [0usize; 2];
         let supply_start = Instant::now();
         self.supply_pending = false;
         let mut detailed = 0;
@@ -324,10 +276,16 @@ impl App {
                     Some(tack_app::supply_plan::Need {
                         asset: a.id(),
                         source: s.id(),
-                        projected: tack_app::supply_plan::projected_edge(
-                            draw.data.transform,
-                            self.camera.zoom(),
-                        ),
+                        projected: if self.options.huge_tiles
+                            && assets.supports_tiles(s.id(), s.revision())
+                        {
+                            512. * uv[2].min(uv[3])
+                        } else {
+                            tack_app::supply_plan::projected_edge(
+                                draw.data.transform,
+                                self.camera.zoom(),
+                            )
+                        },
                         source_edge: a.pixel_size().into_iter().max().unwrap_or(0),
                         crop: [uv[2], uv[3]],
                     })
@@ -383,6 +341,17 @@ impl App {
                     });
                 }
             }
+            let mut tiles = self.options.huge_tiles.then(|| {
+                huge::Tiles::plan(
+                    &self.draws,
+                    &self.camera,
+                    document,
+                    assets,
+                    gpu,
+                    plan.detail_reserved,
+                    &mut demands,
+                )
+            });
             for data in &near {
                 demands.push(ProductDemand {
                     asset: data.asset_id,
@@ -443,6 +412,9 @@ impl App {
                     }
                 }
             }
+            if let Some(tiles) = &tiles {
+                tiles.upload(assets, gpu);
+            }
             // Select and account only after all uploads/evictions. Earlier draws
             // must not advertise quality that later insertions have removed.
             for draw in &mut self.draws {
@@ -472,6 +444,10 @@ impl App {
                 resolved_count += usize::from(draw.key.is_some_and(|k| k.lod >= desired));
                 self.supply_pending |= !gpu.contains_product(key(desired))
                     && !assets.failed_rep(draw.data.asset_id, desired, key(desired).edge);
+            }
+            if let Some(tiles) = &mut tiles {
+                self.supply_pending |= tiles.display(&mut self.draws, assets, gpu);
+                tile_counts = [tiles.requested, tiles.ready];
             }
         }
         let supply_ms = supply_start.elapsed().as_secs_f64() * 1000.;
@@ -539,7 +515,7 @@ impl App {
                     &self.draws,
                 );
             }
-            gpu.render_annotated(
+            gpu.render_annotated_selected(
                 &frame.texture.create_view(&Default::default()),
                 &self.camera,
                 &self.draws,
@@ -549,6 +525,7 @@ impl App {
                     primitives: &scene.primitives,
                     order: &scene.order,
                 },
+                &self.input.gizmo.selection,
             )?;
         } else {
             if let Some(scene) = &mut self.annotations {
@@ -559,12 +536,13 @@ impl App {
                 scene.layout_ms = 0.;
                 scene.build_ms = 0.;
             }
-            gpu.render_spatial(
+            gpu.render_spatial_selected(
                 &frame.texture.create_view(&Default::default()),
                 &self.camera,
                 &self.draws,
                 &self.input.gizmo.quads,
                 grid,
+                &self.input.gizmo.selection,
             )?;
         }
         let cpu_ms = cpu_start.elapsed().as_secs_f64() * 1000.;
@@ -574,7 +552,7 @@ impl App {
             self.first_content_ms = Some(elapsed_ms);
         }
         if !self.draws.is_empty()
-            && recognizable * 100 >= self.draws.len() * 80
+            && recognizable * 100 >= logical_images * 80
             && self.useful_ms.is_none()
         {
             self.useful_ms = Some(elapsed_ms);
@@ -587,7 +565,7 @@ impl App {
         frame.present();
         let present_ms = present_start.elapsed().as_secs_f64() * 1000.;
         if self.options.output.is_some() && self.frames.len() < 7200 {
-            self.frames.push(json!({"window_size":self.camera.screen_size(),"lod_trace":self.lod_trace.as_mut().and_then(|trace| trace.record(&self.camera, &self.draws, self.editor.as_ref().map(|e|e.document()), self.assets.as_ref(), gpu, overview_edge)),"annotations":self.annotations.as_ref().map(|a|json!({"primitives":a.primitives.len(),"glyphs":a.glyphs,"omitted":a.omitted,"layout_ms":a.layout_ms,"build_ms":a.build_ms})),"camera":self.camera.screen_to_world(self.camera.screen_size().map(|v|f64::from(v)/2.)),"zoom":self.camera.zoom(),"overview_edge":overview_edge,"detail_reserved":detail_reserved,"desired_detail":desired_count,"quality_resolved":resolved_count,"scene_ms":scene_ms,"query_ms":query_ms,"supply_ms":supply_ms,"detailed":detailed,"supply":self.assets.as_ref().map(|a| {let s=a.stats();json!({"pending":s.pending,"queued":s.queued,"cpu_bytes":s.cpu_bytes,"evictions":s.evictions,"source_bytes":s.source_bytes,"container_bytes":s.container_bytes,"decode_count":s.decode_count,"codec_requests":s.codec_requests,"decoded_bytes":s.decoded_bytes,"decode_ms":s.decode_ms,"discarded":s.discarded})}),"encode_ms":stats.encode_ms,"submit_ms":stats.submit_ms,"poll_ms":stats.poll_ms,"elapsed_ms":elapsed_ms,"cpu_ms":cpu_ms,"visible":self.draws.len(),"recognizable":recognizable,"upload_cpu_ms":stats.upload_cpu_ms,"upload_bytes":stats.upload_bytes,"uploads":stats.uploads,"gpu_bytes":stats.gpu_bytes,"in_flight":stats.in_flight,"acquire_ms":acquire_ms,"present_ms":present_ms,"callback_ms":start.elapsed().as_secs_f64()*1000.}));
+            self.frames.push(json!({"window_size":self.camera.screen_size(),"lod_trace":self.lod_trace.as_mut().and_then(|trace| trace.record(&self.camera, &self.draws, self.editor.as_ref().map(|e|e.document()), self.assets.as_ref(), gpu, overview_edge)),"annotations":self.annotations.as_ref().map(|a|json!({"primitives":a.primitives.len(),"glyphs":a.glyphs,"omitted":a.omitted,"layout_ms":a.layout_ms,"build_ms":a.build_ms})),"camera":self.camera.screen_to_world(self.camera.screen_size().map(|v|f64::from(v)/2.)),"zoom":self.camera.zoom(),"overview_edge":overview_edge,"detail_reserved":detail_reserved,"desired_detail":desired_count,"quality_resolved":resolved_count,"scene_ms":scene_ms,"query_ms":query_ms,"supply_ms":supply_ms,"detailed":detailed,"supply":self.assets.as_ref().map(|a| {let s=a.stats();json!({"pending":s.pending,"queued":s.queued,"cpu_bytes":s.cpu_bytes,"evictions":s.evictions,"source_bytes":s.source_bytes,"container_bytes":s.container_bytes,"decode_count":s.decode_count,"codec_requests":s.codec_requests,"decoded_bytes":s.decoded_bytes,"decode_ms":s.decode_ms,"discarded":s.discarded})}),"encode_ms":stats.encode_ms,"submit_ms":stats.submit_ms,"poll_ms":stats.poll_ms,"elapsed_ms":elapsed_ms,"cpu_ms":cpu_ms,"visible":logical_images,"tiles_requested":tile_counts[0],"tiles_ready":tile_counts[1],"recognizable":recognizable,"upload_cpu_ms":stats.upload_cpu_ms,"upload_bytes":stats.upload_bytes,"uploads":stats.uploads,"gpu_bytes":stats.gpu_bytes,"in_flight":stats.in_flight,"acquire_ms":acquire_ms,"present_ms":present_ms,"callback_ms":start.elapsed().as_secs_f64()*1000.}));
         }
         self.dirty = self.supply_pending;
         Ok(())
@@ -699,38 +677,7 @@ impl ApplicationHandler<Event> for App {
     fn user_event(&mut self, e: &ActiveEventLoop, event: Event) {
         match event {
             Event::Loaded(result) => {
-                let result = (*result).and_then(|loaded| {
-                    if self.local.untitled {
-                        self.options.path = loaded.path;
-                    }
-                    if self.options.path.parent() == Some(self.local.root.as_path())
-                        && self
-                            .options
-                            .path
-                            .file_name()
-                            .is_some_and(|n| n.to_string_lossy().starts_with("untitled-slot-"))
-                    {
-                        self.local.untitled = true;
-                        self.local.seed =
-                            Some((Arc::clone(&loaded.lease), loaded.board.document.id()));
-                    }
-                    self.local.lease = Some(loaded.lease);
-                    self.loaded(loaded.board, loaded.metadata_ms)?;
-                    self.apply_preferences()?;
-                    self.input.grid_visible = self.local.profile.grid;
-                    if !self.local.untitled {
-                        self.local.profile.remember(&self.options.path)?;
-                        self.local.profile_pending = true;
-                    }
-                    if loaded.recovery {
-                        self.local.recovery_pending = true;
-                        self.panel(tack_app::local_ui::Panel::Recovery);
-                    }
-                    if let Some(warning) = loaded.warning {
-                        self.local_error(warning);
-                    }
-                    Ok(())
-                });
+                let result = (*result).and_then(|loaded| self.install_loaded(loaded, false));
                 if let Err(error) = result {
                     if self.options.seconds.is_some() {
                         self.error = Some(error);

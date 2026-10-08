@@ -1,7 +1,7 @@
 //! Logical UI preferences, shared drawing/hit geometry; never document state.
 use crate::{image_geometry as geometry, image_interaction::ImageInteraction};
 use tack_core::{Camera, Document, Transform};
-use tack_render::{MAX_OVERLAY_QUADS, OverlayQuad};
+use tack_render::{MAX_OVERLAY_QUADS, MAX_SELECTION_RECTS, OverlayQuad, SelectionRect};
 #[derive(Clone, Copy)]
 pub struct GizmoStyle {
     pub handle_size: f64,
@@ -36,6 +36,7 @@ pub struct ImageGizmo {
     pub scale: f64,
     hit_scale: f64,
     pub quads: Vec<OverlayQuad>,
+    pub selection: Vec<SelectionRect>,
 }
 impl Default for ImageGizmo {
     fn default() -> Self {
@@ -45,6 +46,7 @@ impl Default for ImageGizmo {
             scale: 1.,
             hit_scale: 1.,
             quads: Vec::with_capacity(128),
+            selection: Vec::new(),
         }
     }
 }
@@ -143,19 +145,47 @@ impl ImageGizmo {
         hover: Option<GizmoHit>,
     ) {
         self.quads.clear();
+        self.selection.clear();
         let color = if images.crop_mode {
             self.style.crop
         } else {
             self.style.selection
         };
         let Some(frame) = images.frame(doc) else {
+            self.selection = Vec::new();
             return;
         };
-        // A bounded decoration budget. Group outline always remains visible.
-        for id in images.selection.ids().take(20) {
-            if let Some(t) = images.preview_transform(doc, id) {
-                self.outline(t, camera, color);
+        // One derived rectangle per visible authoritative member. This budget is
+        // independent of the small handles/menu overlay, and includes annotations.
+        let view = camera.viewport();
+        for id in images.selection.ids() {
+            if let Some(t) = images.preview_transform(doc, id)
+                && t.bounds().intersects(view)
+            {
+                if self.selection.len() == MAX_SELECTION_RECTS {
+                    break;
+                }
+                if self.selection.len() == self.selection.capacity() {
+                    let capacity = (self.selection.capacity().max(1) * 2).min(MAX_SELECTION_RECTS);
+                    self.selection
+                        .reserve_exact(capacity - self.selection.len());
+                }
+                self.selection.push(SelectionRect {
+                    transform: t,
+                    color,
+                    width: self.style.line_width * self.scale / camera.ui_scale(),
+                });
             }
+        }
+        if self.selection.is_empty() {
+            self.selection = Vec::new();
+        } else if self.selection.len() < self.selection.capacity() / 4 {
+            self.selection.shrink_to(
+                self.selection
+                    .len()
+                    .next_power_of_two()
+                    .min(MAX_SELECTION_RECTS),
+            );
         }
         if images.selection.len() > 1 {
             self.outline(frame, camera, color);

@@ -152,6 +152,7 @@ impl ImageSave {
         if self.active() {
             return Ok(false);
         }
+        let path = crate::file_names::board(path);
         let mut document = editor.document().clone();
         let generation = editor.generation();
         let revision_floor = editor.next_source_revision();

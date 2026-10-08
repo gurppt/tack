@@ -191,6 +191,7 @@ impl AnnotationScene {
         camera: &Camera,
         edit: Option<&NoteEdit>,
         style: AnnotationStyle,
+        note_size: Option<f64>,
     ) -> bool {
         match a.kind() {
             AnnotationKind::Rect => self.shape(t, camera, style),
@@ -221,7 +222,7 @@ impl AnnotationScene {
                     },
                     t,
                     edit.map_or(text.value(), |e| e.value.as_str()),
-                    edit.map_or(text.font_size(), |e| e.size),
+                    edit.map_or(note_size.unwrap_or(text.font_size()), |e| e.size),
                     edit.map_or(text.alignment(), |e| e.alignment),
                 );
                 self.layout_ms += start.elapsed().as_secs_f64() * 1000.;
@@ -300,14 +301,15 @@ impl AnnotationScene {
                         .preview_opacity(*id)
                         .and_then(|opacity| {
                             AnnotationStyle::new(
-                                a.style().stroke(),
-                                a.style().fill(),
-                                a.style().width(),
+                                images.preview_style(*id).unwrap_or(a.style()).stroke(),
+                                images.preview_style(*id).unwrap_or(a.style()).fill(),
+                                images.preview_style(*id).unwrap_or(a.style()).width(),
                                 opacity,
                             )
                             .ok()
                         })
                         .unwrap_or(a.style()),
+                    images.preview_note_size(*id),
                 ) {
                     if first < self.primitives.len() {
                         self.ranges.push((*id, first, self.primitives.len()));
@@ -323,8 +325,10 @@ impl AnnotationScene {
         let mut image = 0;
         for id in doc.object_order() {
             if image < draws.len() && draws[image].data.object_id == *id {
-                self.order.push(CanvasDraw::Image(image));
-                image += 1;
+                while image < draws.len() && draws[image].data.object_id == *id {
+                    self.order.push(CanvasDraw::Image(image));
+                    image += 1;
+                }
             } else if let Ok(index) = self.ranges.binary_search_by_key(id, |r| r.0) {
                 let (_, start, end) = self.ranges[index];
                 self.draw_range(start, end);
@@ -363,6 +367,13 @@ impl AnnotationScene {
         let Ok(kind) = c.kind(t) else {
             return true;
         };
-        self.annotation(&Annotation::new(kind, c.style), t, camera, None, c.style)
+        self.annotation(
+            &Annotation::new(kind, c.style),
+            t,
+            camera,
+            None,
+            c.style,
+            None,
+        )
     }
 }

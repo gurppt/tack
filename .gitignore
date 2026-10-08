@@ -7,3 +7,6 @@ __pycache__/
 /bin/
 
 /.venv/
+
+# Disposable fixtures owned by the Phase 1L generator.
+/test_file/phase1l_generated/

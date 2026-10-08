@@ -1,9 +1,13 @@
 //! Transient selection and gesture preview; durable edits go through DocumentEditor.
 use crate::image_geometry as geometry;
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
+#[path = "image_gesture.rs"]
+mod gesture;
+use gesture::Gesture;
 use tack_core::{
-    Camera, Command, CommandError, Document, DocumentEditor, DocumentQuery, GeometryError,
-    ImageFiltering, ImageRenderData, ObjectId, Opacity, Transform, WorldRect,
+    AnnotationKind, AnnotationStyle, Camera, Command, CommandError, Document, DocumentEditor,
+    DocumentQuery, GeometryError, ImageFiltering, ImageRenderData, ObjectId, ObjectKind, Opacity,
+    Transform, WorldRect,
 };
 
 #[derive(Default)]
@@ -101,45 +105,10 @@ pub enum GestureKind {
     Move,
     Resize { handle: usize, center: bool },
     Scale,
+    NoteScale { handle: usize },
     Rotate,
     Crop { handle: usize },
     Opacity,
-}
-#[derive(Clone, Copy)]
-struct EditData {
-    object_id: ObjectId,
-    transform: Transform,
-    crop: tack_core::Crop,
-    opacity: Opacity,
-    margin: f64,
-}
-impl EditData {
-    fn get(doc: &Document, id: ObjectId) -> Option<Self> {
-        let o = doc.object(id)?;
-        let image = doc.object_render_data(id);
-        Some(Self {
-            object_id: id,
-            transform: o.transform(),
-            crop: image.map_or(tack_core::Crop::FULL, |d| d.crop),
-            opacity: image.map_or_else(
-                || match o.kind() {
-                    tack_core::ObjectKind::Annotation(a) => a.style().opacity(),
-                    _ => Opacity::OPAQUE,
-                },
-                |d| d.opacity,
-            ),
-            margin: (o.transform().bounds().x - o.bounds().x).max(0.),
-        })
-    }
-}
-struct Gesture {
-    kind: GestureKind,
-    start: [f64; 2],
-    frame: Transform,
-    initial: Vec<EditData>,
-    preview: Vec<EditData>,
-    lookup: BTreeMap<ObjectId, usize>,
-    generation: u64,
 }
 #[derive(Default)]
 pub struct ImageInteraction {
@@ -182,6 +151,21 @@ impl ImageInteraction {
             .as_ref()
             .and_then(|g| g.lookup.get(&id).map(|i| g.preview[*i].opacity))
     }
+    pub fn preview_note_size(&self, id: ObjectId) -> Option<f64> {
+        self.gesture
+            .as_ref()
+            .and_then(|g| g.lookup.get(&id).and_then(|i| g.preview[*i].note_size))
+    }
+    pub fn preview_style(&self, id: ObjectId) -> Option<AnnotationStyle> {
+        self.gesture
+            .as_ref()
+            .and_then(|g| g.lookup.get(&id).and_then(|i| g.preview[*i].style))
+    }
+    pub fn selected_note(&self, doc: &Document) -> bool {
+        self.selection.len() == 1 && self.selection.ids().any(|id| {
+            doc.object(id).is_some_and(|o| matches!(o.kind(), ObjectKind::Annotation(a) if matches!(a.kind(), AnnotationKind::Text(_))))
+        })
+    }
     pub fn preview_transform(&self, doc: &Document, id: ObjectId) -> Option<Transform> {
         self.gesture
             .as_ref()
@@ -216,221 +200,6 @@ impl ImageInteraction {
                 })
             })
             .copied()
-    }
-    pub fn begin(
-        &mut self,
-        kind: GestureKind,
-        pointer: [f64; 2],
-        editor: &DocumentEditor,
-    ) -> Result<bool, GeometryError> {
-        self.selection.expand_groups(editor.document());
-        if !pointer.iter().all(|p| p.is_finite()) {
-            return Err(GeometryError);
-        }
-        if matches!(kind, GestureKind::Crop { .. }) && self.selection.len() != 1 {
-            return Ok(false);
-        }
-        if matches!(kind, GestureKind::Resize{handle,..}|GestureKind::Crop{handle} if handle >= 8) {
-            return Err(GeometryError);
-        }
-        let initial: Vec<_> = self
-            .selection
-            .ids()
-            .filter_map(|id| EditData::get(editor.document(), id))
-            .collect();
-        if !matches!(
-            kind,
-            GestureKind::Move | GestureKind::Resize { .. } | GestureKind::Scale
-        ) && self.selection.ids().any(|id| {
-            editor
-                .document()
-                .object(id)
-                .is_some_and(|o| match o.kind() {
-                    tack_core::ObjectKind::Frame(_) => true,
-                    tack_core::ObjectKind::Annotation(_) => {
-                        matches!(kind, GestureKind::Crop { .. })
-                    }
-                    _ => false,
-                })
-        }) {
-            return Ok(false);
-        }
-        let Some(frame) = geometry::frame_transforms(initial.iter().map(|d| d.transform)) else {
-            return Ok(false);
-        };
-        let lookup = initial
-            .iter()
-            .enumerate()
-            .map(|(i, d)| (d.object_id, i))
-            .collect();
-        self.gesture = Some(Gesture {
-            kind,
-            start: pointer,
-            frame,
-            preview: initial.clone(),
-            initial,
-            lookup,
-            generation: editor.generation(),
-        });
-        Ok(true)
-    }
-    /// Reuses fixed preview storage. Validate a whole update before publishing it.
-    pub fn update(&mut self, pointer: [f64; 2]) -> Result<bool, GeometryError> {
-        if !pointer.iter().all(|p| p.is_finite()) {
-            return Err(GeometryError);
-        }
-        let Some(g) = &mut self.gesture else {
-            return Ok(false);
-        };
-        let delta = [pointer[0] - g.start[0], pointer[1] - g.start[1]];
-        let resized = match g.kind {
-            GestureKind::Resize { handle, center } => Some(geometry::resize(
-                g.frame,
-                delta,
-                geometry::HANDLE_DIRECTIONS[handle],
-                center,
-                g.initial.len() > 1,
-            )?),
-            GestureKind::Scale => {
-                let scale = (delta[0] / g.frame.size()[0]).exp().clamp(1e-6, 1e6);
-                Some(Transform::new(
-                    g.frame.center(),
-                    g.frame.size().map(|s| s * scale),
-                    g.frame.rotation(),
-                    g.frame.flips(),
-                )?)
-            }
-            _ => None,
-        };
-        let start_radius =
-            (g.start[0] - g.frame.center()[0]).hypot(g.start[1] - g.frame.center()[1]);
-        let angle = if start_radius < g.frame.size()[0].min(g.frame.size()[1]) * 0.05 {
-            delta[0] / g.frame.size()[0] * std::f64::consts::PI
-        } else {
-            (pointer[1] - g.frame.center()[1]).atan2(pointer[0] - g.frame.center()[0])
-                - (g.start[1] - g.frame.center()[1]).atan2(g.start[0] - g.frame.center()[0])
-        };
-        let calculate = |data: EditData| -> Result<EditData, GeometryError> {
-            let t = data.transform;
-            let transform = match g.kind {
-                GestureKind::Move => Transform::new(
-                    [t.center()[0] + delta[0], t.center()[1] + delta[1]],
-                    t.size(),
-                    t.rotation(),
-                    t.flips(),
-                )?,
-                GestureKind::Resize { .. } | GestureKind::Scale => {
-                    let next = resized.ok_or(GeometryError)?;
-                    if g.initial.len() == 1 {
-                        next
-                    } else {
-                        let scale = next.size()[0] / g.frame.size()[0];
-                        let offset = [
-                            t.center()[0] - g.frame.center()[0],
-                            t.center()[1] - g.frame.center()[1],
-                        ];
-                        Transform::new(
-                            [
-                                next.center()[0] + offset[0] * scale,
-                                next.center()[1] + offset[1] * scale,
-                            ],
-                            t.size().map(|s| s * scale),
-                            t.rotation(),
-                            t.flips(),
-                        )?
-                    }
-                }
-                GestureKind::Rotate => {
-                    let offset = geometry::rotate(
-                        [
-                            t.center()[0] - g.frame.center()[0],
-                            t.center()[1] - g.frame.center()[1],
-                        ],
-                        angle,
-                    );
-                    Transform::new(
-                        [
-                            g.frame.center()[0] + offset[0],
-                            g.frame.center()[1] + offset[1],
-                        ],
-                        t.size(),
-                        geometry::angle(t.rotation() + angle),
-                        t.flips(),
-                    )?
-                }
-                GestureKind::Crop { handle } => {
-                    let (transform, crop) = geometry::crop_transform(
-                        data.transform,
-                        data.crop,
-                        delta,
-                        geometry::HANDLE_DIRECTIONS[handle],
-                    )?;
-                    return Ok(EditData {
-                        transform,
-                        crop,
-                        ..data
-                    });
-                }
-                GestureKind::Opacity => {
-                    return Ok(EditData {
-                        opacity: Opacity::new(
-                            (data.opacity.value() + delta[0] / g.frame.size()[0]).clamp(0., 1.),
-                        )?,
-                        ..data
-                    });
-                }
-            };
-            Ok(EditData { transform, ..data })
-        };
-        for &data in &g.initial {
-            let next = calculate(data)?;
-            // Annotation styles may extend outside the shared transform box.
-            if data.margin > 0. {
-                let b = next.transform.bounds();
-                WorldRect::new(
-                    b.x - data.margin,
-                    b.y - data.margin,
-                    b.width + 2. * data.margin,
-                    b.height + 2. * data.margin,
-                )?;
-            }
-        }
-        for (&data, next) in g.initial.iter().zip(&mut g.preview) {
-            *next = calculate(data)?;
-        }
-        Ok(true)
-    }
-    pub fn commit(&mut self, editor: &mut DocumentEditor) -> Result<bool, CommandError> {
-        let Some(g) = self.gesture.take() else {
-            return Ok(false);
-        };
-        if editor.generation() != g.generation {
-            return Err(CommandError::LimitReached(
-                "document changed during gesture",
-            ));
-        }
-        let mut edits = Vec::with_capacity(g.preview.len() * 2);
-        for (before, after) in g.initial.iter().zip(g.preview) {
-            if before.transform != after.transform {
-                edits.push(Command::SetTransform {
-                    object: after.object_id,
-                    transform: after.transform,
-                });
-            }
-            if before.crop != after.crop {
-                edits.push(Command::SetCrop {
-                    object: after.object_id,
-                    crop: after.crop,
-                });
-            }
-            if before.opacity != after.opacity {
-                edits.push(Command::SetOpacity {
-                    object: after.object_id,
-                    opacity: after.opacity,
-                });
-            }
-        }
-        editor.execute(Command::Batch(edits))
     }
     pub fn delete(&mut self, editor: &mut DocumentEditor) -> Result<bool, CommandError> {
         self.cancel();

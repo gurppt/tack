@@ -75,6 +75,7 @@ pub struct LocalUi {
     pub about_image: bool,
     pub about_layout: Option<crate::about::Layout>,
     pub panel: Panel,
+    parents: Vec<(Panel, usize)>,
     selected: usize,
     search: String,
     capture: bool,
@@ -95,6 +96,7 @@ impl LocalUi {
             about_image: false,
             about_layout: None,
             panel,
+            parents: Vec::new(),
             selected: 0,
             search: String::new(),
             capture: false,
@@ -108,6 +110,35 @@ impl LocalUi {
             hits: Vec::new(),
             focus: None,
             confirm_reset: None,
+        }
+    }
+    fn enter(&mut self, panel: Panel, selected: usize) {
+        if self.parents.len() < 4 {
+            self.parents.push((self.panel, self.selected));
+            self.panel = panel;
+            self.selected = selected;
+            self.clear_focus();
+        }
+    }
+    fn clear_focus(&mut self) {
+        self.capture = false;
+        self.release = false;
+        self.focus = None;
+        self.confirm_reset = None;
+        self.modifiers = Modifiers::NONE;
+        self.search.clear();
+        self.message.clear();
+        self.hits.clear();
+        self.first = 0;
+    }
+    fn back(&mut self) -> Option<UiResult> {
+        self.clear_focus();
+        if let Some((panel, selected)) = self.parents.pop() {
+            self.panel = panel;
+            self.selected = selected;
+            None
+        } else {
+            Some(UiResult::Dismiss)
         }
     }
     fn actions(&self, keymap: &Keymap) -> Vec<Action> {
@@ -272,7 +303,7 @@ impl LocalUi {
             }
             Command::Import => Some(UiResult::Action(Action::ImportKeymap)),
             Command::Export => Some(UiResult::Action(Action::ExportKeymap)),
-            Command::Close => Some(UiResult::Dismiss),
+            Command::Close => self.back(),
             Command::Decrement(row) => {
                 self.selected = row;
                 self.adjust(profile, false)
@@ -337,8 +368,6 @@ impl LocalUi {
                 } else {
                     profile.theme = crate::ui_theme::Theme::ALL[self.selected];
                 }
-                self.panel = Panel::Preferences;
-                self.selected = if scale { 3 } else { 4 };
                 Some(UiResult::PreferencesChanged)
             }
             Panel::Preferences => {
@@ -354,23 +383,31 @@ impl LocalUi {
                     }
                     2 => profile.embedded_import = !profile.embedded_import,
                     3 => {
-                        self.panel = Panel::Scale;
-                        self.selected = usize::from(profile.ui_scale.min(4));
+                        self.enter(Panel::Scale, usize::from(profile.ui_scale.min(4)));
                         return None;
                     }
                     4 => {
-                        self.panel = Panel::Theme;
-                        self.selected = crate::ui_theme::Theme::ALL
+                        let selected = crate::ui_theme::Theme::ALL
                             .iter()
                             .position(|t| *t == profile.theme)
                             .unwrap_or(1);
+                        self.enter(Panel::Theme, selected);
                         return None;
                     }
                     5 | 6 => return self.adjust(profile, true),
-                    7 => return Some(UiResult::Action(Action::KeymapEditor)),
-                    8 => return Some(UiResult::Action(Action::ImportKeymap)),
-                    9 => return Some(UiResult::Action(Action::ExportKeymap)),
-                    _ => return Some(UiResult::Dismiss),
+                    7 => {
+                        self.enter(Panel::Keymap, 0);
+                        return None;
+                    }
+                    8 => {
+                        self.enter(Panel::Keymap, 0);
+                        return Some(UiResult::Action(Action::ImportKeymap));
+                    }
+                    9 => {
+                        self.enter(Panel::Keymap, 0);
+                        return Some(UiResult::Action(Action::ExportKeymap));
+                    }
+                    _ => return self.back(),
                 }
                 Some(UiResult::PreferencesChanged)
             }
