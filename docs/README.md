@@ -7,6 +7,7 @@ Start with the [public overview](../README.md) for features and everyday control
 - [Build, troubleshooting and developer checks](DEVELOPMENT.md)
 - [Feature inventory](FEATURE_INVENTORY.md)
 - [Current UI/clipboard checklist](HUMAN_TEST_1J.md)
+- [LAN collaboration checklist](HUMAN_TEST_2A.md)
 - [About checklist](HUMAN_TEST_1K_ABOUT.md)
 - [Contribution guidelines](../CONTRIBUTING.md)
 - [Dependency and font notices](THIRD_PARTY_NOTICES.md)
@@ -24,6 +25,10 @@ Start with the [public overview](../README.md) for features and everyday control
 - [Native UI polish and clipboard policy](design/ui_polish.md)
 - [About modal and package](design/about_modal.md)
 - [Progressive image supply](design/local_image_supply.md)
+- [Optional LAN backend](design/lan_collaboration.md)
+- [LAN protocol](design/lan_protocol.md)
+- [Client workers, cache and streaming snapshots](design/lan_client.md)
+- [Headless server storage and authority](../crates/tack-server/README.md)
 
 ## Development reports
 
@@ -32,6 +37,8 @@ reports supersede earlier feature status, limitations and stop conditions.
 
 | Checkpoint | Focus |
 | --- | --- |
+| [2A](MISSION_2A_REPORT.md) | Optional native LAN collaboration, authoritative server, bounded CAS and local-first regression |
+| [1L](MISSION_1L_REPORT.md) | Progressive ordinary image supply and guarded huge sources |
 | [1K About](MISSION_1K_ABOUT_REPORT.md) | Editable metadata, compact on-demand modal and package |
 | [1J](MISSION_1J_REPORT.md) · [independent verification](VERIFICATION_1J.md) | Clipboard, unified menus, UI scale and themes |
 | [1I](MISSION_1I_REPORT.md) · [independent verification](VERIFICATION_1I.md) | Layout-aware shortcuts, one-shot tools and arrangement |

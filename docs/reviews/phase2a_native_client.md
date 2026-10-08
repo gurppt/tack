@@ -40,7 +40,7 @@ native checks refer to `benchmark-results/phase2a/native-02/checks.json`.
 | Unverified cache filenames were exposed to codec jobs. | Shared sources are explicitly deferred until matching full-binding AssetReady. Deferred Job construction returns before any IO/codec admission. `deferred_shared_source_admits_no_codec_or_io_until_verified_supply_arrives` and `delayed_verified_shared_job_cannot_publish_into_a_new_deferred_revision` pass. |
 | Metadata snapshot storage sidecars made every original cache admission fail. | Cache recognizes only exact generated regular zero-byte sidecars, bounds snapshot/lock counts and retires only owned files after respecting the lease. `snapshots_and_storage_sidecars_allow_verified_original_admission` covers eight cycles; `snapshot_retirement_respects_active_leases_and_rejects_nonempty_sidecars` preserves active/unowned data. Native-02 proves all three clients actually display originals. |
 | Server startup removed arbitrary filenames ending in `.upload`. | Startup first requires a regular file and validates the exact SHA token before deleting owned interrupted staging. `cas_startup_only_removes_recognized_regular_uploads` verifies recognized cleanup, unknown filename preservation/refusal, directory preservation and symlink target preservation. Independently read this final server change. |
-| Adjacent authority startup cleanup also selected `.pending` by suffix alone. | Independently read the final strict nonzero WireId.pending and regular-file checks before deletion. `pending_cleanup_preserves_unknown_and_nonregular_paths` covers owned cleanup and unknown filename/directory/symlink preservation. This narrow change follows the fourth gate; its execution evidence belongs to the final serialized server gate. |
+| Adjacent authority startup cleanup also selected `.pending` by suffix alone. | Independently read the final strict nonzero WireId.pending and regular-file checks before deletion. `pending_cleanup_preserves_unknown_and_nonregular_paths` covers owned cleanup and unknown filename/directory/symlink preservation. The final `check-final-06.log` runs this regression successfully; native-03 and performance-01 use the resulting server. |
 
 ## Native evidence
 
@@ -79,3 +79,5 @@ input latency, artist feel or acceptance of separately measured performance and
 local-regression budgets. The explicit shared mode targets a trusted LAN without
 TLS/authentication. Ordinary local use creates no shared backend; cache and
 worker activity stay off the input/render thread.
+
+Final source also blocks render retry demand for deferred originals and shows explicit shared errors before an initial snapshot. `check-final-06.log` includes those guards and their tests; `native-03` passes the same 32 assertions on the final binary, and `performance-01` records zero missing-source idle CPU ticks and redraws. The companion protocol/client review independently checks performance and all 18 local regression runs.

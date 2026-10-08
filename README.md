@@ -27,6 +27,9 @@ Built in Rust, with a native GPU-rendered canvas. Boards are saved locally as
   to external files. Relink missing sources when files move.
 - **Make the workspace yours.** Flat Very Dark, Neutral Gray and Light themes,
   crisp bitmap UI, direct integer scaling and editable shortcuts. Right-click keeps application and contextual commands together.
+- **Share a board on your LAN.** Explicitly publish a local board to the optional
+  headless server and edit it from several native clients. Local boards work
+  independently; the server runs only when you start it.
 
 The renderer loads image detail progressively and uses bounded caches. See the
 [feature inventory](docs/FEATURE_INVENTORY.md) for exact behavior and limits.
@@ -92,7 +95,15 @@ yet been validated. Current image import supports PNG/JPEG up to 6000×4500 pixe
 and 64 MiB per encoded image. Boards use Tack's own format; `.pur` import is not
 implemented.
 
-See the [UI/clipboard report](docs/MISSION_1J_REPORT.md),
+Optional LAN collaboration is a foundation for trusted networks. It has no
+authentication or TLS, uses conservative conflict/undo refusal, and requires an
+explicit reconnect after connection loss. Shared snapshot export has a tested
+storage API; its desktop action is still pending. See the
+[LAN test guide](docs/HUMAN_TEST_2A.md) for server, Publish and Join commands.
+
+See the [LAN report](docs/MISSION_2A_REPORT.md),
+[image supply report](docs/MISSION_1L_REPORT.md),
+[UI/clipboard report](docs/MISSION_1J_REPORT.md),
 [About report](docs/MISSION_1K_ABOUT_REPORT.md) and
 [manual test checklist](docs/HUMAN_TEST_1J.md) for validation details.
 

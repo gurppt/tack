@@ -8,10 +8,12 @@ approve that server. The separate
 integration from the protocol author's perspective. Neither note substitutes
 for native and performance receipts.
 
-Status: implementation review, final workspace quality gate, strengthened
-three-client native/image-supply checks and shared performance receipts passed.
-Final local-regression acceptance is pending complete paired runs. The first
-native run is insufficient for complete acceptance, as explained below.
+Status: **PASS within the Linux source/native/performance review scope**.
+Final quality, three-client original supply, shared performance and paired local
+regression receipts have been independently read. No concrete unresolved blocker
+remains in that scope. The first native run is insufficient for complete
+acceptance, as explained below. Windows CI and human desktop validation are
+separate closeout evidence owned by the integrator.
 
 ## Findings and resolutions
 
@@ -149,9 +151,34 @@ Connected at revision 42 with all 1,000 objects and an explicit unavailable-sour
 diagnostic. Its measured three-second idle interval has zero CPU ticks, zero
 main/shared-worker context switches, no I/O and zero redraw frames. GPU-driver
 background thread context switches remain visible in raw receipts and are not
-misrepresented as application wakeups. Final paired local receipts remain to
-be read before declaring local pay-for-play acceptance.
+misrepresented as application wakeups.
+
+`local-regression-01/summary.json` contains all 18 serial runs: three paired
+repeats on a small linked board, mixed 1,000-object board and 50,000-pixel PNG
+board. Final 2A binary hash matches native-03/performance-01; the preserved
+stripped 1L baseline hash is
+`b733f0e98e882359ac52ebc860ec7157985b0aa2d971c3d7885772d468081e92`.
+Every local run reaches quiet state, records zero IP sockets/LAN workers and
+zero idle redraws. 1L records 1–2 CPU ticks over each three-second interval;
+2A records one tick. GPU-accounted peak bytes are identical within each board.
+
+| Local board | 1L / 2A useful-view median (ms) | 1L / 2A idle RSS median (MiB) |
+| --- | ---: | ---: |
+| Small linked source | 478.07 / 489.61 | 334.64 / 335.36 |
+| Mixed 1,000 objects | 480.92 / 481.07 | 359.35 / 359.74 |
+| Axis 50,000-pixel PNG | 732.16 / 712.76 | 336.37 / 336.87 |
+
+This samehost warm/unspecified-page-cache sample shows no material regression
+and proves the optional local networking ownership checks for the tested paths.
+It does not establish a statistical speedup, cold-disk behavior or physical
+VRAM attribution. The weight audit reports a 911,680-byte stripped client
+increase (4.99%) over 1L and a 1,723,568-byte stripped headless server. The server
+dependency tree contains no Winit/WGPU/GUI dependencies. Raw debug-information
+release binaries are reported separately, without presenting them as shipping
+stripped weights.
 
 No Windows desktop run, physical network bandwidth, low-end-memory guarantee,
 authentication or internet-exposure safety is claimed. The supported collaboration
 scope is an explicitly enabled trusted LAN, with current PNG/JPEG limits unchanged.
+
+Remote exact-implementation CI also passed all three jobs (Linux, Windows, dependencies) for `b55bf390ace5462f5408eba3f671a55029fe4973`, run 37819211140. These compile/test jobs do not add a Windows desktop-runtime claim.
