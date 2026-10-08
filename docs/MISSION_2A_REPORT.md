@@ -237,16 +237,18 @@ Both human-test executables are current, executable and ignored by Git.
 before building, stages successful outputs, then replaces `./bin/tack`,
 `./bin/tack-server`, artwork and `./bin/BUILD.txt`.
 
-The measured build stamp identifies implementation `b55bf390...`, release profile,
-UTC `2026-10-08T17:47:14Z`, and these exact checksums:
+The final human-test build stamp identifies documentation closeout
+`b463c36391f7f9de9426b58ee6eb3d645bff939e`, release profile, UTC
+`2026-10-08T17:55:57Z`, and these exact checksums:
 
 - `./bin/tack`: `0cd2e13e6679b829316f64fff9c71900655a61826a0a0cd52feb5d4efc605a9b`.
 - `./bin/tack-server`: `3e43ef7addba4eae197761f87e6287c2b570bb6ab2121a5950c93c8cd0417108`.
 
 These match final native, shared performance and local-regression receipts.
-Documentation-only closeout rebuilds update the stamp to the final Git commit;
-the executable checksums must remain identical. The working-tree dirty flag
-also reflects unrelated owner/director files intentionally preserved.
+The closeout rebuild has identical executable bytes to the tested implementation
+`b55bf390...`; only documentation changed between those commits. This final
+receipt update also changes documentation only. The working-tree dirty flag
+reflects unrelated owner/director files intentionally preserved.
 
 Generated Phase 2A evidence occupies approximately 29 MiB, including one
 18 MiB stripped 1L baseline. Existing 1L corpora are reused. Temporary stripped

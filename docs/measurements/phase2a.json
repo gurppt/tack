@@ -19,7 +19,8 @@
     "local-regression-01/summary.json": "9e46b8577955ecf6c3d2d48d6849a370ae8bf11b113c0d6dcc13f09f55cf920c",
     "weight-audit.json": "5ec5f2805c14b1c5b4434af7f31455b8a0c52d295924652834f537641c10e474",
     "gpu-final-02.log": "a029205f7c253520151259967938e98914fb21834547d4f57c0213b353b28a14",
-    "ci-implementation.json": "30aad1ac7aa57e6226304f9763f42eaae86b05b82aebc53c1a84c5a1bfe16b7d"
+    "ci-implementation.json": "30aad1ac7aa57e6226304f9763f42eaae86b05b82aebc53c1a84c5a1bfe16b7d",
+    "build-closeout.log": "5cefb27bde848116ad93513ab4b5f313df7554e796825b1ffd5b7a866046dedf"
   },
   "native": {
     "provenance": {
@@ -7988,7 +7989,7 @@
     "gate": "fmt/check/Clippy/tests/docs/Python/deny all passed",
     "dependency_audit": "advisories/bans/licenses/sources ok"
   },
-  "human_build_stamp": "STATUS: CURRENT\ncommit: b55bf390ace5462f5408eba3f671a55029fe4973\nprofile: release\nbuilt_utc: 2026-10-08T17:47:14Z\nbinary: ./bin/tack\nserver_binary: ./bin/tack-server\nworktree_dirty: true\nsha256: 0cd2e13e6679b829316f64fff9c71900655a61826a0a0cd52feb5d4efc605a9b\nserver_sha256: 3e43ef7addba4eae197761f87e6287c2b570bb6ab2121a5950c93c8cd0417108\nabout_asset_sha256: d22641555380426ad6567153edca7b83548ad964acdc9c3fbdb70b59ac7759ee\ncheckpoint: phase2a-implementation-b55bf39\n",
+  "human_build_stamp": "STATUS: CURRENT\ncommit: b463c36391f7f9de9426b58ee6eb3d645bff939e\nprofile: release\nbuilt_utc: 2026-10-08T17:55:57Z\nbinary: ./bin/tack\nserver_binary: ./bin/tack-server\nworktree_dirty: true\nsha256: 0cd2e13e6679b829316f64fff9c71900655a61826a0a0cd52feb5d4efc605a9b\nserver_sha256: 3e43ef7addba4eae197761f87e6287c2b570bb6ab2121a5950c93c8cd0417108\nabout_asset_sha256: d22641555380426ad6567153edca7b83548ad964acdc9c3fbdb70b59ac7759ee\ncheckpoint: phase2a-verified-closeout\n",
   "ci": {
     "run_id": 37819211140,
     "head_sha": "b55bf390ace5462f5408eba3f671a55029fe4973",
@@ -8031,5 +8032,8 @@
     "retained_baseline_bytes": 18271176,
     "temporary_stripped_measurement_copies_removed": true,
     "owner_files_preserved": true
-  }
+  },
+  "measured_build_stamp": "STATUS: CURRENT\ncommit: b55bf390ace5462f5408eba3f671a55029fe4973\nprofile: release\nbuilt_utc: 2026-10-08T17:47:14Z\nbinary: ./bin/tack\nserver_binary: ./bin/tack-server\nworktree_dirty: true\nsha256: 0cd2e13e6679b829316f64fff9c71900655a61826a0a0cd52feb5d4efc605a9b\nserver_sha256: 3e43ef7addba4eae197761f87e6287c2b570bb6ab2121a5950c93c8cd0417108\nabout_asset_sha256: d22641555380426ad6567153edca7b83548ad964acdc9c3fbdb70b59ac7759ee\ncheckpoint: phase2a-implementation-b55bf39\n",
+  "human_build_commit": "b463c36391f7f9de9426b58ee6eb3d645bff939e",
+  "human_build_matches_measured_executable_bytes": true
 }
