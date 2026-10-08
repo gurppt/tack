@@ -123,6 +123,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', type=Path, default=REPO/'benchmark-results/phase2a1')
     parser.add_argument('--output', type=Path, default=REPO/'docs/measurements/phase2a1.json')
+    parser.add_argument('--complete', action='store_true', help='require final acceptance receipts')
     args = parser.parse_args()
     root = args.root.resolve()
     receipts = {}
@@ -151,7 +152,9 @@ def main():
                         'page_cache':'warm or unspecified; no physical cold-I/O, low-end or Windows desktop timing claim'},
               'raw_receipts_sha256':receipts}
     for relative in ('baseline/receipt.json','baseline/gate.log','measured-source.json',
-                     'measured-build/BUILD.txt','gate-02.log','subsampled-tests.log'):
+                     'measured-build/BUILD.txt','gate-02.log','gate-03.log','gpu-final.log',
+                     'final-build/BUILD.txt','final-build/source.json','final-build/sizes.json',
+                     'subsampled-tests.log'):
         path = root/relative
         if path.exists():
             record(path)
@@ -165,13 +168,14 @@ def main():
             result['final_replays'].append(supply_receipt(folder))
             for filename in ('summary.json','supply.json','samples.json'):
                 record(folder/filename)
-    for name in ('native-lod','grouped','local-regression','native2a'):
+    for name in ('native-lod','native-lod-baseline','native-lod-threshold','grouped',
+                 'local-regression','local-jpeg-regression','native2a'):
         folder = root/name
         path = folder/'summary.json'
         if path.exists():
             data=load(path)
             record(path)
-            if name == 'native-lod':
+            if name.startswith('native-lod'):
                 result['supplementary'][name] = {
                     key:data.get(key) for key in ('binary_sha256','board_sha256','harness_sha256',
                                                   'transitions','saved_board_sha256','scope')}
@@ -180,9 +184,17 @@ def main():
                         'distinct_history_signatures','first_recognizable_ms','cpu_cache_peak',
                         'gpu_cache_peak','peak_pending','uploads','completed_codec_requests','evictions')}
                     | {'callback_ms':distribution(report.get('cpu_callback_ms',[])),
+                       'stages':[{'name':stage['name'],
+                                  'visible':stage['visible'],
+                                  'quality_resolved':stage['quality_resolved'],
+                                  'trace':{key:stage['trace'].get(key) for key in
+                                           ('source','revision','source_size','filtering',
+                                            'projected_edge','desired','displayed','tiers')}
+                                          if stage.get('trace') else None}
+                                 for stage in report['stages']],
                        'idle':{key:report['idle'].get(key) for key in ('seconds','ticks','io','rss_bytes','threads','idle_frames')}}
                     for report in data['reports']]
-            elif name == 'local-regression':
+            elif name in ('local-regression', 'local-jpeg-regression'):
                 result['supplementary'][name] = {'scope':data['scope'],'runs':[
                     {key:run.get(key) for key in ('name','mode','binary_sha256','board_sha256',
                         'quiet_detected','native_startup_ms','first_frame_ms','first_recognizable_ms',
@@ -204,6 +216,54 @@ def main():
     # matrix was rerun after final arithmetic/pixel corrections.
     if (REPO/'bin/BUILD.txt').exists():
         result['current_build'] = build_fields(REPO/'bin/BUILD.txt')
+    for name in ('ci', 'helper-memory', 'helper-missing'):
+        path = root/(name+'.json')
+        if path.exists():
+            record(path)
+            data = load(path)
+            if name == 'ci':
+                result['ci'] = {'head_sha':data['run']['head_sha'],
+                                'url':data['run']['html_url'],
+                                'conclusion':data['run']['conclusion'],
+                                'jobs':[{key:job[key] for key in ('name','conclusion')}
+                                        for job in data['jobs']['jobs']]}
+            else:
+                result['supplementary'][name] = data
+    if (root/'final-build/sizes.json').exists():
+        result['final_sizes'] = load(root/'final-build/sizes.json')
+    if args.complete:
+        required = ('native-lod','native-lod-baseline','native-lod-threshold','grouped',
+                    'local-regression','local-jpeg-regression','native2a',
+                    'helper-memory','helper-missing')
+        missing = [name for name in required if name not in result['supplementary']]
+        if missing or len(result['final_replays']) != 4:
+            raise AssertionError('missing final receipts: '+repr(missing))
+        ci = result.get('ci', {})
+        if ci.get('conclusion') != 'success' or ci.get('head_sha') != result['current_build']['commit']:
+            raise AssertionError('exact source CI not green')
+        if not all(job['conclusion'] == 'success' for job in ci['jobs']):
+            raise AssertionError('CI job not green')
+        expected = result['current_build']['sha256']
+        if any(row['binary_sha256'] != expected for row in result['final_replays']):
+            raise AssertionError('final replay binary changed')
+        for name in ('local-regression','local-jpeg-regression'):
+            runs = result['supplementary'][name]['runs']
+            if len(runs) != (36 if name == 'local-regression' else 12):
+                raise AssertionError('incomplete ordinary comparisons')
+            if any(not run['quiet_detected'] or run['idle_redraws'] or
+                   any(run['idle']['io_delta'].values()) for run in runs):
+                raise AssertionError('ordinary idle did not converge')
+        for name in ('native-lod','native-lod-threshold'):
+            if any(report['valley_count'] or report['idle']['idle_frames'] or
+                   any(report['idle']['io'].values())
+                   for report in result['supplementary'][name]['reports']):
+                raise AssertionError('native LOD invariant or idle failed')
+        if not any(report['valley_count'] for report in
+                   result['supplementary']['native-lod-baseline']['reports']):
+            raise AssertionError('baseline quality-valley witness missing')
+        if not result['supplementary']['helper-missing']['passed']:
+            raise AssertionError('helper absence did not fail cleanly')
+        result['acceptance_status'] = 'technical PASS; subjective desktop feel queued separately'
     args.output.parent.mkdir(parents=True,exist_ok=True)
     args.output.write_text(json.dumps(result,indent=2)+'\n')
     print(json.dumps({'matrix_runs':len(matrix),'final_replays':len(result['final_replays']),

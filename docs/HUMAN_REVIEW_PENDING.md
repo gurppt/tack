@@ -1,0 +1,53 @@
+# Human review pending
+
+Director queue, 2026-10-08. Phase 1L technical PASS is recorded in
+`docs/reviews/director_phase1l_resume.md` and `docs/MISSION_1L_REPORT.md`.
+This file tracks subjective owner feedback under
+`docs/TACK_DIRECTOR_AUTONOMOUS_LOOP.md`.
+
+## Phase 1L
+
+### LOW — Note and menu comfort at 800x600
+Auto status: Linux/X11 native workflow PASS, 21/21 checks bound to the final
+binary. The screenshots and interaction receipts are in
+`docs/measurements/phase1l/`.
+Human value: comfort of normal box resizing versus Shift scaling; theme readability
+and menu navigation on the owner's workstation.
+Blocks next phase: NO. A concrete regression can reopen a bounded fix.
+
+### MEDIUM — Huge PNG perceived detail
+Auto status: bounded static PNG supply PASS; regional tiles are explicitly
+experimental and opt-in. The 33-run matrix covers zoom, pan, return, reopen,
+multiple sources, mixed ordinary references and potato budgets on the measured host.
+Human value: actual pan/zoom feel, sampled detail quality and convergence on maps.
+Blocks next phase: NO for subjective feel; an unsafe allocation, data-integrity
+failure, or material performance/LOD regression remains a blocker.
+
+### MEDIUM — Windows desktop interactions
+Auto status: Windows CI compile/check/tests/docs PASS. Native picker/input/DPI
+behavior is not tested on a Windows desktop.
+Human value: native pickers, hidden extensions, focus, layout/input and scaling.
+Blocks next phase: NO for the LAN foundation. No Windows runtime PASS is asserted.
+
+## Phase 2A1
+
+### MEDIUM — Pixel-art and huge JPEG visual comfort
+Auto status: technical PASS; a deterministic old/new native witness reproduces
+and removes the best-resident quality valley. Long worker/GPU eviction tests,
+50k JPEG detail/pan/return, potato and mixed PNG/JPEG checks pass.
+Human value: perceived pixel-art sharpness after a normal long working session;
+comfortable huge-JPEG zoom/pan, filtering and detail transitions.
+Blocks next phase: NO. Concrete technical regressions reopen the image fix.
+
+### MEDIUM — Windows desktop image interaction
+Auto status: exact-source Linux/Windows CI green; Linux RTX2060 native tests pass.
+Human value: real Windows GPU, pointer/DPI and huge-image navigation feel.
+Blocks next phase: NO for subjective feel. No Windows desktop runtime acceptance
+is inferred from CI.
+
+## Earlier reviews
+
+Existing `HUMAN_TEST_1K.md` and `HUMAN_TEST_1K_ABOUT.md` have no owner acceptance
+record available to the director. Retain their original checklists; do not infer
+acceptance. Subjective follow-up does not block independent work under the newer
+autonomous-loop directive.

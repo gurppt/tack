@@ -53,7 +53,9 @@ ordinary path.
 An overview requests native reduced DCT at 1/8, 1/4, 1/2 or 1, then samples
 streamed RGB8 scanlines into at most 2048 × 2048 RGBA pixels. There is no full
 decoded RGB/RGBA image allocation. Input is streamed with a 64 KiB feeder;
-large JPEG encoded work is capped at 256 MiB. A native output row is at most
+large JPEG encoded work is capped at 256 MiB. Normal UI import/relink retains
+its separate 64 MiB encoded-file admission; the worker cap does not expand that
+UI limit. A native output row is at most
 196,500 bytes. The pinned P6 header, dimensions, row count and EOF are checked.
 The helper runs with `-strict -maxscans 1 -maxmemory 16384 -rgb -pnm`.
 The memory parameter is additional protection for virtual arrays, not a hard

@@ -260,3 +260,11 @@ Subjective detail/interaction review is deferred under the director's autonomous
 loop policy. Unsafe allocation, corruption and major regressions remain technical
 blockers. Phase 1L workers stop at their closeout; only the director activates a
 new mission, including Phase 2A.
+
+Worker publication validates actual ordinary raster dimensions against admitted
+asset axes and edge. Incorrect cached products are repaired and inconsistent
+source metadata fails once without repeated publication. Shared source aliases
+reserve the maximum declared dimensions and independently peek current CPU/GPU
+resident dimensions, so a small alias cannot undercount a larger cached image.
+All streamed jobs and tile jobs carry cancellation, including narrow JPEGs whose
+pixel count alone classifies them below the huge-image tier.
