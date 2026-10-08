@@ -128,6 +128,103 @@ impl Drop for Fixture {
     }
 }
 #[test]
+fn deferred_shared_source_admits_no_codec_or_io_until_verified_supply_arrives() {
+    use tack_assets::ProductDemand;
+    let f = Fixture::new(false);
+    f.seed();
+    let (_, mut assets) = f.load("seed.tack");
+    let mut canonical = f.document.clone();
+    canonical
+        .apply_inverse(Command::SetSource(
+            Source::from_descriptor(f.source, SourceLocation::Embedded, 1, None).unwrap(),
+        ))
+        .unwrap();
+    assets.defer_shared_source(f.source, 1);
+    let demand = [ProductDemand {
+        asset: f.asset,
+        lod: Lod::Thumbnail,
+        edge: 128,
+        priority: 2,
+        resident: false,
+    }];
+    for _ in 0..4 {
+        assert!(!assets.request_current(f.asset, &canonical, None));
+        assert!(assets.failed(f.asset)); // No redraw retry loop while CAS is pending.
+        assets.replace_view(&demand, &canonical, &Default::default());
+        assets.schedule();
+        assert!(!assets.poll());
+    }
+    let stats = assets.stats();
+    assert_eq!(stats.pending, 0);
+    assert_eq!(stats.queued, 0);
+    assert_eq!(stats.codec_requests, 0);
+    assert_eq!(stats.decode_count, 0);
+    assert_eq!(stats.source_bytes, 0);
+    assert_eq!(stats.container_bytes, 0);
+    assert_eq!(stats.derived_bytes, 0);
+    assert_eq!(stats.errors, 0);
+    assert_eq!(assets.states[&f.source], SourceState::Missing);
+    assert!(assets.failed(f.asset));
+    assert!(assets.get(f.asset).is_none());
+
+    // Only an off-thread CAS verification result may install this private path.
+    assets.set_shared_source(f.source, 1, f.root.join("source.png"));
+    assert!(!assets.failed(f.asset));
+    assets.replace_view(&demand, &canonical, &Default::default());
+    assets.schedule();
+    settle_view(&mut assets);
+    let image = assets.get(f.asset).unwrap();
+    assert_eq!([image.width, image.height], [128, 85]);
+    assert!(!image.rgba.is_empty());
+    assert_eq!(assets.states[&f.source], SourceState::Available);
+    assert_eq!(assets.stats().codec_requests, 1);
+    assert_eq!(assets.stats().errors, 0);
+    assert!(assets.stats().source_bytes > 0);
+    assert_eq!(assets.stats().container_bytes, 0);
+    assert_eq!(
+        canonical.source(f.source).unwrap().location(),
+        &SourceLocation::Embedded
+    );
+}
+
+#[test]
+fn delayed_verified_shared_job_cannot_publish_into_a_new_deferred_revision() {
+    let f = Fixture::new(false);
+    f.seed();
+    let (_, mut assets) = f.load("seed.tack");
+    let mut canonical = f.document.clone();
+    canonical
+        .apply_inverse(Command::SetSource(
+            Source::from_descriptor(f.source, SourceLocation::Embedded, 1, None).unwrap(),
+        ))
+        .unwrap();
+    assets.set_shared_source(f.source, 1, f.root.join("source.png"));
+    assert!(assets.request_current(f.asset, &canonical, None));
+    // Hold publication until an authoritative rejoin/relink advances the source.
+    canonical
+        .apply(Command::SetSource(
+            Source::from_descriptor(f.source, SourceLocation::Embedded, 2, None).unwrap(),
+        ))
+        .unwrap();
+    assets.sync_document(&canonical);
+    assets.defer_shared_source(f.source, 2);
+    assert!(!assets.request_current(f.asset, &canonical, None));
+    settle_view(&mut assets);
+    assert_eq!(assets.stats().discarded, 1);
+    assert_eq!(assets.stats().errors, 0);
+    assert!(assets.get_rep(f.asset, 1, Lod::Thumbnail, 128).is_none());
+    assert!(assets.get(f.asset).is_none());
+    assert_eq!(assets.states[&f.source], SourceState::Missing);
+
+    assets.set_shared_source(f.source, 2, f.root.join("source.png"));
+    assert!(assets.request_current(f.asset, &canonical, None));
+    settle_view(&mut assets);
+    assert!(assets.get_rep(f.asset, 2, Lod::Thumbnail, 128).is_some());
+    assert_eq!(assets.stats().codec_requests, 2);
+    assert!(assets.stats().peak_pending <= assets.limits().requests);
+    assert!(assets.stats().cpu_peak <= assets.limits().cpu_bytes);
+}
+#[test]
 fn linked_reuse_missing_changed_and_independent_repair() {
     let f = Fixture::new(false);
     f.prepared();

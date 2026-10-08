@@ -96,13 +96,26 @@ impl Document {
     }
     /// Apply a single atomic deterministic mutation without retaining history.
     /// Editors use their own execute API so undo cannot become inconsistent.
-    pub fn apply(&mut self, command: Command) -> Result<bool, CommandError> {
+    /// Validated authoritative mutation returning its metadata inverse. Callers must
+    /// separately enforce revision/conflict policy before replaying an inverse.
+    pub fn apply_with_inverse(
+        &mut self,
+        command: Command,
+    ) -> Result<Option<Command>, CommandError> {
         let high_water = if command.source_revision() > 0 {
             self.sources().map(|s| s.revision()).max().unwrap_or(0)
         } else {
             0
         };
         self.validate_source_revision(&command, high_water)?;
-        Ok(self.apply_reversible(command)?.is_some())
+        self.apply_reversible(command)
+    }
+    /// Apply a previously produced inverse after external conflict validation.
+    /// Allows restoring an earlier source binding while its authority remains monotonic.
+    pub fn apply_inverse(&mut self, inverse: Command) -> Result<Option<Command>, CommandError> {
+        self.apply_reversible(inverse)
+    }
+    pub fn apply(&mut self, command: Command) -> Result<bool, CommandError> {
+        Ok(self.apply_with_inverse(command)?.is_some())
     }
 }

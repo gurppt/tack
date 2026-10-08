@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["crates/tack-core", "crates/tack-assets", "crates/tack-render", "crates/tack-app", "crates/tack-storage"]
+members = ["crates/tack-core", "crates/tack-assets", "crates/tack-render", "crates/tack-app", "crates/tack-storage", "crates/tack-shared", "crates/tack-server"]
 
 [workspace.package]
 version = "0.0.1"
@@ -9,6 +9,8 @@ rust-version = "1.95"
 publish = false
 
 [workspace.dependencies]
+tack-shared = { version = "=0.0.1", path = "crates/tack-shared" }
+sha2 = "=0.10.9"
 tack-storage = { version = "=0.0.1", path = "crates/tack-storage" }
 getrandom = "=0.3.4"
 crc32fast = "=1.5.2"

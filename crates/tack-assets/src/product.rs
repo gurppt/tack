@@ -34,6 +34,7 @@ struct Job {
     asset: ImageAsset,
     source: Source,
     original: Option<Payload>,
+    shared_path: Option<PathBuf>,
     lod: Lod,
     edge: u32,
     cancel: Option<Arc<AtomicBool>>,
@@ -181,7 +182,11 @@ pub struct ProductAssets {
     current: HashMap<AssetId, u64>,
     sources: HashMap<AssetId, SourceId>,
     streamed_png: HashSet<(SourceId, u64)>,
+    // Keep local supply's fixed cost one pointer; allocate the map only shared.
+    #[allow(clippy::box_collection)]
+    shared_sources: Option<Box<SharedSourcePaths>>,
 }
+type SharedSourcePaths = HashMap<(SourceId, u64), Option<PathBuf>>;
 impl ProductAssets {
     pub fn new(
         board: Arc<TackFile>,
@@ -274,12 +279,19 @@ impl ProductAssets {
             current: HashMap::new(),
             sources: HashMap::new(),
             streamed_png: HashSet::new(),
+            shared_sources: None,
         })
     }
     pub fn limits(&self) -> SupplyLimits {
         self.limits
     }
     pub fn sync_document(&mut self, doc: &Document) {
+        if let Some(paths) = &mut self.shared_sources {
+            paths.retain(|(id, rev), _| {
+                doc.source(*id)
+                    .is_some_and(|source| source.revision() == *rev)
+            });
+        }
         self.streamed_png
             .retain(|(id, rev)| doc.source(*id).is_some_and(|s| s.revision() == *rev));
         self.current.retain(|id, rev| {
@@ -306,6 +318,24 @@ impl ProductAssets {
     pub fn set_board(&mut self, board: Arc<TackFile>) {
         self.board = board;
     }
+    /// Disposable shared supply descriptors, never document authority. Only the
+    /// validated CAS client provides paths; filesystem work stays on codec workers.
+    pub fn set_shared_source(&mut self, source: SourceId, revision: u64, path: PathBuf) {
+        let paths = self.shared_sources.get_or_insert_with(Default::default);
+        paths.retain(|(id, rev), _| *id != source || *rev == revision);
+        paths.insert((source, revision), Some(path));
+        self.failed
+            .retain(|key| key.source != source || key.revision != revision);
+        self.states.remove(&source);
+    }
+    /// Shared originals must be verified off-thread before any codec job can use
+    /// them. Pending/missing supply is a placeholder, never a speculative path.
+    pub fn defer_shared_source(&mut self, source: SourceId, revision: u64) {
+        let paths = self.shared_sources.get_or_insert_with(Default::default);
+        paths.retain(|(id, rev), _| *id != source || *rev == revision);
+        paths.insert((source, revision), None);
+        self.states.insert(source, SourceState::Missing);
+    }
     pub fn request(&mut self, id: AssetId) -> bool {
         let b = Arc::clone(&self.board);
         self.request_current(id, &b.document, None)
@@ -321,11 +351,21 @@ impl ProductAssets {
         let asset = *doc.asset(id)?;
         let source = doc.source(asset.source_id())?.clone();
         self.observe_current(id, source.revision(), source.id());
+        let shared_path = match self
+            .shared_sources
+            .as_ref()
+            .and_then(|paths| paths.get(&(source.id(), source.revision())))
+        {
+            Some(Some(path)) => Some(path.clone()),
+            Some(None) => return None,
+            None => None,
+        };
         Some(Job {
             board: Arc::clone(&self.board),
             asset,
             source,
             original: original.cloned(),
+            shared_path,
             lod,
             edge,
             cancel: (crate::huge_image::classify_png(asset.pixel_size()).ok()
@@ -620,13 +660,17 @@ impl ProductAssets {
             .get(&id)
             .zip(self.sources.get(&id))
             .is_some_and(|(r, s)| {
-                self.failed.contains(&Key {
-                    asset: (lod == Lod::Thumbnail).then_some(id),
-                    source: *s,
-                    revision: *r,
-                    lod,
-                    edge,
-                })
+                self.shared_sources
+                    .as_ref()
+                    .and_then(|paths| paths.get(&(*s, *r)))
+                    .is_some_and(Option::is_none)
+                    || self.failed.contains(&Key {
+                        asset: (lod == Lod::Thumbnail).then_some(id),
+                        source: *s,
+                        revision: *r,
+                        lod,
+                        edge,
+                    })
             })
     }
     pub fn failed_lod(&self, id: AssetId, lod: Lod) -> bool {
@@ -665,38 +709,46 @@ fn load(job: Job, base: &Path, dir: &Path, disk: &Mutex<crate::decode::DiskCache
     let result = (|| -> Result<Decoded, AssetError> {
         let source = source.ok_or("missing asset metadata")?;
         let s = &job.source;
-        let path = match s.location() {
-            SourceLocation::Embedded => {
-                outcome.state = SourceState::Embedded;
-                None
-            }
-            SourceLocation::Linked(p) => match p.to_native() {
-                Some(path) => {
-                    let path = if p.is_absolute() {
-                        path
-                    } else {
-                        base.join(path)
-                    };
-                    outcome.state = match representation::source_fingerprint(&path) {
-                        Ok(f) if s.fingerprint().is_none_or(|old| old == f) => {
-                            SourceState::Available
-                        }
-                        Ok(_) => SourceState::Changed,
-                        Err(e)
-                            if e.downcast_ref::<std::io::Error>()
-                                .is_some_and(|e| e.kind() == std::io::ErrorKind::NotFound) =>
-                        {
-                            SourceState::Missing
-                        }
-                        Err(_) => SourceState::Unavailable,
-                    };
-                    Some(path)
-                }
-                None => {
-                    outcome.state = SourceState::Foreign;
+        let path = if let Some(path) = &job.shared_path {
+            outcome.state = match representation::source_fingerprint(path) {
+                Ok(_) => SourceState::Available,
+                Err(_) => SourceState::Missing,
+            };
+            Some(path.clone())
+        } else {
+            match s.location() {
+                SourceLocation::Embedded => {
+                    outcome.state = SourceState::Embedded;
                     None
                 }
-            },
+                SourceLocation::Linked(p) => match p.to_native() {
+                    Some(path) => {
+                        let path = if p.is_absolute() {
+                            path
+                        } else {
+                            base.join(path)
+                        };
+                        outcome.state = match representation::source_fingerprint(&path) {
+                            Ok(f) if s.fingerprint().is_none_or(|old| old == f) => {
+                                SourceState::Available
+                            }
+                            Ok(_) => SourceState::Changed,
+                            Err(e)
+                                if e.downcast_ref::<std::io::Error>()
+                                    .is_some_and(|e| e.kind() == std::io::ErrorKind::NotFound) =>
+                            {
+                                SourceState::Missing
+                            }
+                            Err(_) => SourceState::Unavailable,
+                        };
+                        Some(path)
+                    }
+                    None => {
+                        outcome.state = SourceState::Foreign;
+                        None
+                    }
+                },
+            }
         };
         if job.lod == Lod::Thumbnail
             && let Some(e) = board.overviews.get(&id)

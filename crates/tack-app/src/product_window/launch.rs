@@ -1,12 +1,29 @@
 //! Startup/argument ownership, outside the native render/event path.
 use super::*;
 pub fn run(args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
-    run_mode(args, started, false)
+    run_mode(args, started, false, None)
 }
 pub fn run_new(args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
-    run_mode(args, started, true)
+    run_mode(args, started, true, None)
 }
-fn run_mode(args: Vec<OsString>, started: Instant, new: bool) -> Result<(), AssetError> {
+pub fn run_shared(mut args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
+    if args.len() < 2 {
+        return Err("join ADDRESS BOARD_ID [--seconds N --output REPORT]".into());
+    }
+    let address = args
+        .remove(0)
+        .into_string()
+        .map_err(|_| "server address text")?;
+    let board = tack_shared::WireId::parse(args.remove(0).to_str().ok_or("board ID text")?)?;
+    args.insert(0, OsString::from("shared.tack"));
+    run_mode(args, started, false, Some((address, board)))
+}
+fn run_mode(
+    args: Vec<OsString>,
+    started: Instant,
+    new: bool,
+    shared_config: Option<(String, tack_shared::WireId)>,
+) -> Result<(), AssetError> {
     let mut local = LocalState::new()?;
     let untitled = new && args.is_empty();
     let path = if untitled {
@@ -112,94 +129,103 @@ fn run_mode(args: Vec<OsString>, started: Instant, new: bool) -> Result<(), Asse
     let new_board = options.new;
     let untitled = options.untitled;
     let root = local.root.clone();
-    std::thread::Builder::new()
-        .name("tack-document-read".into())
-        .spawn(move || {
-            let start = Instant::now();
-            let result = (|| -> Result<LoadedBoard, AssetError> {
-                tack_storage::create_private_directory(&read_work, true)?;
-                if untitled {
-                    tack_storage::create_private_directory(&root, true)?;
-                }
-                if new_board && !untitled && std::fs::symlink_metadata(&input).is_ok() {
-                    return Err("new board filename already exists".into());
-                }
-                let lease = if untitled {
-                    let mut chosen = None;
-                    for slot in 1..=16 {
-                        let candidate = root.join(format!("untitled-slot-{slot}.tack"));
-                        // Reclaim only an owned, verified empty crash seed with no
-                        // recovery directory. Never infer discard from an empty base.
-                        if let Ok(metadata) = std::fs::symlink_metadata(&candidate) {
-                            // Reclamation owns this private leaf, never a symlink's
-                            // external target (ordinary Open deliberately allows aliases).
-                            if !metadata.is_file() || metadata.file_type().is_symlink() {
+    if shared_config.is_none() {
+        std::thread::Builder::new()
+            .name("tack-document-read".into())
+            .spawn(move || {
+                let start = Instant::now();
+                let result = (|| -> Result<LoadedBoard, AssetError> {
+                    tack_storage::create_private_directory(&read_work, true)?;
+                    if untitled {
+                        tack_storage::create_private_directory(&root, true)?;
+                    }
+                    if new_board && !untitled && std::fs::symlink_metadata(&input).is_ok() {
+                        return Err("new board filename already exists".into());
+                    }
+                    let lease = if untitled {
+                        let mut chosen = None;
+                        for slot in 1..=16 {
+                            let candidate = root.join(format!("untitled-slot-{slot}.tack"));
+                            // Reclaim only an owned, verified empty crash seed with no
+                            // recovery directory. Never infer discard from an empty base.
+                            if let Ok(metadata) = std::fs::symlink_metadata(&candidate) {
+                                // Reclamation owns this private leaf, never a symlink's
+                                // external target (ordinary Open deliberately allows aliases).
+                                if !metadata.is_file() || metadata.file_type().is_symlink() {
+                                    continue;
+                                }
+                                if let Ok(owner) = tack_storage::BoardLease::acquire(&candidate)
+                                    && !owner.recovery_directory().exists()
+                                    && let Ok(seed) = owner.open()
+                                    && seed.document.objects().next().is_none()
+                                    && seed.document.sources().next().is_none()
+                                    && owner.retire_empty_seed(seed.document.id()).is_ok()
+                                {
+                                    chosen = Some(owner);
+                                    break;
+                                }
                                 continue;
                             }
-                            if let Ok(owner) = tack_storage::BoardLease::acquire(&candidate)
+                            if let Ok(owner) = tack_storage::BoardLease::acquire_new(&candidate)
                                 && !owner.recovery_directory().exists()
-                                && let Ok(seed) = owner.open()
-                                && seed.document.objects().next().is_none()
-                                && seed.document.sources().next().is_none()
-                                && owner.retire_empty_seed(seed.document.id()).is_ok()
                             {
                                 chosen = Some(owner);
                                 break;
                             }
-                            continue;
                         }
-                        if let Ok(owner) = tack_storage::BoardLease::acquire_new(&candidate)
-                            && !owner.recovery_directory().exists()
-                        {
-                            chosen = Some(owner);
-                            break;
-                        }
-                    }
-                    Arc::new(chosen.ok_or(
-                        "16 retained Untitled boards; open Recent boards to recover/save them",
-                    )?)
-                } else {
-                    Arc::new(if new_board {
-                        tack_storage::BoardLease::acquire_new(&input)?
+                        Arc::new(chosen.ok_or(
+                            "16 retained Untitled boards; open Recent boards to recover/save them",
+                        )?)
                     } else {
-                        tack_storage::BoardLease::acquire(&input)?
-                    })
-                };
-                if new_board {
-                    lease.save(
-                        &tack_core::Document::new(
-                            tack_storage::new_document_id()?,
-                            tack_core::DocumentLimits::default(),
+                        Arc::new(if new_board {
+                            tack_storage::BoardLease::acquire_new(&input)?
+                        } else {
+                            tack_storage::BoardLease::acquire(&input)?
+                        })
+                    };
+                    if new_board {
+                        lease.save(
+                            &tack_core::Document::new(
+                                tack_storage::new_document_id()?,
+                                tack_core::DocumentLimits::default(),
+                            ),
+                            Vec::new(),
+                        )?;
+                    }
+                    let board = lease.open()?;
+                    let (recovery, warning) = match lease.recovery(board.document.id()) {
+                        Ok(candidate) => (candidate.is_some(), None),
+                        Err(e) => (
+                            lease.owns_recovery(board.document.id()).unwrap_or(false),
+                            Some(format!(
+                                "Recovery invalid; normal file intact. Discard explicitly: {e}"
+                            )),
                         ),
-                        Vec::new(),
-                    )?;
-                }
-                let board = lease.open()?;
-                let (recovery, warning) = match lease.recovery(board.document.id()) {
-                    Ok(candidate) => (candidate.is_some(), None),
-                    Err(e) => (
-                        lease.owns_recovery(board.document.id()).unwrap_or(false),
-                        Some(format!(
-                            "Recovery invalid; normal file intact. Discard explicitly: {e}"
-                        )),
-                    ),
-                };
-                Ok(LoadedBoard {
-                    board,
-                    path: lease.path().to_owned(),
-                    lease,
-                    metadata_ms: start.elapsed().as_secs_f64() * 1000.,
-                    recovery,
-                    warning,
-                })
-            })();
-            let _ = read_proxy.send_event(Event::Loaded(Box::new(result)));
-        })?;
+                    };
+                    Ok(LoadedBoard {
+                        board,
+                        path: lease.path().to_owned(),
+                        lease,
+                        metadata_ms: start.elapsed().as_secs_f64() * 1000.,
+                        recovery,
+                        warning,
+                    })
+                })();
+                let _ = read_proxy.send_event(Event::Loaded(Box::new(result)));
+            })?;
+    }
+    let shared = shared_config
+        .map(|(address, board)| {
+            shared::SharedState::start(address, board, work.join("shared"), proxy.clone())
+                .map(Box::new)
+        })
+        .transpose()?;
     let window_size = options.window_size;
     let mut app = App {
         options,
         lod_trace,
         local: Box::new(local),
+        shared,
         proxy,
         source_active: false,
         annotations: None,

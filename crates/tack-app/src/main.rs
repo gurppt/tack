@@ -6,6 +6,7 @@ mod product_cli;
 mod product_window;
 mod report_output;
 mod session;
+mod shared_cli;
 mod spatial_cli;
 mod supply_cli;
 mod window;
@@ -126,6 +127,16 @@ fn main() -> Result<(), AssetError> {
     }) {
         return product_window::run(std::env::args_os().skip(1).collect(), started);
     }
+    if let Some(command) = product_args.next()
+        && let Some(command) = command.to_str()
+        && ["publish", "join"].contains(&command)
+    {
+        if command == "join" {
+            return product_window::run_shared(product_args.collect(), started);
+        }
+        return shared_cli::run(command, product_args.collect());
+    }
+    let mut product_args = std::env::args_os().skip(1);
     if let Some(command) = product_args.next()
         && let Some(command) = command.to_str()
         && [

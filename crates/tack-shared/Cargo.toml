@@ -1,0 +1,17 @@
+[package]
+name = "tack-shared"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+tack-core.workspace = true
+tack-storage.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+crc32fast.workspace = true
+
+[lints]
+workspace = true

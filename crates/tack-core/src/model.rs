@@ -183,6 +183,26 @@ impl DocumentObject {
             kind: ObjectKind::Image(ImageObject::new(asset)),
         }
     }
+    /// Validated metadata adapter; crop/opacity/transform have already passed core constructors.
+    pub fn image_with_properties(
+        id: ObjectId,
+        asset: AssetId,
+        transform: Transform,
+        crop: Crop,
+        opacity: Opacity,
+        filtering: ImageFiltering,
+    ) -> Self {
+        Self {
+            id,
+            transform,
+            kind: ObjectKind::Image(ImageObject {
+                asset,
+                crop,
+                opacity,
+                filtering,
+            }),
+        }
+    }
     pub fn frame(id: ObjectId, name: String, transform: Transform) -> Result<Self, ModelError> {
         validate_frame_name(&name)?;
         if transform.rotation() != 0. || transform.flips() != [false; 2] {

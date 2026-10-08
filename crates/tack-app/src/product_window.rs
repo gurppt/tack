@@ -19,6 +19,7 @@ use winit::{
 };
 mod huge;
 mod local;
+mod shared;
 use local::{LoadedBoard, LocalState};
 struct OpenOptions {
     path: PathBuf,
@@ -41,10 +42,12 @@ enum Event {
     Loaded(Box<Result<LoadedBoard, AssetError>>),
     LocalReady,
     SourceDone(Result<(), String>),
+    SharedReady,
 }
 struct App {
     options: OpenOptions,
     local: Box<LocalState>,
+    shared: Option<Box<shared::SharedState>>,
     proxy: winit::event_loop::EventLoopProxy<Event>,
     source_active: bool,
     annotations: Option<Box<tack_app::annotation_scene::AnnotationScene>>,
@@ -97,7 +100,11 @@ impl App {
         let window = Arc::new(
             event_loop.create_window(
                 Window::default_attributes()
-                    .with_title("Tack — loading local board")
+                    .with_title(if self.shared.is_some() {
+                        "Tack — connecting shared board"
+                    } else {
+                        "Tack — loading local board"
+                    })
                     .with_inner_size(winit::dpi::PhysicalSize::new(
                         self.options.window_size[0],
                         self.options.window_size[1],
@@ -147,6 +154,9 @@ impl App {
         self.surface = Some(surface);
         self.config = Some(config);
         self.native_startup_ms = self.started.elapsed().as_secs_f64() * 1000.;
+        if self.shared.is_some() {
+            self.apply_preferences()?;
+        }
         Ok(())
     }
     fn redraw(&mut self) -> Result<(), AssetError> {
@@ -256,6 +266,9 @@ impl App {
         }
         let query_ms = cpu_start.elapsed().as_secs_f64() * 1000.;
         let logical_images = self.draws.len();
+        if let (Some(shared), Some(editor)) = (&mut self.shared, &self.editor) {
+            shared.request_visible(editor, &self.draws);
+        }
         let mut tile_counts = [0usize; 2];
         let supply_start = Instant::now();
         self.supply_pending = false;
@@ -453,6 +466,24 @@ impl App {
         let supply_ms = supply_start.elapsed().as_secs_f64() * 1000.;
         if let Some(editor) = &self.editor {
             self.input.build_overlay(editor, &self.camera);
+        }
+        if let Some(shared) = &self.shared {
+            let scale = self.camera.ui_scale();
+            let mut budget = 512;
+            let label = format!(
+                "Shared {} | rev {} | {}",
+                shared.state.label(),
+                shared.revision,
+                self.interaction_error.as_deref().unwrap_or("F5 reconnect")
+            );
+            self.input.gizmo.ui_text(
+                &self.camera,
+                [8. * scale, 8. * scale],
+                f64::from(self.camera.screen_size()[0]) - 16. * scale,
+                &label,
+                self.local.profile.theme.palette().accent_primary,
+                &mut budget,
+            );
         }
         // Reserve the bounded popup budget only while a popup is open.
         if self.context.is_some() {
@@ -654,8 +685,22 @@ impl App {
             .and_then(|g| g.timing_samples())
             .map(|s| s.iter().map(|s| json!({"pass_ms":s.pass_ms})).collect())
             .unwrap_or_default();
-        let mut report = json!({"about":{"requests":self.local.about_ticket,"image_gpu_bytes":gpu.map_or(0, |g| g.ui_image_bytes()),"version":tack_app::about::METADATA.version},"window_size":self.camera.screen_size(),"load_failed":self.load_failed,"local":{"operations":self.local.worker.operations,"recoveries":self.save.recoveries,"recovery_generation":self.save.recovery_generation,"recovery_bytes":self.save.recovery_bytes,"last_storage_worker_ms":self.save.last_worker_ms,"ui_scale":self.camera.ui_scale(),"discarded_asset_results":stats.discarded},"first_frame_ms":self.first_frame_ms,"gpu_setup_ms":self.gpu_setup_ms,"annotation_resources":gpu.map(|g|g.annotation_bytes()),"annotations":self.editor.as_ref().map(|e|e.document().annotation_count()).unwrap_or(0),"spatial":{"grid":self.input.grid_visible,"snapping":self.input.snap.enabled,"frames":self.editor.as_ref().map(|e|e.document().objects().filter(|o|matches!(o.kind(),tack_core::ObjectKind::Frame(_))).count()).unwrap_or(0),"groups":self.editor.as_ref().map(|e|e.document().groups().count()).unwrap_or(0)},"redraw_count":self.redraws,"wait_count":self.wakeups,"operation":"open","editing":self.editor.as_ref().map(|e|json!({"dirty":e.is_dirty(),"generation":e.generation(),"undo_entries":e.undo_len(),"redo_entries":e.redo_len(),"selected":self.input.images.selection.len(),"save_completed":self.save.completed})),"interaction":self.benchmark.as_ref().map(|b|json!({"scenario":b.name(),"input_ms":b.samples,"snap_query_ms":b.snap_queries,"commits":b.commits,"cancels":b.cancels,"invariants":b.invariants})),"native_startup_ms":self.native_startup_ms,"camera_clamped":self.camera_clamped,"navigation_end_pending":self.navigation_end_pending,"drain_ms":self.drain_ms,"state_counts_scope":"requested sources only","recognizable_clock":"CPU submission before present","metadata_load_ms":self.metadata_ms,"metadata_bytes":self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"first_recognizable_ms":self.first_content_ms,"ordinary_view_80_percent_ms":self.useful_ms,"source_bytes_before_detail":stats.source_bytes,"container_bytes":stats.container_bytes+self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"overview_reused":stats.reused,"overview_regenerated":stats.regenerated,"errors":stats.errors,"source_missing":counts(SourceState::Missing),"source_changed":counts(SourceState::Changed),"source_foreign":counts(SourceState::Foreign),"peak_pending":stats.peak_pending,"cpu_payload_bytes":stats.cpu_bytes,"adapter":gpu.map(|g|g.adapter_info.name.clone()),"backend":gpu.map(|g|format!("{:?}",g.adapter_info.backend)),"frames":self.frames,"gpu_samples":samples,"detail":"bounded projected 128/512/2048 display supply"});
+        let mut report = json!({"about":{"requests":self.local.about_ticket,"image_gpu_bytes":gpu.map_or(0, |g| g.ui_image_bytes()),"version":tack_app::about::METADATA.version},"window_size":self.camera.screen_size(),"load_failed":self.load_failed,"local":{"operations":self.local.worker.operations,"recoveries":self.save.recoveries,"recovery_generation":self.save.recovery_generation,"recovery_bytes":self.save.recovery_bytes,"last_storage_worker_ms":self.save.last_worker_ms,"ui_scale":self.camera.ui_scale(),"discarded_asset_results":stats.discarded},"first_frame_ms":self.first_frame_ms,"gpu_setup_ms":self.gpu_setup_ms,"annotation_resources":gpu.map(|g|g.annotation_bytes()),"annotations":self.editor.as_ref().map(|e|e.document().annotation_count()).unwrap_or(0),"spatial":{"grid":self.input.grid_visible,"snapping":self.input.snap.enabled,"frames":self.editor.as_ref().map(|e|e.document().objects().filter(|o|matches!(o.kind(),tack_core::ObjectKind::Frame(_))).count()).unwrap_or(0),"groups":self.editor.as_ref().map(|e|e.document().groups().count()).unwrap_or(0)},"redraw_count":self.redraws,"wait_count":self.wakeups,"operation":"open","editing":self.editor.as_ref().map(|e|json!({"dirty":e.is_dirty(),"generation":e.generation(),"undo_entries":e.undo_len(),"redo_entries":e.redo_len(),"selected":self.input.images.selection.len(),"save_completed":self.save.completed})),"interaction":self.benchmark.as_ref().map(|b|json!({"scenario":b.name(),"input_ms":b.samples,"snap_query_ms":b.snap_queries,"commits":b.commits,"cancels":b.cancels,"invariants":b.invariants})),"native_startup_ms":self.native_startup_ms,"camera_clamped":self.camera_clamped,"navigation_end_pending":self.navigation_end_pending,"drain_ms":self.drain_ms,"state_counts_scope":"requested sources only","recognizable_clock":"CPU submission before present","metadata_load_ms":self.metadata_ms,"metadata_bytes":self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"first_recognizable_ms":self.first_content_ms,"ordinary_view_80_percent_ms":self.useful_ms,"source_bytes_before_detail":stats.source_bytes,"container_bytes":stats.container_bytes+self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"overview_reused":stats.reused,"overview_regenerated":stats.regenerated,"errors":stats.errors,"source_missing":counts(SourceState::Missing),"source_changed":counts(SourceState::Changed),"source_foreign":counts(SourceState::Foreign),"source_unavailable":counts(SourceState::Unavailable),"peak_pending":stats.peak_pending,"cpu_payload_bytes":stats.cpu_bytes,"adapter":gpu.map(|g|g.adapter_info.name.clone()),"backend":gpu.map(|g|format!("{:?}",g.adapter_info.backend)),"frames":self.frames,"gpu_samples":samples,"detail":"bounded projected 128/512/2048 display supply"});
         let supply_receipt = json!({"potato":self.options.potato,"present_mode":self.config.as_ref().map(|c|format!("{:?}",c.present_mode)),"event_samples_ms":self.event_samples,"wheel_samples_ms":self.wheel_samples,"codec_requests":stats.codec_requests,"decoded_bytes":stats.decoded_bytes,"cpu_payload_peak":stats.cpu_peak,"cpu_evictions":stats.evictions,"reprioritized":stats.reprioritized,"discarded":stats.discarded,"peak_queued":stats.peak_queued,"visibility_memo_bytes":self.visibility.bytes()});
+        if let Some(shared) = &self.shared {
+            let canonical = self
+                .editor
+                .as_ref()
+                .map(|editor| tack_storage::encode_metadata(editor.document()))
+                .transpose()?;
+            report["shared"] = json!({"address":shared.address,"board":shared.board,
+                "state":format!("{:?}",shared.state),"revision":shared.revision,
+                "accepted":shared.accepted,"refused":shared.refused,
+                "traffic_probes":shared.probes,
+                "canonical_sha256":canonical.map(|(_,_,bytes)|tack_shared::ContentHash::digest(&bytes)),
+                "object_count":self.editor.as_ref().map(|editor|editor.document().objects().count()),
+                "source_count":self.editor.as_ref().map(|editor|editor.document().sources().count())});
+        }
         if let Some(obj) = report.as_object_mut()
             && let Some(extra) = supply_receipt.as_object()
         {
@@ -695,6 +740,7 @@ impl ApplicationHandler<Event> for App {
                 }
             }
             Event::LocalReady => self.poll_local(),
+            Event::SharedReady => self.poll_shared(),
             Event::SourceDone(result) => {
                 self.source_active = false;
                 self.interaction_error = result.err();
@@ -720,6 +766,13 @@ impl ApplicationHandler<Event> for App {
 
     fn about_to_wait(&mut self, e: &ActiveEventLoop) {
         self.wakeups += 1;
+        self.poll_shared();
+        self.flush_shared();
+        if self.options.output.is_some()
+            && let Some(shared) = &mut self.shared
+        {
+            shared.probe(self.started);
+        }
         self.poll_local();
         self.poll_storage();
         self.invalidate_context();
@@ -742,8 +795,27 @@ impl ApplicationHandler<Event> for App {
                 self.dirty |= a.stats().pending > 0;
             }
         }
+        if self.editor.is_none()
+            && let (Some(shared), Some(window)) = (&self.shared, &self.window)
+        {
+            let title = format!(
+                "Tack · shared {} / {} · {:?} · F5 reconnect · {}",
+                shared.address,
+                shared.board,
+                shared.state,
+                self.interaction_error
+                    .as_deref()
+                    .unwrap_or("snapshot pending")
+            );
+            if self.title != title {
+                window.set_title(&title);
+                self.title = title;
+            }
+        }
         if let (Some(editor), Some(window)) = (&self.editor, &self.window) {
-            let state = if self.save.active() {
+            let state = if self.shared.is_some() {
+                "server authority"
+            } else if self.save.active() {
                 "saving"
             } else if self.save.last_error.is_some() {
                 "save failed"
@@ -854,6 +926,14 @@ impl ApplicationHandler<Event> for App {
             } else {
                 format!("{title} · {}", self.local.import_status)
             };
+            let title = if let Some(shared) = &self.shared {
+                format!(
+                    "{title} · shared {} / {} · {:?} · rev {} · F5 reconnect",
+                    shared.address, shared.board, shared.state, shared.revision
+                )
+            } else {
+                title
+            };
             if self.title != title {
                 window.set_title(&title);
                 self.title = title;
@@ -897,6 +977,12 @@ impl ApplicationHandler<Event> for App {
                     .deadline()
                     .filter(|_| !self.local.recovery_pending),
             )
+            .chain(
+                self.shared
+                    .as_ref()
+                    .filter(|_| self.options.output.is_some())
+                    .and_then(|shared| shared.probe_deadline(self.started)),
+            )
             .min();
         e.set_control_flow(if periodic {
             ControlFlow::WaitUntil(Instant::now() + Duration::from_millis(16))
@@ -908,10 +994,24 @@ impl ApplicationHandler<Event> for App {
     }
 }
 mod launch;
-pub use launch::{run, run_new};
+pub use launch::{run, run_new, run_shared};
 
 impl App {
     fn handle_window_event(&mut self, e: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
+        if matches!(&event, WindowEvent::KeyboardInput { event, .. }
+            if event.state == winit::event::ElementState::Pressed
+            && event.physical_key == winit::keyboard::PhysicalKey::Code(winit::keyboard::KeyCode::F5))
+            && let Some(shared) = &mut self.shared
+        {
+            if let Some(editor) = &mut self.editor {
+                editor.set_shared_writable(false);
+            }
+            if let Err(error) = shared.client.reconnect() {
+                self.interaction_error = Some(error.to_string());
+            }
+            self.dirty = true;
+            return;
+        }
         if matches!(event, WindowEvent::CloseRequested) {
             if self.load_failed {
                 e.exit();
@@ -1007,6 +1107,10 @@ impl App {
                 if let Err(error) = self.local_action(tack_app::actions::Action::SaveAs) {
                     self.local_error(error.to_string());
                 }
+            }
+            if self.local.manual && self.shared.is_some() {
+                self.local.manual = false;
+                self.interaction_error = Some("Shared edits are saved by the server".into());
             }
             if let Some(action) = self.input.pending_local.take()
                 && let Err(error) = self.local_action(action)

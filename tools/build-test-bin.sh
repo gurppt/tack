@@ -10,26 +10,31 @@ if [ -f bin/BUILD.txt ]; then
     { printf 'STATUS: STALE — build in progress or failed\n'; cat bin/BUILD.txt; } > "$stamp"
     mv -f "$stamp" bin/BUILD.txt
 fi
-cargo build --release --locked -p tack-app
+cargo build --release --locked -p tack-app -p tack-server
 binary=$(mktemp bin/.tack.XXXXXX)
+server=$(mktemp bin/.tack-server.XXXXXX)
 stamp=$(mktemp bin/.BUILD.XXXXXX)
 artwork=$(mktemp bin/.about.XXXXXX)
-trap 'rm -f "$binary" "$stamp" "$artwork"' EXIT
+trap 'rm -f "$binary" "$server" "$stamp" "$artwork"' EXIT
 target_dir=$(cargo metadata --locked --offline --no-deps --format-version 1 | python3 -c 'import json,sys; print(json.load(sys.stdin)["target_directory"])')
 cp "$target_dir/release/tack-app" "$binary"
 chmod 755 "$binary"
+cp "$target_dir/release/tack-server" "$server"
+chmod 755 "$server"
 cp "$target_dir/release/tack-about.png" "$artwork"
 dirty=false
 if [ -n "$(git status --porcelain)" ]; then dirty=true; fi
 {
     printf 'STATUS: CURRENT\n'
     printf 'commit: %s\n' "$(git rev-parse HEAD)"
-    printf 'profile: release\nbuilt_utc: %s\nbinary: ./bin/tack\nworktree_dirty: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$dirty"
+    printf 'profile: release\nbuilt_utc: %s\nbinary: ./bin/tack\nserver_binary: ./bin/tack-server\nworktree_dirty: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$dirty"
     printf 'sha256: %s\n' "$(sha256sum "$binary" | cut -d ' ' -f 1)"
+    printf 'server_sha256: %s\n' "$(sha256sum "$server" | cut -d ' ' -f 1)"
     printf 'about_asset_sha256: %s\n' "$(sha256sum "$artwork" | cut -d ' ' -f 1)"
     printf 'checkpoint: %s\n' "${1:-current workspace}"
 } > "$stamp"
 mv -f "$artwork" bin/tack-about.png
 mv -f "$binary" bin/tack
+mv -f "$server" bin/tack-server
 mv -f "$stamp" bin/BUILD.txt
 cat bin/BUILD.txt

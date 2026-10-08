@@ -235,7 +235,9 @@ impl ImportRequest {
 pub fn admit(editor: &mut DocumentEditor, image: &AdmittedImage) -> Result<bool, AssetError> {
     let mut commands = Vec::with_capacity(4);
     if let Some(source) = editor.document().source(image.source.id()) {
-        if source != &image.source {
+        if source != &image.source
+            && !(editor.is_shared() && source.revision() == image.source.revision())
+        {
             return Err("import source identity changed before admission".into());
         }
     } else {

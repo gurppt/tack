@@ -21,7 +21,7 @@ pub use stroke::{segment_distance, simplify_stroke};
 pub use camera::{Camera, GeometryError, WorldRect};
 pub use commands::{Command, CommandError};
 pub use document::{Document, DocumentLimits};
-pub use history::DocumentEditor;
+pub use history::{BackendRequest, DocumentEditor};
 pub use ids::{AssetId, DocumentId, GroupId, InvalidId, ObjectId, SourceId};
 pub use model::{
     DocumentObject, ImageAsset, ImageFiltering, ImageObject, MAX_SOURCE_PATH_BYTES, ModelError,

@@ -6,6 +6,7 @@ rust-version.workspace = true
 publish.workspace = true
 
 [dependencies]
+tack-shared.workspace = true
 tack-storage.workspace = true
 tack-core.workspace = true
 tack-assets.workspace = true

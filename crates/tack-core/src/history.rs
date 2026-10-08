@@ -12,6 +12,21 @@ pub struct DocumentEditor {
     dirty: bool,
     generation: u64,
     source_revision_high_water: u64,
+    shared: Option<Box<SharedCommands>>,
+}
+
+/// Backend requests carry semantic edits only. A shared editor displays accepted
+/// authority; its owner transports these requests outside the domain/UI layer.
+#[derive(Clone, Debug)]
+pub enum BackendRequest {
+    Edit(Command),
+    Undo,
+    Redo,
+}
+struct SharedCommands {
+    writable: bool,
+    requests: VecDeque<BackendRequest>,
+    bytes: usize,
 }
 impl DocumentEditor {
     /// Zero capacity disables recording. Capacity is chosen explicitly by owner.
@@ -26,6 +41,7 @@ impl DocumentEditor {
             dirty: false,
             generation: 0,
             source_revision_high_water,
+            shared: None,
         }
     }
     /// Startup restore is dirty authority, not an ordinary command or a saved generation.
@@ -37,6 +53,9 @@ impl DocumentEditor {
     }
     pub fn document(&self) -> &Document {
         &self.document
+    }
+    pub fn is_shared(&self) -> bool {
+        self.shared.is_some()
     }
     /// Original handles are needed by live authority or an embedded source redo/inverse.
     pub fn required_originals(&self) -> Vec<(crate::SourceId, u64)> {
@@ -114,6 +133,9 @@ impl DocumentEditor {
         self.capacity
     }
     pub fn execute(&mut self, command: Command) -> Result<bool, CommandError> {
+        if self.shared.is_some() {
+            return self.request_shared(BackendRequest::Edit(command));
+        }
         let generation = self
             .generation
             .checked_add(1)
@@ -147,6 +169,9 @@ impl DocumentEditor {
         Ok(true)
     }
     pub fn undo(&mut self) -> Result<bool, CommandError> {
+        if self.shared.is_some() {
+            return self.request_shared(BackendRequest::Undo);
+        }
         let Some(command) = self.undo.back().cloned() else {
             return Ok(false);
         };
@@ -165,6 +190,9 @@ impl DocumentEditor {
         Ok(true)
     }
     pub fn redo(&mut self) -> Result<bool, CommandError> {
+        if self.shared.is_some() {
+            return self.request_shared(BackendRequest::Redo);
+        }
         let Some(command) = self.redo.last().cloned() else {
             return Ok(false);
         };
@@ -190,5 +218,86 @@ impl DocumentEditor {
     /// Consume the editor, discarding its local history.
     pub fn into_document(self) -> Document {
         self.document
+    }
+
+    /// Opt-in authoritative backend. Local editors allocate no backend queue.
+    pub fn shared(document: Document) -> Self {
+        let mut editor = Self::new(document, 0);
+        editor.shared = Some(Box::new(SharedCommands {
+            writable: false,
+            requests: VecDeque::new(),
+            bytes: 0,
+        }));
+        editor
+    }
+    pub fn set_shared_writable(&mut self, writable: bool) {
+        if let Some(shared) = &mut self.shared {
+            shared.writable = writable;
+            if !writable {
+                shared.requests.clear();
+                shared.bytes = 0;
+            }
+        }
+    }
+    pub fn pending_backend_requests(&self) -> usize {
+        self.shared
+            .as_ref()
+            .map_or(0, |shared| shared.requests.len())
+    }
+    /// Rejoin seeds the server's revision floor, including revisions no longer
+    /// present in live metadata after a shared inverse operation.
+    pub fn set_shared_source_revision_floor(&mut self, revision: u64) {
+        if self.shared.is_some() {
+            self.source_revision_high_water = self.source_revision_high_water.max(revision);
+        }
+    }
+    fn request_shared(&mut self, request: BackendRequest) -> Result<bool, CommandError> {
+        let shared = self
+            .shared
+            .as_mut()
+            .ok_or(CommandError::LimitReached("backend"))?;
+        if !shared.writable {
+            return Err(CommandError::LimitReached(
+                "shared board disconnected/read-only",
+            ));
+        }
+        let bytes = match &request {
+            BackendRequest::Edit(command) => command.retained_bytes(),
+            _ => 0,
+        };
+        if bytes > 512 * 1024
+            || shared.requests.len() >= 32
+            || shared.bytes.saturating_add(bytes) > 8 * 1024 * 1024
+        {
+            return Err(CommandError::LimitReached("shared command queue"));
+        }
+        shared.bytes += bytes;
+        shared.requests.push_back(request);
+        Ok(true)
+    }
+    pub fn take_backend_request(&mut self) -> Option<BackendRequest> {
+        let shared = self.shared.as_mut()?;
+        let request = shared.requests.pop_front()?;
+        if let BackendRequest::Edit(command) = &request {
+            shared.bytes = shared.bytes.saturating_sub(command.retained_bytes());
+        }
+        Some(request)
+    }
+    /// Only the backend may supply accepted commands. No private undo is recorded.
+    pub fn accept_authoritative(&mut self, command: Command) -> Result<bool, CommandError> {
+        if self.shared.is_none() {
+            return Err(CommandError::LimitReached("not a shared backend"));
+        }
+        let next = self
+            .generation
+            .checked_add(1)
+            .ok_or(CommandError::LimitReached("edit generation"))?;
+        let revision = command.source_revision();
+        let changed = self.document.apply_reversible(command)?.is_some();
+        if changed {
+            self.generation = next;
+            self.source_revision_high_water = self.source_revision_high_water.max(revision);
+        }
+        Ok(changed)
     }
 }

@@ -54,6 +54,9 @@ impl App {
         Ok(())
     }
     pub(in super::super) fn local_action(&mut self, action: Action) -> Result<(), AssetError> {
+        if self.shared.is_some() && matches!(action, Action::Save | Action::SaveAs) {
+            return Err("Shared edits are saved by the server. Local snapshot export is reserved for the documented streaming API.".into());
+        }
         if self.load_failed {
             return Ok(());
         }
@@ -89,6 +92,9 @@ impl App {
                 new: true,
             })?,
             SaveOriginalAs => {
+                if self.shared.is_some() {
+                    return Err("Shared Save Original As is not available yet; use the documented local snapshot API".into());
+                }
                 if self.input.images.selection.len() != 1 {
                     return Err("Save Original As requires one selected image".into());
                 }

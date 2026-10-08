@@ -278,6 +278,9 @@ impl App {
         }
     }
     pub(super) fn poll_storage(&mut self) {
+        if self.shared.is_some() {
+            return;
+        }
         if self.load_failed {
             return;
         }
