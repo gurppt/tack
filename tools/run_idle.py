@@ -13,10 +13,15 @@ from run_native_image_checks import command
 def observe(pid):
     tasks = {}
     for p in Path(f'/proc/{pid}/task').iterdir():
-        raw = (p/'stat').read_text(); fields = raw[raw.rfind(')')+2:].split()
-        status = (p/'status').read_text().splitlines()
+        try:
+            raw = (p/'stat').read_text(); fields = raw[raw.rfind(')')+2:].split()
+            status = (p/'status').read_text().splitlines()
+            name = (p/'comm').read_text().strip()
+        except (FileNotFoundError, ProcessLookupError):
+            # Short-lived codec threads may finish during this observation.
+            continue
         switches = {s.split(':')[0]:int(s.split()[1]) for s in status if s.startswith(('voluntary_ctxt_switches:', 'nonvoluntary_ctxt_switches:'))}
-        tasks[p.name] = {'name':(p/'comm').read_text().strip(), 'ticks':int(fields[11])+int(fields[12]), **switches}
+        tasks[p.name] = {'name':name, 'ticks':int(fields[11])+int(fields[12]), **switches}
     status = Path(f'/proc/{pid}/status').read_text().splitlines()
     rss = next(int(s.split()[1])*1024 for s in status if s.startswith('VmRSS:'))
     io = {s.split(':')[0]:int(s.split()[1]) for s in Path(f'/proc/{pid}/io').read_text().splitlines()}

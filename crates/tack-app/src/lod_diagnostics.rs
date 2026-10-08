@@ -46,6 +46,8 @@ impl LodDiagnostics {
                         camera.zoom(),
                     ),
                     source_edge: asset.pixel_size().into_iter().max().unwrap_or(0),
+                    source_size: asset.pixel_size(),
+                    filtering: draw.data.filtering,
                     crop: [uv[2], uv[3]],
                 })
             })
@@ -74,17 +76,17 @@ impl LodDiagnostics {
             let reason = if resident {"gpu-resident"} else if state.cpu_resident {"cpu-resident/upload-budget"}
                 else if state.active_codec_worker.is_some() {"codec-active"} else if state.queued {"queued"}
                 else if state.failed {"source-or-codec-failed"} else if !state.wanted {"not-current-demand"} else {"admissible/queue-cap-or-source-fairness"};
-            Some(json!({"tier":format!("{lod:?}"), "edge":edge, "gpu_resident":resident,
-                "cpu_cache_hit":state.cpu_resident,"pending":state.queued||state.active_codec_worker.is_some(),
+            Some(json!({"tier":format!("{lod:?}"), "edge":edge, "gpu_resident":resident, "gpu_pixel_size":gpu.product_size(ProductKey {asset:(lod==Lod::Thumbnail).then_some(draw.data.asset_id), source, revision:s.revision(), lod, edge}),
+                "cpu_cache_hit":state.cpu_resident,"cpu_pixel_size":state.pixel_size,"pending":state.queued||state.active_codec_worker.is_some(),
                 "active_codec_worker":state.active_codec_worker,"request_generation":state.request_generation,
                 "publication":state.publication, "suppression_reason":reason}))
         }).collect();
         let size = draw.data.transform.size().map(|v| v * camera.zoom());
         Some(
             json!({"source":format!("{:032x}",source.value()),"asset":format!("{:032x}",draw.data.asset_id.value()),
-            "revision":s.revision(),"camera_epoch":self.epoch,"projected_size":size,"projected_edge":size.into_iter().fold(0.,f64::max),
+            "revision":s.revision(),"source_size":document.asset(draw.data.asset_id)?.pixel_size(),"filtering":format!("{:?}",draw.data.filtering),"camera_epoch":self.epoch,"projected_size":size,"projected_edge":size.into_iter().fold(0.,f64::max),
             "desired":format!("{desired:?}"),"displayed":draw.key.map(|k|format!("{:?}",k.lod)),
-            "selection_reason":"smallest-adequate-resident-then-highest-fallback/post-upload",
+            "selection_reason":"finest-valid-resident/post-upload",
             "ownership":"source/revision/tier, no camera-epoch ownership", "tiers":tiers}),
         )
     }

@@ -54,6 +54,11 @@ cargo run --release --locked -p tack-app
 The preparation step downloads and builds the pinned image decoder locally.
 No generated test corpus is needed to use the application.
 
+Large baseline JPEGs use streamed previews and requested detail tiles. Keep
+the packaged `tack-jpeg-decoder` executable beside Tack when copying a build;
+Cargo and `tools/build-test-bin.sh` prepare this automatically. Large progressive
+JPEGs remain unsupported by the bounded detail path.
+
 Launching opens an empty board. Drop in a few images, use right-click to explore
 commands, and press **Ctrl+S** to save. Open an existing board with:
 

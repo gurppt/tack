@@ -1,4 +1,4 @@
-# Current feature inventory — Phase 1L
+# Current feature inventory — Phase 2A1
 
 Code audit of the local prototype on 2026-10-08, based on `Action::ALL`,
 `product_bindings`, `ImageInput`, annotation/spatial input, local file workers,
@@ -188,14 +188,22 @@ owner tests, but complete native experimental combinations are not claimed.
 Large static noninterlaced PNG sources derive overviews by bounded scanlines.
 NORMAL/LARGE/HUGE_TILED classify checked decoded risk, with a 32 MiB monolithic
 pixel-working allowance and separate capped parser/row scratch. 16-bit precision
-and codec capability affect routing. JPEG retains the previous 6000×4500 guards.
+and codec capability affect routing. Large baseline JPEG now uses bounded
+scanlines and default requested tiles; dimensions exceeding the ordinary route
+select that bounded path. Huge progressive/multiscan JPEG is explicitly refused.
 
-Visible 256-pixel mip tiles are an **opt-in prototype** (`open BOARD --huge-tiles`),
-not ordinary product defaults. Their CPU/GPU/disk residency uses existing budgets;
+Visible PNG 256-pixel mip tiles remain an **opt-in prototype** (`open BOARD --huge-tiles`).
+JPEG tiles are automatic and include a one-pixel Smooth gutter. Their
+CPU/GPU/disk residency uses existing budgets;
 source/revision identities and cancellation reject obsolete results. Sequential
 PNG rescans, nearest-source mip sampling and more visible sources than admitted
 tile slots remain explicit limitations. No complete full-resolution frame or
-pyramid is constructed. See the Phase 1L design note and measurement report.
+pyramid is constructed. Uncached JPEG regions also scan sequentially; cached
+return reuses derived work. Ordinary LOD selection keeps the finest valid
+resident, avoids native upscaling, and requests native small Nearest sources
+within admission budgets. Opt-in diagnostics and long-churn tests cover actual
+resident dimensions and source revisions. See the
+[2A1 report](MISSION_2A1_CORE_IMAGE_REPORT.md) and decoder design note.
 
 Preferences Theme/Scale choices stay inside their submenu for live preview;
 Escape or Back returns to Preferences. Last successful Open/Save As folder uses

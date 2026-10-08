@@ -30,7 +30,9 @@ def prepare(root):
         previous = json.loads(record.read_text())
         library_alias(prefix)
         libraries = list((prefix / "lib").glob("*turbojpeg*.a")) + list((prefix / "lib").glob("*turbojpeg*.lib"))
-        if previous.get("source_sha256") == ARCHIVE_SHA256 and libraries and (prefix / "include/turbojpeg.h").is_file():
+        decoder = prefix / ("bin/djpeg.exe" if (prefix / "bin/djpeg.exe").exists() else "bin/djpeg")
+        if previous.get("source_sha256") == ARCHIVE_SHA256 and libraries and (prefix / "include/turbojpeg.h").is_file() and decoder.is_file():
+            previous["decoder_sha256"] = hashlib.sha256(decoder.read_bytes()).hexdigest()
             previous["library_sha256"] = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in libraries}
             record.write_text(json.dumps(previous, indent=2) + "\n")
             print(prefix)
@@ -64,6 +66,7 @@ def prepare(root):
     # Pure build metadata, never read on the application's frame path.
     record.write_text(json.dumps(dict(version=VERSION, source_url=URL,
         source_sha256=ARCHIVE_SHA256, cmake_command=configure,
+        decoder_sha256=hashlib.sha256(next((prefix / "bin").glob("djpeg*")).read_bytes()).hexdigest(),
         library_sha256={p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in (prefix / "lib").iterdir() if "turbojpeg" in p.name},
         compiler_cache=[line for line in (build / "CMakeCache.txt").read_text().splitlines() if line.startswith("CMAKE_C_COMPILER:")],
         nasm=subprocess.run(["nasm", "-v"], check=True, capture_output=True, text=True).stdout.strip()), indent=2) + "\n")

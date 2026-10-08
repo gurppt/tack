@@ -43,7 +43,7 @@ fn check_cancel(cancel: Option<&AtomicBool>) -> Result<(), AssetError> {
 }
 fn ordinary_edge(edge: u32) -> Result<(), AssetError> {
     if ![8, 16, 32, 64, 128, 512, 2048].contains(&edge) {
-        return Err("tile or unsupported display edge requires static PNG streaming".into());
+        return Err("tile or unsupported display edge requires bounded image streaming".into());
     }
     Ok(())
 }
@@ -72,16 +72,16 @@ pub fn source_fingerprint(path: &Path) -> Result<SourceFingerprint, AssetError> 
 }
 pub fn image_metadata(path: &Path) -> Result<([u32; 2], u64), AssetError> {
     let mut source = CountRead {
-        inner: File::open(path)?,
+        inner: BufReader::with_capacity(8192, File::open(path)?),
         count: 0,
     };
     let format = sniff(&mut source)?;
     let size = if format == Format::Jpeg {
-        let mut d = jpeg_decoder::Decoder::new((&mut source).take(ENCODED_LIMIT));
-        d.set_max_decoding_buffer_size(192 * 1024 * 1024);
-        d.read_info()?;
-        let info = d.info().ok_or("JPEG metadata absent")?;
-        [u32::from(info.width), u32::from(info.height)]
+        let header = crate::jpeg_header::read(&mut source)?;
+        if !header.ordinary() {
+            header.require_streamed()?;
+        }
+        header.size
     } else if format == Format::Png {
         let remaining = crate::huge_image::PNG_ENCODED_LIMIT.saturating_sub(source.count);
         crate::huge_image::png_dimensions(BudgetReader::with_limit(&mut source, remaining, None))?
@@ -96,7 +96,8 @@ pub fn image_metadata(path: &Path) -> Result<([u32; 2], u64), AssetError> {
         let (w, h) = reader.into_dimensions()?;
         [w, h]
     };
-    if format != Format::Png && (size[0] == 0 || size[1] == 0 || size[0] > 6000 || size[1] > 4500) {
+    if format == Format::Other && (size[0] == 0 || size[1] == 0 || size[0] > 6000 || size[1] > 4500)
+    {
         return Err("supported image dimensions are 1..6000 x 1..4500".into());
     }
     Ok((size, source.count))
@@ -163,12 +164,22 @@ pub(crate) fn derive_linked_edge_cancel(
 ) -> Result<(image::RgbaImage, u32), AssetError> {
     check_cancel(cancel)?;
     let mut reader = CountRead {
-        inner: File::open(path)?,
+        inner: BufReader::with_capacity(8192, File::open(path)?),
         count: 0,
     };
     let result = (|| {
         if sniff(&mut reader)? == Format::Jpeg {
-            ordinary_edge(edge)?; // Reject tile tags before native parsing, allocation or casts.
+            let mut header_reader =
+                BudgetReader::with_limit(&mut reader, crate::jpeg_header::ENCODED_LIMIT, cancel);
+            let header = crate::jpeg_header::read(&mut header_reader)?;
+            if crate::huge_image::Tile::from_tag(edge).is_some() || !header.ordinary() {
+                return Ok((
+                    crate::jpeg_scanlines::derive(&mut header_reader, header, edge, cancel)?,
+                    5,
+                ));
+            }
+            ordinary_edge(edge)?;
+            reader.seek(std::io::SeekFrom::Start(0))?;
             let mut bytes = Vec::new();
             BudgetReader::with_limit(&mut reader, ENCODED_LIMIT + 1, cancel)
                 .take(ENCODED_LIMIT + 1)
@@ -179,11 +190,12 @@ pub(crate) fn derive_linked_edge_cancel(
             check_cancel(cancel)?;
             let pixels = NativeThumbnail::with_edge(&bytes, edge)?.decode()?;
             check_cancel(cancel)?;
+            let bounded_edge = edge.min(pixels.width().max(pixels.height()));
             let pixels = image::DynamicImage::ImageRgb8(pixels)
-                .thumbnail(edge, edge)
+                .thumbnail(bounded_edge, bounded_edge)
                 .into_rgba8();
             check_cancel(cancel)?;
-            return Ok((pixels, 1));
+            return Ok((pixels, 7));
         }
         let remaining = crate::huge_image::PNG_ENCODED_LIMIT.saturating_sub(reader.count);
         derive_stream_edge_cancel(
@@ -198,26 +210,29 @@ pub(crate) fn derive_linked_edge_cancel(
     result
 }
 #[cfg(test)]
-pub(crate) fn derive_stream<R: Read + Seek>(
+pub(crate) fn derive_stream<R: Read + Seek + Send>(
     source: &mut R,
 ) -> Result<image::RgbaImage, AssetError> {
     derive_stream_edge(source, 128)
 }
 #[cfg(test)]
-pub(crate) fn derive_stream_edge<R: Read + Seek>(
+pub(crate) fn derive_stream_edge<R: Read + Seek + Send>(
     source: &mut R,
     edge: u32,
 ) -> Result<image::RgbaImage, AssetError> {
     Ok(derive_stream_edge_cancel(source, edge, None)?.0)
 }
-pub(crate) fn derive_stream_edge_cancel<R: Read + Seek>(
+pub(crate) fn derive_stream_edge_cancel<R: Read + Seek + Send>(
     source: &mut R,
     edge: u32,
     cancel: Option<&AtomicBool>,
 ) -> Result<(image::RgbaImage, u32), AssetError> {
     check_cancel(cancel)?;
     // One budget spans probing, metadata and decode, even after seeking back.
-    let mut source = BudgetReader::with_limit(source, crate::huge_image::PNG_ENCODED_LIMIT, cancel);
+    let mut source = BufReader::with_capacity(
+        8192,
+        BudgetReader::with_limit(source, crate::huge_image::PNG_ENCODED_LIMIT, cancel),
+    );
     let format = sniff(&mut source)?;
     if format == Format::Png {
         let (_size, precision_streamed) = crate::huge_image::png_layout(&mut source)?;
@@ -229,43 +244,36 @@ pub(crate) fn derive_stream_edge_cancel<R: Read + Seek>(
         ordinary_edge(edge)?;
         return Ok((
             crate::huge_image::derive_normal(&mut source, edge, cancel)?,
-            4,
+            6,
         ));
     }
-    ordinary_edge(edge)?;
     if format == Format::Jpeg {
-        // Read budget also bounds hostile ICC/APP marker storage, not only output pixels.
-        let mut d = jpeg_decoder::Decoder::new((&mut source).take(ENCODED_LIMIT));
-        d.set_max_decoding_buffer_size(192 * 1024 * 1024);
-        d.read_info()?;
-        let info = d.info().ok_or("JPEG metadata absent")?;
-        if info.width == 0 || info.height == 0 || info.width > 6000 || info.height > 4500 {
-            return Err("source dimensions exceed 6000x4500".into());
+        let header = crate::jpeg_header::read(&mut source)?;
+        if crate::huge_image::Tile::from_tag(edge).is_some() || !header.ordinary() {
+            return Ok((
+                crate::jpeg_scanlines::derive(&mut source, header, edge, cancel)?,
+                5,
+            ));
         }
-        if !matches!(
-            info.pixel_format,
-            jpeg_decoder::PixelFormat::RGB24 | jpeg_decoder::PixelFormat::L8
-        ) {
-            return Err("unsupported JPEG pixel format".into());
+        ordinary_edge(edge)?;
+        source.seek(std::io::SeekFrom::Start(0))?;
+        let mut bytes = Vec::new();
+        (&mut source)
+            .take(ENCODED_LIMIT + 1)
+            .read_to_end(&mut bytes)?;
+        if bytes.len() as u64 > ENCODED_LIMIT {
+            return Err("JPEG exceeds 64 MiB decode input budget".into());
         }
-        d.scale(u16::try_from(edge)?, u16::try_from(edge)?)?;
-        let bytes = d.decode()?;
-        let info = d.info().ok_or("JPEG metadata absent")?;
-        let (w, h) = (u32::from(info.width), u32::from(info.height));
-        let pixels = match info.pixel_format {
-            jpeg_decoder::PixelFormat::RGB24 => image::DynamicImage::ImageRgb8(
-                image::RgbImage::from_raw(w, h, bytes).ok_or("JPEG RGB output")?,
-            ),
-            jpeg_decoder::PixelFormat::L8 => image::DynamicImage::ImageLuma8(
-                image::GrayImage::from_raw(w, h, bytes).ok_or("JPEG grayscale output")?,
-            ),
-            _ => return Err("JPEG pixel format".into()),
-        };
         check_cancel(cancel)?;
-        let pixels = pixels.thumbnail(edge, edge).into_rgba8();
+        let decoded = NativeThumbnail::with_edge(&bytes, edge)?.decode()?;
+        let bounded_edge = edge.min(decoded.width().max(decoded.height()));
+        let pixels = image::DynamicImage::ImageRgb8(decoded)
+            .thumbnail(bounded_edge, bounded_edge)
+            .into_rgba8();
         check_cancel(cancel)?;
-        return Ok((pixels, 2));
+        return Ok((pixels, 7));
     }
+    ordinary_edge(edge)?;
     let mut reader =
         ImageReader::new(BufReader::new(BudgetReader::new(&mut source))).with_guessed_format()?;
     let mut limits = Limits::default();
@@ -274,11 +282,12 @@ pub(crate) fn derive_stream_edge_cancel<R: Read + Seek>(
     limits.max_alloc = Some(192 * 1024 * 1024);
     reader.limits(limits);
     let decoded = reader.decode()?;
-    let thumbnail = decoded.thumbnail(edge, edge);
+    let bounded_edge = edge.min(decoded.width().max(decoded.height()));
+    let thumbnail = decoded.thumbnail(bounded_edge, bounded_edge);
     drop(decoded);
     let pixels = thumbnail.into_rgba8();
     check_cancel(cancel)?;
-    Ok((pixels, 2))
+    Ok((pixels, 8))
 }
 
 /// Bound cumulative parser reads including repeated seeks; storage originals can be larger.
@@ -361,9 +370,9 @@ mod tests {
         let bytes = encode(&image).unwrap();
         let (normal, generator) =
             derive_stream_edge_cancel(&mut Cursor::new(&bytes), 128, None).unwrap();
-        assert_eq!(generator, 4);
-        // The existing image::thumbnail pipeline also enlarges tiny Normal sources.
-        assert_eq!(normal.dimensions(), (128, 69));
+        assert_eq!(generator, 6);
+        // Native-sized sources are never enlarged to satisfy a nominal LOD tier.
+        assert_eq!(normal.dimensions(), (13, 7));
         assert_eq!(normal.get_pixel(0, 0).0, [10, 20, 30, 117]);
         let tag = crate::huge_image::Tile { mip: 0, x: 0, y: 0 }
             .tag()
@@ -399,7 +408,7 @@ mod tests {
     }
 
     #[test]
-    fn jpeg_tile_rejection_precedes_native_parse_and_scale_cast() {
+    fn malformed_jpeg_tile_rejection_precedes_native_spawn_and_scale_cast() {
         let bytes = [0xff, 0xd8, 0xff, 0xd9];
         let tag = crate::huge_image::Tile { mip: 0, x: 0, y: 0 }
             .tag()
@@ -409,16 +418,16 @@ mod tests {
             count: 0,
         };
         let error = derive_stream_edge_cancel(&mut counted, tag, None).unwrap_err();
-        assert!(error.to_string().contains("tile"));
-        assert_eq!(counted.count, 2);
+        assert!(error.to_string().contains("JPEG"));
+        assert!(counted.count <= 16);
         let path = fixture(&bytes);
         let mut read = 0;
         let result = derive_linked_edge_cancel(&path, &mut read, tag, None);
         let mut overflow = u64::MAX;
         let overflow_result = derive_linked_edge_cancel(&path, &mut overflow, tag, None);
         std::fs::remove_file(path).unwrap();
-        assert!(result.unwrap_err().to_string().contains("tile"));
-        assert_eq!(read, 2);
+        assert!(result.unwrap_err().to_string().contains("JPEG"));
+        assert!(read <= 16);
         assert!(
             overflow_result
                 .unwrap_err()
@@ -488,14 +497,14 @@ mod tests {
             block,
         };
         assert!(derive_stream(&mut reader).is_err());
-        assert!(reader.bytes <= ENCODED_LIMIT + 2);
-        assert!(reader.bytes > ENCODED_LIMIT - 65537);
+        assert!(reader.bytes <= crate::jpeg_header::HEADER_LIMIT as u64 + 2);
+        assert!(reader.bytes > crate::jpeg_header::HEADER_LIMIT as u64 - 65537);
     }
     #[test]
     fn sixteen_bit_working_risk_routes_to_rows_while_rgb8_keeps_normal_filtering() {
         for (color, depth, channels, expected) in [
             (png::ColorType::Rgba, png::BitDepth::Sixteen, 8usize, 3),
-            (png::ColorType::Rgb, png::BitDepth::Eight, 3usize, 4),
+            (png::ColorType::Rgb, png::BitDepth::Eight, 3usize, 6),
         ] {
             let mut bytes = Vec::new();
             {

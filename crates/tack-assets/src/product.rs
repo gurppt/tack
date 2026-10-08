@@ -157,6 +157,7 @@ struct Outcome {
     decode_ms: f64,
     cancelled: bool,
     streamed_png: bool,
+    streamed_jpeg: bool,
 }
 struct Worker {
     sender: SyncSender<Job>,
@@ -182,6 +183,7 @@ pub struct ProductAssets {
     current: HashMap<AssetId, u64>,
     sources: HashMap<AssetId, SourceId>,
     streamed_png: HashSet<(SourceId, u64)>,
+    streamed_jpeg: HashSet<(SourceId, u64)>,
     // Keep local supply's fixed cost one pointer; allocate the map only shared.
     #[allow(clippy::box_collection)]
     shared_sources: Option<Box<SharedSourcePaths>>,
@@ -279,6 +281,7 @@ impl ProductAssets {
             current: HashMap::new(),
             sources: HashMap::new(),
             streamed_png: HashSet::new(),
+            streamed_jpeg: HashSet::new(),
             shared_sources: None,
         })
     }
@@ -292,6 +295,8 @@ impl ProductAssets {
                     .is_some_and(|source| source.revision() == *rev)
             });
         }
+        self.streamed_jpeg
+            .retain(|(id, rev)| doc.source(*id).is_some_and(|s| s.revision() == *rev));
         self.streamed_png
             .retain(|(id, rev)| doc.source(*id).is_some_and(|s| s.revision() == *rev));
         self.current.retain(|id, rev| {
@@ -368,8 +373,8 @@ impl ProductAssets {
             shared_path,
             lod,
             edge,
-            cancel: (crate::huge_image::classify_png(asset.pixel_size()).ok()
-                == Some(crate::huge_image::ImageClass::HugeTiled))
+            cancel: (crate::huge_image::Tile::from_tag(edge).is_some()
+                || crate::huge_image::requires_streaming(asset.pixel_size()).unwrap_or(true))
             .then(|| Arc::new(AtomicBool::new(false))),
         })
     }
@@ -545,6 +550,9 @@ impl ProductAssets {
                 self.stats.discarded += 1;
                 continue;
             }
+            if o.streamed_jpeg {
+                self.streamed_jpeg.insert((o.key.source, o.key.revision));
+            }
             if o.streamed_png {
                 self.streamed_png.insert((o.key.source, o.key.revision));
             }
@@ -649,11 +657,31 @@ impl ProductAssets {
         self.stats
     }
     pub fn supports_tiles(&self, source: SourceId, revision: u64) -> bool {
-        self.streamed_png.contains(&(source, revision))
+        (self.streamed_png.contains(&(source, revision))
+            || self.streamed_jpeg.contains(&(source, revision)))
             && matches!(
                 self.states.get(&source),
                 Some(SourceState::Available | SourceState::Embedded)
             )
+    }
+    pub fn supports_jpeg_tiles(&self, source: SourceId, revision: u64) -> bool {
+        self.streamed_jpeg.contains(&(source, revision)) && self.supports_tiles(source, revision)
+    }
+    /// Actual source-shared resident pixels, without refreshing eviction order.
+    /// Aliases may declare inconsistent sizes; reservations must include reality.
+    pub fn detail_pixel_size(&self, source: SourceId, revision: u64, lod: Lod) -> Option<[u32; 2]> {
+        if lod == Lod::Thumbnail {
+            return None;
+        }
+        self.details
+            .peek(Key {
+                asset: None,
+                source,
+                revision,
+                lod,
+                edge: lod.edge(),
+            })
+            .map(|image| [image.width, image.height])
     }
     pub fn failed_rep(&self, id: AssetId, lod: Lod, edge: u32) -> bool {
         self.current
@@ -705,6 +733,7 @@ fn load(job: Job, base: &Path, dir: &Path, disk: &Mutex<crate::decode::DiskCache
         decode_ms: 0.,
         cancelled: false,
         streamed_png: false,
+        streamed_jpeg: false,
     };
     let result = (|| -> Result<Decoded, AssetError> {
         let source = source.ok_or("missing asset metadata")?;
@@ -763,7 +792,11 @@ fn load(job: Job, base: &Path, dir: &Path, disk: &Mutex<crate::decode::DiskCache
                 representation::decode_png(&bytes, Some([e.width, e.height]))
                     .map_err(|_| tack_storage::StorageError::Corrupt("overview encoding"))
             }) {
-                return resize(image, job.edge);
+                return resize(
+                    image,
+                    job.edge
+                        .min(job.asset.pixel_size()[0].max(job.asset.pixel_size()[1])),
+                );
             }
         }
         let cache_path = |generator| {
@@ -796,23 +829,41 @@ fn load(job: Job, base: &Path, dir: &Path, disk: &Mutex<crate::decode::DiskCache
             } else {
                 job.edge
             };
-            for generator in [3, 4, 1, 2] {
+            for generator in [5, 6, 3, 7, 8] {
                 let file = cache_path(generator);
                 if let Ok(input) = File::open(&file) {
                     use std::io::Read;
                     let mut bytes = Vec::new();
                     input
-                        .take(u64::from(raster_edge).pow(2) * 5 + 1)
+                        .take(u64::from(raster_edge + 2).pow(2) * 5 + 1)
                         .read_to_end(&mut bytes)?;
                     outcome.repair_cache_bytes += bytes.len() as u64;
-                    if let Ok(image) = decode_cached_png(&bytes, raster_edge) {
+                    if let Ok(image) = decode_cached_png(
+                        &bytes,
+                        raster_edge
+                            + u32::from(
+                                generator == 5
+                                    && crate::huge_image::Tile::from_tag(job.edge).is_some(),
+                            ) * 2,
+                    ) {
+                        if representation_layout(&job, [image.width, image.height]).is_err() {
+                            std::fs::remove_file(&file)?;
+                            continue;
+                        }
                         outcome.streamed_png = generator == 3;
+                        outcome.streamed_jpeg = generator == 5;
                         outcome.prepared = (job.lod == Lod::Thumbnail && job.edge == 128)
                             .then_some(PreparedOverview {
                                 asset: id,
                                 revision: s.revision(),
                                 size: [image.width, image.height],
-                                generator: generator.min(2),
+                                generator: if generator == 7
+                                    && outcome.state != SourceState::Embedded
+                                {
+                                    1
+                                } else {
+                                    2
+                                },
                                 path: file.clone(),
                             });
                         outcome.repair_cache_hit = true;
@@ -837,6 +888,7 @@ fn load(job: Job, base: &Path, dir: &Path, disk: &Mutex<crate::decode::DiskCache
                 return Err("source changed during derivation".into());
             }
             outcome.streamed_png = generator == 3;
+            outcome.streamed_jpeg = generator == 5;
             (pixels, generator)
         } else if outcome.state == SourceState::Embedded {
             let mut reader = CountRead {
@@ -859,10 +911,12 @@ fn load(job: Job, base: &Path, dir: &Path, disk: &Mutex<crate::decode::DiskCache
             outcome.container_bytes += reader.count;
             let (pixels, generator) = result?;
             outcome.streamed_png = generator == 3;
+            outcome.streamed_jpeg = generator == 5;
             (pixels, generator)
         } else {
             return Err("no available source or stored last-known preview".into());
         };
+        representation_layout(&job, [pixels.width(), pixels.height()])?;
         let file = cache_path(generator);
         let stored = (|| -> Result<bool, AssetError> {
             let bytes = representation::encode(&pixels)?;
@@ -899,7 +953,11 @@ fn load(job: Job, base: &Path, dir: &Path, disk: &Mutex<crate::decode::DiskCache
                 asset: id,
                 revision: s.revision(),
                 size: [pixels.width(), pixels.height()],
-                generator: generator.min(2),
+                generator: if generator == 7 && outcome.state != SourceState::Embedded {
+                    1
+                } else {
+                    2
+                },
                 path: file,
             });
         }
@@ -918,6 +976,21 @@ fn load(job: Job, base: &Path, dir: &Path, disk: &Mutex<crate::decode::DiskCache
         .as_ref()
         .is_some_and(|c| c.load(Ordering::Relaxed));
     outcome
+}
+
+/// Worker publication must satisfy the planner's declared-source reservation.
+/// A small valid PNG stored under a large tier is also not sufficient detail.
+fn representation_layout(job: &Job, size: [u32; 2]) -> Result<(), AssetError> {
+    if job.lod == Lod::Thumbnail || crate::huge_image::Tile::from_tag(job.edge).is_some() {
+        return Ok(());
+    }
+    let declared = job.asset.pixel_size();
+    let bounds = declared.map(|n| n.min(job.edge));
+    let longest = declared[0].max(declared[1]).min(job.edge);
+    if size.contains(&0) || (0..2).any(|i| size[i] > bounds[i]) || size[0].max(size[1]) != longest {
+        return Err("representation dimensions disagree with declared source/tier; verify or relink the source".into());
+    }
+    Ok(())
 }
 
 fn decode_cached_png(bytes: &[u8], raster_edge: u32) -> Result<Decoded, AssetError> {

@@ -61,6 +61,7 @@ jobs:
           cargo test -p tack-render --test selection_gpu --locked -- --ignored
           cargo test -p tack-render --test product_gpu --locked -- --include-ignored
           cargo test -p tack-app --test lod_convergence --locked -- --ignored --test-threads=1
+          cargo test -p tack-app --test lod_long_churn --locked -- --ignored --test-threads=1
   dependencies:
     runs-on: ubuntu-latest
     steps:

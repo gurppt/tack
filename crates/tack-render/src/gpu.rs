@@ -33,6 +33,7 @@ struct Vertex {
 }
 
 struct Texture {
+    size: [u32; 2],
     bind_group: wgpu::BindGroup,
     nearest: wgpu::BindGroup,
 }
@@ -404,6 +405,7 @@ impl Gpu {
             })
         };
         Texture {
+            size: [image.width, image.height],
             bind_group: make_group(sampler),
             nearest: make_group(nearest_sampler),
         }
@@ -447,6 +449,17 @@ impl Gpu {
         } else {
             self.textures.contains(TextureKey::Product(key))
         }
+    }
+    /// Actual resident dimensions for opt-in supply diagnostics; no LRU touch.
+    pub fn product_size(&self, key: ProductKey) -> Option<[u32; 2]> {
+        let cache = if key.lod == Lod::Thumbnail {
+            &self.thumbnails
+        } else {
+            &self.textures
+        };
+        cache
+            .peek(TextureKey::Product(key))
+            .map(|texture| texture.size)
     }
     /// Release document-derived textures when reusing a fresh window.
     pub fn clear_products(&mut self) {

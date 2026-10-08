@@ -240,7 +240,8 @@ pub(crate) fn derive_normal<R: Read + Seek>(
     if cancel.is_some_and(|c| c.load(Ordering::Relaxed)) {
         return Err("PNG decode cancelled".into());
     }
-    let thumbnail = decoded.thumbnail(edge, edge);
+    let target = edge.min(w.max(h));
+    let thumbnail = decoded.thumbnail(target, target);
     drop(decoded);
     Ok(thumbnail.into_rgba8())
 }

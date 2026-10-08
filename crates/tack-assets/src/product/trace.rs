@@ -24,6 +24,7 @@ pub struct RepTrace {
     pub lod: Lod,
     pub edge: u32,
     pub cpu_resident: bool,
+    pub pixel_size: Option<[u32; 2]>,
     pub active_codec_worker: Option<usize>,
     pub queued: bool,
     pub wanted: bool,
@@ -54,6 +55,13 @@ impl ProductAssets {
             lod,
             edge,
             cpu_resident: self.cached(key),
+            pixel_size: (if lod == Lod::Thumbnail {
+                &self.cache
+            } else {
+                &self.details
+            })
+            .peek(key)
+            .map(|image| [image.width, image.height]),
             active_codec_worker: self.pending.get(&key).copied(),
             queued: self.queue.iter().any(|j| j.key() == key),
             wanted: self.wanted.contains(&key),

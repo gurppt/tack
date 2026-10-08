@@ -1,4 +1,4 @@
-//! Opt-in bounded PNG tile prototype. Coarse fallback remains until admitted tiles converge.
+//! Bounded JPEG tiles and opt-in PNG tiles. Fallback remains until admitted tiles converge.
 use super::*;
 use tack_assets::huge_image::{self, TILE_EDGE, Tile};
 use tack_core::{Crop, ImageRenderData, Transform};
@@ -12,6 +12,10 @@ pub(super) struct Tiles {
     pub requested: usize,
     pub ready: usize,
 }
+pub(super) struct TilePolicy {
+    pub reserved: usize,
+    pub png: bool,
+}
 impl Tiles {
     pub fn plan(
         draws: &[DrawProductImage],
@@ -19,9 +23,13 @@ impl Tiles {
         doc: &tack_core::Document,
         assets: &ProductAssets,
         gpu: &Gpu,
-        reserved: usize,
+        policy: TilePolicy,
         demands: &mut Vec<ProductDemand>,
     ) -> Self {
+        let TilePolicy {
+            reserved,
+            png: png_opt_in,
+        } = policy;
         let budget = if assets.limits().workers == 1 {
             8 * 1024 * 1024usize
         } else {
@@ -30,7 +38,7 @@ impl Tiles {
         let mut slots = budget
             .saturating_sub(reserved)
             .min(assets.limits().cpu_bytes / 4)
-            / (TILE_EDGE as usize).pow(2)
+            / (TILE_EDGE as usize + 2).pow(2)
             / 4;
         slots = slots.min(64).min(10000usize.saturating_sub(draws.len()));
         let mut eligible = draws
@@ -38,9 +46,8 @@ impl Tiles {
             .filter(|draw| {
                 doc.asset(draw.data.asset_id)
                     .and_then(|a| doc.source(a.source_id()))
-                    .is_some_and(|s| assets.supports_tiles(s.id(), s.revision()))
-                    && tack_app::supply_plan::projected_edge(draw.data.transform, camera.zoom())
-                        > f64::from(assets.limits().max_lod.edge())
+                    .is_some_and(|s| eligible_source(assets, s.id(), s.revision(), png_opt_in))
+                    && detail_density(draw.data, camera) > f64::from(assets.limits().max_lod.edge())
             })
             .count();
         let mut result = Self {
@@ -59,10 +66,9 @@ impl Tiles {
                 continue;
             };
             let size = asset.pixel_size();
-            let projected =
-                tack_app::supply_plan::projected_edge(draw.data.transform, camera.zoom());
-            if !assets.supports_tiles(source.id(), source.revision())
-                || projected <= f64::from(assets.limits().max_lod.edge())
+            let density = detail_density(draw.data, camera);
+            if !eligible_source(assets, source.id(), source.revision(), png_opt_in)
+                || density <= f64::from(assets.limits().max_lod.edge())
             {
                 continue;
             }
@@ -71,8 +77,6 @@ impl Tiles {
             if quota == 0 {
                 continue;
             }
-            let crop = draw.data.crop.uv_rect();
-            let density = projected / crop[2].min(crop[3]).max(1e-9);
             let Ok(mut mip) = huge_image::mip_for_density(size, density) else {
                 continue;
             };
@@ -85,7 +89,23 @@ impl Tiles {
                 }
                 mip += 1;
             }
-            for (tile, data) in selected {
+            for (tile, mut data) in selected {
+                if assets.supports_jpeg_tiles(source.id(), source.revision()) {
+                    let Ok(dimensions) = tile.dimensions(size) else {
+                        continue;
+                    };
+                    let uv = data.crop.uv_rect();
+                    let padded = dimensions.map(|axis| f64::from(axis + 2));
+                    let Ok(crop) = Crop::new(
+                        (1. + uv[0] * f64::from(dimensions[0])) / padded[0],
+                        (1. + uv[1] * f64::from(dimensions[1])) / padded[1],
+                        uv[2] * f64::from(dimensions[0]) / padded[0],
+                        uv[3] * f64::from(dimensions[1]) / padded[1],
+                    ) else {
+                        continue;
+                    };
+                    data.crop = crop;
+                }
                 let Ok(edge) = tile.tag() else {
                     continue;
                 };
@@ -172,6 +192,20 @@ impl Tiles {
         *draws = output;
         pending
     }
+}
+fn eligible_source(
+    assets: &ProductAssets,
+    source: tack_core::SourceId,
+    revision: u64,
+    png_opt_in: bool,
+) -> bool {
+    assets.supports_jpeg_tiles(source, revision)
+        || (png_opt_in && assets.supports_tiles(source, revision))
+}
+fn detail_density(data: ImageRenderData, camera: &Camera) -> f64 {
+    let crop = data.crop.uv_rect();
+    tack_app::supply_plan::projected_edge(data.transform, camera.zoom())
+        / crop[2].min(crop[3]).max(1e-9)
 }
 fn visible_uv(data: ImageRenderData, camera: &Camera) -> [f64; 4] {
     let view = camera.viewport();
@@ -289,6 +323,20 @@ mod tests {
             opacity: tack_core::Opacity::OPAQUE,
             filtering: tack_core::ImageFiltering::Smooth,
         }
+    }
+    #[test]
+    fn cropped_huge_source_demands_tiles_below_uncropped_tier_threshold() {
+        let mut d = data([false; 2], 0., Crop::new(0.4, 0., 0.005, 1.).unwrap());
+        d.transform = Transform::new([0.; 2], [800., 400.], 0., [false; 2]).unwrap();
+        let camera = Camera::new([800, 600]);
+        assert_eq!(
+            tack_app::supply_plan::projected_edge(d.transform, camera.zoom()),
+            800.
+        );
+        assert!(detail_density(d, &camera) > 2048.);
+        let tiles = regions(d, [50000, 512], visible_uv(d, &camera), 0, 64);
+        assert!(!tiles.is_empty());
+        assert!(tiles.iter().all(|(tile, _)| tile.x >= 78 && tile.x <= 79));
     }
     #[test]
     fn visible_tiles_bound_admission_and_preserve_flipped_rotated_crop() {

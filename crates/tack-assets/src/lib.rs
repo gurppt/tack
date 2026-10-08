@@ -1,6 +1,8 @@
 //! Bounded asynchronous display-image pipeline.
 mod board;
 mod decode;
+mod jpeg_header;
+mod jpeg_scanlines;
 mod loader;
 mod native_thumbnail;
 mod preparation;

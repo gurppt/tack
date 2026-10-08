@@ -15,13 +15,16 @@ binary=$(mktemp bin/.tack.XXXXXX)
 server=$(mktemp bin/.tack-server.XXXXXX)
 stamp=$(mktemp bin/.BUILD.XXXXXX)
 artwork=$(mktemp bin/.about.XXXXXX)
-trap 'rm -f "$binary" "$server" "$stamp" "$artwork"' EXIT
+decoder=$(mktemp bin/.jpeg.XXXXXX)
+trap 'rm -f "$binary" "$server" "$stamp" "$artwork" "$decoder"' EXIT
 target_dir=$(cargo metadata --locked --offline --no-deps --format-version 1 | python3 -c 'import json,sys; print(json.load(sys.stdin)["target_directory"])')
 cp "$target_dir/release/tack-app" "$binary"
 chmod 755 "$binary"
 cp "$target_dir/release/tack-server" "$server"
 chmod 755 "$server"
 cp "$target_dir/release/tack-about.png" "$artwork"
+cp "$target_dir/release/tack-jpeg-decoder" "$decoder"
+chmod 755 "$decoder"
 dirty=false
 if [ -n "$(git status --porcelain)" ]; then dirty=true; fi
 {
@@ -31,9 +34,11 @@ if [ -n "$(git status --porcelain)" ]; then dirty=true; fi
     printf 'sha256: %s\n' "$(sha256sum "$binary" | cut -d ' ' -f 1)"
     printf 'server_sha256: %s\n' "$(sha256sum "$server" | cut -d ' ' -f 1)"
     printf 'about_asset_sha256: %s\n' "$(sha256sum "$artwork" | cut -d ' ' -f 1)"
+    printf 'jpeg_decoder_sha256: %s\n' "$(sha256sum "$decoder" | cut -d ' ' -f 1)"
     printf 'checkpoint: %s\n' "${1:-current workspace}"
 } > "$stamp"
 mv -f "$artwork" bin/tack-about.png
+mv -f "$decoder" bin/tack-jpeg-decoder
 mv -f "$binary" bin/tack
 mv -f "$server" bin/tack-server
 mv -f "$stamp" bin/BUILD.txt

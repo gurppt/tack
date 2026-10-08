@@ -1,4 +1,4 @@
-# Bounded PNG supply and opt-in tiles — Phase 1L
+# Bounded image supply — Phase 2A1
 
 Phase 1L streams large static PNGs into small display products. Regional tiles
 remain an opt-in prototype: `--huge-tiles`. Default opening uses overview-first
@@ -125,13 +125,33 @@ to keep tiles opt-in. The prototype proves bounded selected demand and source
 authority; it is not a production random-access image pyramid. Optional Bézier
 arrows and endpoint attachments were deferred to protect this scope.
 
-JPEG keeps the existing reduced DCT path with the current safe wrapper. Sources
-remain limited to 6000×4500, at most 64 MiB encoded input and 32 MiB native RGB
-output, with a 100-scan limit. Progressive JPEG scratch can remain proportional
-to full source dimensions; reduced output alone does not bound that scratch.
-The safe wrapper does not provide a proven bounded regional decoder. Larger
-JPEGs and JPEG tile requests are refused, rather than routed into full decoding.
-The 8192–50000 JPEG sweep therefore measures refusal, not JPEG tiling support.
+Phase 2A1 adds **default bounded JPEG tiles**, while PNG tiles remain opt-in.
+Ordinary JPEG uses the existing safe reduced-DCT wrapper (64 MiB encoded,
+32 MiB RGB output); progressive/multiscan coefficient scratch has a separate
+192 MiB checked allowance. Larger JPEG routes to the pinned native `djpeg`
+helper on image workers: reduced-DCT overview, streamed RGB rows and requested
+256-pixel mip tiles. Each JPEG tile includes a one-pixel gutter for Smooth,
+at most 258² RGBA pixels. Tile admission conservatively reserves that size.
+Crop-adjusted demand also controls tile eligibility.
+
+The large route accepts 8-bit interleaved single-scan baseline RGB/grayscale,
+bounded header/input/row/output work, and the codec's own 65,500-axis limit.
+Large progressive and split-component scans are explicitly refused before
+native decoding. The accepted baseline native scratch envelope is checked
+separately from Rust buffers, caches and process RSS. Every uncached region
+still scans the sequential entropy stream; valid derived-cache hits reuse
+requested regions. There is no complete frame or persistent pyramid.
+See the [decoder boundary](jpeg_decoder_boundary.md) for exact limits, source
+inspection, cancellation, packaging and scratch accounting, and the
+[2A1 report](../MISSION_2A1_CORE_IMAGE_REPORT.md) for measured acceptance.
+
+Ordinary representations now stop at native dimensions. Generator IDs 6/7/8
+replace legacy upscaled PNG/JPEG/other cache products; JPEG tile products use
+5, and streamed PNG remains 3. After upload/eviction, selection keeps the finest
+valid resident for the current source/revision. Small Nearest sources at most
+512 pixels request budget-admitted native Medium pixels even below the preview
+threshold. Local Default sampling resolves the active preference before demand
+and rendering. No LOD diagnostic or codec timer runs on a settled board.
 
 ## Shared runtime budgets
 

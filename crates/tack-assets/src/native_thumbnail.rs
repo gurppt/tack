@@ -35,18 +35,46 @@ impl<'a> NativeThumbnail<'a> {
     }
 
     /// Bounded display decode; never selects full resolution merely on zoom.
-    pub fn with_edge(encoded: &'a [u8], edge: u32) -> Result<Self, AssetError> {
+    pub fn with_edge(mut encoded: &'a [u8], edge: u32) -> Result<Self, AssetError> {
         if ![8, 16, 32, 64, 128, 512, 2048].contains(&edge) {
             return Err("invalid JPEG display edge".into());
         }
         if encoded.is_empty() || encoded.len() > MAX_SOURCE {
             return Err("JPEG encoded input is empty or exceeds 64 MiB".into());
         }
+        let original = encoded;
+        let validated = crate::jpeg_header::read(&mut encoded)?;
+        encoded = original;
+        // Progressive or non-interleaved sequential JPEG needs source-sized
+        // coefficients even with reduced DCT. Bound that separately from output.
+        if !validated.baseline_interleaved {
+            let coefficients = u64::from(validated.size[0])
+                .div_ceil(96)
+                .checked_mul(96)
+                .and_then(|w| {
+                    u64::from(validated.size[1])
+                        .div_ceil(96)
+                        .checked_mul(96)
+                        .and_then(|h| w.checked_mul(h))
+                })
+                .and_then(|n| n.checked_mul(6))
+                .and_then(|n| n.checked_add(validated.scratch_bound))
+                .ok_or("JPEG coefficient scratch arithmetic")?;
+            if coefficients > 192 * 1024 * 1024 {
+                return Err(
+                    "JPEG progressive/multiscan coefficient scratch exceeds 192 MiB bound".into(),
+                );
+            }
+        }
         let mut decoder = Decompressor::new()?;
         decoder.set_scan_limit(100)?;
         let header = decoder.read_header(encoded)?;
-        if header.width == 0 || header.height == 0 || header.width > 6000 || header.height > 4500 {
-            return Err("source dimensions exceed 6000x4500".into());
+        if header.width == 0
+            || header.height == 0
+            || header.width > crate::jpeg_header::CODEC_MAX_AXIS as usize
+            || header.height > crate::jpeg_header::CODEC_MAX_AXIS as usize
+        {
+            return Err("JPEG dimensions exceed codec limit".into());
         }
         if header.is_lossless
             || header.is_arithmetic

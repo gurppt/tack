@@ -174,7 +174,7 @@ fn deferred_shared_source_admits_no_codec_or_io_until_verified_supply_arrives() 
     assets.schedule();
     settle_view(&mut assets);
     let image = assets.get(f.asset).unwrap();
-    assert_eq!([image.width, image.height], [128, 85]);
+    assert_eq!([image.width, image.height], [96, 64]);
     assert!(!image.rgba.is_empty());
     assert_eq!(assets.states[&f.source], SourceState::Available);
     assert_eq!(assets.stats().codec_requests, 1);
@@ -297,7 +297,7 @@ fn embedded_original_survives_deletion_and_preview_repairs_without_external_io()
     assert_eq!(a.stats().regenerated, 1);
     assert_eq!(a.stats().source_bytes, 0);
     assert!(a.stats().container_bytes > 0);
-    assert_eq!(a.get(f.asset).unwrap().rgba.len(), 128 * 85 * 4);
+    assert_eq!(a.get(f.asset).unwrap().rgba.len(), 96 * 64 * 4);
 }
 #[test]
 fn jpeg_metadata_and_native_generator_use_existing_tier() {
@@ -905,7 +905,7 @@ fn delayed_zoom_result_cannot_suppress_the_new_tier_or_return_to_detail() {
     a.replace_view(&demand(Lod::Detail), &f.document, &Default::default());
     a.schedule();
     settle_view(&mut a);
-    assert_eq!(a.get_lod(f.asset, 1, Lod::Detail).unwrap().width, 2048);
+    assert_eq!(a.get_lod(f.asset, 1, Lod::Detail).unwrap().width, 900);
     assert_eq!(a.stats().pending, 0);
     assert!(a.stats().peak_pending <= a.limits().requests);
     assert!(a.stats().cpu_peak <= a.limits().cpu_bytes);
@@ -1139,4 +1139,297 @@ fn cancelled_huge_tile_can_be_requested_again() {
     assert!(assets.get_rep(f.asset, 2, Lod::Detail, edge).is_some());
     assert!(assets.supports_tiles(f.source, 2));
     assert_eq!(assets.stats().errors, 0);
+}
+
+#[test]
+fn long_worker_cache_churn_readmits_native_pixels_without_saved_authority_changes() {
+    use tack_assets::{ProductDemand, SupplyLimits};
+    let mut f = Fixture::sized(false, [192, 128]);
+    let mut ids = vec![f.asset];
+    for _ in 0..15 {
+        let source = new_source_id().unwrap();
+        let asset = new_asset_id().unwrap();
+        f.document
+            .apply(Command::AddSource(
+                Source::from_descriptor(
+                    source,
+                    SourceLocation::Linked(LinkedPath::native(Path::new("source.png")).unwrap()),
+                    1,
+                    Some(source_fingerprint(&f.root.join("source.png")).unwrap()),
+                )
+                .unwrap(),
+            ))
+            .unwrap();
+        f.document
+            .apply(Command::AddAsset(
+                ImageAsset::new(asset, source, [192, 128]).unwrap(),
+            ))
+            .unwrap();
+        ids.push(asset);
+    }
+    f.seed();
+    let path = f.root.join("seed.tack");
+    let metadata_before = encode_metadata(&f.document).unwrap();
+    let mut assets = ProductAssets::with_limits(
+        Arc::new(TackFile::open(&path).unwrap()),
+        &path,
+        f.root.join("long-churn"),
+        SupplyLimits {
+            cpu_bytes: 1024 * 1024,
+            workers: 1,
+            requests: 4,
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    assets.enable_lod_diagnostics();
+    for turn in 0..1200 {
+        let asset = ids[turn % ids.len()];
+        let lod = if turn % 2 == 0 {
+            Lod::Medium
+        } else {
+            Lod::Detail
+        };
+        let demands = [
+            ProductDemand {
+                asset,
+                lod: Lod::Thumbnail,
+                edge: 128,
+                priority: 0,
+                resident: false,
+            },
+            ProductDemand {
+                asset,
+                lod,
+                edge: lod.edge(),
+                priority: 2,
+                resident: false,
+            },
+        ];
+        assets.replace_view(&demands, &f.document, &Default::default());
+        settle_view(&mut assets);
+        assert!(
+            assets.get_rep(asset, 1, lod, lod.edge()).is_some(),
+            "turn {turn}, {:?}, {:?}",
+            assets.stats(),
+            assets.rep_trace(asset, 1, lod, lod.edge())
+        );
+        let image = assets.get_rep(asset, 1, lod, lod.edge()).unwrap();
+        assert_eq!(
+            [image.width, image.height],
+            [192, 128],
+            "native pixels at transition {turn}"
+        );
+        let trace = assets.rep_trace(asset, 1, lod, lod.edge()).unwrap();
+        assert_eq!(trace.pixel_size, Some([192, 128]));
+        assert!(trace.cpu_resident && !trace.queued && trace.active_codec_worker.is_none());
+        assert!(trace.publication.is_some_and(|(_, valid)| valid));
+        assert!(assets.stats().cpu_peak <= assets.limits().cpu_bytes);
+        assert!(assets.stats().peak_pending <= assets.limits().requests);
+    }
+    assert!(assets.stats().completed >= 2400);
+    assert!(assets.stats().evictions >= 2000);
+    assert_eq!(assets.stats().pending, 0);
+    assert_eq!(encode_metadata(&f.document).unwrap(), metadata_before);
+    save(f.root.join("reopen.tack"), &f.document, vec![]).unwrap();
+    let reopened = TackFile::open(f.root.join("reopen.tack")).unwrap();
+    assert_eq!(
+        encode_metadata(&reopened.document).unwrap(),
+        metadata_before
+    );
+}
+
+#[test]
+fn old_upsampled_png_cache_cannot_poison_native_detail_readmission() {
+    use tack_assets::{ProductDemand, SupplyLimits};
+    let f = Fixture::sized(false, [192, 128]);
+    f.seed();
+    let path = f.root.join("seed.tack");
+    let cache = f.root.join("old-generator-cache");
+    fs::create_dir(&cache).unwrap();
+    // Phase2A generator4 upscaled this native192x128 source to2048x1365.
+    // Its unchanged source/revision key must not win after the new clamp.
+    let historical = cache.join(format!("{:032x}-1-4-2048.png", f.source.value()));
+    image::RgbImage::from_pixel(2048, 1365, image::Rgb([128, 128, 128]))
+        .save(historical)
+        .unwrap();
+    let mut assets = ProductAssets::with_limits(
+        Arc::new(TackFile::open(&path).unwrap()),
+        &path,
+        cache,
+        SupplyLimits {
+            cpu_bytes: 1024 * 1024,
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    assets.replace_view(
+        &[ProductDemand {
+            asset: f.asset,
+            lod: Lod::Detail,
+            edge: 2048,
+            priority: 2,
+            resident: false,
+        }],
+        &f.document,
+        &Default::default(),
+    );
+    settle_view(&mut assets);
+    assert!(!assets.failed_lod(f.asset, Lod::Detail));
+    let native = assets.get_lod(f.asset, 1, Lod::Detail).unwrap();
+    assert_eq!([native.width, native.height], [192, 128]);
+    assert_eq!(assets.stats().repair_cache_hits, 0);
+    assert!(assets.stats().source_bytes > 0);
+    assert!(assets.stats().cpu_peak <= assets.limits().cpu_bytes);
+}
+
+#[test]
+fn poisoned_current_generator_detail_sizes_regenerate_and_cannot_misstate_lod() {
+    use tack_assets::ProductDemand;
+    for bad in [[8, 8], [512, 256]] {
+        let f = Fixture::new(false);
+        f.seed();
+        let path = f.root.join("seed.tack");
+        let cache = f.root.join("current-generator-cache");
+        fs::create_dir(&cache).unwrap();
+        let file = cache.join(format!("{:032x}-1-6-512.png", f.source.value()));
+        image::RgbImage::from_pixel(bad[0], bad[1], image::Rgb([99, 99, 99]))
+            .save(&file)
+            .unwrap();
+        let mut assets =
+            ProductAssets::new(Arc::new(TackFile::open(&path).unwrap()), &path, cache).unwrap();
+        assets.replace_view(
+            &[ProductDemand {
+                asset: f.asset,
+                lod: Lod::Medium,
+                edge: 512,
+                priority: 1,
+                resident: false,
+            }],
+            &f.document,
+            &Default::default(),
+        );
+        settle_view(&mut assets);
+        let image = assets.get_rep(f.asset, 1, Lod::Medium, 512).unwrap();
+        assert_eq!([image.width, image.height], [96, 64]);
+        assert_eq!(assets.stats().repair_cache_hits, 0);
+        assert!(assets.stats().source_bytes > 0);
+        assert_eq!(image::image_dimensions(&file).unwrap(), (96, 64));
+        assert!(!assets.failed_lod(f.asset, Lod::Medium));
+    }
+}
+#[test]
+fn forged_native_asset_size_fails_detail_once_before_cache_publication() {
+    use tack_assets::ProductDemand;
+    let mut f = Fixture::new(false);
+    image::RgbImage::from_pixel(512, 256, image::Rgb([77, 11, 99]))
+        .save(f.root.join("source.png"))
+        .unwrap();
+    let source = Source::from_descriptor(
+        f.source,
+        SourceLocation::Linked(LinkedPath::native(Path::new("source.png")).unwrap()),
+        2,
+        Some(source_fingerprint(&f.root.join("source.png")).unwrap()),
+    )
+    .unwrap();
+    f.document.apply(Command::SetSource(source)).unwrap();
+    f.seed();
+    let (_, mut assets) = f.load("seed.tack");
+    let demand = [ProductDemand {
+        asset: f.asset,
+        lod: Lod::Medium,
+        edge: 512,
+        priority: 1,
+        resident: false,
+    }];
+    assets.replace_view(&demand, &f.document, &Default::default());
+    settle_view(&mut assets);
+    assert!(assets.get_rep(f.asset, 2, Lod::Medium, 512).is_none());
+    assert!(assets.failed_lod(f.asset, Lod::Medium));
+    assert_eq!(assets.stats().errors, 1);
+    assert_eq!(assets.stats().derived_bytes, 0);
+    assert_eq!(assets.stats().cpu_bytes, 0);
+    let completed = assets.stats().completed;
+    for _ in 0..10 {
+        assets.replace_view(&demand, &f.document, &Default::default());
+        assets.schedule();
+        assets.poll();
+    }
+    assert_eq!(assets.stats().pending, 0);
+    assert_eq!(assets.stats().completed, completed);
+}
+#[test]
+fn vintage_upsampled_persisted_overview_is_clamped_before_native_publication() {
+    let f = Fixture::new(false);
+    let old = f.root.join("old-overview.png");
+    image::RgbImage::from_pixel(128, 85, image::Rgb([41, 51, 61]))
+        .save(&old)
+        .unwrap();
+    save(
+        f.root.join("legacy.tack"),
+        &f.document,
+        vec![BlobInput::overview(
+            f.asset,
+            1,
+            [128, 85],
+            2,
+            Payload::File(old),
+        )],
+    )
+    .unwrap();
+    let (board, mut assets) = f.load("legacy.tack");
+    f.wait(&mut assets);
+    let image = assets.get(f.asset).unwrap();
+    assert_eq!([image.width, image.height], [96, 64]);
+    assert_eq!(assets.stats().source_bytes, 0);
+    assert_eq!(assets.stats().errors, 0);
+    assert_eq!(board.document, f.document);
+}
+
+#[test]
+fn source_shared_alias_reports_actual_resident_size_without_redecoding_small_declared_alias() {
+    use tack_assets::ProductDemand;
+    let mut f = Fixture::sized(false, [768, 512]);
+    let alias = new_asset_id().unwrap();
+    f.document
+        .apply(Command::AddAsset(
+            ImageAsset::new(alias, f.source, [96, 64]).unwrap(),
+        ))
+        .unwrap();
+    f.seed();
+    let (_, mut assets) = f.load("seed.tack");
+    let first = [ProductDemand {
+        asset: f.asset,
+        lod: Lod::Medium,
+        edge: 512,
+        priority: 1,
+        resident: false,
+    }];
+    assets.replace_view(&first, &f.document, &Default::default());
+    settle_view(&mut assets);
+    assert_eq!(
+        assets.detail_pixel_size(f.source, 1, Lod::Medium),
+        Some([512, 341])
+    );
+    let completed = assets.stats().completed;
+    let second = [ProductDemand {
+        asset: alias,
+        lod: Lod::Medium,
+        edge: 512,
+        priority: 1,
+        resident: false,
+    }];
+    assets.replace_view(&second, &f.document, &Default::default());
+    settle_view(&mut assets);
+    assert_eq!(f.document.asset(alias).unwrap().pixel_size(), [96, 64]);
+    let pixels = assets.get_rep(alias, 1, Lod::Medium, 512).unwrap();
+    assert_eq!([pixels.width, pixels.height], [512, 341]);
+    assert_eq!(
+        assets.detail_pixel_size(f.source, 1, Lod::Medium),
+        Some([512, 341])
+    );
+    assert_eq!(assets.detail_pixel_size(f.source, 2, Lod::Medium), None);
+    assert_eq!(assets.detail_pixel_size(f.source, 1, Lod::Thumbnail), None);
+    assert_eq!(assets.stats().completed, completed);
+    assert_eq!(assets.stats().pending, 0);
 }

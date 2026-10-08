@@ -7,6 +7,10 @@ turbojpeg 1.5.1 and turbojpeg-sys 1.2.0. The Rust wrapper/binding licenses are
 MIT OR Unlicense; this project relies on the MIT alternative. The wrapper's
 [MIT notice](third_party/turbojpeg-MIT.txt) is retained.
 
+The bounded huge-JPEG worker also launches the unmodified, statically linked
+`djpeg` tool from that same pinned source, packaged as `tack-jpeg-decoder`
+beside the application. The same upstream notices apply to this executable.
+
 libjpeg-turbo includes IJG, BSD and zlib terms. Its upstream
 [license and copyright notices](third_party/libjpeg-turbo/LICENSE.md) and
 [IJG README/license](third_party/libjpeg-turbo/README.ijg) are reproduced

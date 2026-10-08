@@ -249,10 +249,17 @@ impl App {
                 } else {
                     usize::MAX
                 }));
-            for data in candidates
+            for mut data in candidates
                 .filter_map(|id| document.object_render_data(id))
                 .map(|d| self.input.images.preview(d))
             {
+                if data.filtering == tack_core::ImageFiltering::Default {
+                    data.filtering = if self.local.profile.sampling == "Nearest" {
+                        tack_core::ImageFiltering::Nearest
+                    } else {
+                        tack_core::ImageFiltering::Smooth
+                    };
+                }
                 let bounds = data.transform.bounds();
                 if bounds.intersects(viewport) {
                     self.draws.push(DrawProductImage { data, key: None });
@@ -289,8 +296,9 @@ impl App {
                     Some(tack_app::supply_plan::Need {
                         asset: a.id(),
                         source: s.id(),
-                        projected: if self.options.huge_tiles
-                            && assets.supports_tiles(s.id(), s.revision())
+                        projected: if assets.supports_jpeg_tiles(s.id(), s.revision())
+                            || (self.options.huge_tiles
+                                && assets.supports_tiles(s.id(), s.revision()))
                         {
                             512. * uv[2].min(uv[3])
                         } else {
@@ -300,6 +308,26 @@ impl App {
                             )
                         },
                         source_edge: a.pixel_size().into_iter().max().unwrap_or(0),
+                        source_size: [Lod::Medium, Lod::Detail].into_iter().fold(
+                            a.pixel_size(),
+                            |size, lod| {
+                                let key = ProductKey {
+                                    asset: None,
+                                    source: s.id(),
+                                    revision: s.revision(),
+                                    lod,
+                                    edge: lod.edge(),
+                                };
+                                assets
+                                    .detail_pixel_size(s.id(), s.revision(), lod)
+                                    .into_iter()
+                                    .chain(gpu.product_size(key))
+                                    .fold(size, |size, resident| {
+                                        std::array::from_fn(|axis| size[axis].max(resident[axis]))
+                                    })
+                            },
+                        ),
+                        filtering: draw.data.filtering,
                         crop: [uv[2], uv[3]],
                     })
                 })
@@ -354,14 +382,17 @@ impl App {
                     });
                 }
             }
-            let mut tiles = self.options.huge_tiles.then(|| {
+            let mut tiles = Some({
                 huge::Tiles::plan(
                     &self.draws,
                     &self.camera,
                     document,
                     assets,
                     gpu,
-                    plan.detail_reserved,
+                    huge::TilePolicy {
+                        reserved: plan.detail_reserved,
+                        png: self.options.huge_tiles,
+                    },
                     &mut demands,
                 )
             });

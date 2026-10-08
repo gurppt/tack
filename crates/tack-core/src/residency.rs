@@ -64,6 +64,11 @@ impl<K: Copy + Eq + Hash, V> ByteCache<K, V> {
         Some(&entry.value)
     }
 
+    /// Inspect current residency without changing LRU history.
+    pub fn peek(&self, key: K) -> Option<&V> {
+        self.entries.get(&key).map(|entry| &entry.value)
+    }
+
     pub fn contains(&self, key: K) -> bool {
         self.entries.contains_key(&key)
     }
