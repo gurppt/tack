@@ -1,6 +1,8 @@
 # Phase 2A3 — daily-use polish and desktop shared-board entry
 
-Local technical checks **PASS**; exact-source Linux/Windows CI pending publication.
+**Technical PASS.** Local checks and exact implementation Linux/Windows CI are green.
+Implementation commit `e059d6d4707d6bbf4944a54c6f46b001102ed809`; [Quality run 37967512093](https://github.com/gurppt/tack/actions/runs/37967512093)
+passes Linux, Windows and dependency checks.
 Baseline: Phase 2A2 implementation `873ce97cb57dc525441feebb94156073b3ebe87b`.
 The original brief and its desktop-entry addendum are covered. Measurements and
 raw-receipt hashes are in [phase2a3.json](measurements/phase2a3.json); independent

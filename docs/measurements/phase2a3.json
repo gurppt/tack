@@ -203,5 +203,17 @@
     "benchmark-results/phase2a3/cleanup.json": "9170d1944028d03c66745649a70f0f180b7640ea9a7f33a5bd52d83f309de8a1"
   },
   "scope": "Serial native Linux/X11 800x600, RTX2060; two warm/unspecified-page-cache pairs. Max bookmark schema4 is current-only because baseline refuses it. RSS includes driver; no per-process VRAM claim.",
-  "dependencies": "Cargo.lock and all dependency declarations unchanged; server tree contains no UI, renderer or image codecs; logo uses existing build-only Pillow"
+  "dependencies": "Cargo.lock and all dependency declarations unchanged; server tree contains no UI, renderer or image codecs; logo uses existing build-only Pillow",
+  "ci": {
+    "implementation_commit": "e059d6d4707d6bbf4944a54c6f46b001102ed809",
+    "quality_run": 37967512093,
+    "url": "https://github.com/gurppt/tack/actions/runs/37967512093",
+    "conclusion": "success",
+    "jobs": {
+      "dependencies": "success",
+      "rust (windows-latest)": "success",
+      "rust (ubuntu-latest)": "success"
+    },
+    "receipt_sha256": "7d4dd77fd6cfd4e9001baa0c43e3fe60c9bed264120646f7d5ed8e840aef1df3"
+  }
 }

@@ -7,9 +7,9 @@ production behavior; this reviewer authored focused independent tests and
 reviewed the relevant diff. No Cargo, decoder or native/GPU execution by the
 reviewer during serialized integrator checks.
 
-Status: **LOCAL VERIFICATION PASS — exact-source CI pending**. No unresolved
-concrete defect remains in the reviewed paths and final local receipts. Exact
-implementation Linux/Windows/dependency CI remains to be attached after commit.
+Status: **TECHNICAL PASS**. No unresolved concrete defect remains in the reviewed
+paths and final local receipts. Exact implementation Linux/Windows/dependency CI
+is completed successfully; human acceptance limits below remain distinct.
 
 ## Concrete findings and corrections
 
@@ -171,5 +171,15 @@ it is not claimed byte-identical to Phase 2A2. Dependency evidence shows no new
 UI, image or renderer baggage in the server. Supplied black-rhombus SVG remains
 intact; reproducible static asset tests do not settle final owner branding.
 
-Exact-source CI, human interaction/artwork acceptance and Windows desktop runtime
-are distinct remaining closeout items. Local technical verification is complete.
+## Exact-source CI closeout
+
+`benchmark-results/phase2a3/ci-implementation.json` was checked: run
+[37967512093](https://github.com/gurppt/tack/actions/runs/37967512093), implementation
+commit `e059d6d4707d6bbf4944a54c6f46b001102ed809`, completed/success. All three
+jobs carry that same head SHA and run ID and completed successfully:
+`dependencies`, `rust (ubuntu-latest)` and `rust (windows-latest)`.
+No compilation or native execution was repeated by this reviewer for closeout.
+
+Technical verification is complete. Human interaction/artwork acceptance and
+Windows desktop runtime remain distinct limits; passing Windows CI does not
+claim an interactive Windows desktop session or final owner branding approval.
