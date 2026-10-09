@@ -1,11 +1,14 @@
 # Phase 2A4 — desktop sharing and primitive pixel toolbar
 
-**Local technical verification PASS; exact-source CI pending. Physical
+**Technical verification PASS; exact-source Linux/Windows CI green. Physical
 two-computer LAN acceptance remains PENDING.** One Linux machine with multiple
 real native processes and its real LAN address establishes the technical workflow,
 not partner connectivity, firewall behavior or human usability on two machines.
 
 Baseline implementation: `e059d6d4707d6bbf4944a54c6f46b001102ed809` (Phase 2A3).
+Implementation: `390608762d5502cdfe7b64c66370b7c8ea6632b5`.
+[Exact-source Quality CI](https://github.com/gurppt/tack/actions/runs/37983915478)
+passed all three Linux/Windows/dependency jobs.
 Compact measurements/hashes: [phase2a4.json](measurements/phase2a4.json).
 Independent review: [phase2a4_shared_ui.md](reviews/phase2a4_shared_ui.md).
 
@@ -55,6 +58,7 @@ hashes are published in the measurements file.
 
 | Check | Result |
 | --- | --- |
+| Exact-source Quality CI | Linux + Windows Rust and dependency jobs PASS |
 | Full `tools/check.sh` | fmt/check/Clippy/docs, 340 Rust + 27 Python tests, dependency checks PASS |
 | Explicit hardware GPU suites | 14 PASS: smoke, selection, product, LOD convergence and long churn |
 | Independent contracts | 5 PASS within the gate: geometry/bounds, migration, fork/read-only, companion, icons |

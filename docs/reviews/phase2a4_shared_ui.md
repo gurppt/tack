@@ -7,7 +7,7 @@ read the mission, relevant existing authority design and contributing rules,
 and directly inspected the supplied Deluxe Paint reference. No historical
 whole-repository scan, Cargo, native/GPU test or subprocess benchmark was run.
 
-Status: **LOCAL TECHNICAL VERIFICATION PASS — exact-source CI pending**. No
+Status: **TECHNICAL VERIFICATION PASS — exact-source CI green**. No
 unresolved concrete defect remains in the reviewed paths and final local
 receipts. Physical two-computer LAN acceptance is **PENDING**: it is the mission's
 primary objective acceptance gate, distinct from subjective icon/geometry
@@ -171,8 +171,9 @@ changes; subsequent changes are report/harness/package work, no production edits
   exact edited PNG nearest pixels at 1×/2× and corrupt-icon fallback. The reviewer
   visually inspected `icon-1-edited-png.png`: compact 800×600 toolbar and status
   `Arrow [F11]` displaying the actual remapped shortcut. UI raster/style comfort
-  remains an owner decision. Default configuration is 275 serialized bytes;
-  GPU atlas plus bounded vertex buffer is 20,224 bytes, no document image cache.
+  remains an owner decision. Default toolbar configuration is 268 serialized
+  bytes (the floating test configuration is 275); GPU atlas plus bounded vertex
+  buffer is 20,224 bytes, no document image cache.
 - `daily-final` 20/20, `about-final` 41/41 and `authority-final` 32/32 pass.
   Native Shared/Managed/Toolbar/Daily/About harness hashes match their current
   scripts. About artwork/decoder artifact hashes are unchanged.
@@ -194,7 +195,10 @@ changes; subsequent changes are report/harness/package work, no production edits
 
 Final stripped client is 19,671,488 bytes versus Phase 2A3's 19,450,176 bytes
 (+221,312, about 1.14%). No new GUI/docking/decode dependency was introduced.
-Exact-source Linux/Windows/dependency CI is pending commit. Physical two-machine
+Exact-source Linux/Windows/dependency CI passed for implementation `3906087`
+([Quality run 37983915478](https://github.com/gurppt/tack/actions/runs/37983915478)); the integrator recorded
+its raw receipt and hash in the compact measurements after the local review.
+Physical two-machine
 LAN testing remains an objective acceptance item outside the subjective review
 queue; Windows desktop runtime, multi-interface suitability and artist comfort
 also must not be inferred from these automated local receipts.

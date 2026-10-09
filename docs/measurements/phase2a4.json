@@ -340,5 +340,16 @@
   },
   "scope": "Serial Linux/X11 :99 RTX2060 800x600, two warm/unspecified-cache pairs per empty/1000-object fixture; ticks are coarse process sampling including GPU driver, no CPU-zero/legacy-CPU/physical-two-PC/Windows-desktop claim",
   "physical_lan": "PENDING",
-  "ci": null
+  "ci": {
+    "implementation_commit": "390608762d5502cdfe7b64c66370b7c8ea6632b5",
+    "quality_run": 37983915478,
+    "url": "https://github.com/gurppt/tack/actions/runs/37983915478",
+    "conclusion": "success",
+    "jobs": {
+      "dependencies": "success",
+      "rust (ubuntu-latest)": "success",
+      "rust (windows-latest)": "success"
+    },
+    "receipt_sha256": "2e17b0fb18fb33d55c0a896eeabef6abdd881e8edc94e6a5ef1375e9b4835e0d"
+  }
 }
