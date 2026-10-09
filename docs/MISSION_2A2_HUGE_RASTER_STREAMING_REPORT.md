@@ -1,6 +1,7 @@
 # Phase 2A2 — bounded huge-raster streaming
 
-2026-10-09. Status: **local gate, GPU and review PASS; exact-source CI pending**.
+2026-10-09. Status: **TECHNICAL PASS** — local gate, GPU, independent review
+and exact-source Linux/Windows CI green.
 Baseline: Phase 2A1 implementation `5c2c0bb`, closeout `e62b233`.
 Normative brief: `briefs/CODEX_PHASE_2A2_HUGE_RASTER_STREAMING.md`.
 Durable results, source/binary hashes and raw-receipt hashes:
@@ -198,7 +199,7 @@ still rescans sequential rows; this phase does not add random PNG access.
 - [Independent review](reviews/phase2a2_huge_raster.md) found two concrete
   issues: copied relative-path cache namespace collisions and destructive open
   of a cache hardlinked to authority. Both are corrected and regression tested;
-  no unresolved source blocker was found. Final receipts/CI are separate gates.
+  no unresolved source blocker was found. Local and exact-source CI gates pass.
 
 Final stripped client: **19,329,864 bytes**, SHA-256
 `861bbeb67c39572372585eba53250543ff4892c93fcb376e449c43d8f8c72664`,
@@ -215,9 +216,13 @@ cache were removed, retaining current-phase cache/native tools and all owner
 files. Phase artifacts are bounded and existing axis/ordinary fixtures reused;
 the duplicate generator raster was removed after hash verification. Historical
 failed harness attempts are excluded from acceptance. At closeout, the reserve
-remains above 10 GiB. No full-source caches enter Git.
+is about 22.7 GiB free; retained phase artifacts occupy about 128 MB.
+No full-source caches enter Git.
 
-CI implementation commit/run: pending closeout. No Windows desktop/GPU runtime
-acceptance is inferred from CI. Remaining subjective review is recorded in
+Implementation commit: `873ce97cb57dc525441feebb94156073b3ebe87b`.
+[Exact-source Quality run 37898157574](https://github.com/gurppt/tack/actions/runs/37898157574)
+passes Linux, Windows and dependency jobs, including Linux software-Vulkan GPU
+tests. The closeout changes only documentation/evidence. No Windows desktop/GPU
+runtime acceptance is inferred from CI. Remaining subjective review is recorded in
 [the human queue](HUMAN_REVIEW_PENDING.md); the two-second cold refinement and
 sequential codec limitations above are measured technical facts.

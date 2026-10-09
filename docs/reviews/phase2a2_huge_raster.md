@@ -5,11 +5,11 @@ authors are separate. Baseline: Phase 2A1 implementation `5c2c0bb`, closeout
 `e62b233`. Scope: regional supply bounds, cancellation/publication, persistent
 cache authority/quota, worker-only I/O and inherited local/server boundaries.
 
-Status: **SOURCE AND LOCAL TECHNICAL REVIEW PASS — exact-source CI pending**.
+Status: **FINAL TECHNICAL PASS**.
 No Cargo, decoder, native or GPU execution by this reviewer during the root's
-serialized measurements. No concrete source blocker remains. Technical closeout
-still awaits exact-source Linux/Windows CI receipts; those pending receipts are
-not source defects.
+serialized measurements. No concrete source blocker remains. Reviewed source,
+executed local evidence and exact-source Linux/Windows CI satisfy this technical
+scope. Human visual judgment remains a separate acceptance step.
 
 ## Initial source audit
 
@@ -175,9 +175,18 @@ product 9, convergence 2 and eviction-pressure long churn 1 tests.
 changes seen during review are a test-only declared/header mismatch regression
 and native harness refinements, not a changed production binary.
 
-## Closeout receipts outstanding
+## Final closeout
 
-Exact-source Linux/Windows CI and any additional local receipt the integrator
-includes in final closeout. Human visual judgment remains separate from deterministic
-pixel witnesses and telemetry. No unexecuted future receipt is reported as a
-code defect.
+Implementation commit: `873ce97cb57dc525441feebb94156073b3ebe87b`.
+`benchmark-results/phase2a2/ci-implementation.json` records completed/success
+[GitHub Actions run 37898157574](https://github.com/gurppt/tack/actions/runs/37898157574).
+The reviewer independently queried GitHub's public run/jobs API and confirmed
+the same exact head and three completed/success jobs: `rust (windows-latest)`
+(113714201664), `rust (ubuntu-latest)` (113714201967), and `dependencies`
+(113714201911). Current production hashes still match the measured final-build
+manifest; its later test/harness refinements are included in the successful CI
+commit. No compilation or native measurement was rerun by this reviewer.
+
+This closes the technical review. CI does not establish Windows desktop/GPU
+behavior or old-CPU feasibility. Human visual judgment remains separate from
+the deterministic pixel witnesses, bounded source paths and native telemetry.

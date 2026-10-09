@@ -1,5 +1,5 @@
 {
-  "status": "LOCAL GATE/GPU/REVIEW PASS; exact-source CI pending",
+  "status": "TECHNICAL PASS",
   "baseline": {
     "implementation_commit": "5c2c0bb90ca5533c13b75634696dd6f7b96f3c7b",
     "closeout_commit": "e62b2333ee76d2e5613411f34ab1dc361d9998a3",
@@ -312,7 +312,8 @@
     "post_build_validation_files": {
       "crates/tack-assets/src/product/tiles/tests.rs": "73d984e6bd55816ee0ad83b73b542061c6e64fa3c89710160b10c8aec57105a9",
       "tools/run_phase2a2_square.py": "c12cc4d7652b90571539c830b1cd778c44b6fcaf451326eb69b13b33301dd75b"
-    }
+    },
+    "validated_implementation_commit": "873ce97cb57dc525441feebb94156073b3ebe87b"
   },
   "fixture": {
     "dimensions": [
@@ -3196,8 +3197,8 @@
       "sha256": "fa9b5de20809e5fee48c40988146b48b6ce21f4b4420fdaeef22e64e0180acc3"
     },
     "benchmark-results/phase2a2/final-build/source.json": {
-      "bytes": 31694,
-      "sha256": "a2705858aa111e8fbda72589b6319554327a2c82710f56078dac0c292861fd3a"
+      "bytes": 31775,
+      "sha256": "e05932fe76bd40e33a8c0ded3a098e05f760f3c255592ac11987e7ee96cb0595"
     },
     "benchmark-results/phase2a2/fixtures/generation.json": {
       "bytes": 564,
@@ -3258,10 +3259,6 @@
     "benchmark-results/phase2a2/lod-native-final.log": {
       "bytes": 153,
       "sha256": "99915215aab487bf813f08555dc9214d5a3f2eb71c1c80464225dd99f9e41dab"
-    },
-    "benchmark-results/phase2a2/mixed-final/supply.log": {
-      "bytes": 458,
-      "sha256": "7592864692c5e65b6b65ae425cba340be51f06e75f6fa5b09a15e91bfaa1d010"
     },
     "benchmark-results/phase2a2/mixed-final-potato/summary.json": {
       "bytes": 5732,
@@ -3418,14 +3415,6 @@
     "benchmark-results/phase2a2/shared-native-final.log": {
       "bytes": 33,
       "sha256": "d57e89dbfdde81dbf0f37bdf1db998799bd57e5d3fec64b0807418ab06710909"
-    },
-    "benchmark-results/phase2a2/square-default/cold.log": {
-      "bytes": 560,
-      "sha256": "9d07df90661522ec2b387b4ad64c4283f7d80f6a02487f58b4332d8d588692ae"
-    },
-    "benchmark-results/phase2a2/square-default/reopen.log": {
-      "bytes": 560,
-      "sha256": "81a71c22ecd6a1647b1195e455cadf59126316177e1221dfbd60e3005694c613"
     },
     "benchmark-results/phase2a2/square-default-v2/cold.log": {
       "bytes": 560,
@@ -7621,5 +7610,63 @@
     "elapsed_seconds": 17.263010531954933,
     "checks": 32,
     "scope": "actual Linux/X11 native keys and pointer; isolated owned server/files; no Windows or artist-feel claim"
+  },
+  "ci-implementation": {
+    "run_id": 37898157574,
+    "head_sha": "873ce97cb57dc525441feebb94156073b3ebe87b",
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/gurppt/tack/actions/runs/37898157574",
+    "jobs": [
+      {
+        "id": 113714201664,
+        "name": "rust (windows-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/gurppt/tack/actions/runs/37898157574/job/113714201664",
+        "started_at": "2026-10-09T07:17:21Z",
+        "completed_at": "2026-10-09T07:23:06Z"
+      },
+      {
+        "id": 113714201911,
+        "name": "dependencies",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/gurppt/tack/actions/runs/37898157574/job/113714201911",
+        "started_at": "2026-10-09T07:17:22Z",
+        "completed_at": "2026-10-09T07:19:45Z"
+      },
+      {
+        "id": 113714201967,
+        "name": "rust (ubuntu-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/gurppt/tack/actions/runs/37898157574/job/113714201967",
+        "started_at": "2026-10-09T07:17:22Z",
+        "completed_at": "2026-10-09T07:21:46Z"
+      }
+    ]
+  },
+  "implementation_commit": "873ce97cb57dc525441feebb94156073b3ebe87b",
+  "cleanup": {
+    "removed": [
+      {
+        "path": "/home/gurp/softs/tack/benchmark-results/phase2a2/candidate",
+        "bytes": 23807906,
+        "reason": "superseded binary or invalid harness attempt; final receipts preserved"
+      },
+      {
+        "path": "/home/gurp/softs/tack/benchmark-results/phase2a2/mixed-final",
+        "bytes": 52025,
+        "reason": "superseded binary or invalid harness attempt; final receipts preserved"
+      },
+      {
+        "path": "/home/gurp/softs/tack/benchmark-results/phase2a2/square-default",
+        "bytes": 4567964,
+        "reason": "superseded binary or invalid harness attempt; final receipts preserved"
+      }
+    ],
+    "phase_bytes": 128474025,
+    "free_disk_bytes": 24393342976
   }
 }
