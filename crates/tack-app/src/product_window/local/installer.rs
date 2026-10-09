@@ -108,6 +108,8 @@ impl App {
             self.local.untitled = true;
             self.local.seed = Some((Arc::clone(&loaded.lease), board.document.id()));
         }
+        self.offline = loaded.sharing;
+        self.shared_copy = self.offline.as_ref().map(|_| loaded.path.clone());
         self.options.path = loaded.path;
         self.local.lease = Some(loaded.lease);
         self.local.profile = profile;
@@ -120,12 +122,23 @@ impl App {
         self.camera = camera;
         self.camera_clamped = clamped;
         self.extent = extent;
-        self.editor = Some(DocumentEditor::new(board.document.clone(), 200));
+        self.editor = Some(if self.offline.is_some() {
+            DocumentEditor::shared(board.document.clone())
+        } else {
+            DocumentEditor::new(board.document.clone(), 200)
+        });
         self.board = Some(board);
         self.visibility.invalidate();
         self.load_failed = false;
         if !reuse {
             self.apply_preferences()?;
+        }
+        if self.offline.is_some() {
+            self.local.lease = None;
+            self.share_panel()?;
+            if std::mem::take(&mut self.options.put_online) {
+                self.put_online()?;
+            }
         }
         self.input.grid_visible = self.local.profile.grid;
         if loaded.recovery {

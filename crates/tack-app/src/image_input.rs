@@ -36,6 +36,9 @@ pub struct ImageInput {
     last_click: Option<(tack_core::ObjectId, [f64; 2], Instant)>,
 }
 impl ImageInput {
+    pub fn active_tool(&self) -> crate::actions::Tool {
+        self.annotation.tools.tool()
+    }
     pub fn new() -> Result<Self, BindingError> {
         Ok(Self {
             images: ImageInteraction::default(),
@@ -122,6 +125,9 @@ impl ImageInput {
         }
         if self.annotation.tools.tool().is_annotation() {
             return CursorIcon::Crosshair;
+        }
+        if self.annotation.tools.tool() == crate::actions::Tool::Pan {
+            return CursorIcon::Grab;
         }
         match self.hover(editor, camera) {
             Some(GizmoHit::Rotate) => CursorIcon::Crosshair,
@@ -351,6 +357,12 @@ impl ImageInput {
                 self.cancel();
                 return Ok(false);
             }
+            if action == Action::ImagePointer
+                && self.annotation.tools.tool() == crate::actions::Tool::Pan
+            {
+                self.cancel();
+                return Ok(false);
+            }
             self.cancel();
             self.active_token = Some(token);
             if action == Action::ImagePointer && self.begin_annotation(pointer, editor, camera) {
@@ -554,6 +566,10 @@ impl ImageInput {
             self.click = None;
         }
         if self.state.is_action_held(&self.keymap, Action::PanView)
+            || (self.annotation.tools.tool() == crate::actions::Tool::Pan
+                && self
+                    .state
+                    .is_action_held(&self.keymap, Action::ImagePointer))
             || (self
                 .state
                 .is_action_held(&self.keymap, Action::CenterPointer)

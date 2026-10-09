@@ -17,12 +17,15 @@ use winit::{
     event_loop::{ActiveEventLoop, ControlFlow, EventLoop},
     window::{Window, WindowId},
 };
+mod chrome;
+mod hosting;
 mod huge;
 mod local;
 mod shared;
 use local::{LoadedBoard, LocalState};
 struct OpenOptions {
     join_receipt: Option<PathBuf>,
+    put_online: bool,
     path: PathBuf,
     new: bool,
     untitled: bool,
@@ -47,6 +50,12 @@ enum Event {
 }
 struct App {
     options: OpenOptions,
+    chrome: chrome::Chrome,
+    host: Option<tack_app::hosting::Hosted>,
+    offline: Option<tack_app::sharing::Descriptor>,
+    shared_copy: Option<PathBuf>,
+    share_remote: Option<String>,
+    close_after_host: bool,
     local: Box<LocalState>,
     shared: Option<Box<shared::SharedState>>,
     proxy: winit::event_loop::EventLoopProxy<Event>,
@@ -126,6 +135,9 @@ impl App {
                 128 * 1024 * 1024
             },
         ))?;
+        if let Some(atlas) = self.chrome.atlas.take() {
+            gpu.set_ui_icon_atlas(&atlas)?;
+        }
         gpu.configure_diagnostics(self.options.output.is_some());
         if self.options.potato {
             gpu.constrain_uploads(1024 * 1024, 2);
@@ -165,6 +177,7 @@ impl App {
         if !self.drawable || self.occluded {
             return Ok(());
         }
+        self.refresh_chrome();
         self.redraws += 1;
         let start = Instant::now();
         let (Some(gpu), Some(surface), Some(config)) = (&mut self.gpu, &self.surface, &self.config)
@@ -500,24 +513,23 @@ impl App {
         if let Some(editor) = &self.editor {
             self.input.build_overlay(editor, &self.camera);
         }
-        if let Some(shared) = &self.shared {
-            let scale = self.camera.ui_scale();
-            let mut budget = 512;
-            let label = format!(
-                "Shared {} | rev {} | {}",
-                shared.state.label(),
-                shared.revision,
-                self.interaction_error.as_deref().unwrap_or("F5 reconnect")
-            );
-            self.input.gizmo.ui_text(
-                &self.camera,
-                [8. * scale, 8. * scale],
-                f64::from(self.camera.screen_size()[0]) - 16. * scale,
-                &label,
-                self.local.profile.theme.palette().accent_primary,
-                &mut budget,
-            );
-        }
+        let active_tool = self.input.active_tool();
+        chrome::draw(
+            &self.chrome,
+            &mut self.input.gizmo,
+            &self.camera,
+            &self.local.profile,
+            active_tool,
+            gpu,
+            (
+                self.context.is_some() || self.local.ui.is_some(),
+                self.shared.as_ref().map(|s| s.state).or_else(|| {
+                    self.offline
+                        .as_ref()
+                        .map(|_| tack_shared::client::ConnectionState::Disconnected)
+                }),
+            ),
+        )?;
         // Reserve the bounded popup budget only while a popup is open.
         if self.context.is_some() {
             self.input
@@ -718,7 +730,7 @@ impl App {
             .and_then(|g| g.timing_samples())
             .map(|s| s.iter().map(|s| json!({"pass_ms":s.pass_ms})).collect())
             .unwrap_or_default();
-        let mut report = json!({"about":{"requests":self.local.about_ticket,"image_gpu_bytes":gpu.map_or(0, |g| g.ui_image_bytes()),"version":tack_app::about::METADATA.version},"window_size":self.camera.screen_size(),"load_failed":self.load_failed,"local":{"operations":self.local.worker.operations,"recoveries":self.save.recoveries,"recovery_generation":self.save.recovery_generation,"recovery_bytes":self.save.recovery_bytes,"last_storage_worker_ms":self.save.last_worker_ms,"ui_scale":self.camera.ui_scale(),"discarded_asset_results":stats.discarded},"first_frame_ms":self.first_frame_ms,"gpu_setup_ms":self.gpu_setup_ms,"annotation_resources":gpu.map(|g|g.annotation_bytes()),"annotations":self.editor.as_ref().map(|e|e.document().annotation_count()).unwrap_or(0),"spatial":{"grid":self.input.grid_visible,"snapping":self.input.snap.enabled,"frames":self.editor.as_ref().map(|e|e.document().objects().filter(|o|matches!(o.kind(),tack_core::ObjectKind::Frame(_))).count()).unwrap_or(0),"groups":self.editor.as_ref().map(|e|e.document().groups().count()).unwrap_or(0)},"redraw_count":self.redraws,"wait_count":self.wakeups,"operation":"open","editing":self.editor.as_ref().map(|e|json!({"dirty":e.is_dirty(),"generation":e.generation(),"undo_entries":e.undo_len(),"redo_entries":e.redo_len(),"selected":self.input.images.selection.len(),"save_completed":self.save.completed})),"interaction":self.benchmark.as_ref().map(|b|json!({"scenario":b.name(),"input_ms":b.samples,"snap_query_ms":b.snap_queries,"commits":b.commits,"cancels":b.cancels,"invariants":b.invariants})),"native_startup_ms":self.native_startup_ms,"camera_clamped":self.camera_clamped,"navigation_end_pending":self.navigation_end_pending,"drain_ms":self.drain_ms,"state_counts_scope":"requested sources only","recognizable_clock":"CPU submission before present","metadata_load_ms":self.metadata_ms,"metadata_bytes":self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"first_recognizable_ms":self.first_content_ms,"ordinary_view_80_percent_ms":self.useful_ms,"source_bytes_before_detail":stats.source_bytes,"container_bytes":stats.container_bytes+self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"overview_reused":stats.reused,"overview_regenerated":stats.regenerated,"errors":stats.errors,"source_missing":counts(SourceState::Missing),"source_changed":counts(SourceState::Changed),"source_foreign":counts(SourceState::Foreign),"source_unavailable":counts(SourceState::Unavailable),"peak_pending":stats.peak_pending,"cpu_payload_bytes":stats.cpu_bytes,"adapter":gpu.map(|g|g.adapter_info.name.clone()),"backend":gpu.map(|g|format!("{:?}",g.adapter_info.backend)),"frames":self.frames,"gpu_samples":samples,"detail":"bounded projected 128/512/2048 display supply"});
+        let mut report = json!({"about":{"requests":self.local.about_ticket,"image_gpu_bytes":gpu.map_or(0, |g| g.ui_image_bytes()),"version":tack_app::about::METADATA.version},"window_size":self.camera.screen_size(),"load_failed":self.load_failed,"local":{"operations":self.local.worker.operations,"recoveries":self.save.recoveries,"recovery_generation":self.save.recovery_generation,"recovery_bytes":self.save.recovery_bytes,"last_storage_worker_ms":self.save.last_worker_ms,"ui_scale":self.camera.ui_scale(),"discarded_asset_results":stats.discarded},"first_frame_ms":self.first_frame_ms,"gpu_setup_ms":self.gpu_setup_ms,"annotation_resources":gpu.map(|g|g.annotation_bytes()),"annotations":self.editor.as_ref().map(|e|e.document().annotation_count()).unwrap_or(0),"spatial":{"grid":self.input.grid_visible,"snapping":self.input.snap.enabled,"frames":self.editor.as_ref().map(|e|e.document().objects().filter(|o|matches!(o.kind(),tack_core::ObjectKind::Frame(_))).count()).unwrap_or(0),"groups":self.editor.as_ref().map(|e|e.document().groups().count()).unwrap_or(0)},"redraw_count":self.redraws,"wait_count":self.wakeups,"operation":"open","editing":self.editor.as_ref().map(|e|json!({"dirty":e.is_dirty(),"generation":e.generation(),"undo_entries":e.undo_len(),"redo_entries":e.redo_len(),"selected":self.input.images.selection.len(),"save_completed":self.save.completed})),"interaction":self.benchmark.as_ref().map(|b|json!({"scenario":b.name(),"input_ms":b.samples,"snap_query_ms":b.snap_queries,"commits":b.commits,"cancels":b.cancels,"invariants":b.invariants})),"native_startup_ms":self.native_startup_ms,"camera_clamped":self.camera_clamped,"navigation_end_pending":self.navigation_end_pending,"drain_ms":self.drain_ms,"chrome":{"toolbar_entries":self.chrome.toolbar.count,"placement":format!("{:?}",self.local.profile.toolbar.placement),"config_bytes":serde_json::to_vec(&self.local.profile.toolbar)?.len(),"icon_atlas_gpu_bytes":gpu.map(|g|g.ui_icon_bytes()).unwrap_or(0),"status_bar":self.local.profile.status_bar},"state_counts_scope":"requested sources only","recognizable_clock":"CPU submission before present","metadata_load_ms":self.metadata_ms,"metadata_bytes":self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"first_recognizable_ms":self.first_content_ms,"ordinary_view_80_percent_ms":self.useful_ms,"source_bytes_before_detail":stats.source_bytes,"container_bytes":stats.container_bytes+self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"overview_reused":stats.reused,"overview_regenerated":stats.regenerated,"errors":stats.errors,"source_missing":counts(SourceState::Missing),"source_changed":counts(SourceState::Changed),"source_foreign":counts(SourceState::Foreign),"source_unavailable":counts(SourceState::Unavailable),"peak_pending":stats.peak_pending,"cpu_payload_bytes":stats.cpu_bytes,"adapter":gpu.map(|g|g.adapter_info.name.clone()),"backend":gpu.map(|g|format!("{:?}",g.adapter_info.backend)),"frames":self.frames,"gpu_samples":samples,"detail":"bounded projected 128/512/2048 display supply"});
         let supply_receipt = json!({"potato":self.options.potato,"present_mode":self.config.as_ref().map(|c|format!("{:?}",c.present_mode)),"event_samples_ms":self.event_samples,"wheel_samples_ms":self.wheel_samples,"codec_requests":stats.codec_requests,"region_jobs":stats.region_jobs,"tile_outputs":stats.tile_outputs,"tile_cache_hits":stats.tile_cache_hits,"tile_cache_read_bytes":stats.tile_cache_read_bytes,"tile_cache_write_bytes":stats.tile_cache_write_bytes,"tile_disk_bytes":stats.tile_disk_bytes,"decoded_bytes":stats.decoded_bytes,"cpu_payload_peak":stats.cpu_peak,"cpu_evictions":stats.evictions,"reprioritized":stats.reprioritized,"discarded":stats.discarded,"peak_queued":stats.peak_queued,"visibility_memo_bytes":self.visibility.bytes()});
         if let Some(shared) = &self.shared {
             let canonical = self
@@ -840,6 +852,20 @@ impl ApplicationHandler<Event> for App {
                     .as_deref()
                     .unwrap_or("snapshot pending")
             );
+            let title = if self.options.output.is_some()
+                || std::env::var_os("TACK_NATIVE_DIAGNOSTICS").is_some()
+            {
+                title
+            } else {
+                format!(
+                    "Tack · Shared board · {}",
+                    match shared.state {
+                        tack_shared::client::ConnectionState::Connecting
+                        | tack_shared::client::ConnectionState::Reconnecting => "Connecting",
+                        _ => "Offline",
+                    }
+                )
+            };
             if self.title != title {
                 window.set_title(&title);
                 self.title = title;
@@ -967,6 +993,25 @@ impl ApplicationHandler<Event> for App {
             } else {
                 title
             };
+            let title = if self.shared.is_some()
+                && self.options.output.is_none()
+                && std::env::var_os("TACK_NATIVE_DIAGNOSTICS").is_none()
+            {
+                format!(
+                    "Tack · Shared board · {} · {} selected",
+                    match self.shared.as_ref().map(|s| s.state) {
+                        Some(tack_shared::client::ConnectionState::Connected) => "Online",
+                        Some(
+                            tack_shared::client::ConnectionState::Connecting
+                            | tack_shared::client::ConnectionState::Reconnecting,
+                        ) => "Connecting",
+                        _ => "Offline",
+                    },
+                    self.input.images.selection.len()
+                )
+            } else {
+                title
+            };
             if self.title != title {
                 window.set_title(&title);
                 self.title = title;
@@ -1046,6 +1091,12 @@ impl App {
             return;
         }
         if matches!(event, WindowEvent::CloseRequested) {
+            if self.host.is_some() {
+                if let Err(error) = self.stop_hosting(true) {
+                    self.local_error(error.to_string());
+                }
+                return;
+            }
             if self.load_failed {
                 e.exit();
                 return;
@@ -1090,16 +1141,28 @@ impl App {
             }
             return;
         }
+        if let WindowEvent::CursorMoved { position, .. } = &event {
+            self.pointer = [position.x, position.y];
+        }
         let result = if matches!(event, WindowEvent::RedrawRequested) {
             self.redraw()
         } else {
-            let ui = self.context_event(&event).and_then(|used| {
-                if used {
-                    Ok(true)
-                } else {
-                    self.local_ui_event(&event)
-                }
-            });
+            let ui = self
+                .chrome_event(&event)
+                .and_then(|used| {
+                    if used {
+                        Ok(true)
+                    } else {
+                        self.context_event(&event)
+                    }
+                })
+                .and_then(|used| {
+                    if used {
+                        Ok(true)
+                    } else {
+                        self.local_ui_event(&event)
+                    }
+                });
             let consumed = match ui {
                 Ok(consumed) => consumed,
                 Err(error) => {
@@ -1166,6 +1229,7 @@ impl App {
                         s.configure(&g.device, c);
                         self.dirty = true;
                     }
+                    self.chrome_layout();
                 }
                 WindowEvent::Occluded(b) => self.occluded = b,
                 WindowEvent::ScaleFactorChanged { .. } => {

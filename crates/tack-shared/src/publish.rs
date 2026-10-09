@@ -339,6 +339,16 @@ pub fn save_local_snapshot(
     if path.exists() {
         return Err(Error::Invalid("snapshot destination already exists"));
     }
+    let (canonical, inputs) = snapshot_inputs(document, sources)?;
+    let owner = tack_storage::BoardLease::acquire_new(path)?;
+    owner.save(&canonical, inputs)?;
+    Ok(())
+}
+/// Checked streaming snapshot inputs, also used for an owned host's offline checkpoint.
+pub fn snapshot_inputs(
+    document: &Document,
+    sources: &[(SourceBinding, Payload)],
+) -> Result<(Document, Vec<BlobInput>)> {
     let canonical = crate::shared_document(document)?;
     let mut inputs = Vec::new();
     for source in canonical.sources() {
@@ -385,9 +395,7 @@ pub fn save_local_snapshot(
             Payload::Stored { file, range },
         ));
     }
-    let owner = tack_storage::BoardLease::acquire_new(path)?;
-    owner.save(&canonical, inputs)?;
-    Ok(())
+    Ok((canonical, inputs))
 }
 pub(crate) fn changed_sources(command: &tack_core::Command, output: &mut Vec<Source>) {
     match command {

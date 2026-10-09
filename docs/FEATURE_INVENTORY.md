@@ -1,4 +1,4 @@
-# Current feature inventory — Phase 2A3
+# Current feature inventory — Phase 2A4
 
 Code audit of the local prototype on 2026-10-09, based on `Action::ALL`,
 `product_bindings`, `ImageInput`, annotation/spatial input, local file workers,
@@ -7,7 +7,7 @@ Historical Phase 1I evidence has 170 automated native assertions on US and Frenc
 800×600 and 1024×768. Owner comfort/discovery review and real Windows desktop
 validation remain pending; “implemented” does not imply human acceptance.
 
-Every semantic catalog entry is listed below (99 actions). Shortcuts are the
+Every semantic catalog entry is listed below (104 actions). Shortcuts are the
 **default logical, layout-aware keyboard bindings** exported by `context_ui`; the actual menu
 reads the active user keymap. An em dash means no default press shortcut.
 All actions can be inspected/remapped in Tack → Edit → Keymap. This exposure
@@ -32,10 +32,15 @@ selection, tool choice, camera and text drafts. Menu paths are one submenu deep.
 | Camera bookmarks (`CameraBookmarks`) | implemented | camera / bookmark metadata | — | Tack → View → Camera bookmarks | shared Tack menu | jump No; rename/delete Yes | Board metadata, camera session | Enter/click jumps; F2/visible Rename and Delete buttons. Shared snapshots allow jump, not editing. |
 | Duplicate selection (`DuplicateSelection`) | implemented | images, notes, all supported annotations, frames | Ctrl+D | Tack → Edit | shared Tack menu | Yes, one transaction | Board | Fresh object/group IDs, same image assets/sources/originals; one adaptive grid-step offset. Explicitly local-only. |
 | Image information (`SourceInfo`) | implemented | one selected image | — | Image → Source | Image information | No | temporary panel | Existing metadata and observed status only; no filesystem access, codec probing or decode requests. |
-| Join shared board (`JoinSharedBoard`) | implemented | connection descriptor | — | Tack → File | shared Tack menu | No | another native window | Numeric IP:PORT + Board ID, or canonical tack://IP:PORT/ID; IPv6 brackets; explicit cancellable launch reuses CLI join. Current local board retained. |
-| Copy shared address (`CopySharedBoardAddress`) | implemented | joined board | — | Tack → File | shared Tack menu | No | clipboard | Canonical URI; off-thread existing native clipboard helper. Disabled for local boards. |
+| Join shared board (`JoinSharedBoard`) | implemented | connection descriptor | — | Tack → File | shared Tack menu | No | another native window | Primary Paste invite; canonical tack://IP:PORT/ID or compatible numeric IP:PORT + Board ID; IPv6 brackets; explicit cancellable launch reuses CLI join. Current local board retained. |
+| Copy Invite (`CopySharedBoardAddress`) | implemented | joined board | — | Tack → File | shared Tack menu | No | clipboard | Canonical URI; off-thread existing native clipboard helper. Disabled for local boards. |
+| Share Board (`ShareBoard`) | implemented | local/shared incarnation | — | Tack → File / toolbar | shared Tack menu | No | independent shared file + companion | Start Sharing owns existing server process, local original remains independent; same-profile Put Online reuses Board ID. |
+| Stop Sharing (`StopSharing`) | implemented | owned hosted board | — | Tack → File / online panel | shared Tack menu | No | checked offline snapshot | Enabled only for owned host; checkpoint/reap outside UI, offline read-only. |
+| Toggle Toolbar (`ToggleToolbar`) | implemented | chrome | — | Tack → View / keymap | shared Tack menu | No | profile | One toolbar, six placements, hidden has no icon draw. |
+| Edit Toolbar (`EditToolbar`) | implemented | chrome | — | Tack → View / keymap | shared Tack menu | No | profile | Catalog Add/Remove, Up/Down, Reset; ≤32 semantic IDs, no duplicate tool system. |
+| Toggle Status Bar (`ToggleStatusBar`) | implemented | chrome | — | Tack → View / keymap | shared Tack menu | No | profile | One cached hover/shortcut/state line; fixed shared indicator also visible without strip. |
 | Pointer tool (`SelectTool(Pointer)`) | implemented | selection | V | Tack → Tools | No | No | session | Direct canvas selection/manipulation. |
-| Pan tool (`SelectTool(Pan)`) | experimental | tool state | — | keymap catalog only | No | No | session | Generic Interaction state exists; native pointer pipeline does not implement a complete dedicated pan/rotate-view tool. |
+| Pan tool (`SelectTool(Pan)`) | implemented | camera | — | toolbar / keymap | No | No | session | Left drag uses existing camera pan, no document mutation. |
 | Rotate view tool (`SelectTool(RotateView)`) | experimental | tool state | — | keymap catalog only | No | No | session | Generic Interaction state exists; native pointer pipeline does not implement a complete dedicated pan/rotate-view tool. |
 | Temporary pointer tool (`TemporaryTool(Pointer)`) | experimental | tool state | — | keymap hold binding only | No | No | session | Generic held-tool restoration tested; no default binding or menu; complete native tool combinations not validated. |
 | Temporary pan tool (`TemporaryTool(Pan)`) | experimental | tool state | — | keymap catalog only | No | No | session | Generic Interaction state exists; native pointer pipeline does not implement a complete dedicated pan/rotate-view tool. |
@@ -228,3 +233,8 @@ a bounded native path descriptor and worker-only fallback checks.
 Implementation, measured limits and validation: [Phase 1L report](MISSION_1L_REPORT.md), [huge-image design](design/huge_images.md), [owner checklist](HUMAN_TEST_1L.md).
 
 Phase 2A3 adds static SVG-derived package/window/About identity without a runtime SVG library. Desktop Publish and shared recents are deferred: current publish consumes a committed file; recent-file records represent native paths. No new startup LAN activity or permanent worker is introduced. See [the 2A3 report](MISSION_2A3_DAILY_USE_POLISH_REPORT.md).
+
+Phase 2A4 scope: editable hard-alpha PNG16 icons and primitive native toolbar/status
+are documented in [pixel_toolbar.md](design/pixel_toolbar.md); desktop identity
+and server ownership in [shared_desktop_lifecycle.md](design/shared_desktop_lifecycle.md).
+Physical two-computer LAN acceptance remains separate from same-host automation.

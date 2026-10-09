@@ -15,7 +15,7 @@ impl App {
                 self.operation(Operation::CopyAddress(address.canonical()))?;
             }
             Action::DuplicateSelection => {
-                if self.shared.is_some() {
+                if self.shared.is_some() || self.offline.is_some() {
                     return Err("Duplicate is local-only in this phase".into());
                 }
                 let editor = self.editor.as_mut().ok_or("document unavailable")?;
@@ -37,7 +37,7 @@ impl App {
                 }
             }
             Action::AddCameraBookmark => {
-                if self.shared.is_some() {
+                if self.shared.is_some() || self.offline.is_some() {
                     return Err("Bookmark editing is local-only in this phase".into());
                 }
                 let doc = self
@@ -118,7 +118,7 @@ impl App {
         }
         Ok(())
     }
-    fn daily_panel(&mut self, panel: Panel, data: DailyPanel) {
+    pub(in super::super) fn daily_panel(&mut self, panel: Panel, data: DailyPanel) {
         self.panel(panel);
         self.local.ui = Some(Box::new(LocalUi::daily(panel, data)));
     }
@@ -134,7 +134,7 @@ impl App {
             Panel::Bookmarks,
             DailyPanel {
                 bookmarks,
-                shared: self.shared.is_some(),
+                shared: self.shared.is_some() || self.offline.is_some(),
                 ..Default::default()
             },
         );
@@ -142,6 +142,19 @@ impl App {
     }
     pub(super) fn daily_result(&mut self, result: UiResult) -> Result<(), AssetError> {
         match result {
+            UiResult::Sharing(choice) => self.sharing_choice(choice)?,
+            UiResult::Server(text) => {
+                let addr: std::net::SocketAddr = text
+                    .trim()
+                    .parse()
+                    .map_err(|_| "Advanced server address must be numeric IP:port")?;
+                tack_app::shared_address::SharedAddress::parse(&format!(
+                    "{} 00000000000000000000000000000001",
+                    addr
+                ))?;
+                self.share_remote = Some(addr.to_string());
+                self.sharing_choice(tack_app::sharing::Choice::Start)?;
+            }
             UiResult::JumpBookmark(id) => {
                 let doc = self
                     .editor
@@ -217,7 +230,7 @@ impl App {
         Ok(())
     }
     fn local_bookmark_edit(&self) -> Result<(), AssetError> {
-        if self.shared.is_some() {
+        if self.shared.is_some() || self.offline.is_some() {
             Err("Bookmark editing is local-only in this phase".into())
         } else {
             Ok(())

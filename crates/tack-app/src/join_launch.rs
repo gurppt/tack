@@ -12,15 +12,25 @@ pub fn launch(
     work: &Path,
     cancel: &AtomicBool,
 ) -> Result<bool, AssetError> {
+    let mut command = Command::new(std::env::current_exe()?);
+    command
+        .arg("join")
+        .arg(address.server.to_string())
+        .arg(address.board.to_string());
+    launch_command(&mut command, work, cancel, Duration::from_secs(15))
+}
+pub fn launch_command(
+    command: &mut Command,
+    work: &Path,
+    cancel: &AtomicBool,
+    timeout: Duration,
+) -> Result<bool, AssetError> {
     std::fs::create_dir_all(work)?;
     let receipt = work.join(format!(
         "join-{:032x}.ready",
         tack_storage::new_document_id()?.value()
     ));
-    let mut child = Command::new(std::env::current_exe()?)
-        .arg("join")
-        .arg(address.server.to_string())
-        .arg(address.board.to_string())
+    let mut child = command
         .arg("--join-receipt")
         .arg(&receipt)
         .stdin(Stdio::null())
@@ -47,7 +57,7 @@ pub fn launch(
                     format!("Shared window stopped ({status}); local board retained").into(),
                 );
             }
-            if started.elapsed() > Duration::from_secs(15) {
+            if started.elapsed() > timeout {
                 return Err("Shared join timed out; local board retained".into());
             }
             std::thread::sleep(Duration::from_millis(20));
@@ -58,5 +68,8 @@ pub fn launch(
         let _ = child.wait();
     }
     let _ = std::fs::remove_file(receipt);
+    if matches!(result, Ok(true)) {
+        crate::owned_window::adopt(child)?;
+    }
     result
 }

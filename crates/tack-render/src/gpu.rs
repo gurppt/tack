@@ -10,8 +10,11 @@ use tack_core::{
     AssetId, ByteCache, Camera, ImageFiltering, ImageRenderData, Lod, SourceId, WorldRect,
 };
 use wgpu::util::DeviceExt;
+#[path = "ui_icons.rs"]
+mod ui_icons;
 #[path = "ui_image.rs"]
 mod ui_image;
+pub use ui_icons::UiIcon;
 
 const MAX_OBJECTS: usize = 10000;
 pub const UPLOAD_BUDGET_BYTES: usize = 16 * 1024 * 1024;
@@ -150,6 +153,7 @@ pub struct RenderStats {
 /// Texture ownership and GPU submission only; no file access or codec calls.
 pub struct Gpu {
     ui_image: Option<Box<ui_image::UiImage>>,
+    ui_icons: Option<Box<ui_icons::UiIcons>>,
     pub device: wgpu::Device,
     pub queue: wgpu::Queue,
     pub adapter_info: wgpu::AdapterInfo,
@@ -345,6 +349,7 @@ impl Gpu {
             submit_ms: 0.,
             poll_ms: 0.,
             ui_image: None,
+            ui_icons: None,
             upload_budget: UPLOAD_BUDGET_BYTES,
             max_uploads: MAX_UPLOADS,
         })
@@ -680,6 +685,9 @@ impl Gpu {
         }
         self.overlay
             .prepare(&self.device, &self.queue, camera, overlay)?;
+        if let Some(icons) = &self.ui_icons {
+            icons.prepare(&self.queue, camera);
+        }
         if let Some(image) = &self.ui_image {
             image.prepare(&self.queue, camera);
         }
@@ -754,6 +762,9 @@ impl Gpu {
                 selection.draw(&mut pass);
             }
             self.overlay.draw(&mut pass);
+            if let Some(icons) = &self.ui_icons {
+                icons.draw(&mut pass, &self.pipeline);
+            }
             if let Some(image) = &self.ui_image {
                 image.draw(&mut pass, &self.pipeline);
             }

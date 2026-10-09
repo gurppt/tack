@@ -8,6 +8,10 @@ impl LocalUi {
         profile: &Preferences,
     ) {
         self.hits.clear();
+        if self.panel == Panel::Toolbar {
+            self.draw_toolbar(gizmo, camera, profile);
+            return;
+        }
         if matches!(
             self.panel,
             Panel::Preferences | Panel::Keymap | Panel::Scale | Panel::Theme
@@ -55,10 +59,13 @@ impl LocalUi {
             None,
         );
         let heading = match self.panel {
+            Panel::Sharing => "Share Board",
+            Panel::Server => "Advanced: Tack server IP:port",
+            Panel::Toolbar => "Edit Toolbar",
             Panel::Bookmarks => "Camera bookmarks - Enter jumps",
             Panel::BookmarkName => "Bookmark name - Ctrl+A replaces",
             Panel::Info => "Image information - existing metadata",
-            Panel::Join => "Join: tack://IP:PORT/ID or IP:PORT ID",
+            Panel::Join => "Join Shared Board - paste invite",
             Panel::Connecting => "Join shared board",
             Panel::Menu => "Tack - local files",
             Panel::Preferences => "Preferences",
@@ -80,6 +87,8 @@ impl LocalUi {
             &mut budget,
         );
         let rows: Vec<String> = match self.panel {
+            Panel::Toolbar => Vec::new(),
+            Panel::Sharing | Panel::Server => self.daily_rows(),
             Panel::Bookmarks
             | Panel::BookmarkName
             | Panel::Info
@@ -143,7 +152,7 @@ impl LocalUi {
                     ("Delete (Del)", Command::DeleteBookmark),
                     ("Close", Command::Close),
                 ],
-                Panel::BookmarkName | Panel::Join => &[
+                Panel::BookmarkName | Panel::Join | Panel::Server => &[
                     ("Confirm", Command::ConfirmDaily),
                     ("Cancel", Command::Close),
                 ],

@@ -16,7 +16,7 @@ def main():
     a=p.parse_args()
     if os.environ.get('DISPLAY') in (None,':0',':0.0') or os.environ.get('TACK_NATIVE_NO_WM')!='1': p.error('Owned isolated display required')
     root=a.output.resolve();root.mkdir(parents=True,exist_ok=False)
-    binary=a.binary.resolve();env=dict(os.environ,TACK_PROFILE_DIR=str(root/'profile'),TACK_TEST_WINDOW_SIZE='800x600',XDG_DATA_HOME=str(root/'data'),XDG_CONFIG_HOME=str(root/'config'))
+    binary=a.binary.resolve();env=dict(os.environ,TACK_NATIVE_DIAGNOSTICS="1",TACK_PROFILE_DIR=str(root/'profile'),TACK_TEST_WINDOW_SIZE='800x600',XDG_DATA_HOME=str(root/'data'),XDG_CONFIG_HOME=str(root/'config'))
     profile=json.loads(a.profile.read_text());profile.update(recent=[],ui_scale=1)
     remaps={'F6':'AddCameraBookmark','F7':'CameraBookmarks','F8':'SourceInfo','F9':'JoinSharedBoard','F12':'CopySharedBoardAddress'}
     profile['keymap']=[b for b in profile['keymap'] if b['action'] not in [*remaps.values(),'DuplicateSelection']]

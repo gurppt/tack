@@ -16,7 +16,7 @@ impl App {
             self.dirty = true;
         }
     }
-    fn menu_context(&self) -> Option<Context> {
+    pub(super) fn menu_context(&self) -> Option<Context> {
         Some(
             Context::selection(
                 self.editor.as_ref()?,
@@ -24,7 +24,8 @@ impl App {
                 self.input.grid_visible,
                 self.input.snap.enabled,
             )
-            .with_shared(self.shared.is_some()),
+            .with_shared(self.shared.is_some() || self.offline.is_some())
+            .with_hosted(self.host.is_some()),
         )
     }
     fn prepare_menu(&mut self) -> Result<(), AssetError> {

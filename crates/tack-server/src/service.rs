@@ -22,6 +22,7 @@ pub struct ServerConfig {
     pub listen: String,
     pub root: PathBuf,
     pub asset_quota: u64,
+    pub managed: Option<crate::managed::Config>,
 }
 impl Default for ServerConfig {
     fn default() -> Self {
@@ -29,6 +30,7 @@ impl Default for ServerConfig {
             listen: "127.0.0.1:7337".into(),
             root: "tack-server-data".into(),
             asset_quota: 4 * 1024 * 1024 * 1024,
+            managed: None,
         }
     }
 }
@@ -91,6 +93,32 @@ pub fn serve(config: ServerConfig) -> Result<()> {
         config.root.display(),
         config.asset_quota
     );
+    if let Some(managed) = config.managed {
+        let managed_hub = Arc::clone(&hub);
+        let ready = managed.ready.clone();
+        thread::Builder::new()
+            .name("tack-host-lifetime".into())
+            .spawn(move || {
+                use std::io::Read;
+                let _ = std::io::stdin().lock().read(&mut [0u8; 1]);
+                let result = (|| -> Result<()> {
+                    let hub = managed_hub.lock().map_err(|_| "host mutex")?;
+                    for subscriber in hub.subscribers.values() {
+                        let _ = subscriber.out.socket.shutdown(Shutdown::Both);
+                    }
+                    crate::managed::checkpoint(&managed, &hub.root)
+                })();
+                let code = if let Err(e) = result {
+                    eprintln!("Hosted checkpoint: {e}");
+                    1
+                } else {
+                    0
+                };
+                std::process::exit(code);
+            })
+            .map_err(|e| e.to_string())?;
+        std::fs::write(&ready, b"ready").map_err(|e| e.to_string())?;
+    }
     for socket in listener.incoming() {
         let socket = match socket {
             Ok(s) => s,

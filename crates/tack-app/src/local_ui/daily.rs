@@ -3,6 +3,7 @@ use super::*;
 use tack_core::{BookmarkId, CameraBookmark};
 #[derive(Default)]
 pub struct DailyPanel {
+    pub choices: Vec<crate::sharing::Choice>,
     pub bookmarks: Vec<CameraBookmark>,
     pub id: Option<BookmarkId>,
     pub text: String,
@@ -13,6 +14,13 @@ pub struct DailyPanel {
 impl LocalUi {
     pub fn daily(panel: Panel, data: DailyPanel) -> Self {
         let mut ui = Self::new(panel);
+        if panel == Panel::Sharing {
+            ui.selected = data
+                .choices
+                .iter()
+                .position(|c| *c != crate::sharing::Choice::None)
+                .unwrap_or(0);
+        }
         ui.daily = Some(Box::new(data));
         ui
     }
@@ -22,6 +30,13 @@ impl LocalUi {
     pub(super) fn daily_activate(&mut self) -> Option<UiResult> {
         let data = self.daily.as_ref()?;
         match self.panel {
+            Panel::Sharing => data
+                .choices
+                .get(self.selected)
+                .copied()
+                .map(UiResult::Sharing),
+            Panel::Server if self.selected == 1 => Some(UiResult::Server(data.text.clone())),
+            Panel::Server if self.selected == 2 => Some(UiResult::Dismiss),
             Panel::Bookmarks => data
                 .bookmarks
                 .get(self.selected)
@@ -67,7 +82,10 @@ impl LocalUi {
             }
             return None;
         }
-        if !matches!(self.panel, Panel::BookmarkName | Panel::Join) {
+        if !matches!(
+            self.panel,
+            Panel::BookmarkName | Panel::Join | Panel::Server
+        ) {
             return None;
         }
         if key == PhysicalKey::Code(KeyCode::Enter) {
@@ -80,7 +98,9 @@ impl LocalUi {
         if self.modifiers.contains(Modifiers::CONTROL) {
             match key {
                 PhysicalKey::Code(KeyCode::KeyA) => data.replace = true,
-                PhysicalKey::Code(KeyCode::KeyV) if self.panel == Panel::Join => {
+                PhysicalKey::Code(KeyCode::KeyV)
+                    if matches!(self.panel, Panel::Join | Panel::Server) =>
+                {
                     return Some(Some(UiResult::PasteAddress));
                 }
                 _ => {}
@@ -95,7 +115,7 @@ impl LocalUi {
                 data.text.pop();
             }
         } else if let Some(text) = &event.text {
-            let limit = if self.panel == Panel::Join {
+            let limit = if matches!(self.panel, Panel::Join | Panel::Server) {
                 256
             } else {
                 tack_core::MAX_BOOKMARK_NAME_BYTES
@@ -116,8 +136,9 @@ impl LocalUi {
             return Vec::new();
         };
         match self.panel {
+            Panel::Sharing => data.rows.clone(),
             Panel::Bookmarks => data.bookmarks.iter().map(|b| b.name().to_owned()).collect(),
-            Panel::BookmarkName | Panel::Join => vec![
+            Panel::BookmarkName | Panel::Join | Panel::Server => vec![
                 data.text.clone(),
                 "Confirm (Enter)".into(),
                 "Cancel (Escape)".into(),
@@ -133,6 +154,7 @@ impl LocalUi {
                         .collect::<Vec<_>>()
                 })
                 .collect(),
+            Panel::Connecting if !data.rows.is_empty() => data.rows.clone(),
             Panel::Connecting => vec![
                 "Connecting in another window...".into(),
                 "Cancel (Escape)".into(),

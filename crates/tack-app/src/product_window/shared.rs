@@ -11,6 +11,7 @@ pub(super) struct SharedState {
     pub board: WireId,
     client_id: WireId,
     pub state: ConnectionState,
+    snapshot_seen: bool,
     pub revision: u64,
     pub bindings: HashMap<SourceId, SourceBinding>,
     requested: HashSet<(SourceId, u64)>,
@@ -45,6 +46,7 @@ impl SharedState {
             board,
             client_id,
             state: ConnectionState::Connecting,
+            snapshot_seen: false,
             revision: 0,
             bindings: HashMap::new(),
             requested: HashSet::new(),
@@ -105,6 +107,7 @@ impl App {
         }
     }
     fn shared_event(&mut self, event: ClientEvent) -> Result<(), AssetError> {
+        let mut show_host = false;
         let shared = self.shared.as_mut().ok_or("shared backend unavailable")?;
         match event {
             ClientEvent::State(state) => {
@@ -122,6 +125,7 @@ impl App {
                 sources,
                 ..
             } => {
+                show_host = !shared.snapshot_seen && self.host.is_some();
                 let first = self.editor.is_none();
                 self.input.cancel();
                 self.input.name_edit = None;
@@ -162,6 +166,7 @@ impl App {
                 self.board = Some(board);
                 self.editor = Some(editor);
                 self.options.path = path;
+                shared.snapshot_seen = true;
                 shared.revision = revision;
                 shared.state = ConnectionState::Connected;
                 shared.bindings = sources
@@ -299,6 +304,9 @@ impl App {
                 }
             }
         }
+        if show_host {
+            self.share_panel()?;
+        }
         self.notify_join_receipt()?;
         self.dirty = true;
         Ok(())
@@ -310,7 +318,11 @@ impl App {
         if self.local.worker.active() || self.local.queued.is_some() {
             return Ok(());
         }
-        let message = if self.editor.is_some() {
+        let message = if self
+            .shared
+            .as_ref()
+            .is_some_and(|s| s.snapshot_seen && s.state == ConnectionState::Connected)
+        {
             "joined".into()
         } else if let Some(error) = &self.interaction_error {
             format!("failed: {}", error.chars().take(256).collect::<String>())

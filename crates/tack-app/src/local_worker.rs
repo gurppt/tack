@@ -20,6 +20,8 @@ use tack_assets::AssetError;
 use tack_core::{ObjectId, Source};
 pub enum LocalUpdate {
     Joined(Result<bool, String>),
+    Hosted(Result<crate::hosting::Hosted, String>),
+    HostStopped(Result<(), String>),
     AddressText(Result<String, String>),
     About {
         ticket: u64,
@@ -45,6 +47,7 @@ pub struct OpenedBoard {
     pub lease: Arc<tack_storage::BoardLease>,
     pub path: PathBuf,
     pub metadata_ms: f64,
+    pub sharing: Option<crate::sharing::Descriptor>,
     pub recovery: bool,
     pub warning: Option<String>,
 }
@@ -64,6 +67,7 @@ impl OpenedBoard {
         };
         Ok(Self {
             path: lease.path().to_owned(),
+            sharing: crate::sharing::Descriptor::read(lease.path(), board.document.id())?,
             lease,
             board,
             metadata_ms: started.elapsed().as_secs_f64() * 1000.,
@@ -73,6 +77,13 @@ impl OpenedBoard {
     }
 }
 pub enum Operation {
+    Share(Box<crate::hosting::ShareRequest>, PathBuf),
+    Host {
+        profile: PathBuf,
+        snapshot: PathBuf,
+        descriptor: crate::sharing::Descriptor,
+    },
+    StopHost(crate::hosting::Hosted),
     Join {
         address: crate::shared_address::SharedAddress,
         work: PathBuf,
@@ -185,6 +196,28 @@ impl LocalWorker {
                 };
                 let result = (|| -> Result<(), AssetError> {
                     match operation {
+                        Operation::Share(request, work) => {
+                            emit(LocalUpdate::Joined(
+                                request.run(&work, &stop).map_err(|e| e.to_string()),
+                            ));
+                        }
+                        Operation::Host {
+                            profile,
+                            snapshot,
+                            descriptor,
+                        } => {
+                            emit(LocalUpdate::Hosted(
+                                crate::hosting::Hosted::start(
+                                    &profile, &snapshot, descriptor, &stop,
+                                )
+                                .map_err(|e| e.to_string()),
+                            ));
+                        }
+                        Operation::StopHost(host) => {
+                            emit(LocalUpdate::HostStopped(
+                                host.stop().map_err(|e| e.to_string()),
+                            ));
+                        }
                         Operation::Join { address, work } => {
                             emit(LocalUpdate::Joined(
                                 crate::join_launch::launch(&address, &work, &stop)
@@ -304,7 +337,9 @@ impl LocalWorker {
                             if let Some(path) = path {
                                 command.arg(if new { "new" } else { "open" }).arg(path);
                             }
-                            command.stdin(std::process::Stdio::null()).spawn()?;
+                            crate::owned_window::adopt(
+                                command.stdin(std::process::Stdio::null()).spawn()?,
+                            )?;
                         }
                         Operation::RestoreRecovery { lease, id } => {
                             let result = (|| -> Result<tack_storage::TackFile, AssetError> {
@@ -348,6 +383,7 @@ impl LocalWorker {
                             && matches!(
                                 update,
                                 LocalUpdate::Opened(_)
+                                    | LocalUpdate::Hosted(_)
                                     | LocalUpdate::Joined(_)
                                     | LocalUpdate::AddressText(_)
                             )

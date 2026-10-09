@@ -14,3 +14,5 @@ pub const HISTORY_PER_CLIENT: usize = 32;
 pub const RECEIPTS_PER_CLIENT: usize = 128;
 pub const MAX_HISTORY_BYTES: usize = 8 * 1024 * 1024;
 pub const MAX_AUTHORITY_BYTES: usize = 128 * 1024 * 1024;
+
+pub mod managed;

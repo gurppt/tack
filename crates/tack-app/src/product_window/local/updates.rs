@@ -3,6 +3,8 @@ use super::*;
 impl App {
     pub(in super::super) fn local_update(&mut self, update: LocalUpdate) -> Result<(), AssetError> {
         match update {
+            LocalUpdate::Hosted(result) => self.host_ready(result)?,
+            LocalUpdate::HostStopped(result) => self.host_stopped(result)?,
             LocalUpdate::Joined(result) => {
                 if self
                     .local
@@ -47,9 +49,11 @@ impl App {
             }
             LocalUpdate::Opened(result) => {
                 let opened = result.map_err(AssetError::from)?;
-                if self.can_reuse_fresh(true) {
+                if self.local.reload_offline || self.can_reuse_fresh(true) {
+                    self.local.reload_offline = false;
                     self.install_loaded(
                         LoadedBoard {
+                            sharing: opened.sharing,
                             board: opened.board,
                             lease: opened.lease,
                             path: opened.path,

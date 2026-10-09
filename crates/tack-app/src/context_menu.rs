@@ -34,6 +34,7 @@ pub struct Context {
     pub kind: ContextKind,
     selection_kind: ContextKind,
     shared: bool,
+    hosted: bool,
     pub generation: u64,
     undo: bool,
     redo: bool,
@@ -106,6 +107,7 @@ impl Context {
             kind,
             selection_kind: kind,
             shared: false,
+            hosted: false,
             generation: editor.generation(),
             undo: editor.undo_len() > 0,
             redo: editor.redo_len() > 0,
@@ -130,11 +132,16 @@ impl Context {
         self.shared = shared;
         self
     }
+    pub fn with_hosted(mut self, hosted: bool) -> Self {
+        self.hosted = hosted;
+        self
+    }
     pub fn enabled(self, action: Action) -> bool {
         match action {
             Action::DuplicateSelection => self.any && !self.shared,
             Action::AddCameraBookmark => !self.shared,
             Action::CopySharedBoardAddress => self.shared,
+            Action::StopSharing => self.hosted,
             Action::SourceInfo => self.selection_kind == ContextKind::Image,
             Action::Undo => self.undo,
             Action::Redo => self.redo,
@@ -449,8 +456,10 @@ fn context_items(context: Context, submenu: Option<Group>, keymap: &Keymap) -> V
                 a("Save", Save),
                 a("Save As...", SaveAs),
                 a("Recent boards", RecentBoards),
+                a("Share Board...", ShareBoard),
+                a("Stop Sharing", StopSharing),
                 a("Join shared board...", JoinSharedBoard),
-                a("Copy shared address", CopySharedBoardAddress),
+                a("Copy Invite", CopySharedBoardAddress),
             ],
             Group::Edit => vec![
                 a("Undo", Undo),
@@ -462,6 +471,9 @@ fn context_items(context: Context, submenu: Option<Group>, keymap: &Keymap) -> V
                 a("Keymap...", KeymapEditor),
             ],
             Group::View => vec![
+                a("Show / hide toolbar", ToggleToolbar),
+                a("Edit Toolbar...", EditToolbar),
+                a("Show / hide status bar", ToggleStatusBar),
                 a("Grid", ToggleGrid),
                 a("Snapping", ToggleSnapping),
                 a("Focus frame", FocusFrame),
@@ -867,6 +879,19 @@ impl ContextMenu {
             self.child_group = Some(g);
         }
         self.relayout(camera);
+    }
+    pub fn hovered_action(&self) -> Option<Action> {
+        self.child
+            .as_ref()
+            .or(Some(&self.root))
+            .and_then(|l| l.selected.and_then(|i| l.items.get(i)))
+            .and_then(|item| {
+                if let Command::Action(a) = item.command {
+                    Some(a)
+                } else {
+                    None
+                }
+            })
     }
     fn close_child(&mut self) {
         self.child = None;

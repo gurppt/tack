@@ -19,3 +19,5 @@ pub use annotations::{
 
 mod selection;
 pub use selection::{MAX_SELECTION_RECTS, SelectionRect};
+
+pub use gpu::UiIcon;

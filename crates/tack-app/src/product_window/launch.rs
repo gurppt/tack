@@ -43,6 +43,7 @@ fn run_mode(
     local.untitled = untitled;
     let mut options = OpenOptions {
         join_receipt: None,
+        put_online: false,
         path,
         new,
         untitled,
@@ -62,9 +63,10 @@ fn run_mode(
     let mut it = args.into_iter().skip(1);
     while let Some(a) = it.next() {
         match a.to_str() {
-            Some("--join-receipt") if shared_config.is_some() => {
+            Some("--join-receipt") => {
                 options.join_receipt = Some(PathBuf::from(it.next().ok_or("join receipt path")?))
             }
+            Some("--put-online") => options.put_online = true,
             Some("--window-size") => {
                 let size = it.next().ok_or("window size WIDTHxHEIGHT")?;
                 options.window_size = parse_window_size(size.to_str().ok_or("window size text")?)?;
@@ -208,6 +210,10 @@ fn run_mode(
                         ),
                     };
                     Ok(LoadedBoard {
+                        sharing: tack_app::sharing::Descriptor::read(
+                            lease.path(),
+                            board.document.id(),
+                        )?,
                         board,
                         path: lease.path().to_owned(),
                         lease,
@@ -230,6 +236,17 @@ fn run_mode(
         options,
         lod_trace,
         local: Box::new(local),
+        chrome: chrome::Chrome {
+            atlas: Some(tack_app::toolbar_icons::load(
+                &tack_app::toolbar_icons::root(),
+            )),
+            ..Default::default()
+        },
+        host: None,
+        offline: None,
+        shared_copy: None,
+        share_remote: None,
+        close_after_host: false,
         shared,
         proxy,
         source_active: false,

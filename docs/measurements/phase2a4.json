@@ -1,0 +1,344 @@
+{
+  "baseline": {
+    "commit": "e059d6d4707d6bbf4944a54c6f46b001102ed809",
+    "client_sha256": "3ad64ecb0533b383d47e36884785c36f065f774df69e478201a7ca3e064a8893",
+    "stripped_bytes": 19450176
+  },
+  "current": {
+    "tack-server": {
+      "bytes": 1854888,
+      "sha256": "d61405b82b61b570145b13a9dd5b39ca2d3ae0ac82273347bdb059a0b3ce90b1"
+    },
+    "tack-jpeg-decoder": {
+      "bytes": 890896,
+      "sha256": "4fcef9b973c80de96ecf2d5babe86ef87b1be2459f22559243c8e85da3ebe587"
+    },
+    "tack": {
+      "bytes": 19671488,
+      "sha256": "57adcef9023e39046ffe22cb0d1418dccfecace99520edfb67a7f93592a7171c"
+    },
+    "tack-about.png": {
+      "bytes": 38426,
+      "sha256": "d22641555380426ad6567153edca7b83548ad964acdc9c3fbdb70b59ac7759ee"
+    }
+  },
+  "source_manifest": {
+    "files": 337,
+    "sha256": "4de3f397a2521647e1627595ab3b6cf8eb29ce4380ee96395ab5cfaf1e027817"
+  },
+  "client_delta_bytes": 221312,
+  "client_delta_percent": 1.1378406036017363,
+  "local": [
+    {
+      "board": "empty",
+      "mode": "phase2a3",
+      "runs": 2,
+      "startup_median_ms": 460.01454549999994,
+      "rss_median_bytes": 349741056.0,
+      "threads": [
+        41,
+        41
+      ],
+      "idle_ticks": [
+        1,
+        1
+      ],
+      "idle_redraws": [
+        0,
+        0
+      ],
+      "io_delta": [
+        {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        }
+      ],
+      "ip_sockets": [
+        0,
+        0
+      ]
+    },
+    {
+      "board": "empty",
+      "mode": "phase2a4-visible",
+      "runs": 2,
+      "startup_median_ms": 451.7711095,
+      "rss_median_bytes": 350156800.0,
+      "threads": [
+        41,
+        41
+      ],
+      "idle_ticks": [
+        2,
+        1
+      ],
+      "idle_redraws": [
+        0,
+        0
+      ],
+      "io_delta": [
+        {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        }
+      ],
+      "ip_sockets": [
+        0,
+        0
+      ]
+    },
+    {
+      "board": "images-1k",
+      "mode": "phase2a3",
+      "runs": 2,
+      "startup_median_ms": 455.107393,
+      "rss_median_bytes": 377675776.0,
+      "threads": [
+        41,
+        41
+      ],
+      "idle_ticks": [
+        7,
+        6
+      ],
+      "idle_redraws": [
+        0,
+        0
+      ],
+      "io_delta": [
+        {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        }
+      ],
+      "ip_sockets": [
+        0,
+        0
+      ]
+    },
+    {
+      "board": "images-1k",
+      "mode": "phase2a4-visible",
+      "runs": 2,
+      "startup_median_ms": 440.128501,
+      "rss_median_bytes": 377909248.0,
+      "threads": [
+        41,
+        41
+      ],
+      "idle_ticks": [
+        6,
+        7
+      ],
+      "idle_redraws": [
+        0,
+        0
+      ],
+      "io_delta": [
+        {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        }
+      ],
+      "ip_sockets": [
+        0,
+        0
+      ]
+    }
+  ],
+  "hidden_and_bare": [
+    {
+      "mode": "hidden",
+      "repeat": 0,
+      "startup_ms": 438.401971,
+      "chrome": {
+        "config_bytes": 271,
+        "icon_atlas_gpu_bytes": 20224,
+        "placement": "Hidden",
+        "status_bar": true,
+        "toolbar_entries": 0
+      },
+      "threads": 41,
+      "ticks": 2,
+      "idle_redraws": 0,
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      }
+    },
+    {
+      "mode": "bare",
+      "repeat": 0,
+      "startup_ms": 475.95194499999997,
+      "chrome": {
+        "config_bytes": 271,
+        "icon_atlas_gpu_bytes": 20224,
+        "placement": "Hidden",
+        "status_bar": false,
+        "toolbar_entries": 0
+      },
+      "threads": 41,
+      "ticks": 0,
+      "idle_redraws": 0,
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      }
+    },
+    {
+      "mode": "hidden",
+      "repeat": 1,
+      "startup_ms": 463.584374,
+      "chrome": {
+        "config_bytes": 271,
+        "icon_atlas_gpu_bytes": 20224,
+        "placement": "Hidden",
+        "status_bar": true,
+        "toolbar_entries": 0
+      },
+      "threads": 41,
+      "ticks": 2,
+      "idle_redraws": 0,
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      }
+    },
+    {
+      "mode": "bare",
+      "repeat": 1,
+      "startup_ms": 461.459799,
+      "chrome": {
+        "config_bytes": 271,
+        "icon_atlas_gpu_bytes": 20224,
+        "placement": "Hidden",
+        "status_bar": false,
+        "toolbar_entries": 0
+      },
+      "threads": 41,
+      "ticks": 1,
+      "idle_redraws": 0,
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      }
+    }
+  ],
+  "checks": {
+    "rust": 340,
+    "python": 27,
+    "gpu": 14,
+    "shared_gui": 12,
+    "managed_eof": 6,
+    "toolbar": 18,
+    "daily": 20,
+    "authority": 32,
+    "about": 41,
+    "huge_poses": 33,
+    "lod_wheel": 2520,
+    "lod_pan": 32,
+    "lod_filter": 5
+  },
+  "raw_receipts": {
+    "benchmark-results/phase2a4/source_manifest.json": "4de3f397a2521647e1627595ab3b6cf8eb29ce4380ee96395ab5cfaf1e027817",
+    "benchmark-results/phase2a4/full-gate.log": "76709de5e37d87e4cacc4453a83b30b89ca2140974e1d028320a42177097971c",
+    "benchmark-results/phase2a4/final-build/manifest.json": "c8d6922453f42055e9b1f68902f7320f108a0a6877d064e7f0f127b0721d4253",
+    "benchmark-results/phase2a4/shared-final/receipt.json": "3bad2c2d10df57c6358b3fae2d317c9a723539e2ab9a6a58e804e20abfd6a439",
+    "benchmark-results/phase2a4/managed-final/receipt.json": "44e8843148400bf042050396c01090a200b0cd89433b4a663a69c3b971ca9c5d",
+    "benchmark-results/phase2a4/toolbar-shipping/receipt.json": "ab1dbdc9904597bae3a8340ee43f4f0372956d69eacfaa2f1c750566898c7d2c",
+    "benchmark-results/phase2a4/daily-final/checks.json": "27f40c6768c521d7fbf3bf2c8a8b4138b635c92bc8a6bcd430ab08c99c13ddc6",
+    "benchmark-results/phase2a4/authority-final/provenance.json": "efcb5ee263acb7f2677ad8cc3c791cd64337949432cedad0117b1e835b2b7dcd",
+    "benchmark-results/phase2a4/about-final/receipt.json": "cd4290eeaa3c82bb652369bfb7c9c5fcef01da9241acc72556f945d4e71a057d",
+    "benchmark-results/phase2a4/lod-final/summary.json": "69f99e5272895ca1fa1946ea025bf05224a170293360174d7393422bb2987953",
+    "benchmark-results/phase2a4/square-final/summary.json": "24a4cc915771915384f8234efa94958d83cca8ae6827212e29219bd2c8b1e3d0",
+    "benchmark-results/phase2a4/square-potato-final/summary.json": "100a75e59c2a811cd5c669f33cc264c5e5b00db52a8ec4df6a0dd04294769550",
+    "benchmark-results/phase2a4/mixed-final/summary.json": "b22ac08c5dbb7c42ceda22063b489e9ff71c29db23e1038e87aaeca448a97a73",
+    "benchmark-results/phase2a4/idle-final/receipt.json": "57a43b520bb5b20e1b16b221f66186b809a085f73f5ace447dda2497d97239c4",
+    "benchmark-results/phase2a4/idle-final/paired/summary.json": "2827ccbe20be04872ab091fa5aaa57eb71e4c0f44f0226382d7c7b0648f6f52c",
+    "benchmark-results/phase2a4/server-dependencies.txt": "2f082d979de58f2c097d14f9828b99bc830e050ee82aedc888d384eff0352158",
+    "benchmark-results/phase2a4/gpu-smoke.log": "b402ce11fecaf5e240ae0c7ccbd5698024361cb5e0a83bc022f860c767194285",
+    "benchmark-results/phase2a4/gpu-selection.log": "41065a973be0e5ad9e4ea1f0750cb734432c2e03d5675c300a1e3847d4320900",
+    "benchmark-results/phase2a4/gpu-product.log": "fb3d7caf5f6a32e4e0f5b0693388a8703508575ddf832ccb35ea5ecd98ff7ff4",
+    "benchmark-results/phase2a4/gpu-convergence.log": "5f9081fa39b5914759e576f2fcc9217b97610ba162ea92c4f924730d4d7946ba",
+    "benchmark-results/phase2a4/gpu-churn.log": "a888300d9d40b5a69c9629db00592a5cd1dbd142f143f22c0723f11df242ea64"
+  },
+  "scope": "Serial Linux/X11 :99 RTX2060 800x600, two warm/unspecified-cache pairs per empty/1000-object fixture; ticks are coarse process sampling including GPU driver, no CPU-zero/legacy-CPU/physical-two-PC/Windows-desktop claim",
+  "physical_lan": "PENDING",
+  "ci": null
+}

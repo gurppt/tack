@@ -98,6 +98,10 @@ impl RecentPath {
 #[serde(deny_unknown_fields)]
 pub struct Preferences {
     pub version: u32,
+    #[serde(default)]
+    pub toolbar: crate::toolbar::Config,
+    #[serde(default = "status_default")]
+    pub status_bar: bool,
     pub grid: bool,
     pub sampling: String,
     pub embedded_import: bool,
@@ -116,6 +120,8 @@ impl Preferences {
     pub fn defaults() -> Result<Self, AssetError> {
         Ok(Self {
             version: 2,
+            toolbar: crate::toolbar::Config::default(),
+            status_bar: true,
             grid: false,
             sampling: "Smooth".into(),
             embedded_import: true,
@@ -143,6 +149,7 @@ impl Preferences {
         {
             return Err("unsupported or out-of-bounds preferences".into());
         }
+        self.toolbar.clone().normalize()?;
         for recent in self.recent.iter().chain(self.last_board_directory.iter()) {
             if recent.bytes.len() > tack_core::MAX_SOURCE_PATH_BYTES {
                 return Err("recent path too long".into());
@@ -206,6 +213,7 @@ pub fn read(path: &Path) -> Result<Preferences, AssetError> {
         return Err("preferences file exceeds bound".into());
     }
     let mut profile: Preferences = serde_json::from_slice(&bytes)?;
+    profile.toolbar.normalize()?;
     let keymap = profile.keymap()?;
     if profile.version == 1 {
         profile.version = 2;
@@ -331,4 +339,8 @@ pub fn save_profile(
     }
     write_locked(&path, &next)?;
     fingerprint(&path)?.ok_or_else(|| "preferences publication missing".into())
+}
+
+fn status_default() -> bool {
+    true
 }

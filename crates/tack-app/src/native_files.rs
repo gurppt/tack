@@ -34,7 +34,7 @@ pub fn usable_directory(path: Option<&Path>) -> Option<PathBuf> {
 #[cfg(not(target_os = "linux"))]
 use std::{io::Read, process::Stdio, sync::atomic::Ordering, time::Instant};
 #[cfg(target_os = "linux")]
-fn capture(
+pub(crate) fn capture(
     command: Command,
     _work: &Path,
     cancel: &AtomicBool,
@@ -44,7 +44,7 @@ fn capture(
     crate::clipboard::capture(command, cancel, limit, timeout)
 }
 #[cfg(not(target_os = "linux"))]
-fn capture(
+pub(crate) fn capture(
     mut command: Command,
     work: &Path,
     cancel: &AtomicBool,

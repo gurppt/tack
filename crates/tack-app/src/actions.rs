@@ -102,10 +102,15 @@ pub enum Action {
     SourceInfo,
     JoinSharedBoard,
     CopySharedBoardAddress,
+    ShareBoard,
+    StopSharing,
+    ToggleToolbar,
+    EditToolbar,
+    ToggleStatusBar,
 }
 impl Action {
     /// Enumerable action catalog, including currently unassigned actions.
-    pub const ALL: [Self; 99] = [
+    pub const ALL: [Self; 104] = [
         Self::SelectTool(Tool::Pointer),
         Self::SelectTool(Tool::Pan),
         Self::SelectTool(Tool::RotateView),
@@ -205,6 +210,11 @@ impl Action {
         Self::SourceInfo,
         Self::JoinSharedBoard,
         Self::CopySharedBoardAddress,
+        Self::ShareBoard,
+        Self::StopSharing,
+        Self::ToggleToolbar,
+        Self::EditToolbar,
+        Self::ToggleStatusBar,
     ];
     /// Stable readable semantic names; never a positional catalog index.
     pub fn id(self) -> String {
@@ -236,6 +246,11 @@ impl Action {
                 | Self::SourceInfo
                 | Self::JoinSharedBoard
                 | Self::CopySharedBoardAddress
+                | Self::ShareBoard
+                | Self::StopSharing
+                | Self::ToggleToolbar
+                | Self::EditToolbar
+                | Self::ToggleStatusBar
         )
     }
     pub fn category(self) -> &'static str {
@@ -381,7 +396,12 @@ impl Action {
             Self::CameraBookmarks => "Camera bookmarks...",
             Self::SourceInfo => "Image information...",
             Self::JoinSharedBoard => "Join shared board...",
-            Self::CopySharedBoardAddress => "Copy shared board address",
+            Self::CopySharedBoardAddress => "Copy Invite",
+            Self::ShareBoard => "Share Board...",
+            Self::StopSharing => "Stop Sharing",
+            Self::ToggleToolbar => "Show / hide toolbar",
+            Self::EditToolbar => "Edit Toolbar...",
+            Self::ToggleStatusBar => "Show / hide status bar",
         }
     }
 }

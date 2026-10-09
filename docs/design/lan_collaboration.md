@@ -1,6 +1,9 @@
-# Optional LAN document backend (Phase 2A)
+# Optional LAN document backend (Phase 2A / desktop 2A4)
 
-Tack remains a local native board application. `tack publish LOCAL.tack IP:PORT`
+Tack remains a local native board application. File → Share Board / Join Shared
+Board provide the artist-facing [desktop lifecycle](shared_desktop_lifecycle.md),
+including explicit ownership of the existing headless server. CLI remains
+available: `tack publish LOCAL.tack IP:PORT`
 explicitly transfers the selected board's originals and publishes its validated
 metadata. `tack join IP:PORT BOARD_ID` opens a shared window. The separately
 started `tack-server --root PRIVATE_DIRECTORY --listen IP:PORT` is headless.
@@ -24,8 +27,9 @@ already transmitted operation keeps its original base revision and is refused
 if stale. A refusal never counts as a document mutation. An accepted command
 increments the editor generation and updates the ordinary query/render path.
 Camera, selection, tools, preferences and renderer caches never enter the wire.
-The server revision and connection/refusal state appear in bitmap canvas text
-and the native window title; F5 explicitly reconnects.
+A fixed pixel indicator and artist-facing status/title expose connection state.
+Revision/address debugging belongs in Advanced or explicit diagnostics; F5
+explicitly reconnects.
 
 ## Event and supply ownership
 

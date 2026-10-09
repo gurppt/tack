@@ -17,7 +17,9 @@ impl App {
         };
         self.camera.set_ui_scale(scale);
         self.input.gizmo.set_scale(scale);
-        self.dirty = true;
+        self.chrome_layout();
+        self.chrome.last_hover = None;
+        self.chrome.last_state = "";
         Ok(())
     }
     pub(in super::super) fn import_paths(
@@ -25,6 +27,9 @@ impl App {
         paths: Vec<PathBuf>,
         force_embedded: bool,
     ) -> Result<(), AssetError> {
+        if self.offline.is_some() && self.shared.is_none() {
+            return Err("Offline shared copies are read only".into());
+        }
         if self.local.importing {
             return Err(
                 "An image import is active; wait or cancel it before importing again".into(),
@@ -54,11 +59,22 @@ impl App {
         Ok(())
     }
     pub(in super::super) fn local_action(&mut self, action: Action) -> Result<(), AssetError> {
-        if self.shared.is_some() && matches!(action, Action::Save | Action::SaveAs) {
+        if (self.shared.is_some() || self.offline.is_some())
+            && matches!(action, Action::Save | Action::SaveAs)
+        {
             return Err("Shared edits are saved by the server. Local snapshot export is reserved for the documented streaming API.".into());
         }
         if self.load_failed {
             return Ok(());
+        }
+        if self.offline.is_some()
+            && self.shared.is_none()
+            && matches!(
+                action,
+                Action::Paste | Action::RelinkSource | Action::ImportImages
+            )
+        {
+            return Err("Offline shared copies are read only".into());
         }
         use Action::*;
         if action != Paste
@@ -72,6 +88,21 @@ impl App {
         self.local.ui = None;
         self.release_about();
         match action {
+            ToggleToolbar => {
+                tack_app::toolbar::Toolbar::toggle(&mut self.local.profile);
+                self.local.profile_pending = true;
+                self.local.profile_changed = true;
+                self.chrome_layout();
+            }
+            ToggleStatusBar => {
+                self.local.profile.status_bar = !self.local.profile.status_bar;
+                self.local.profile_pending = true;
+                self.local.profile_changed = true;
+                self.chrome_layout();
+            }
+            EditToolbar => self.panel(Panel::Toolbar),
+            ShareBoard => self.share_panel()?,
+            StopSharing => self.stop_hosting(false)?,
             DuplicateSelection
             | AddCameraBookmark
             | CameraBookmarks
@@ -193,6 +224,7 @@ impl App {
             return Ok(false);
         };
         let old_grid = self.local.profile.grid;
+        ui.set_pointer(self.pointer);
         let result = ui.handle(event, &mut self.input.keymap, &mut self.local.profile);
         self.dirty = true;
         if let Some(result) = result {
@@ -202,7 +234,9 @@ impl App {
                 | UiResult::RenameBookmark(_)
                 | UiResult::DeleteBookmark(_)
                 | UiResult::Join(_)
-                | UiResult::PasteAddress => self.daily_result(result)?,
+                | UiResult::PasteAddress
+                | UiResult::Sharing(_)
+                | UiResult::Server(_) => self.daily_result(result)?,
                 UiResult::Action(action) => self.local_action(action)?,
                 UiResult::PreferencesChanged => {
                     if old_grid != self.local.profile.grid {
@@ -218,6 +252,8 @@ impl App {
                         .ui
                         .as_ref()
                         .is_some_and(|ui| matches!(ui.panel, Panel::Connecting | Panel::Join))
+                        && !self.local.reload_offline
+                        && !self.close_after_host
                     {
                         self.local.worker.cancel();
                         self.local.queued = None;
@@ -327,6 +363,7 @@ impl App {
     ) -> Result<(), AssetError> {
         let path = paths.first().ok_or("picker returned no path")?.clone();
         match action {
+            Action::ShareBoard => self.share_to(path),
             Action::OpenBoard => self.open_board(path),
             Action::ImportImages => self.import_paths(paths, false),
             Action::SaveAs => {

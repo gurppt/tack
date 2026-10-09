@@ -20,8 +20,12 @@ mod events;
 mod settings;
 #[cfg(test)]
 mod tests;
+mod toolbar;
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Panel {
+    Sharing,
+    Server,
+    Toolbar,
     Bookmarks,
     BookmarkName,
     Info,
@@ -45,6 +49,8 @@ pub enum UiResult {
     DeleteBookmark(tack_core::BookmarkId),
     Join(String),
     PasteAddress,
+    Sharing(crate::sharing::Choice),
+    Server(String),
     Action(Action),
     PreferencesChanged,
     CloseSave,
@@ -56,6 +62,11 @@ pub enum UiResult {
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Command {
+    ToolbarToggle,
+    ToolbarUp,
+    ToolbarDown,
+    ToolbarPlacement,
+    ToolbarReset,
     RenameBookmark,
     DeleteBookmark,
     ConfirmDaily,
@@ -110,6 +121,9 @@ pub struct LocalUi {
     confirm_reset: Option<ResetScope>,
 }
 impl LocalUi {
+    pub fn set_pointer(&mut self, pointer: [f64; 2]) {
+        self.cursor = pointer;
+    }
     pub fn new(panel: Panel) -> Self {
         Self {
             daily: None,
@@ -173,6 +187,8 @@ impl LocalUi {
     }
     fn count(&self, keymap: &Keymap, profile: &Preferences) -> usize {
         match self.panel {
+            Panel::Toolbar => Self::toolbar_count(),
+            Panel::Sharing | Panel::Server => self.daily_rows().len(),
             Panel::Bookmarks
             | Panel::BookmarkName
             | Panel::Info
@@ -291,7 +307,15 @@ impl LocalUi {
         profile: &mut Preferences,
     ) -> Option<UiResult> {
         self.focus = None;
+        if self.panel == Panel::Toolbar && command != Command::Close {
+            return self.toolbar_command(command, profile);
+        }
         match command {
+            Command::ToolbarToggle
+            | Command::ToolbarUp
+            | Command::ToolbarDown
+            | Command::ToolbarPlacement
+            | Command::ToolbarReset => None,
             Command::RenameBookmark => self.daily_command(true),
             Command::DeleteBookmark => self.daily_command(false),
             Command::ConfirmDaily => {
@@ -365,7 +389,12 @@ impl LocalUi {
     }
     fn activate(&mut self, keymap: &mut Keymap, profile: &mut Preferences) -> Option<UiResult> {
         match self.panel {
-            Panel::Bookmarks | Panel::BookmarkName | Panel::Join => self.daily_activate(),
+            Panel::Toolbar => self.toolbar_command(Command::ToolbarToggle, profile),
+            Panel::Sharing
+            | Panel::Server
+            | Panel::Bookmarks
+            | Panel::BookmarkName
+            | Panel::Join => self.daily_activate(),
             Panel::Info | Panel::Connecting => Some(UiResult::Dismiss),
             Panel::Menu => self
                 .actions(keymap)

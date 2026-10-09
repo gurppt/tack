@@ -30,6 +30,8 @@ Start with the [public overview](../README.md) for features and everyday control
 - [Client workers, cache and streaming snapshots](design/lan_client.md)
 - [Headless server storage and authority](../crates/tack-server/README.md)
 
+Current phase: [2A4 shared UX and pixel toolbar](MISSION_2A4_SHARED_UX_PIXEL_TOOLBAR_REPORT.md).
+
 ## Development reports
 
 Reports describe the code and evidence at their recorded checkpoint. Later

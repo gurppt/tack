@@ -2,7 +2,8 @@
 # Repository-local human-test executable. Never installs system-wide.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-mkdir -p bin
+mkdir -p bin/gfx/icons
+cp gfx/icons/*.png bin/gfx/icons/
 # Mark the previously installed executable as stale while building. A failed build
 # must not leave an older executable described as current.
 if [ -f bin/BUILD.txt ]; then
@@ -22,6 +23,10 @@ cp "$target_dir/release/tack-app" "$binary"
 chmod 755 "$binary"
 cp "$target_dir/release/tack-server" "$server"
 chmod 755 "$server"
+# Keep the human build compact; symbol-rich originals remain in shared target/.
+if command -v strip >/dev/null 2>&1; then
+    strip --strip-all "$binary" "$server"
+fi
 cp "$target_dir/release/tack-about.png" "$artwork"
 cp "$target_dir/release/tack-jpeg-decoder" "$decoder"
 chmod 755 "$decoder"

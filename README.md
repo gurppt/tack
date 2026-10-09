@@ -29,9 +29,13 @@ Built in Rust, with a native GPU-rendered canvas. Boards are saved locally as
   to external files. Relink missing sources when files move, and inspect dimensions, encoded size and source status from Image → Source → Image information.
 - **Make the workspace yours.** Flat Very Dark, Neutral Gray and Light themes,
   crisp bitmap UI, direct integer scaling and editable shortcuts. Right-click keeps application and contextual commands together.
-- **Share a board on your LAN.** Explicitly publish a local board to the optional
-  headless server and edit it from several native clients. Local boards work
-  independently; the server runs only when you start it. Join from File → Join shared board using a numeric IP and Board ID or `tack://IP:PORT/BOARD_ID`.
+- **Share a board on your LAN.** File → Share Board → Share from this computer
+  creates a separate `-shared.tack` and manages the optional server while that
+  hosted window is open. Click Copy Invite; another artist pastes it into
+  File → Join Shared Board. Stop sharing or reopen the shared copy and Put Online.
+- **Keep tools close.** One compact pixel toolbar offers mouse access to tools
+  and commands. Move it to an edge or float it, choose up to 32 actions, and hide
+  it whenever you want. The optional status strip shows current shortcuts/state.
 
 The renderer loads image detail progressively and uses bounded caches. See the
 [feature inventory](docs/FEATURE_INVENTORY.md) for exact behavior and limits.
@@ -52,6 +56,10 @@ python3 -m pip install Pillow==10.2.0
 python3 tools/prepare_turbojpeg.py
 cargo run --release --locked -p tack-app
 ```
+
+For the complete desktop sharing build, run `bash tools/build-test-bin.sh`, then
+launch `./bin/tack`. Keep the adjacent helper/server and assets when copying it.
+See the [two-computer checklist](docs/HUMAN_TEST_2A4_LAN.md).
 
 The preparation step downloads and builds the pinned image decoder locally.
 No generated test corpus is needed to use the application.

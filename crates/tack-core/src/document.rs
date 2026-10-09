@@ -38,6 +38,13 @@ pub struct Document {
     pub(crate) memberships: BTreeMap<ObjectId, crate::GroupId>,
 }
 impl Document {
+    /// Independent document incarnation; object/source identities are retained.
+    pub fn fork(&self, id: DocumentId) -> Self {
+        let mut copy = self.clone();
+        copy.id = id;
+        copy
+    }
+
     pub fn new(id: DocumentId, limits: DocumentLimits) -> Self {
         Self {
             id,

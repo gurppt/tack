@@ -78,3 +78,15 @@ autonomous-loop directive.
 Automated coverage checks bookmark persistence/exact jump, atomic duplication, metadata-only info and desktop Join at 800×600. Human value: discoverability of View bookmarks, rename/delete buttons, duplicate offset and information readability. The supplied black-rhombus SVG is preserved; the fuchsia/turquoise italic-t adaptation follows the brief but still needs the owner's visual approval at 16/32px and in About. This is a subjective artwork decision, not a claim of final owner-approved SVG.
 
 Compact checklist: save an overview and a close-up; rename, jump, delete and Undo; duplicate grouped images plus notes, Undo once and reopen; inspect a missing/huge image; use File→Join on the existing LAN server, cancel once, then copy the joined address. Check palette and tiny icon on the owner's desktop. Windows desktop feel remains pending; CI is not native Windows acceptance.
+
+## Phase 2A4
+
+### LOW — Toolbar and sharing wording comfort
+Human value: readable 16px symbols, active/hover colors, six placements and grip
+discovery at 800×600/1024×768; the checkbox/reorder editor and plain Share/Join
+wording. Edit `gfx/icons/arrow.png`, restart, and judge the artwork in the real
+build. Native tests check actual pixel expansion and persistence; they do not
+establish owner comfort. Blocks next phase: NO for subjective preferences.
+
+Physical LAN connectivity/lifecycle is a technical acceptance checklist in
+[HUMAN_TEST_2A4_LAN.md](HUMAN_TEST_2A4_LAN.md), not a subjective review item.

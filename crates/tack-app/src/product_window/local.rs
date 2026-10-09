@@ -20,6 +20,7 @@ pub(super) struct LoadedBoard {
     pub lease: Arc<tack_storage::BoardLease>,
     pub metadata_ms: f64,
     pub path: PathBuf,
+    pub sharing: Option<tack_app::sharing::Descriptor>,
     pub recovery: bool,
     pub warning: Option<String>,
 }
@@ -55,6 +56,7 @@ pub(super) struct LocalState {
     pub drops: Vec<PathBuf>,
     pub drop_deadline: Option<Instant>,
     pub untitled: bool,
+    pub reload_offline: bool,
 }
 impl LocalState {
     pub fn new() -> Result<Self, AssetError> {
@@ -112,6 +114,7 @@ impl LocalState {
             drops: Vec::new(),
             drop_deadline: None,
             untitled: false,
+            reload_offline: false,
         })
     }
 }
@@ -282,7 +285,7 @@ impl App {
         }
     }
     pub(super) fn poll_storage(&mut self) {
-        if self.shared.is_some() {
+        if self.shared.is_some() || self.offline.is_some() {
             return;
         }
         if self.load_failed {

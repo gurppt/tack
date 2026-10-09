@@ -60,3 +60,13 @@ pub mod shared_address;
 pub mod source_info;
 
 pub mod icon;
+
+pub mod toolbar;
+pub mod toolbar_icons;
+
+pub mod hosting;
+pub mod sharing;
+
+pub mod sharing_address;
+
+pub mod owned_window;
