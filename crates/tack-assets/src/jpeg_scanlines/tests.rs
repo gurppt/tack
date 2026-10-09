@@ -55,10 +55,10 @@ fn mip_strides_and_neighbor_gutters_match_nonconstant_source_coordinates() {
     assert_eq!(sample(&p, 0, 1), sample(&p, 0, 2));
 }
 
-fn jpeg(width: u32, height: u32, progressive: bool) -> Vec<u8> {
+pub(super) fn jpeg(width: u32, height: u32, progressive: bool) -> Vec<u8> {
     jpeg_subsampled(width, height, progressive, turbojpeg::Subsamp::None)
 }
-fn jpeg_subsampled(
+pub(super) fn jpeg_subsampled(
     width: u32,
     height: u32,
     progressive: bool,

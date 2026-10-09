@@ -12,11 +12,12 @@ impl App {
         } else {
             SupplyLimits::default()
         };
-        let mut assets = ProductAssets::with_limits(
+        let mut assets = ProductAssets::with_tile_cache(
             Arc::clone(&board),
             &loaded.path,
             self.work.clone(),
             limits,
+            Some(self.local.root.join("raster-cache-v1")),
         )?;
         if self.options.lod_debug {
             assets.enable_lod_diagnostics();

@@ -54,7 +54,9 @@ cargo run --release --locked -p tack-app
 The preparation step downloads and builds the pinned image decoder locally.
 No generated test corpus is needed to use the application.
 
-Large baseline JPEGs use streamed previews and requested detail tiles. Keep
+Large baseline JPEGs use streamed previews and requested detail tiles. Visited
+detail is retained in a bounded local cache and can be reused after reopening.
+Keep
 the packaged `tack-jpeg-decoder` executable beside Tack when copying a build;
 Cargo and `tools/build-test-bin.sh` prepare this automatically. Large progressive
 JPEGs remain unsupported by the bounded detail path.
@@ -96,8 +98,12 @@ search, change or reset shortcuts. In a text note, **Ctrl+Enter** confirms editi
 
 The current desktop runtime is tested on **Linux/X11**. **Windows** builds and
 tests run in CI; Windows image clipboard and Wayland clipboard runtime have not
-yet been validated. Current image import supports PNG/JPEG up to 6000×4500 pixels
-and 64 MiB per encoded image. Boards use Tack's own format; `.pur` import is not
+yet been validated. Image import supports PNG/JPEG with a 64 MiB encoded-image
+limit. Large static PNG and baseline JPEG sources use bounded streaming;
+a 50,000 × 50,000 JPEG is covered by automated navigation tests. Format-specific
+limits and experimental PNG detail tiles are described in the
+[image supply documentation](docs/design/huge_images.md).
+Boards use Tack's own format; `.pur` import is not
 implemented.
 
 Optional LAN collaboration is a foundation for trusted networks. It has no

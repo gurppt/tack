@@ -77,16 +77,37 @@ the outer pixel. The client draws the interior UV rectangle so Smooth filtering
 can sample neighboring content across tile borders. PNG prototype tiles retain
 their separate opt-in behavior.
 
+Phase 2A2 additionally admits a rectangular batch of neighboring tile addresses
+at one mip, in any request order. `admissible_tiles` shares the decoder's pure
+planner with the worker scheduler. Empty batches, duplicate addresses, different
+mips, gaps, out-of-source tiles and excessive crops are refused before helper
+startup. One batch invokes the existing helper once and traverses the source
+entropy stream once; each native RGB scanline is scattered directly into the
+requested guttered RGBA tiles. It does not materialize the rectangular crop.
+
+The batch ceiling is 15 tiles, aggregate guttered RGBA at most 4 MiB, and native
+rectangular crop footprint at most 4 MiB charged at four bytes per pixel. Sixteen
+full 258² outputs would exceed that aggregate ceiling. At mips coarser than the
+native 1/8 DCT scale, integer sample strides increase the crop footprint and can
+reduce the admissible batch further. The scheduler can retain existing single
+requests when grouping is inadmissible. The single-tile and overview routes
+preserve their existing bounds and share the parser, scanline consumer and child
+lifecycle with the regional route. Neither route adds random entropy access.
+
 The main worker consumes stdout while one scoped feeder writes stdin. One
 scoped watcher kills the child on cancellation or a 30-second active-operation
 deadline, including when stdout is blocked before any pixels arrive. Errors
 kill/reap the child; scoped threads finish before the worker returns. There
 are at most two existing image workers, hence at most two decoder children,
-four support threads and two bounded outputs. Settled boards have no helper,
+four support threads and two bounded job outputs. A regional job
+owns at most 4 MiB of aggregate tiles; an overview retains its 16 MiB output cap. Settled boards have no helper,
 watcher, JPEG timer or new background service.
 
-Requested outputs reuse the existing bounded source/revision keyed derived PNG
-cache, with a separate JPEG generator identity. Corrupt entries are discarded.
+Overview outputs retain the existing per-open derived PNG cache. Native tile
+outputs additionally use a bounded profile-owned raw cache, with checked
+source/revision/path/fingerprint/tile/generator identity. Cache hits bypass
+the codec; unavailable or corrupt cache falls back to the source. See
+[the huge-image design](huge_images.md) for quotas and authority checks.
 Tiles are disposable presentation products and never become canonical board
 content. Save/reopen preserves original JPEG bytes or linked descriptors. A
 source change or relink invalidates detail capability and old revisions.
@@ -96,12 +117,24 @@ source change or relink invalidates detail capability and old revisions.
 A complete sequential tile-pyramid preparation pass would remove repeated
 entropy scans, but adds cache construction, write amplification, cancellation
 and fairness responsibilities for data the current view may never use. The
-cropped scanline route is the simpler candidate for the existing narrow 50k
-panoramas. Acceptance measurements must show its actual first-detail/far-pan
-cost and cached return behavior. This implementation does not claim a persistent
-whole-source pyramid, a filtered mip pyramid, efficient random-region access,
-or equivalent cost for a 50k × 50k source. The existing per-open disposable
-cache is removed on normal close; cold reopen reconstructs presentation data.
+cropped scanline route, bounded neighboring batches and a small visited-region
+cache avoid that preparation. The measured real 50k × 50k baseline fixture is
+33,425,392 encoded bytes: twelve separate bottom-right tiles take 7.623 s and
+395,579,232 logical source bytes; one twelve-tile rectangle takes 0.629 s and
+33,161,544 bytes. Three bands take 1.875 s and 98,894,808 bytes. These are
+single release-provider observations on the measured host, with exact RGBA
+comparison and independent source-coordinate witnesses; they are not SSD
+cold-cache or universal throughput guarantees.
+
+Actual native opposite-corner refinement takes 0.767 s/default and
+1.997 s/potato on the constrained modern host. Reopening the last visited
+six-tile region takes 30/73 ms, with six checked raw hits and no detail source
+reads or codec invocation. Overview reconstruction is measured separately.
+The overview remains drawable while cold detail arrives. This implementation
+does not claim a whole-source or filtered mip pyramid, random entropy access,
+or legacy-CPU equivalence. The profile cache survives normal close;
+other per-open products are retired as before. Full receipts and limitations
+are in the [Phase 2A2 report](../MISSION_2A2_HUGE_RASTER_STREAMING_REPORT.md).
 
 The exact upstream source inspection is reproducible under
 `target/native/source/libjpeg-turbo-3.2.0/src/`: `jdmaster.c`, `jdcoefct.c`,

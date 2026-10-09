@@ -45,6 +45,26 @@ Human value: real Windows GPU, pointer/DPI and huge-image navigation feel.
 Blocks next phase: NO for subjective feel. No Windows desktop runtime acceptance
 is inferred from CI.
 
+## Phase 2A2
+
+### MEDIUM — Huge-raster navigation comfort
+Auto status: real 50,000 × 50,000 baseline JPEG, normal/potato navigation,
+mixed images and restart cache reuse have Linux RTX2060 receipts. Measured
+cold opposite-corner refinement is about two seconds with potato budgets;
+the overview and camera remain usable. Technical closeout is recorded in
+the [mission report](MISSION_2A2_HUGE_RASTER_STREAMING_REPORT.md).
+Human value: acceptable progressive detail on actual photographic/maps content,
+Smooth tile-border comfort, and perceived pan/zoom latency on the owner's SSD
+and CPU. A constrained modern machine does not establish legacy-CPU performance.
+Blocks next phase: NO for subjective feel; a concrete freeze, authority or
+allocation regression remains a technical blocker.
+
+### MEDIUM — Windows GPU navigation comfort
+Human value: actual Windows desktop GPU/driver, pointer/DPI and cold/hot huge
+image feel. CI is separate compile/test evidence and does not establish this
+desktop experience.
+Blocks next phase: NO for subjective feel.
+
 ## Earlier reviews
 
 Existing `HUMAN_TEST_1K.md` and `HUMAN_TEST_1K_ABOUT.md` have no owner acceptance

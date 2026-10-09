@@ -1819,6 +1819,7 @@ dependencies = [
  "png",
  "serde",
  "serde_json",
+ "sha2",
  "tack-core",
  "tack-storage",
  "tracing",

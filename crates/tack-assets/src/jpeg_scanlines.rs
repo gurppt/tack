@@ -20,6 +20,9 @@ use std::{
 const HELPER_SECONDS: u64 = 30;
 const TARGET_BYTES: usize = 16 * 1024 * 1024;
 
+mod batch;
+pub(crate) use batch::{MAX_BATCH_TILES, admissible_tiles, derive_tiles};
+
 struct Process(Arc<Mutex<Child>>);
 impl Drop for Process {
     fn drop(&mut self) {
@@ -139,6 +142,13 @@ fn raster<R: BufRead>(
     plan: &Plan,
     cancel: Option<&AtomicBool>,
 ) -> Result<image::RgbaImage, AssetError> {
+    let mut images = raster_many(source, plan.native, std::slice::from_ref(plan), cancel)?;
+    images
+        .pop()
+        .ok_or_else(|| "JPEG bounded output missing".into())
+}
+
+fn raster_header<R: BufRead>(source: &mut R, native: [u32; 2]) -> Result<(), AssetError> {
     // Pinned djpeg P6 header has exactly three lines. No unbounded read_line.
     let mut lines = Vec::new();
     for _ in 0..3 {
@@ -156,46 +166,71 @@ fn raster<R: BufRead>(
         .split_whitespace()
         .map(str::parse::<u32>)
         .collect::<Result<Vec<_>, _>>()?;
-    if dimensions.as_slice() != plan.native {
+    if dimensions.as_slice() != native {
         return Err("JPEG helper crop/output dimensions mismatch".into());
     }
+    Ok(())
+}
+
+fn raster_many<R: BufRead>(
+    source: &mut R,
+    native: [u32; 2],
+    plans: &[Plan],
+    cancel: Option<&AtomicBool>,
+) -> Result<Vec<image::RgbaImage>, AssetError> {
+    raster_header(source, native)?;
     let row_bytes = usize::try_from(
-        u64::from(plan.native[0])
+        u64::from(native[0])
             .checked_mul(3)
             .ok_or("JPEG row arithmetic")?,
     )?;
     if row_bytes > 3 * jpeg_header::CODEC_MAX_AXIS as usize {
         return Err("JPEG native row exceeds bound".into());
     }
-    let bytes = usize::try_from(
-        u64::from(plan.output[0])
-            .checked_mul(u64::from(plan.output[1]))
-            .and_then(|n| n.checked_mul(4))
-            .ok_or("JPEG output arithmetic")?,
-    )?;
-    let mut output = allocate(bytes)?;
+    let mut outputs = plans
+        .iter()
+        .map(|p| {
+            let bytes = usize::try_from(
+                u64::from(p.output[0])
+                    .checked_mul(u64::from(p.output[1]))
+                    .and_then(|n| n.checked_mul(4))
+                    .ok_or("JPEG output arithmetic")?,
+            )?;
+            allocate(bytes)
+        })
+        .collect::<Result<Vec<_>, AssetError>>()?;
+    let mut next = vec![0u32; plans.len()];
     let mut row = allocate(row_bytes)?;
-    let mut next = 0u32;
-    for y in 0..plan.native[1] {
+    for y in 0..native[1] {
         if cancel.is_some_and(|c| c.load(Ordering::Relaxed)) {
             return Err("JPEG derivation cancelled".into());
         }
         source.read_exact(&mut row)?;
-        while next < plan.output[1] && y == sample(plan, 1, next) {
-            for x in 0..plan.output[0] {
-                let sx = sample(plan, 0, x) as usize;
-                let dst = (next as usize * plan.output[0] as usize + x as usize) * 4;
-                output[dst..dst + 3].copy_from_slice(&row[sx * 3..sx * 3 + 3]);
-                output[dst + 3] = 255;
+        for ((plan, output), next) in plans.iter().zip(&mut outputs).zip(&mut next) {
+            while *next < plan.output[1] && y == sample(plan, 1, *next) {
+                for x in 0..plan.output[0] {
+                    let sx = sample(plan, 0, x) as usize;
+                    let dst = (*next as usize * plan.output[0] as usize + x as usize) * 4;
+                    output[dst..dst + 3].copy_from_slice(&row[sx * 3..sx * 3 + 3]);
+                    output[dst + 3] = 255;
+                }
+                *next += 1;
             }
-            next += 1;
         }
     }
-    if next != plan.output[1] || !source.fill_buf()?.is_empty() {
+    if next.iter().zip(plans).any(|(next, p)| *next != p.output[1])
+        || !source.fill_buf()?.is_empty()
+    {
         return Err("JPEG helper raster incomplete or has excess pixels".into());
     }
-    image::RgbaImage::from_raw(plan.output[0], plan.output[1], output)
-        .ok_or_else(|| "JPEG bounded layout".into())
+    outputs
+        .into_iter()
+        .zip(plans)
+        .map(|(pixels, p)| {
+            image::RgbaImage::from_raw(p.output[0], p.output[1], pixels)
+                .ok_or_else(|| "JPEG bounded layout".into())
+        })
+        .collect()
 }
 
 fn feed<R: Read>(
@@ -235,11 +270,23 @@ pub fn derive<R: Read + Send>(
     edge: u32,
     cancel: Option<&AtomicBool>,
 ) -> Result<image::RgbaImage, AssetError> {
+    let plan = plan(header.size, edge)?;
+    run(source, header, &plan, cancel, |reader| {
+        raster(reader, &plan, cancel)
+    })
+}
+
+fn run<R: Read + Send, T>(
+    source: &mut R,
+    header: Header,
+    plan: &Plan,
+    cancel: Option<&AtomicBool>,
+    read_raster: impl FnOnce(&mut BufReader<std::process::ChildStdout>) -> Result<T, AssetError>,
+) -> Result<T, AssetError> {
     header.require_streamed()?;
     if cancel.is_some_and(|c| c.load(Ordering::Relaxed)) {
         return Err("JPEG derivation cancelled".into());
     }
-    let plan = plan(header.size, edge)?;
     let mut command = Command::new(helper()?);
     command
         .args([
@@ -306,7 +353,7 @@ pub fn derive<R: Read + Send>(
                 return Err(e.into());
             }
         };
-        let result = raster(&mut BufReader::with_capacity(8192, stdout), &plan, cancel);
+        let result = read_raster(&mut BufReader::with_capacity(8192, stdout));
         if result.is_err()
             && let Ok(mut c) = child.0.lock()
         {

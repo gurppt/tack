@@ -18,6 +18,7 @@ use std::{
 };
 use tack_core::{AssetId, ByteCache, Document, ImageAsset, Lod, Source, SourceId, SourceLocation};
 use tack_storage::{Payload, RangeReader, TackFile};
+mod tiles;
 mod trace;
 pub use trace::RepTrace;
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -141,6 +142,12 @@ pub struct ProductAssetStats {
     pub codec_requests: usize,
     pub decoded_bytes: u64,
     pub reprioritized: usize,
+    pub region_jobs: usize,
+    pub tile_outputs: usize,
+    pub tile_cache_hits: usize,
+    pub tile_cache_read_bytes: u64,
+    pub tile_cache_write_bytes: u64,
+    pub tile_disk_bytes: usize,
 }
 struct Outcome {
     key: Key,
@@ -158,10 +165,19 @@ struct Outcome {
     cancelled: bool,
     streamed_png: bool,
     streamed_jpeg: bool,
+    region_jobs: usize,
+    tile_cache_hit: bool,
+    tile_cache_read_bytes: u64,
+    tile_cache_write_bytes: u64,
+    tile_disk_bytes: usize,
+}
+struct WorkBatch {
+    jobs: Vec<Job>,
+    jpeg: bool,
 }
 struct Worker {
-    sender: SyncSender<Job>,
-    receiver: Receiver<Outcome>,
+    sender: SyncSender<WorkBatch>,
+    receiver: Receiver<Vec<Outcome>>,
     handle: thread::JoinHandle<()>,
     cancel: Option<Arc<AtomicBool>>,
 }
@@ -221,20 +237,39 @@ impl ProductAssets {
         repair_dir: PathBuf,
         limits: SupplyLimits,
     ) -> Result<Self, AssetError> {
+        Self::with_tile_cache(board, board_path, repair_dir, limits, None)
+    }
+    /// Derived tiles are optional, disposable profile state. Opening and reading
+    /// this bounded cache happens lazily on the image workers, never here.
+    pub fn with_tile_cache(
+        board: Arc<TackFile>,
+        board_path: &Path,
+        repair_dir: PathBuf,
+        limits: SupplyLimits,
+        persistent_dir: Option<PathBuf>,
+    ) -> Result<Self, AssetError> {
         let limits = limits.validate()?;
+        let tile_budget = persistent_dir.as_ref().map_or(0, |_| {
+            (limits.disk_bytes / 2).min(crate::tile_disk::MAX_BUDGET)
+        });
+        let tiles = Arc::new(Mutex::new(tiles::Persistent::new(
+            persistent_dir,
+            tile_budget,
+        )));
         let disk = Arc::new(Mutex::new(crate::decode::DiskCache::new(
             repair_dir.clone(),
-            limits.disk_bytes,
+            limits.disk_bytes - tile_budget,
         )));
         let base = board_path.parent().unwrap_or(Path::new(".")).to_path_buf();
         let mut workers = Vec::new();
         for _ in 0..limits.workers {
             // One active job per worker, no FIFO backlog hidden behind a codec.
-            let (tx, rx) = mpsc::sync_channel::<Job>(1);
+            let (tx, rx) = mpsc::sync_channel::<WorkBatch>(1);
             let (done_tx, done_rx) = mpsc::sync_channel(1);
             let base = base.clone();
             let dir = repair_dir.clone();
             let disk = Arc::clone(&disk);
+            let tiles = Arc::clone(&tiles);
             let handle = thread::Builder::new()
                 .name("tack-product-display".into())
                 .spawn(move || {
@@ -244,9 +279,11 @@ impl ProductAssets {
                     }
                     while let Ok(job) = rx.recv() {
                         let start = Instant::now();
-                        let mut outcome = load(job, &base, &dir, &disk);
-                        outcome.decode_ms = start.elapsed().as_secs_f64() * 1000.;
-                        if done_tx.send(outcome).is_err() {
+                        let mut outcomes = tiles::load_batch(job, &base, &dir, &disk, &tiles);
+                        if let Some(first) = outcomes.first_mut() {
+                            first.decode_ms = start.elapsed().as_secs_f64() * 1000.;
+                        }
+                        if done_tx.send(outcomes).is_err() {
                             break;
                         }
                     }
@@ -452,7 +489,9 @@ impl ProductAssets {
                 || self.queue.iter().any(|j| j.key() == k)
                 // At most two queued representations per source leave admission
                 // space for other visible sources, with one ready successor.
-                || self.queue.iter().filter(|j| j.source.id() == k.source).count() >= 2
+                || (self.queue.iter().filter(|j| j.source.id() == k.source).count() >= 2
+                    && !(crate::huge_image::Tile::from_tag(edge).is_some()
+                        && self.supports_jpeg_tiles(k.source, k.revision)))
             {
                 continue;
             }
@@ -467,9 +506,15 @@ impl ProductAssets {
             }
         }
         self.stats.reprioritized += previous.iter().filter(|k| !self.wanted.contains(k)).count();
-        for (key, index) in &self.pending {
-            if !self.wanted.contains(key)
-                && let Some(cancel) = &self.workers[*index].cancel
+        // A regional job may still contain useful overlapping tiles after pan.
+        // Cancel it only when none of its bounded products remains wanted.
+        for (index, worker) in self.workers.iter().enumerate() {
+            if self.pending.values().any(|i| *i == index)
+                && !self
+                    .pending
+                    .iter()
+                    .any(|(key, i)| *i == index && self.wanted.contains(key))
+                && let Some(cancel) = &worker.cancel
             {
                 cancel.store(true, Ordering::Relaxed);
             }
@@ -493,13 +538,21 @@ impl ProductAssets {
             });
             if let Some(pos) = pos {
                 let job = self.queue.remove(pos);
-                let key = job.key();
-                self.workers[i].cancel = job.cancel.clone();
-                if self.workers[i].sender.try_send(job).is_ok() {
-                    self.pending.insert(key, i);
+                let jpeg = self.supports_jpeg_tiles(job.source.id(), job.source.revision());
+                let jobs = tiles::gather(job, jpeg, &mut self.queue);
+                let keys: Vec<_> = jobs.iter().map(Job::key).collect();
+                self.workers[i].cancel = jobs[0].cancel.clone();
+                if self.workers[i]
+                    .sender
+                    .try_send(WorkBatch { jobs, jpeg })
+                    .is_ok()
+                {
                     self.stats.codec_requests += 1;
-                    if let Some(trace) = &mut self.trace {
-                        trace.started(key);
+                    for key in keys {
+                        self.pending.insert(key, i);
+                        if let Some(trace) = &mut self.trace {
+                            trace.started(key);
+                        }
                     }
                 }
             }
@@ -519,7 +572,7 @@ impl ProductAssets {
         let mut outcomes = Vec::new();
         for w in &self.workers {
             while let Ok(o) = w.receiver.try_recv() {
-                outcomes.push(o);
+                outcomes.extend(o);
             }
         }
         let changed = !outcomes.is_empty();
@@ -528,7 +581,15 @@ impl ProductAssets {
                 self.workers[index].cancel = None;
             }
             self.stats.completed += 1;
-            self.stats.decode_count += 1;
+            self.stats.decode_count += usize::from(o.decode_ms > 0.);
+            self.stats.region_jobs += o.region_jobs;
+            self.stats.tile_outputs += usize::from(
+                crate::huge_image::Tile::from_tag(o.key.edge).is_some() && o.result.is_ok(),
+            );
+            self.stats.tile_cache_hits += usize::from(o.tile_cache_hit);
+            self.stats.tile_cache_read_bytes += o.tile_cache_read_bytes;
+            self.stats.tile_cache_write_bytes += o.tile_cache_write_bytes;
+            self.stats.tile_disk_bytes = self.stats.tile_disk_bytes.max(o.tile_disk_bytes);
             if let Ok(image) = &o.result {
                 self.stats.decoded_bytes = self
                     .stats
@@ -708,20 +769,17 @@ impl ProductAssets {
         self.failed_lod(id, Lod::Thumbnail)
     }
 }
-fn load(job: Job, base: &Path, dir: &Path, disk: &Mutex<crate::decode::DiskCache>) -> Outcome {
-    let board = &job.board;
-    let id = job.asset.id();
-    let source = Some(job.source.id());
-    let mut outcome = Outcome {
+fn empty_outcome(job: &Job) -> Outcome {
+    Outcome {
         key: Key {
-            asset: (job.lod == Lod::Thumbnail).then_some(id),
+            asset: (job.lod == Lod::Thumbnail).then_some(job.asset.id()),
             source: job.source.id(),
             revision: job.source.revision(),
             lod: job.lod,
             edge: job.edge,
         },
-        asset: id,
-        source,
+        asset: job.asset.id(),
+        source: Some(job.source.id()),
         state: SourceState::Missing,
         result: Err("missing source".into()),
         prepared: None,
@@ -734,7 +792,18 @@ fn load(job: Job, base: &Path, dir: &Path, disk: &Mutex<crate::decode::DiskCache
         cancelled: false,
         streamed_png: false,
         streamed_jpeg: false,
-    };
+        region_jobs: 0,
+        tile_cache_hit: false,
+        tile_cache_read_bytes: 0,
+        tile_cache_write_bytes: 0,
+        tile_disk_bytes: 0,
+    }
+}
+fn load(job: Job, base: &Path, dir: &Path, disk: &Mutex<crate::decode::DiskCache>) -> Outcome {
+    let board = &job.board;
+    let id = job.asset.id();
+    let source = Some(job.source.id());
+    let mut outcome = empty_outcome(&job);
     let result = (|| -> Result<Decoded, AssetError> {
         let source = source.ok_or("missing asset metadata")?;
         let s = &job.source;

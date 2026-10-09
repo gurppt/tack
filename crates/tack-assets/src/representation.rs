@@ -209,6 +209,60 @@ pub(crate) fn derive_linked_edge_cancel(
         .ok_or("source read byte counter overflow")?;
     result
 }
+/// A provider may coalesce adjacent raster tiles; consumers use the same pixels
+/// and tile keys regardless of the source codec. All work remains off-thread.
+pub(crate) fn derive_linked_tiles_cancel(
+    path: &Path,
+    read: &mut u64,
+    edges: &[u32],
+    expected_size: [u32; 2],
+    cancel: Option<&AtomicBool>,
+) -> Result<Vec<image::RgbaImage>, AssetError> {
+    let mut reader = CountRead {
+        inner: BufReader::with_capacity(8192, File::open(path)?),
+        count: 0,
+    };
+    let result = derive_stream_tiles_cancel(&mut reader, edges, expected_size, cancel);
+    *read = read
+        .checked_add(reader.count)
+        .ok_or("source read counter overflow")?;
+    result
+}
+
+pub(crate) fn derive_stream_tiles_cancel<R: Read + Seek + Send>(
+    source: &mut R,
+    edges: &[u32],
+    expected_size: [u32; 2],
+    cancel: Option<&AtomicBool>,
+) -> Result<Vec<image::RgbaImage>, AssetError> {
+    check_cancel(cancel)?;
+    if edges.is_empty() || edges.len() > crate::jpeg_scanlines::MAX_BATCH_TILES {
+        return Err("raster tile batch exceeds bounded admission".into());
+    }
+    if sniff(source)? == Format::Jpeg {
+        let mut reader =
+            BudgetReader::with_limit(source, crate::jpeg_header::ENCODED_LIMIT, cancel);
+        let header = crate::jpeg_header::read(&mut reader)?;
+        if header.size != expected_size {
+            return Err("raster dimensions disagree with declared source; verify or relink".into());
+        }
+        // Coarse requests whose native stride footprint exceeds the regional
+        // ceiling retain the existing bounded single-tile provider.
+        if edges.len() == 1 && !crate::jpeg_scanlines::admissible_tiles(header.size, edges) {
+            return Ok(vec![crate::jpeg_scanlines::derive(
+                &mut reader,
+                header,
+                edges[0],
+                cancel,
+            )?]);
+        }
+        return crate::jpeg_scanlines::derive_tiles(&mut reader, header, edges, cancel);
+    }
+    if edges.len() != 1 {
+        return Err("this raster provider admits one tile per region".into());
+    }
+    Ok(vec![derive_stream_edge_cancel(source, edges[0], cancel)?.0])
+}
 #[cfg(test)]
 pub(crate) fn derive_stream<R: Read + Seek + Send>(
     source: &mut R,

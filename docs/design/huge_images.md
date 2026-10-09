@@ -1,16 +1,18 @@
-# Bounded image supply — Phase 2A1
+# Bounded image supply — Phase 2A2
 
-Phase 1L streams large static PNGs into small display products. Regional tiles
-remain an opt-in prototype: `--huge-tiles`. Default opening uses overview-first
-128/512/2048 representations, including for huge PNGs. Neither path allocates
-the full huge-source RGBA frame or constructs a complete mip pyramid.
+Large static PNGs stream into small display products; PNG regional tiles remain
+an opt-in prototype: `--huge-tiles`. JPEG uses overview-first 128/512/2048
+representations and bounded local tiles by default. Phase 2A2 batches neighboring
+JPEG demand and retains visited raw tiles within a fixed profile SSD quota.
+Neither format allocates the full huge-source RGBA frame or constructs a
+complete mip pyramid. Current acceptance and remaining limitations belong in
+[the Phase 2A2 report](../MISSION_2A2_HUGE_RASTER_STREAMING_REPORT.md).
 
 The implementation extends the existing source/revision supply, cache and
 worker system. `png = 0.18.1` was already transitive; the direct dependency
 provides header inspection, row decoding, metadata suppression and parser
-limits. It adds no package identity, but its executable cost must still be
-measured. The final validation and binary provenance are in
-[the mission report](../MISSION_1L_REPORT.md).
+limits. Its introduction added no package identity; the original PNG validation
+and binary-cost measurements are in [the Phase 1L report](../MISSION_1L_REPORT.md).
 
 ## Routing policy and memory boundary
 
@@ -106,8 +108,13 @@ The whole coarse image remains until every admitted tile for that object is
 resident. Only then do its tiles replace that draw. This avoids partial coverage
 holes and double compositing opacity over the fallback. Ordinary detail is
 requested before tiles; two-worker mode reserves worker zero for overviews.
-One active job per source and at most two queued jobs per source prevent a single
-huge source from monopolizing every worker/request slot.
+Dispatch permits one active operation per source. Ordinary representations retain
+the two queued jobs per source limit; known JPEG tile demand can fill the unchanged
+16-key global cap (four in potato mode) to form a useful regional batch. Each tile
+counts as a key, including while its batch is active. An overlapping pan keeps a
+batch useful if any of its keys remains wanted; it is cancelled once all become
+obsolete. Distant jumps and sharp zoom-out discard obsolete queued demand without
+waiting on a worker, while a valid coarse representation remains drawable.
 
 ## Codec behavior and prototype limitations
 
@@ -125,7 +132,7 @@ to keep tiles opt-in. The prototype proves bounded selected demand and source
 authority; it is not a production random-access image pyramid. Optional Bézier
 arrows and endpoint attachments were deferred to protect this scope.
 
-Phase 2A1 adds **default bounded JPEG tiles**, while PNG tiles remain opt-in.
+JPEG has **default bounded local tiles**, while PNG tiles remain opt-in.
 Ordinary JPEG uses the existing safe reduced-DCT wrapper (64 MiB encoded,
 32 MiB RGB output); progressive/multiscan coefficient scratch has a separate
 192 MiB checked allowance. Larger JPEG routes to the pinned native `djpeg`
@@ -138,12 +145,21 @@ The large route accepts 8-bit interleaved single-scan baseline RGB/grayscale,
 bounded header/input/row/output work, and the codec's own 65,500-axis limit.
 Large progressive and split-component scans are explicitly refused before
 native decoding. The accepted baseline native scratch envelope is checked
-separately from Rust buffers, caches and process RSS. Every uncached region
-still scans the sequential entropy stream; valid derived-cache hits reuse
-requested regions. There is no complete frame or persistent pyramid.
+separately from Rust buffers, caches and process RSS. Every uncached region still
+traverses the sequential entropy stream from the beginning; crop/skip saves
+output and IDCT work without providing arbitrary entropy access. A regional
+operation gathers at most 15 demanded tiles in a contiguous band or rectangle
+at one mip. Aggregate guttered RGBA output and the native crop footprint charged
+at four bytes per pixel are each capped at 4 MiB. Rows scatter directly into
+tiles; the crop rectangle is not materialized. Cached holes are excluded and
+new contiguous regions are grouped under the same admission checks. There is
+no off-screen ring, complete frame, background preparation or persistent pyramid.
+The worker's encoded JPEG read ceiling remains 256 MiB per operation, separate
+from the 64 MiB ordinary decode and UI import/relink limits. Header, row and
+native scratch limits remain independent of the four-MiB regional output.
 See the [decoder boundary](jpeg_decoder_boundary.md) for exact limits, source
 inspection, cancellation, packaging and scratch accounting, and the
-[2A1 report](../MISSION_2A1_CORE_IMAGE_REPORT.md) for measured acceptance.
+[2A2 report](../MISSION_2A2_HUGE_RASTER_STREAMING_REPORT.md) for measured acceptance.
 
 Ordinary representations now stop at native dimensions. Generator IDs 6/7/8
 replace legacy upscaled PNG/JPEG/other cache products; JPEG tile products use
@@ -159,7 +175,7 @@ and rendering. No LOD diagnostic or codec timer runs on a settled board.
 | --- | --- | --- |
 | CPU display payload | 64 MiB: 16 overview + 48 detail | 8 MiB: 2 overview + 6 detail |
 | GPU display payload | 128 MiB: 64 overview + 64 detail | 16 MiB: 8 overview + 8 detail |
-| Derived disk cache | 512 MiB | 8 MiB |
+| Derived disk cache, combined | 512 MiB: 64 persistent raw + 448 per-open | 8 MiB: 4 persistent raw + 4 per-open |
 | Decode workers | 2 | 1 |
 | Pending + queued requests | 16 | 4 |
 | Upload bytes per frame | 16 MiB | 1 MiB |
@@ -174,11 +190,44 @@ redraw, file-stat loop or GPU submission.
 
 ## Authority, cache lifetime and failures
 
-Derived representations reuse the existing disposable cache authority in the
-private temporary `tack-product-open-*` work directory. It is bounded and
-removed on normal close. Reopen reconstructs detail; a warm OS page cache after
-reopen does not demonstrate persistent derived tiles. No huge-cache startup
-scan or permanent service is introduced.
+Overview/repair products keep the private temporary `tack-product-open-*`
+directory, removed on normal close. Visited raster tiles additionally reuse the
+profile's disposable `raster-cache-v1/tile-detail-v1.raw`. The persistent quota
+is `min(total_derived_disk / 2, 64 MiB)`; the per-open cache receives the remainder.
+Thus disk reuse reduces reopen codec work without increasing the combined quota.
+
+The raw file starts with a checked 16-byte global prefix: `TACKR001`, the
+four-byte little-endian slot size and a CRC of the preceding 12 bytes. Each
+266,384-byte slot contains a checked 128-byte header and room for at most
+258² × 4 raw RGBA bytes, including JPEG gutters. File length is
+`16 + allocated_slot_count × 266384`; slots grow only as tiles are visited.
+The 64-MiB ceiling admits 251 slots, and potato's four MiB admits 15. Startup
+reads the prefix and at most 251 headers into a compact index; it never walks a
+directory proportional to possible source tiles or reads every payload.
+Payload CRC is checked on a hit, and simple LRU stamps persist in slot headers.
+Opening, reads, recency writes, eviction and corruption handling run on image
+workers, with no filesystem work or codec wait on the renderer/input thread.
+
+Each 80-byte identity contains a 16-byte namespace (SHA-256 of document ID and,
+for linked/shared originals, the canonical physical path, truncated to 128 bits),
+SourceId, revision, actual 20-byte size/mtime fingerprint, embedded-original CRC,
+source dimensions, tagged mip/tile address and generator. This distinguishes
+copies of the same document whose relative links resolve to different files,
+even when size/mtime match. Actual fingerprints are checked before and after
+reuse/derivation, including when the document has no recorded fingerprint.
+The namespace hash does not preload or hash the whole source.
+
+A stable `tile-detail-v1.lock` provides one non-blocking cooperative lease per
+profile, shared by its image workers. There is no database, mmap or daemon.
+Unsafe paths are refused before cache mutation; Unix additionally rejects
+multiple hard links and writable-by-other-users paths. On every platform an
+existing raw file must have the valid global prefix before resizing or writing,
+so an ordinary JPEG, PNG or board cannot be mistaken for disposable cache bytes.
+Invalid/empty existing files are left untouched; global-header corruption
+disables reuse until the disposable file is deleted and reopened. Slot corruption
+is a miss and can be regenerated. An unavailable, deleted or separately leased
+cache falls back to source decoding and does not discard successfully derived
+pixels. Cache state is never required for reopening or saving a document.
 
 Source ID/revision and linked fingerprint validation govern acceptance. Relink
 and revision changes clear obsolete capability/state, change product keys and
@@ -193,6 +242,41 @@ recompression; exported SHA-256 must match the original. Save/recovery/reopen
 does not depend on retaining derived tiles.
 
 ## Reproducible fixtures and observations
+
+Phase 2A2 adds a real deterministic 50,000×50,000 baseline grayscale JPEG,
+33,425,392 encoded bytes, generated with bounded procedural rows. Its regional
+release comparison is in `benchmark-results/phase2a2/region-comparison-release.json`:
+
+| Twelve useful deep tiles | Helpers | Elapsed | Logical source reads |
+| --- | ---: | ---: | ---: |
+| One decode per tile | 12 | 7.623 s | 395,579,232 bytes |
+| Three horizontal bands | 3 | 1.875 s | 98,894,808 bytes |
+| One demanded rectangle | 1 | 0.629 s | 33,161,544 bytes |
+
+The rectangle retains 3,195,072 output bytes and has a charged crop footprint of
+3,354,120 bytes, each below four MiB. The comparison validates source-coordinate
+pixels; it is a serial release measurement on the development host. A 15-tile
+neighbor-column comparison takes 0.737 s without improving the twelve useful
+pixels, so the product keeps demand-only gathering.
+
+The release raw/PNG roundtrip receipt is
+`benchmark-results/phase2a2/cache-comparison-release.log`. With warm OS pages,
+64 alternating trials measure raw-hit median 0.110/0.104 ms versus PNG
+0.247/0.334 ms for flat/noisy 256² tiles. Raw avoids codec work but reserves
+266,384 bytes per slot; the flat PNG is only 1,915 bytes. These are host cache
+roundtrips, not cold SSD latency or an old-CPU benchmark.
+
+`benchmark-results/phase2a2/square-final-{default,potato}/summary.json` records
+native Linux/RTX2060 800×600 fit/deep/pan/extreme-jump/return/zoom-out stages.
+Fit and sharp zoom-out request zero tiles; both reopen returns read six raw
+tiles with zero additional regional jobs or logical source bytes. CPU display
+payload peaks at 6,971,744/6,172,976 bytes and GPU payload at 6,971,744 bytes,
+while whole-process HWM is 366,809,088/362,577,920 bytes (about 350/346 MiB).
+Thus roughly 360 MB process residency is distinct from roughly six-MiB display
+caches, and neither is a measurement of every decoder allocation. Sampled child
+HWM is about 2.3–2.5 MB; 50-ms sampling can miss short-lived peaks. Settled stages
+record zero I/O and zero/one CPU tick. Remaining native/regression evidence and
+the final acceptance decision belong in the mission report.
 
 Reuse the existing `test_file/phase1l_generated` corpus. After additions, its
 measured physical size is 411.719 MiB. The generator enforces a 512 MiB data
@@ -256,10 +340,8 @@ ancestry before removing any entry; unowned additions cause refusal. Save any
 fixture edits worth keeping outside that generated subtree before cleanup.
 Never remove the adjacent owner `test_file/test_file.tack` or `gfx/` assets.
 
-Subjective detail/interaction review is deferred under the director's autonomous
-loop policy. Unsafe allocation, corruption and major regressions remain technical
-blockers. Phase 1L workers stop at their closeout; only the director activates a
-new mission, including Phase 2A.
+Subjective detail/interaction review remains separate from technical acceptance.
+Unsafe allocation, corruption and major regressions remain technical blockers.
 
 Worker publication validates actual ordinary raster dimensions against admitted
 asset axes and edge. Incorrect cached products are repaired and inconsistent

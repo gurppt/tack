@@ -9,6 +9,7 @@ mod preparation;
 mod product;
 mod profile;
 mod representation;
+mod tile_disk;
 mod ui_image;
 pub use product::{
     PreparedOverview, ProductAssetStats, ProductAssets, ProductDemand, RepTrace, SourceState,

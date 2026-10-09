@@ -1,6 +1,6 @@
-# Current feature inventory — Phase 2A1
+# Current feature inventory — Phase 2A2
 
-Code audit of the local prototype on 2026-10-08, based on `Action::ALL`,
+Code audit of the local prototype on 2026-10-09, based on `Action::ALL`,
 `product_bindings`, `ImageInput`, annotation/spatial input, local file workers,
 storage/recovery and tests. This inventories shipped and reachable code, not a roadmap.
 Historical Phase 1I evidence has 170 automated native assertions on US and French XKB layouts at
@@ -198,12 +198,22 @@ CPU/GPU/disk residency uses existing budgets;
 source/revision identities and cancellation reject obsolete results. Sequential
 PNG rescans, nearest-source mip sampling and more visible sources than admitted
 tile slots remain explicit limitations. No complete full-resolution frame or
-pyramid is constructed. Uncached JPEG regions also scan sequentially; cached
-return reuses derived work. Ordinary LOD selection keeps the finest valid
+pyramid is constructed. Neighboring JPEG demand coalesces into at most fifteen
+tiles and 4 MiB of output per regional job, with a separately checked crop
+footprint. Uncached JPEG regions still scan sequentially. A disposable raw tile
+cache in the local profile reuses visited JPEG/PNG detail after reopening;
+its quota is taken from existing disk budgets (64 MiB default, 4 MiB potato).
+Only image workers access that cache; corruption, deletion or a conflicting
+lease falls back to the source. A real 50,000 × 50,000 baseline JPEG passes
+overview, local detail, pan, opposite-corner, exact return and restart checks.
+Potato keeps one worker, four admitted keys, 8 MiB CPU and 16 MiB GPU payload
+budgets; this is a modern-host budget test, not a legacy-CPU runtime claim.
+Ordinary LOD selection keeps the finest valid
 resident, avoids native upscaling, and requests native small Nearest sources
 within admission budgets. Opt-in diagnostics and long-churn tests cover actual
 resident dimensions and source revisions. See the
-[2A1 report](MISSION_2A1_CORE_IMAGE_REPORT.md) and decoder design note.
+[2A1 report](MISSION_2A1_CORE_IMAGE_REPORT.md),
+[2A2 report](MISSION_2A2_HUGE_RASTER_STREAMING_REPORT.md) and decoder design note.
 
 Preferences Theme/Scale choices stay inside their submenu for live preview;
 Escape or Back returns to Preferences. Last successful Open/Save As folder uses
