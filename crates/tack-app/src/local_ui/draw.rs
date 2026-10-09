@@ -55,6 +55,11 @@ impl LocalUi {
             None,
         );
         let heading = match self.panel {
+            Panel::Bookmarks => "Camera bookmarks - Enter jumps",
+            Panel::BookmarkName => "Bookmark name - Ctrl+A replaces",
+            Panel::Info => "Image information - existing metadata",
+            Panel::Join => "Join: tack://IP:PORT/ID or IP:PORT ID",
+            Panel::Connecting => "Join shared board",
             Panel::Menu => "Tack - local files",
             Panel::Preferences => "Preferences",
             Panel::Scale => "UI Scale - choose directly",
@@ -75,6 +80,11 @@ impl LocalUi {
             &mut budget,
         );
         let rows: Vec<String> = match self.panel {
+            Panel::Bookmarks
+            | Panel::BookmarkName
+            | Panel::Info
+            | Panel::Join
+            | Panel::Connecting => self.daily_rows(),
             Panel::Menu => self
                 .actions(keymap)
                 .iter()
@@ -126,7 +136,58 @@ impl LocalUi {
                 &mut budget,
             );
         }
-        let hint = "Up/Down choose; Enter confirm; Escape close";
+        if height >= 240. && self.daily.is_some() {
+            let commands: &[(&str, Command)] = match self.panel {
+                Panel::Bookmarks => &[
+                    ("Rename (F2)", Command::RenameBookmark),
+                    ("Delete (Del)", Command::DeleteBookmark),
+                    ("Close", Command::Close),
+                ],
+                Panel::BookmarkName | Panel::Join => &[
+                    ("Confirm", Command::ConfirmDaily),
+                    ("Cancel", Command::Close),
+                ],
+                _ => &[("Close / Cancel", Command::Close)],
+            };
+            for (i, (label, command)) in commands.iter().enumerate() {
+                let x = 24. + i as f64 * (width - 32.) / commands.len() as f64;
+                let x2 = x + (width - 32.) / commands.len() as f64 - 4.;
+                let enabled = !matches!(command, Command::RenameBookmark | Command::DeleteBookmark)
+                    || self
+                        .daily
+                        .as_ref()
+                        .is_some_and(|d| !d.shared && !d.bookmarks.is_empty());
+                self.hits.push(Hit {
+                    rect: [x, height - 44., x2, height - 22.],
+                    command: *command,
+                    enabled,
+                });
+                gizmo.pixel_rect(
+                    camera,
+                    [x * scale, (height - 44.) * scale],
+                    [x2 * scale, (height - 22.) * scale],
+                    palette.selection,
+                    None,
+                );
+                gizmo.ui_text(
+                    camera,
+                    [x * scale, (height - 42.) * scale],
+                    x2 - x,
+                    label,
+                    if enabled {
+                        palette.text_primary
+                    } else {
+                        palette.text_secondary
+                    },
+                    &mut budget,
+                );
+            }
+        }
+        let hint = if self.panel == Panel::Bookmarks {
+            "Enter jumps; F2 rename; Del delete; Escape close"
+        } else {
+            "Up/Down scroll; Enter confirm; Escape close"
+        };
         if height >= 180. {
             gizmo.ui_text(
                 camera,

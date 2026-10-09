@@ -299,7 +299,29 @@ impl App {
                 }
             }
         }
+        self.notify_join_receipt()?;
         self.dirty = true;
+        Ok(())
+    }
+    pub(super) fn notify_join_receipt(&mut self) -> Result<(), AssetError> {
+        let Some(path) = self.options.join_receipt.as_ref() else {
+            return Ok(());
+        };
+        if self.local.worker.active() || self.local.queued.is_some() {
+            return Ok(());
+        }
+        let message = if self.editor.is_some() {
+            "joined".into()
+        } else if let Some(error) = &self.interaction_error {
+            format!("failed: {}", error.chars().take(256).collect::<String>())
+        } else {
+            return Ok(());
+        };
+        self.operation(tack_app::local_worker::Operation::JoinReceipt {
+            path: path.clone(),
+            message,
+        })?;
+        self.options.join_receipt = None;
         Ok(())
     }
     pub(super) fn flush_shared(&mut self) {

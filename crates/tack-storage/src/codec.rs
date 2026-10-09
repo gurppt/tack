@@ -91,7 +91,13 @@ pub(crate) fn encode_document(doc: &Document) -> Result<Vec<u8>> {
     {
         return Err(StorageError::Invalid("record count"));
     }
-    let estimated = 16usize
+    let estimated = 4
+        + doc
+            .bookmarks()
+            .iter()
+            .map(|b| 44 + b.name().len())
+            .sum::<usize>()
+        + 16usize
         + doc
             .sources()
             .map(|s| {
@@ -212,9 +218,24 @@ pub(crate) fn encode_document(doc: &Document) -> Result<Vec<u8>> {
             }
         }
     }
+    if spatial_schema(doc) == 4 {
+        out.extend((doc.bookmarks().len() as u32).to_le_bytes());
+        for b in doc.bookmarks() {
+            out.extend(1u16.to_le_bytes());
+            out.extend(b.id().value().to_le_bytes());
+            for v in b.center().into_iter().chain([b.zoom()]) {
+                out.extend(v.to_le_bytes());
+            }
+            out.extend((b.name().len() as u16).to_le_bytes());
+            out.extend(b.name().as_bytes());
+        }
+    }
     Ok(out)
 }
 pub(crate) fn spatial_schema(doc: &Document) -> u32 {
+    if !doc.bookmarks().is_empty() {
+        return 4;
+    }
     if doc
         .objects()
         .any(|o| matches!(o.kind(), ObjectKind::Annotation(_)))
@@ -304,7 +325,7 @@ pub(crate) fn decode_document(
         let kind = d.u16()?;
         if kind != 1
             && !(schema >= 2 && kind == 2)
-            && !(schema == 3 && matches!(kind, 3 | 4 | 6 | 7 | 8))
+            && !(schema >= 3 && matches!(kind, 3 | 4 | 6 | 7 | 8))
         {
             return Err(StorageError::Unsupported("object kind"));
         }
@@ -397,6 +418,29 @@ pub(crate) fn decode_document(
             doc.apply(Command::AddGroup(Group::new(id, members).map_err(invalid)?))
                 .map_err(invalid)?;
         }
+    }
+    if schema == 4 {
+        let count = d.u32()? as usize;
+        if count > MAX_CAMERA_BOOKMARKS {
+            return Err(StorageError::Invalid("bookmark count"));
+        }
+        let mut views = Vec::with_capacity(count);
+        for _ in 0..count {
+            d.version()?;
+            let id = BookmarkId::new(d.id()?).map_err(invalid)?;
+            let center = [d.f64()?, d.f64()?];
+            let zoom = d.f64()?;
+            let len = d.u16()? as usize;
+            if len > MAX_BOOKMARK_NAME_BYTES {
+                return Err(StorageError::Invalid("bookmark name length"));
+            }
+            let name = std::str::from_utf8(d.take(len)?)
+                .map_err(invalid)?
+                .to_owned();
+            views.push(CameraBookmark::new(id, name, center, zoom).map_err(invalid)?);
+        }
+        doc.apply(Command::SetCameraBookmarks(views))
+            .map_err(invalid)?;
     }
     Ok(doc)
 }

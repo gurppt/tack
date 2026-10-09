@@ -185,6 +185,12 @@ pub fn draw(
         palette.accent_primary,
         &mut budget,
     );
+    crate::icon::draw(
+        gizmo,
+        camera,
+        [(x + w - 36.) * scale, (y + 4.) * scale],
+        scale,
+    );
     let [tx, ty, tw, th] = layout.text;
     for (i, (line, color)) in text_rows((tw / 8.).floor() as usize, palette)
         .iter()

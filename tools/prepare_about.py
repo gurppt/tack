@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import tomllib
 from PIL import Image
+from prepare_icon import prepare as prepare_icon
 
 FIELDS = ('name', 'version', 'author', 'website', 'contact', 'license',
           'copyright', 'tagline', 'source')
@@ -104,3 +105,4 @@ if __name__ == '__main__':
     parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parent.parent)
     args = parser.parse_args()
     prepare(args.root.resolve(), args.output.resolve(), args.version)
+    prepare_icon(args.root.resolve(), args.output.resolve())

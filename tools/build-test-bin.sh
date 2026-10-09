@@ -25,6 +25,14 @@ chmod 755 "$server"
 cp "$target_dir/release/tack-about.png" "$artwork"
 cp "$target_dir/release/tack-jpeg-decoder" "$decoder"
 chmod 755 "$decoder"
+for icon in "$target_dir"/release/tack-icon-*.png "$target_dir"/release/tack-icon.ico; do
+    cp "$icon" bin/
+done
+python3 - <<'PYICON'
+from pathlib import Path
+root=Path.cwd()/"bin"
+(root/"tack.desktop").write_text("[Desktop Entry]\nType=Application\nName=Tack\nComment=Reference boards\nExec=\""+str(root/"tack")+"\"\nIcon="+str(root/"tack-icon-64.png")+"\nTerminal=false\nCategories=Graphics;\n")
+PYICON
 dirty=false
 if [ -n "$(git status --porcelain)" ]; then dirty=true; fi
 {

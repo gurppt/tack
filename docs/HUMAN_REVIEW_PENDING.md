@@ -71,3 +71,10 @@ Existing `HUMAN_TEST_1K.md` and `HUMAN_TEST_1K_ABOUT.md` have no owner acceptanc
 record available to the director. Retain their original checklists; do not infer
 acceptance. Subjective follow-up does not block independent work under the newer
 autonomous-loop directive.
+
+## Phase 2A3
+
+### LOW — Daily-use comfort and identity
+Automated coverage checks bookmark persistence/exact jump, atomic duplication, metadata-only info and desktop Join at 800×600. Human value: discoverability of View bookmarks, rename/delete buttons, duplicate offset and information readability. The supplied black-rhombus SVG is preserved; the fuchsia/turquoise italic-t adaptation follows the brief but still needs the owner's visual approval at 16/32px and in About. This is a subjective artwork decision, not a claim of final owner-approved SVG.
+
+Compact checklist: save an overview and a close-up; rename, jump, delete and Undo; duplicate grouped images plus notes, Undo once and reopen; inspect a missing/huge image; use File→Join on the existing LAN server, cancel once, then copy the joined address. Check palette and tiny icon on the owner's desktop. Windows desktop feel remains pending; CI is not native Windows acceptance.

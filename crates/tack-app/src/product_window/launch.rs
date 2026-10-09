@@ -15,6 +15,7 @@ pub fn run_shared(mut args: Vec<OsString>, started: Instant) -> Result<(), Asset
         .into_string()
         .map_err(|_| "server address text")?;
     let board = tack_shared::WireId::parse(args.remove(0).to_str().ok_or("board ID text")?)?;
+    tack_app::shared_address::SharedAddress::parse(&format!("{address} {board}"))?;
     args.insert(0, OsString::from("shared.tack"));
     run_mode(args, started, false, Some((address, board)))
 }
@@ -41,6 +42,7 @@ fn run_mode(
     };
     local.untitled = untitled;
     let mut options = OpenOptions {
+        join_receipt: None,
         path,
         new,
         untitled,
@@ -60,6 +62,9 @@ fn run_mode(
     let mut it = args.into_iter().skip(1);
     while let Some(a) = it.next() {
         match a.to_str() {
+            Some("--join-receipt") if shared_config.is_some() => {
+                options.join_receipt = Some(PathBuf::from(it.next().ok_or("join receipt path")?))
+            }
             Some("--window-size") => {
                 let size = it.next().ok_or("window size WIDTHxHEIGHT")?;
                 options.window_size = parse_window_size(size.to_str().ok_or("window size text")?)?;

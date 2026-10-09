@@ -33,6 +33,7 @@ pub enum ContextKind {
 pub struct Context {
     pub kind: ContextKind,
     selection_kind: ContextKind,
+    shared: bool,
     pub generation: u64,
     undo: bool,
     redo: bool,
@@ -104,6 +105,7 @@ impl Context {
         Self {
             kind,
             selection_kind: kind,
+            shared: false,
             generation: editor.generation(),
             undo: editor.undo_len() > 0,
             redo: editor.redo_len() > 0,
@@ -124,8 +126,16 @@ impl Context {
             annotation_fill: first_id.and_then(|id| doc.object(id)).is_some_and(|o| matches!(o.kind(), ObjectKind::Annotation(a) if matches!(a.kind(), AnnotationKind::Rect))),
         }
     }
+    pub fn with_shared(mut self, shared: bool) -> Self {
+        self.shared = shared;
+        self
+    }
     pub fn enabled(self, action: Action) -> bool {
         match action {
+            Action::DuplicateSelection => self.any && !self.shared,
+            Action::AddCameraBookmark => !self.shared,
+            Action::CopySharedBoardAddress => self.shared,
+            Action::SourceInfo => self.selection_kind == ContextKind::Image,
             Action::Undo => self.undo,
             Action::Redo => self.redo,
             Action::SelectAll => self.has_objects,
@@ -425,6 +435,7 @@ fn context_items(context: Context, submenu: Option<Group>, keymap: &Keymap) -> V
                 v
             }
             Group::Source => vec![
+                a("Image information...", SourceInfo),
                 a("Open original", OpenSource),
                 a("Reveal original", RevealSource),
                 a("Relink...", RelinkSource),
@@ -438,11 +449,14 @@ fn context_items(context: Context, submenu: Option<Group>, keymap: &Keymap) -> V
                 a("Save", Save),
                 a("Save As...", SaveAs),
                 a("Recent boards", RecentBoards),
+                a("Join shared board...", JoinSharedBoard),
+                a("Copy shared address", CopySharedBoardAddress),
             ],
             Group::Edit => vec![
                 a("Undo", Undo),
                 a("Redo", Redo),
                 a("Paste", Paste),
+                a("Duplicate selection", DuplicateSelection),
                 a("Select all", SelectAll),
                 a("Delete", DeleteSelection),
                 a("Keymap...", KeymapEditor),
@@ -453,6 +467,8 @@ fn context_items(context: Context, submenu: Option<Group>, keymap: &Keymap) -> V
                 a("Focus frame", FocusFrame),
                 a("Next frame", NextFrame),
                 a("Previous frame", PreviousFrame),
+                a("Add bookmark...", AddCameraBookmark),
+                a("Camera bookmarks...", CameraBookmarks),
             ],
             Group::Tools => vec![
                 a("Pointer", SelectTool(Tool::Pointer)),

@@ -21,15 +21,17 @@ Built in Rust, with a native GPU-rendered canvas. Boards are saved locally as
   rows or columns, and arrange references in a grid. Use snapping when needed.
 - **Mark up ideas.** Add text notes, rectangles, lines, arrows and freehand
   strokes. Label regions with frames and jump between them.
+- **Save useful views.** Name exact camera positions and zoom levels without adding canvas objects; jump back from View → Camera bookmarks.
+- **Duplicate quickly.** Press Ctrl+D to duplicate a local selection, reusing image originals and keeping one Undo step.
 - **Edit with confidence.** Undo and redo board edits, save your work, and recover
   completed recovery snapshots after an interrupted session.
 - **Choose how images are stored.** Embed originals for portable boards or link
-  to external files. Relink missing sources when files move.
+  to external files. Relink missing sources when files move, and inspect dimensions, encoded size and source status from Image → Source → Image information.
 - **Make the workspace yours.** Flat Very Dark, Neutral Gray and Light themes,
   crisp bitmap UI, direct integer scaling and editable shortcuts. Right-click keeps application and contextual commands together.
 - **Share a board on your LAN.** Explicitly publish a local board to the optional
   headless server and edit it from several native clients. Local boards work
-  independently; the server runs only when you start it.
+  independently; the server runs only when you start it. Join from File → Join shared board using a numeric IP and Board ID or `tack://IP:PORT/BOARD_ID`.
 
 The renderer loads image detail progressively and uses bounded caches. See the
 [feature inventory](docs/FEATURE_INVENTORY.md) for exact behavior and limits.
@@ -85,6 +87,7 @@ platform setup and the optional X11 startup workaround.
 | Right-click / F10 | Context and application commands / application menu |
 | Ctrl+I / Ctrl+V | Import images / paste |
 | T / R / L / A / P | Text / rectangle / line / arrow / freehand |
+| Ctrl+D | Duplicate local selection |
 | Ctrl+Z / Ctrl+Shift+Z | Undo / redo |
 | Ctrl+S / Ctrl+Shift+S | Save / Save As |
 | Ctrl+O / Ctrl+N | Open / new board window |
@@ -115,7 +118,8 @@ storage API; its desktop action is still pending. See the
 See the [LAN report](docs/MISSION_2A_REPORT.md),
 [image supply report](docs/MISSION_1L_REPORT.md),
 [UI/clipboard report](docs/MISSION_1J_REPORT.md),
-[About report](docs/MISSION_1K_ABOUT_REPORT.md) and
+[About report](docs/MISSION_1K_ABOUT_REPORT.md),
+[daily-use report](docs/MISSION_2A3_DAILY_USE_POLISH_REPORT.md) and
 [manual test checklist](docs/HUMAN_TEST_1J.md) for validation details.
 
 ## Documentation

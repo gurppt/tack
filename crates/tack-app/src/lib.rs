@@ -53,3 +53,10 @@ pub mod lod_diagnostics;
 
 pub mod file_names;
 pub mod source_export;
+
+pub mod duplicate;
+pub mod join_launch;
+pub mod shared_address;
+pub mod source_info;
+
+pub mod icon;

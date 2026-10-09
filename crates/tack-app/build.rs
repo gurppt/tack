@@ -8,6 +8,9 @@ fn main() -> Result<(), Box<dyn Error>> {
         "gfx/about.toml",
         "gfx/tack_about.png",
         "tools/prepare_about.py",
+        "tools/prepare_icon.py",
+        "gfx/tack-icon.svg",
+        "gfx/Rhombus--Streamline-Fluent-Ui-Filled.svg",
     ] {
         println!("cargo:rerun-if-changed={}", root.join(file).display());
     }
@@ -41,6 +44,20 @@ fn main() -> Result<(), Box<dyn Error>> {
         if fs::read(&asset).ok().as_deref() != Some(bytes.as_slice()) {
             // Build/package preparation only; the ordinary app never reads here.
             fs::write(&asset, &bytes)?;
+        }
+    }
+    for name in [
+        "tack-icon-16.png",
+        "tack-icon-32.png",
+        "tack-icon-64.png",
+        "tack-icon-128.png",
+        "tack-icon-256.png",
+        "tack-icon.ico",
+    ] {
+        let bytes = fs::read(output.join(name))?;
+        let path = profile.join(name);
+        if fs::read(&path).ok().as_deref() != Some(bytes.as_slice()) {
+            fs::write(path, bytes)?;
         }
     }
     if env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("linux") {

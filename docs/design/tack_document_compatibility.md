@@ -161,3 +161,11 @@ Schema-2 frame/group records remain byte compatible, including inside schema 3.
 Annotations have no media/source relationship. Transient editing/capture/font
 resources remain outside persistence. Mixed annotation groups are deferred and
 refused explicitly in the authoring UI; existing image groups are retained.
+
+## Phase 2A3: invisible camera bookmarks (schema 4)
+
+Container format 1 is unchanged. Schemas1–3 retain their exact record layout and remain readable. The writer selects schema 4 only when bookmarks exist; it includes all schema 3 image/frame/annotation records and groups, then a u32 bookmark count and up to 64 records. Each record is version 1 u16, nonzero BookmarkId u128, center_x/center_y/zoom f64 little-endian, UTF-8 byte length u16, and name bytes. Names are nonempty, at most 128 bytes, without control characters; IDs are unique. Camera center is finite within ±1e8, zoom within 0.001..64. Invalid versions, lengths, duplicate IDs, non-finite/out-of-range values, truncation and trailing bytes refuse the document before admission.
+
+Older Tack builds supporting only schemas 1–3 explicitly refuse schema 4; they must not drop bookmarks and rewrite a file. Removing the last bookmark allows the appropriate previous schema again. Bookmarks are invisible document metadata, separate from Frames and the transient current camera. Jump changes only the camera. Add/rename/delete use the existing reversible command history and preserve exact IEEE754 values through save/reopen.
+
+Shared schema 4 snapshots may contain bookmarks: clients can jump to them. Bookmark mutation and Duplicate are explicitly disabled in shared desktop windows for this slice; no special command DTO or replication protocol is added. The server acquires no UI/render/codec dependency.

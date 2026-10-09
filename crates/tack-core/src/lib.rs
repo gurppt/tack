@@ -2,7 +2,9 @@
 //! No UI, storage, window, GPU, network or decoder dependencies.
 
 mod annotations;
+mod bookmarks;
 mod camera;
+pub use bookmarks::{CameraBookmark, MAX_BOOKMARK_NAME_BYTES, MAX_CAMERA_BOOKMARKS};
 mod commands;
 mod document;
 mod history;
@@ -22,7 +24,7 @@ pub use camera::{Camera, GeometryError, WorldRect};
 pub use commands::{Command, CommandError};
 pub use document::{Document, DocumentLimits};
 pub use history::{BackendRequest, DocumentEditor};
-pub use ids::{AssetId, DocumentId, GroupId, InvalidId, ObjectId, SourceId};
+pub use ids::{AssetId, BookmarkId, DocumentId, GroupId, InvalidId, ObjectId, SourceId};
 pub use model::{
     DocumentObject, ImageAsset, ImageFiltering, ImageObject, MAX_SOURCE_PATH_BYTES, ModelError,
     ObjectKind, Source, SourceFingerprint, SourceLocation,

@@ -22,6 +22,7 @@ mod local;
 mod shared;
 use local::{LoadedBoard, LocalState};
 struct OpenOptions {
+    join_receipt: Option<PathBuf>,
     path: PathBuf,
     new: bool,
     untitled: bool,
@@ -100,6 +101,7 @@ impl App {
         let window = Arc::new(
             event_loop.create_window(
                 Window::default_attributes()
+                    .with_window_icon(tack_app::icon::window())
                     .with_title(if self.shared.is_some() {
                         "Tack — connecting shared board"
                     } else {

@@ -309,7 +309,7 @@ fn inspect(args: Vec<OsString>) -> Result<(), AssetError> {
     let b = TackFile::open(PathBuf::from(args.first().ok_or("inspect FILE.tack")?))?;
     emit(
         None,
-        &json!({"document_id":format!("{:032x}",b.document.id().value()),"objects":b.document.object_order().len(),"assets":b.document.assets().count(),"sources":b.document.sources().count(),"embedded":b.originals.len(),"overviews":b.overviews.len(),"discarded_overviews":b.discarded_overviews,"metadata_bytes":b.metadata_bytes_read,"metadata_ms":start.elapsed().as_secs_f64()*1000.,"original_bytes_read":0}),
+        &json!({"bookmarks":b.document.bookmarks().iter().map(|view|json!({"id":format!("{:032x}",view.id().value()),"name":view.name(),"center":view.center(),"zoom":view.zoom()})).collect::<Vec<_>>(),"document_id":format!("{:032x}",b.document.id().value()),"objects":b.document.object_order().len(),"assets":b.document.assets().count(),"sources":b.document.sources().count(),"embedded":b.originals.len(),"overviews":b.overviews.len(),"discarded_overviews":b.discarded_overviews,"metadata_bytes":b.metadata_bytes_read,"metadata_ms":start.elapsed().as_secs_f64()*1000.,"original_bytes_read":0}),
     )
 }
 fn query_scale(args: Vec<OsString>) -> Result<(), AssetError> {

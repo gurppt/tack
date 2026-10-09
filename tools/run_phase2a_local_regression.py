@@ -58,6 +58,7 @@ def main():
     parser.add_argument('--current', type=Path, required=True)
     parser.add_argument('--board', type=Path, action='append', required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--current-only-board', type=Path, action='append', default=[], help='New-schema stress boards the baseline cannot read')
     parser.add_argument('--baseline-label', default='baseline1l')
     parser.add_argument('--current-label', default='current2a')
     parser.add_argument('--repeats', type=int, choices=range(1,4), default=3)
@@ -69,8 +70,9 @@ def main():
     data = {'harness_sha256': digest(__file__), 'runs': [],
             'scope': 'Warm/unspecified OS page cache; serial native800x600 samehost/display. Socket records distinguish OS X11 Unix sockets from Tack-created TCP/UDP. CPU /proc ticks, no perprocess VRAM attribution.'}
     for repeat in range(args.repeats):
-        for board in args.board:
-            for mode, binary in [(args.baseline_label, args.baseline), (args.current_label, args.current)]:
+        for board in [*args.board, *args.current_only_board]:
+            binaries = [(args.current_label,args.current)] if board in args.current_only_board else [(args.baseline_label,args.baseline),(args.current_label,args.current)]
+            for mode, binary in binaries:
                 name = f'{repeat}-{board.stem}-{mode}'
                 runroot = root / name
                 runroot.mkdir()

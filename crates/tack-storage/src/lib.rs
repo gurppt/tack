@@ -12,7 +12,7 @@ mod save;
 pub use reader::{BlobRange, OverviewEntry, RangeReader, TackFile};
 pub use save::{BlobInput, Payload, SaveStage, save, save_with_hook};
 use std::{error::Error, fmt};
-use tack_core::{AssetId, DocumentId, GroupId, ObjectId, SourceId};
+use tack_core::{AssetId, BookmarkId, DocumentId, GroupId, ObjectId, SourceId};
 
 pub const HEADER_BYTES: usize = 80;
 pub const MAX_METADATA_BYTES: usize = 64 * 1024 * 1024;
@@ -83,6 +83,7 @@ generator!(new_object_id, ObjectId);
 generator!(new_asset_id, AssetId);
 generator!(new_source_id, SourceId);
 generator!(new_group_id, GroupId);
+generator!(new_bookmark_id, BookmarkId);
 
 /// Private owned work directories; callers choose trusted paths. Existing directories
 /// are not chmod'ed. Unix permissions are set at creation, before any media is written.

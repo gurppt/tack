@@ -40,6 +40,9 @@ impl LocalUi {
                 _ => None,
             };
         }
+        if let Some(result) = self.daily_event(event) {
+            return result;
+        }
         let p = self.cursor.map(|v| v / self.layout[0]);
         let hit = self.hits.iter().copied().find(|h| h.contains(p));
         if self.capture {
@@ -119,8 +122,8 @@ impl LocalUi {
                     if selected < self.count(keymap, profile) {
                         self.selected = selected;
                         self.focus = None;
-                        if self.panel != Panel::Keymap
-                            && !(self.panel == Panel::Preferences && matches!(selected, 5 | 6))
+                        if !(matches!(self.panel, Panel::Keymap | Panel::Info | Panel::Connecting)
+                            || self.panel == Panel::Preferences && matches!(selected, 5 | 6))
                         {
                             return self.activate(keymap, profile);
                         }

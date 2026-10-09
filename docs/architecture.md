@@ -224,3 +224,5 @@ lack of artist-rated usefulness limit product conclusions. See
 under faster cold supply and the remaining native presentation outliers.
 The current [preparation gate](MISSION_0_7_REPORT.md) charges first-open work
 before interpreting prepared-navigation coverage.
+
+Phase 2A3 keeps the current camera transient while adding up to 64 invisible persisted camera bookmarks as bounded metadata. They have no canvas objects or thumbnails. Temporary daily-use panels and metadata-only duplication use the existing UI/editor/worker boundaries. Desktop Join launches the same CLI/native backend on explicit action, with a temporary readiness receipt written by the existing operation worker, cancelled-child cleanup, and no startup socket.

@@ -1,0 +1,207 @@
+{
+  "baseline": {
+    "commit": "873ce97cb57dc525441feebb94156073b3ebe87b",
+    "binary_sha256": "861bbeb67c39572372585eba53250543ff4892c93fcb376e449c43d8f8c72664",
+    "stripped_bytes": 19329864
+  },
+  "current": {
+    "binary_sha256": "3ad64ecb0533b383d47e36884785c36f065f774df69e478201a7ca3e064a8893",
+    "stripped_bytes": 19450176,
+    "server_sha256": "9be47efc16e3b79d327c92139a056a34eb78166326c89de66bd06170107aa3b4",
+    "server_bytes": 16229976,
+    "about_sha256": "d22641555380426ad6567153edca7b83548ad964acdc9c3fbdb70b59ac7759ee",
+    "decoder_sha256": "4fcef9b973c80de96ecf2d5babe86ef87b1be2459f22559243c8e85da3ebe587",
+    "source_manifest_sha256": "dea428ca62d8bbf6983d524cdc6b1c3cdc43b26ce1c70703fc6fadc348807564"
+  },
+  "local": [
+    {
+      "board": "empty",
+      "mode": "phase2a2",
+      "runs": 2,
+      "startup_median_ms": 452.3505345,
+      "rss_median_bytes": 349536256.0,
+      "threads": [
+        41,
+        41
+      ],
+      "idle_cpu_percent": [
+        0.3310968410536615,
+        0.6621662162279798
+      ],
+      "idle_redraws": [
+        0,
+        0
+      ],
+      "cpu_payload_bytes": [
+        0,
+        0
+      ],
+      "gpu_payload_bytes": [
+        0,
+        0
+      ],
+      "startup_without_gpu_median_ms": 22.26228949999998
+    },
+    {
+      "board": "empty",
+      "mode": "phase2a3",
+      "runs": 2,
+      "startup_median_ms": 453.922643,
+      "rss_median_bytes": 349620224.0,
+      "threads": [
+        41,
+        41
+      ],
+      "idle_cpu_percent": [
+        0.331086271777378,
+        0.33104862552087205
+      ],
+      "idle_redraws": [
+        0,
+        0
+      ],
+      "cpu_payload_bytes": [
+        0,
+        0
+      ],
+      "gpu_payload_bytes": [
+        0,
+        0
+      ],
+      "startup_without_gpu_median_ms": 21.31482299999996
+    },
+    {
+      "board": "mixed_prod_1000",
+      "mode": "phase2a2",
+      "runs": 2,
+      "startup_median_ms": 450.480421,
+      "rss_median_bytes": 356360192.0,
+      "threads": [
+        41,
+        41
+      ],
+      "idle_cpu_percent": [
+        0.6622740440066298,
+        0.3317316319445557
+      ],
+      "idle_redraws": [
+        0,
+        0
+      ],
+      "cpu_payload_bytes": [
+        3194880,
+        3194880
+      ],
+      "gpu_payload_bytes": [
+        3194880,
+        3194880
+      ],
+      "startup_without_gpu_median_ms": 18.87938349999999
+    },
+    {
+      "board": "mixed_prod_1000",
+      "mode": "phase2a3",
+      "runs": 2,
+      "startup_median_ms": 467.094415,
+      "rss_median_bytes": 356536320.0,
+      "threads": [
+        41,
+        41
+      ],
+      "idle_cpu_percent": [
+        0.33141276410964565,
+        0.6622050166677058
+      ],
+      "idle_redraws": [
+        0,
+        0
+      ],
+      "cpu_payload_bytes": [
+        3194880,
+        3194880
+      ],
+      "gpu_payload_bytes": [
+        3194880,
+        3194880
+      ],
+      "startup_without_gpu_median_ms": 21.33118299999998
+    },
+    {
+      "board": "max-bookmarks",
+      "mode": "phase2a3",
+      "runs": 2,
+      "startup_median_ms": 439.27702850000003,
+      "rss_median_bytes": 349691904.0,
+      "threads": [
+        41,
+        41
+      ],
+      "idle_cpu_percent": [
+        0.3311384129372301,
+        0.33111111946069127
+      ],
+      "idle_redraws": [
+        0,
+        0
+      ],
+      "cpu_payload_bytes": [
+        0,
+        0
+      ],
+      "gpu_payload_bytes": [
+        0,
+        0
+      ],
+      "startup_without_gpu_median_ms": 20.753196499999973
+    }
+  ],
+  "metadata": {
+    "bookmark_commit_ms": 0.009290000000000001,
+    "bookmark_count": 64,
+    "bookmark_file_bytes": 3359,
+    "bookmark_history_bytes": 176,
+    "duplicates": [
+      {
+        "asset_count": 1,
+        "commit_ms": 0.772242,
+        "construct_ms": 1.538543,
+        "history_bytes": 176176,
+        "objects": 1000,
+        "original_bytes_read": 0,
+        "original_size_metadata": 966367641600,
+        "source_count": 1
+      },
+      {
+        "asset_count": 1,
+        "commit_ms": 9.061689,
+        "construct_ms": 16.100192999999997,
+        "history_bytes": 1760176,
+        "objects": 10000,
+        "original_bytes_read": 0,
+        "original_size_metadata": 966367641600,
+        "source_count": 1
+      }
+    ]
+  },
+  "raw_receipts": {
+    "benchmark-results/phase2a3/full-gate.log": "0c96e584749fa3ea13a8e242786148ba8c5b67f183fcfe1c81a74baf150cb651",
+    "benchmark-results/phase2a3/daily-verified/receipt.json": "5703154166d7e345fea4db0dc4229dce6ffc5d22df0e6b5eed463cc0e8a0efba",
+    "benchmark-results/phase2a3/about-verified/receipt.json": "ede79ef441e0a8be674f88f61c68bf548c93d08225bfff01d2faa2d8c3d27351",
+    "benchmark-results/phase2a3/idle-final/summary.json": "8f83b86af3de8ead179cd9bc2ea7c4b4b68ca5b9239fc74fa31cae39c19c4dfc",
+    "benchmark-results/phase2a3/metadata/metadata-cost.json": "d5048c431c42f174b380b9925c2ddb0c7cec1ee6d320026733e148f79954591c",
+    "benchmark-results/phase2a3/square-final/summary.json": "6ce52f025ef9736c2c0d6df5fed36251f56d47073fcd967f746d90a547533a73",
+    "benchmark-results/phase2a3/square-potato-final/summary.json": "d3617d3bb591d0ebe96d44bacf0131140eafdefb7525c8e31463f6d3c353ea8b",
+    "benchmark-results/phase2a3/mixed-final/summary.json": "2a165b6f469dff5607448b291071444f9fa9fd73123d2620b21cc2c4778f379a",
+    "benchmark-results/phase2a3/shared-final/checks.json": "d8f4d18e5c7ed9d01e10cd2b24abe12febe8f3424e275afe2704f98132ea2746",
+    "benchmark-results/phase2a3/lod-final/summary.json": "0bd60a2f8ed23fc6c1795c41ed208aabacf84be9e7cb1ffc63fcfa30e87590ea",
+    "benchmark-results/phase2a3/gpu-smoke.log": "4e57963cacc9e7ebf2da16ce32ae249b5613bb163224c39f4886b06ab3930d1f",
+    "benchmark-results/phase2a3/gpu-selection.log": "8b919fb231e644620168d059363bde0d9dfc81cd77c294c5f0e9ca3dbcf2f6ff",
+    "benchmark-results/phase2a3/gpu-product.log": "ce280b02f194ae2915bc75da87b8657db03652b27a363c2564c0a4a37ad72d20",
+    "benchmark-results/phase2a3/gpu-convergence.log": "dc15fdc2972f7aaf262870e46744f65fff2f64dcfd60348b250bd3c38fc65afd",
+    "benchmark-results/phase2a3/gpu-churn.log": "58a629c59a4ec81e10da0e924beec06710fc24e2550f18a14c1726b8de8617bc",
+    "benchmark-results/phase2a3/server-dependencies.txt": "2f082d979de58f2c097d14f9828b99bc830e050ee82aedc888d384eff0352158",
+    "benchmark-results/phase2a3/cleanup.json": "9170d1944028d03c66745649a70f0f180b7640ea9a7f33a5bd52d83f309de8a1"
+  },
+  "scope": "Serial native Linux/X11 800x600, RTX2060; two warm/unspecified-page-cache pairs. Max bookmark schema4 is current-only because baseline refuses it. RSS includes driver; no per-process VRAM claim.",
+  "dependencies": "Cargo.lock and all dependency declarations unchanged; server tree contains no UI, renderer or image codecs; logo uses existing build-only Pillow"
+}

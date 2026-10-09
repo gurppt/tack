@@ -126,39 +126,7 @@ impl SourceRequest {
                 let text = path.to_str().ok_or(
                     "clipboard paths require valid Unicode; original descriptor is unchanged",
                 )?;
-                #[cfg(windows)]
-                let bytes: Vec<u8> = text.encode_utf16().flat_map(u16::to_le_bytes).collect();
-                #[cfg(not(windows))]
-                let bytes = text.as_bytes().to_vec();
-                if bytes.len() > 4096 {
-                    return Err("clipboard path exceeds 4096-byte limit".into());
-                }
-                #[cfg(target_os = "linux")]
-                {
-                    let wayland = std::env::var_os("WAYLAND_DISPLAY").is_some();
-                    Ok(SourceInvocation {
-                        executable: if wayland { "wl-copy" } else { "xclip" }.into(),
-                        args: if wayland {
-                            vec![]
-                        } else {
-                            vec!["-selection".into(), "clipboard".into(), "-in".into()]
-                        },
-                        stdin: Some(bytes),
-                    })
-                }
-                #[cfg(windows)]
-                {
-                    Ok(SourceInvocation {
-                        executable: "clip.exe".into(),
-                        args: vec![],
-                        stdin: Some(bytes),
-                    })
-                }
-                #[cfg(not(any(target_os = "linux", windows)))]
-                {
-                    let _ = bytes;
-                    Err("clipboard source paths are unavailable on this platform".into())
-                }
+                text_invocation(text)
             }
         }
     }
@@ -235,4 +203,43 @@ impl SourceInvocation {
             }
         }
     }
+}
+
+fn text_invocation(text: &str) -> Result<SourceInvocation, Error> {
+    #[cfg(windows)]
+    let bytes: Vec<u8> = text.encode_utf16().flat_map(u16::to_le_bytes).collect();
+    #[cfg(not(windows))]
+    let bytes = text.as_bytes().to_vec();
+    if bytes.len() > 4096 {
+        return Err("clipboard path exceeds 4096-byte limit".into());
+    }
+    #[cfg(target_os = "linux")]
+    {
+        let wayland = std::env::var_os("WAYLAND_DISPLAY").is_some();
+        Ok(SourceInvocation {
+            executable: if wayland { "wl-copy" } else { "xclip" }.into(),
+            args: if wayland {
+                vec![]
+            } else {
+                vec!["-selection".into(), "clipboard".into(), "-in".into()]
+            },
+            stdin: Some(bytes),
+        })
+    }
+    #[cfg(windows)]
+    {
+        Ok(SourceInvocation {
+            executable: "clip.exe".into(),
+            args: vec![],
+            stdin: Some(bytes),
+        })
+    }
+    #[cfg(not(any(target_os = "linux", windows)))]
+    {
+        let _ = bytes;
+        Err("clipboard source paths are unavailable on this platform".into())
+    }
+}
+pub fn copy_text(text: &str) -> Result<(), Error> {
+    text_invocation(text)?.run()
 }

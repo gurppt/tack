@@ -1,4 +1,4 @@
-# Current feature inventory — Phase 2A2
+# Current feature inventory — Phase 2A3
 
 Code audit of the local prototype on 2026-10-09, based on `Action::ALL`,
 `product_bindings`, `ImageInput`, annotation/spatial input, local file workers,
@@ -7,7 +7,7 @@ Historical Phase 1I evidence has 170 automated native assertions on US and Frenc
 800×600 and 1024×768. Owner comfort/discovery review and real Windows desktop
 validation remain pending; “implemented” does not imply human acceptance.
 
-Every semantic catalog entry is listed below (93 actions). Shortcuts are the
+Every semantic catalog entry is listed below (99 actions). Shortcuts are the
 **default logical, layout-aware keyboard bindings** exported by `context_ui`; the actual menu
 reads the active user keymap. An em dash means no default press shortcut.
 All actions can be inspected/remapped in Tack → Edit → Keymap. This exposure
@@ -28,6 +28,12 @@ selection, tool choice, camera and text drafts. Menu paths are one submenu deep.
 
 | Feature / semantic action | Status | Object type | Invocation / default shortcut | Other UI | Context menu | Undoable? | Persisted? | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Add camera bookmark (`AddCameraBookmark`) | implemented | invisible camera metadata | — | Tack → View → Add bookmark | shared Tack menu | Yes | Board, schema4 | Local editing only; at most 64 named exact views, 128 UTF-8 bytes per name. |
+| Camera bookmarks (`CameraBookmarks`) | implemented | camera / bookmark metadata | — | Tack → View → Camera bookmarks | shared Tack menu | jump No; rename/delete Yes | Board metadata, camera session | Enter/click jumps; F2/visible Rename and Delete buttons. Shared snapshots allow jump, not editing. |
+| Duplicate selection (`DuplicateSelection`) | implemented | images, notes, all supported annotations, frames | Ctrl+D | Tack → Edit | shared Tack menu | Yes, one transaction | Board | Fresh object/group IDs, same image assets/sources/originals; one adaptive grid-step offset. Explicitly local-only. |
+| Image information (`SourceInfo`) | implemented | one selected image | — | Image → Source | Image information | No | temporary panel | Existing metadata and observed status only; no filesystem access, codec probing or decode requests. |
+| Join shared board (`JoinSharedBoard`) | implemented | connection descriptor | — | Tack → File | shared Tack menu | No | another native window | Numeric IP:PORT + Board ID, or canonical tack://IP:PORT/ID; IPv6 brackets; explicit cancellable launch reuses CLI join. Current local board retained. |
+| Copy shared address (`CopySharedBoardAddress`) | implemented | joined board | — | Tack → File | shared Tack menu | No | clipboard | Canonical URI; off-thread existing native clipboard helper. Disabled for local boards. |
 | Pointer tool (`SelectTool(Pointer)`) | implemented | selection | V | Tack → Tools | No | No | session | Direct canvas selection/manipulation. |
 | Pan tool (`SelectTool(Pan)`) | experimental | tool state | — | keymap catalog only | No | No | session | Generic Interaction state exists; native pointer pipeline does not implement a complete dedicated pan/rotate-view tool. |
 | Rotate view tool (`SelectTool(RotateView)`) | experimental | tool state | — | keymap catalog only | No | No | session | Generic Interaction state exists; native pointer pipeline does not implement a complete dedicated pan/rotate-view tool. |
@@ -220,3 +226,5 @@ Escape or Back returns to Preferences. Last successful Open/Save As folder uses
 a bounded native path descriptor and worker-only fallback checks.
 
 Implementation, measured limits and validation: [Phase 1L report](MISSION_1L_REPORT.md), [huge-image design](design/huge_images.md), [owner checklist](HUMAN_TEST_1L.md).
+
+Phase 2A3 adds static SVG-derived package/window/About identity without a runtime SVG library. Desktop Publish and shared recents are deferred: current publish consumes a committed file; recent-file records represent native paths. No new startup LAN activity or permanent worker is introduced. See [the 2A3 report](MISSION_2A3_DAILY_USE_POLISH_REPORT.md).

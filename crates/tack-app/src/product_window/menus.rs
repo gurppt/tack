@@ -17,12 +17,15 @@ impl App {
         }
     }
     fn menu_context(&self) -> Option<Context> {
-        Some(Context::selection(
-            self.editor.as_ref()?,
-            &self.input.images.selection,
-            self.input.grid_visible,
-            self.input.snap.enabled,
-        ))
+        Some(
+            Context::selection(
+                self.editor.as_ref()?,
+                &self.input.images.selection,
+                self.input.grid_visible,
+                self.input.snap.enabled,
+            )
+            .with_shared(self.shared.is_some()),
+        )
     }
     fn prepare_menu(&mut self) -> Result<(), AssetError> {
         self.release_about();

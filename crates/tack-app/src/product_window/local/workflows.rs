@@ -72,6 +72,12 @@ impl App {
         self.local.ui = None;
         self.release_about();
         match action {
+            DuplicateSelection
+            | AddCameraBookmark
+            | CameraBookmarks
+            | SourceInfo
+            | JoinSharedBoard
+            | CopySharedBoardAddress => self.daily_action(action)?,
             ApplicationMenu => self.open_application_menu()?,
             About => {
                 self.local.about_ticket = self
@@ -191,6 +197,12 @@ impl App {
         self.dirty = true;
         if let Some(result) = result {
             match result {
+                UiResult::JumpBookmark(_)
+                | UiResult::SaveBookmark(..)
+                | UiResult::RenameBookmark(_)
+                | UiResult::DeleteBookmark(_)
+                | UiResult::Join(_)
+                | UiResult::PasteAddress => self.daily_result(result)?,
                 UiResult::Action(action) => self.local_action(action)?,
                 UiResult::PreferencesChanged => {
                     if old_grid != self.local.profile.grid {
@@ -201,6 +213,15 @@ impl App {
                     self.apply_preferences()?;
                 }
                 UiResult::Dismiss => {
+                    if self
+                        .local
+                        .ui
+                        .as_ref()
+                        .is_some_and(|ui| matches!(ui.panel, Panel::Connecting | Panel::Join))
+                    {
+                        self.local.worker.cancel();
+                        self.local.queued = None;
+                    }
                     self.release_about();
                     if self.load_failed {
                         self.local.close_ready = true;

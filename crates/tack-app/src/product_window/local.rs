@@ -1,5 +1,6 @@
 //! Local workflows compose the existing editor, storage worker, input and canvas.
 use super::*;
+mod daily;
 mod fresh;
 mod installer;
 mod updates;
@@ -178,7 +179,7 @@ impl App {
             self.local.queued = None;
         }
     }
-    fn operation(&mut self, operation: Operation) -> Result<(), AssetError> {
+    pub(super) fn operation(&mut self, operation: Operation) -> Result<(), AssetError> {
         if self.load_failed {
             return Err("close the failed-open window before opening another board".into());
         }
@@ -220,6 +221,9 @@ impl App {
                     self.local_error(error.to_string());
                 }
             }
+        }
+        if let Err(error) = self.notify_join_receipt() {
+            self.interaction_error = Some(error.to_string());
         }
         if !self.local.worker.active()
             && let Some(op) = self.local.queued.take()

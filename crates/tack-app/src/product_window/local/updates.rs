@@ -3,6 +3,48 @@ use super::*;
 impl App {
     pub(in super::super) fn local_update(&mut self, update: LocalUpdate) -> Result<(), AssetError> {
         match update {
+            LocalUpdate::Joined(result) => {
+                if self
+                    .local
+                    .ui
+                    .as_ref()
+                    .is_some_and(|ui| ui.panel == Panel::Connecting)
+                {
+                    self.panel(Panel::Info);
+                    self.local.ui = Some(Box::new(LocalUi::daily(
+                        Panel::Info,
+                        tack_app::local_ui::DailyPanel {
+                            rows: vec![match result {
+                                Ok(true) => "Joined: shared board opened in another window".into(),
+                                Ok(false) => "Join cancelled; local board retained".into(),
+                                Err(e) => format!("Join failed: {e}"),
+                            }],
+                            ..Default::default()
+                        },
+                    )));
+                }
+            }
+            LocalUpdate::AddressText(result) => {
+                if let Some(ui) = self.local.ui.as_mut().filter(|ui| ui.panel == Panel::Join) {
+                    match result {
+                        Ok(text)
+                            if text.trim().len() <= 256
+                                && !text.trim().chars().any(char::is_control) =>
+                        {
+                            if let Some(data) = ui.daily_data() {
+                                data.text = text.trim().into();
+                                data.replace = false;
+                            }
+                        }
+                        Ok(_) => {
+                            ui.message =
+                                "Shared address exceeds 256 bytes or contains control characters"
+                                    .into()
+                        }
+                        Err(e) => ui.message = e,
+                    }
+                }
+            }
             LocalUpdate::Opened(result) => {
                 let opened = result.map_err(AssetError::from)?;
                 if self.can_reuse_fresh(true) {

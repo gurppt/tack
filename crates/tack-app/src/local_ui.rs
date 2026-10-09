@@ -11,13 +11,22 @@ use winit::{
     event::{ElementState, WindowEvent},
     keyboard::{KeyCode, PhysicalKey},
 };
+mod daily;
 mod draw;
+pub use daily::DailyPanel;
+#[cfg(test)]
+mod daily_tests;
 mod events;
 mod settings;
 #[cfg(test)]
 mod tests;
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Panel {
+    Bookmarks,
+    BookmarkName,
+    Info,
+    Join,
+    Connecting,
     About,
     Menu,
     Preferences,
@@ -30,6 +39,12 @@ pub enum Panel {
     Error,
 }
 pub enum UiResult {
+    JumpBookmark(tack_core::BookmarkId),
+    SaveBookmark(Option<tack_core::BookmarkId>, String),
+    RenameBookmark(tack_core::BookmarkId),
+    DeleteBookmark(tack_core::BookmarkId),
+    Join(String),
+    PasteAddress,
     Action(Action),
     PreferencesChanged,
     CloseSave,
@@ -41,6 +56,9 @@ pub enum UiResult {
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Command {
+    RenameBookmark,
+    DeleteBookmark,
+    ConfirmDaily,
     Search,
     Change,
     Unassign,
@@ -72,6 +90,7 @@ enum ResetScope {
     Category(Action),
 }
 pub struct LocalUi {
+    daily: Option<Box<DailyPanel>>,
     pub about_image: bool,
     pub about_layout: Option<crate::about::Layout>,
     pub panel: Panel,
@@ -93,6 +112,7 @@ pub struct LocalUi {
 impl LocalUi {
     pub fn new(panel: Panel) -> Self {
         Self {
+            daily: None,
             about_image: false,
             about_layout: None,
             panel,
@@ -153,6 +173,11 @@ impl LocalUi {
     }
     fn count(&self, keymap: &Keymap, profile: &Preferences) -> usize {
         match self.panel {
+            Panel::Bookmarks
+            | Panel::BookmarkName
+            | Panel::Info
+            | Panel::Join
+            | Panel::Connecting => self.daily_rows().len(),
             Panel::Menu | Panel::Keymap => self.actions(keymap).len(),
             Panel::Preferences => 11,
             Panel::Scale => 5,
@@ -267,6 +292,12 @@ impl LocalUi {
     ) -> Option<UiResult> {
         self.focus = None;
         match command {
+            Command::RenameBookmark => self.daily_command(true),
+            Command::DeleteBookmark => self.daily_command(false),
+            Command::ConfirmDaily => {
+                self.selected = 1;
+                self.daily_activate()
+            }
             Command::Search => {
                 self.focus = Some(Command::Search);
                 None
@@ -334,6 +365,8 @@ impl LocalUi {
     }
     fn activate(&mut self, keymap: &mut Keymap, profile: &mut Preferences) -> Option<UiResult> {
         match self.panel {
+            Panel::Bookmarks | Panel::BookmarkName | Panel::Join => self.daily_activate(),
+            Panel::Info | Panel::Connecting => Some(UiResult::Dismiss),
             Panel::Menu => self
                 .actions(keymap)
                 .get(self.selected)

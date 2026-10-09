@@ -214,6 +214,21 @@ impl DocumentObject {
             kind: ObjectKind::Frame(name),
         })
     }
+    pub fn duplicate(&self, id: ObjectId, offset: [f64; 2]) -> Result<Self, crate::GeometryError> {
+        let mut copy = self.clone();
+        copy.id = id;
+        let t = self.transform;
+        copy.transform = Transform::new(
+            [t.center()[0] + offset[0], t.center()[1] + offset[1]],
+            t.size(),
+            t.rotation(),
+            t.flips(),
+        )?;
+        if let ObjectKind::Annotation(a) = &copy.kind {
+            a.bounds(copy.transform)?;
+        }
+        Ok(copy)
+    }
     pub fn id(&self) -> ObjectId {
         self.id
     }

@@ -9,6 +9,7 @@ use std::{error::Error, fmt};
 pub enum Command {
     /// Flat bounded object edits; one atomic operation and one inverse.
     Batch(Vec<Command>),
+    SetCameraBookmarks(Vec<crate::CameraBookmark>),
     AddSource(Source),
     RemoveSource(SourceId),
     /// Explicit revision/binding replacement; inverse retains the previous source.
@@ -105,6 +106,13 @@ impl Command {
                         })
                         .sum::<usize>()
             }
+            Self::SetCameraBookmarks(views) => {
+                views.capacity() * std::mem::size_of::<crate::CameraBookmark>()
+                    + views
+                        .iter()
+                        .map(|b| b.retained_bytes() - std::mem::size_of::<crate::CameraBookmark>())
+                        .sum::<usize>()
+            }
             Self::AddGroup(g) => g.retained_bytes(),
             Self::SetFrameName { name, .. } => name.capacity(),
             Self::SetText { text, .. } => text.retained_bytes(),
@@ -135,7 +143,8 @@ impl Command {
     fn flat_edit(&self) -> bool {
         matches!(
             self,
-            Self::AddSource(_)
+            Self::SetCameraBookmarks(_)
+                | Self::AddSource(_)
                 | Self::RemoveSource(_)
                 | Self::SetSource(_)
                 | Self::AddAsset(_)
@@ -192,6 +201,20 @@ impl Document {
     ) -> Result<Option<Command>, CommandError> {
         use Command::*;
         let inverse = match command {
+            SetCameraBookmarks(views) => {
+                let ids: std::collections::BTreeSet<_> = views.iter().map(|b| b.id()).collect();
+                if views.len() > crate::MAX_CAMERA_BOOKMARKS || ids.len() != views.len() {
+                    return Err(CommandError::LimitReached("valid unique camera bookmarks"));
+                }
+                if self.bookmarks == views {
+                    None
+                } else {
+                    Some(SetCameraBookmarks(std::mem::replace(
+                        &mut self.bookmarks,
+                        views,
+                    )))
+                }
+            }
             Batch(edits) => {
                 if edits.len() > 200_000 || edits.iter().any(|e| !e.flat_edit()) {
                     return Err(CommandError::LimitReached("flat metadata batch"));

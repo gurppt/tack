@@ -89,6 +89,9 @@ impl CommandDto {
     pub fn from_command(command: &Command) -> Result<Self> {
         use Command::*;
         Ok(match command {
+            Command::SetCameraBookmarks(_) => {
+                return Err(Error::Invalid("camera bookmark edits are local-only"));
+            }
             Batch(edits) => {
                 if edits.len() > 4096 || edits.iter().any(|e| matches!(e, Batch(_))) {
                     return Err(Error::Invalid("flat LAN batch limit"));

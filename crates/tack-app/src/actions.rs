@@ -96,10 +96,16 @@ pub enum Action {
     RecentBoards,
     ImportKeymap,
     ExportKeymap,
+    DuplicateSelection,
+    AddCameraBookmark,
+    CameraBookmarks,
+    SourceInfo,
+    JoinSharedBoard,
+    CopySharedBoardAddress,
 }
 impl Action {
     /// Enumerable action catalog, including currently unassigned actions.
-    pub const ALL: [Self; 93] = [
+    pub const ALL: [Self; 99] = [
         Self::SelectTool(Tool::Pointer),
         Self::SelectTool(Tool::Pan),
         Self::SelectTool(Tool::RotateView),
@@ -193,6 +199,12 @@ impl Action {
         Self::RecentBoards,
         Self::ImportKeymap,
         Self::ExportKeymap,
+        Self::DuplicateSelection,
+        Self::AddCameraBookmark,
+        Self::CameraBookmarks,
+        Self::SourceInfo,
+        Self::JoinSharedBoard,
+        Self::CopySharedBoardAddress,
     ];
     /// Stable readable semantic names; never a positional catalog index.
     pub fn id(self) -> String {
@@ -218,6 +230,12 @@ impl Action {
                 | Self::RecentBoards
                 | Self::ImportKeymap
                 | Self::ExportKeymap
+                | Self::DuplicateSelection
+                | Self::AddCameraBookmark
+                | Self::CameraBookmarks
+                | Self::SourceInfo
+                | Self::JoinSharedBoard
+                | Self::CopySharedBoardAddress
         )
     }
     pub fn category(self) -> &'static str {
@@ -225,7 +243,13 @@ impl Action {
             Self::SelectTool(_) | Self::TemporaryTool(_) | Self::AnnotationStyle(_) => {
                 "Tools and annotations"
             }
-            Self::PanView | Self::ZoomView | Self::CenterPointer => "Navigation",
+            Self::PanView
+            | Self::ZoomView
+            | Self::CenterPointer
+            | Self::AddCameraBookmark
+            | Self::CameraBookmarks => "Navigation",
+            Self::DuplicateSelection => "Selection and editing",
+            Self::SourceInfo => "Sources",
             Self::OpenSource | Self::RevealSource | Self::CopySourcePath | Self::SaveOriginalAs => {
                 "Sources"
             }
@@ -352,6 +376,12 @@ impl Action {
             Self::RecentBoards => "Recent boards",
             Self::ImportKeymap => "Import keymap",
             Self::ExportKeymap => "Export keymap",
+            Self::DuplicateSelection => "Duplicate selection",
+            Self::AddCameraBookmark => "Add camera bookmark...",
+            Self::CameraBookmarks => "Camera bookmarks...",
+            Self::SourceInfo => "Image information...",
+            Self::JoinSharedBoard => "Join shared board...",
+            Self::CopySharedBoardAddress => "Copy shared board address",
         }
     }
 }

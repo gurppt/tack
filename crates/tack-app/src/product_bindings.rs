@@ -20,6 +20,7 @@ pub fn product_keymap() -> Result<Keymap, BindingError> {
         (KeyCode::KeyI, ctrl, Action::ImportImages),
         (KeyCode::KeyS, ctrl.union(shift), Action::SaveAs),
         (KeyCode::KeyV, ctrl, Action::Paste),
+        (KeyCode::KeyD, ctrl, Action::DuplicateSelection),
         (KeyCode::KeyR, ctrl.union(shift), Action::RelinkSource),
         (KeyCode::Comma, ctrl, Action::Preferences),
         (

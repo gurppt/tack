@@ -19,6 +19,8 @@ use std::{
 use tack_assets::AssetError;
 use tack_core::{ObjectId, Source};
 pub enum LocalUpdate {
+    Joined(Result<bool, String>),
+    AddressText(Result<String, String>),
     About {
         ticket: u64,
         result: Result<tack_assets::Decoded, String>,
@@ -71,6 +73,16 @@ impl OpenedBoard {
     }
 }
 pub enum Operation {
+    Join {
+        address: crate::shared_address::SharedAddress,
+        work: PathBuf,
+    },
+    JoinReceipt {
+        path: PathBuf,
+        message: String,
+    },
+    CopyAddress(String),
+    PasteAddress(PathBuf),
     About {
         ticket: u64,
     },
@@ -173,6 +185,24 @@ impl LocalWorker {
                 };
                 let result = (|| -> Result<(), AssetError> {
                     match operation {
+                        Operation::Join { address, work } => {
+                            emit(LocalUpdate::Joined(
+                                crate::join_launch::launch(&address, &work, &stop)
+                                    .map_err(|e| e.to_string()),
+                            ));
+                        }
+                        Operation::JoinReceipt { path, message } => {
+                            std::fs::write(path, message)?;
+                        }
+                        Operation::CopyAddress(text) => {
+                            crate::source_actions::copy_text(&text)?;
+                        }
+                        Operation::PasteAddress(work) => {
+                            emit(LocalUpdate::AddressText(
+                                crate::native_files::clipboard_text(&work, &stop)
+                                    .map_err(|e| e.to_string()),
+                            ));
+                        }
                         Operation::About { ticket } => {
                             if !stop.load(Ordering::Relaxed) {
                                 let result = crate::about::load_image().map_err(|e| e.to_string());
@@ -315,7 +345,12 @@ impl LocalWorker {
                 match active.receiver.try_recv() {
                     Ok(update) => {
                         if active.cancel.load(Ordering::Relaxed)
-                            && matches!(update, LocalUpdate::Opened(_))
+                            && matches!(
+                                update,
+                                LocalUpdate::Opened(_)
+                                    | LocalUpdate::Joined(_)
+                                    | LocalUpdate::AddressText(_)
+                            )
                         {
                             continue;
                         }
@@ -356,3 +391,6 @@ impl Drop for LocalWorker {
         }
     }
 }
+
+#[cfg(test)]
+mod cancel_tests;
