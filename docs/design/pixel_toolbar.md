@@ -29,6 +29,11 @@ another working directory. Packaged copies fall back to `gfx/icons/` beside the
 executable when the development directory is absent. `TACK_ICON_DIR` explicitly
 overrides the directory for testing/portable iteration.
 
+Icons beside the executable (`bin/gfx/icons/` for the local Linux build,
+`bin/tack-windows-x86_64/gfx/icons/` for the Windows package) are editable user
+artwork. Build and packaging scripts install only missing PNGs and preserve
+every existing file, including custom names. Rebuilding never resets this folder.
+
 Format: exactly **16×16 RGBA PNG**, encoded file ≤16 KiB, alpha 0 or 255, integer
 pixel artwork. Files: pointer, pan, text, rectangle, line, arrow, scribble,
 frame, duplicate, undo, redo, share, join, save, grid, placeholder. Other semantic

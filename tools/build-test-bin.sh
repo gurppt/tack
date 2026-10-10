@@ -2,8 +2,8 @@
 # Repository-local human-test executable. Never installs system-wide.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-mkdir -p bin/gfx/icons
-cp gfx/icons/*.png bin/gfx/icons/
+# Runtime icons are editable user artwork. Seed missing files only.
+python3 tools/install_toolbar_icons.py gfx/icons bin/gfx/icons
 # Mark the previously installed executable as stale while building. A failed build
 # must not leave an older executable described as current.
 if [ -f bin/BUILD.txt ]; then

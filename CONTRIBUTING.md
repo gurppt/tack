@@ -24,6 +24,9 @@ budget per phase; document any necessary exception before exceeding it.
 Cleanup must target known generated paths, never user files, briefs, source,
 profile data or board assets. Inspect first; avoid broad home/tmp/cache wipes
 and full `cargo clean` when selective cleanup suffices.
+Runtime toolbar icons under `bin/**/gfx/icons/` are user artwork, even though
+`bin/` is ignored by Git. Builds/packages must preserve existing icons and install
+only missing defaults; never regenerate or overwrite these editable files.
 
 Run `bash tools/check.sh` with the pinned toolchain and cargo-deny 0.20.2.
 Tests for renderer policy should run without a GPU; explicitly run the GPU

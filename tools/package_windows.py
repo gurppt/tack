@@ -2,6 +2,7 @@
 """Package the explicit GNU Windows build with pinned SIMD decoder and UI assets."""
 import datetime, hashlib, json, shutil, subprocess, zipfile
 from pathlib import Path
+from install_toolbar_icons import install_missing
 
 def digest(p):
     h=hashlib.sha256()
@@ -25,8 +26,7 @@ def main():
         subprocess.run(['x86_64-w64-mingw32-strip','--strip-all',str(package/name)],check=True)
     for p in built.glob('tack-icon*'):shutil.copy2(p,package/p.name)
     shutil.copy2(built/'tack-about.png',package/'tack-about.png')
-    icons=package/'gfx/icons';icons.mkdir(parents=True,exist_ok=True)
-    for p in (root/'gfx/icons').glob('*.png'):shutil.copy2(p,icons/p.name)
+    install_missing(root/'gfx/icons', package/'gfx/icons')
     imports={}
     for p in package.glob('*.exe'):
         data=subprocess.check_output(['x86_64-w64-mingw32-objdump','-p',str(p)],text=True)
