@@ -11,11 +11,7 @@ impl App {
         self.input.gizmo.frame_title_scale = self.local.profile.frame_title_scale;
         self.input.gizmo.style.handle_size = f64::from(self.local.profile.handle_size);
         self.input.gizmo.style.hit_radius = f64::from(self.local.profile.hit_radius);
-        let scale = if self.local.profile.ui_scale > 0 {
-            f64::from(self.local.profile.ui_scale)
-        } else {
-            self.window.as_ref().map_or(1., |w| w.scale_factor())
-        };
+        let scale = self.window.as_ref().map_or(1., |w| w.scale_factor());
         self.camera.set_ui_scale(scale);
         self.input.gizmo.set_scale(scale);
         self.chrome_layout();

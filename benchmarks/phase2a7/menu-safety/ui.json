@@ -1,0 +1,583 @@
+{
+  "binary_sha256": "168b2dab1b5ce4b155eebd90837cfce1a7e3edff6e848dbd09bb314646a9e793",
+  "harness_sha256": "c3bd40f8953d892d5ae5bfc0e8d56fe6635905ec3adb48c47019c932b001196e",
+  "scope": "Owned Linux Xvfb / software Vulkan; physical artist, Windows desktop and two-computer LAN pending",
+  "checks": [
+    {
+      "name": "800x600 bar1 provided logo exact nearest pixels",
+      "observed": true,
+      "detail": {
+        "logo_rect": [
+          376,
+          164,
+          73,
+          33
+        ]
+      }
+    },
+    {
+      "name": "800x600 bar1 centered About and border",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "800x600 bar1 About outside dismissal",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "800x600 bar1 native toolbar stays at quarter edge after resize",
+      "observed": true,
+      "detail": [
+        204.0,
+        0.0,
+        414.0,
+        16.0
+      ]
+    },
+    {
+      "name": "800x600 bar1 independent toolbar cells and released artwork",
+      "observed": true,
+      "detail": [
+        204.0,
+        0.0,
+        414.0,
+        16.0
+      ]
+    },
+    {
+      "name": "800x600 bar2 provided logo exact nearest pixels",
+      "observed": true,
+      "detail": {
+        "logo_rect": [
+          376,
+          164,
+          73,
+          33
+        ]
+      }
+    },
+    {
+      "name": "800x600 bar2 centered About and border",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "800x600 bar2 About outside dismissal",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "800x600 bar2 native toolbar stays at quarter edge after resize",
+      "observed": true,
+      "detail": [
+        152.0,
+        0.0,
+        572.0,
+        32.0
+      ]
+    },
+    {
+      "name": "800x600 bar2 independent toolbar cells and released artwork",
+      "observed": true,
+      "detail": [
+        152.0,
+        0.0,
+        572.0,
+        32.0
+      ]
+    },
+    {
+      "name": "800x600 bar3 provided logo exact nearest pixels",
+      "observed": true,
+      "detail": {
+        "logo_rect": [
+          376,
+          164,
+          73,
+          33
+        ]
+      }
+    },
+    {
+      "name": "800x600 bar3 centered About and border",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "800x600 bar3 About outside dismissal",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "800x600 bar3 native toolbar stays at quarter edge after resize",
+      "observed": true,
+      "detail": [
+        99.0,
+        0.0,
+        729.0,
+        48.0
+      ]
+    },
+    {
+      "name": "800x600 bar3 independent toolbar cells and released artwork",
+      "observed": true,
+      "detail": [
+        99.0,
+        0.0,
+        729.0,
+        48.0
+      ]
+    },
+    {
+      "name": "1024x768 bar1 provided logo exact nearest pixels",
+      "observed": true,
+      "detail": {
+        "logo_rect": [
+          488,
+          248,
+          73,
+          33
+        ]
+      }
+    },
+    {
+      "name": "1024x768 bar1 centered About and border",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "1024x768 bar1 About outside dismissal",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "1024x768 bar1 native toolbar stays at quarter edge after resize",
+      "observed": true,
+      "detail": [
+        260.0,
+        0.0,
+        470.0,
+        16.0
+      ]
+    },
+    {
+      "name": "1024x768 bar1 independent toolbar cells and released artwork",
+      "observed": true,
+      "detail": [
+        260.0,
+        0.0,
+        470.0,
+        16.0
+      ]
+    },
+    {
+      "name": "immutable Default Save redirects to Save As without changing profile",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "Edit Toolbar wheel scrolls Available independently of Order",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "Keymap pointer resting at edge does not scroll",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "Keymap wheel scrolls bounded list",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "Keymap direct thumb drag changes viewport",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "grid Behavior Enter changes Undo to Release",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "shortcut collision Escape keeps previous binding",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "shortcut collision Enter commits reassignment and dirty marker",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "Save As names keyset and clears dirty marker",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "Save overwrites loaded user keyset without picker",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "Load restores saved keyset identity and bindings",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "B captures arbitrary Right Mouse shortcut and stays local",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "Middle Hold Pan begins same press and Right Mouse recalls view",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "Note Enter keeps paper and Shift Enter newline",
+      "observed": true,
+      "detail": {
+        "id": 13021196902383864006917632328261582262,
+        "kind": 3,
+        "center": [
+          580.0,
+          387.5
+        ],
+        "size": [
+          320.0,
+          160.0
+        ],
+        "rotation": 0.0,
+        "stroke": [
+          255,
+          198,
+          82,
+          255
+        ],
+        "filled": 1,
+        "fill": [
+          255,
+          198,
+          82,
+          255
+        ],
+        "width": 3.0,
+        "opacity": 1.0,
+        "font_size": 32.0,
+        "alignment": 0,
+        "text": "Native note\nSecond line"
+      }
+    },
+    {
+      "name": "Rectangle fill Color Cycle persists both hues and opacity",
+      "observed": true,
+      "detail": {
+        "id": 257944015228562622970567718827247205118,
+        "kind": 4,
+        "center": [
+          160.0,
+          325.0
+        ],
+        "size": [
+          120.0,
+          75.0
+        ],
+        "rotation": 0.0,
+        "stroke": [
+          240,
+          92,
+          104,
+          255
+        ],
+        "filled": 1,
+        "fill": [
+          240,
+          92,
+          104,
+          191
+        ],
+        "width": 3.0,
+        "opacity": 1.0
+      }
+    },
+    {
+      "name": "native ctrl+shift+s cancel retains document and opens no Error",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "native ctrl+o cancel retains document and opens no Error",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "native F12 cancel retains document and opens no Error",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "native F11 cancel retains document and opens no Error",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "native F13 cancel retains document and opens no Error",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "settled local idle has zero redraw I/O TCP/UDP and no caret timer",
+      "observed": true,
+      "detail": {
+        "redraws": 0,
+        "threads": 39,
+        "rss": 119087104,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        }
+      }
+    },
+    {
+      "name": "public title contains only Tack file identity and dirty marker",
+      "observed": true,
+      "detail": {
+        "initial": "Tack \u2014 Untitled",
+        "dirty": "Tack \u2014 Untitled *"
+      }
+    },
+    {
+      "name": "outside click cannot dismiss unsaved-data confirmation",
+      "observed": true,
+      "detail": null
+    }
+  ],
+  "idle": {
+    "seconds": 3.0153803329994844,
+    "rss_before": 119087104,
+    "rss_after": 119087104,
+    "threads": 39,
+    "tasks": [
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-0",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-1",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-2",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-3",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-4",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-5",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-6",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-7",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-8",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-9",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-10",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-11",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-12",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-13",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-14",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-15",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack:disk$0",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "WSI swapchain q",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "WSI swapchain e",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-product-di",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-product-di",
+        "ticks": 0,
+        "voluntary_switches": 0
+      }
+    ],
+    "ticks": 0,
+    "cpu_percent_one_core": 0.0,
+    "socket_records": [
+      {
+        "kind": "unix",
+        "record": "0000000000000000: 00000003 00000000 00000000 0001 03 151920"
+      }
+    ],
+    "io_delta": {
+      "rchar": 0,
+      "wchar": 0,
+      "syscr": 0,
+      "syscw": 0,
+      "read_bytes": 0,
+      "write_bytes": 0,
+      "cancelled_write_bytes": 0
+    }
+  }
+}

@@ -6,6 +6,35 @@ use tack_app::{
 };
 use winit::event::{ElementState, MouseButton};
 impl App {
+    pub(super) fn menu_access_event(&mut self, event: &WindowEvent) -> Result<bool, AssetError> {
+        let WindowEvent::KeyboardInput { event, .. } = event else {
+            return Ok(false);
+        };
+        if event.state != ElementState::Pressed
+            || self.native_modifiers != tack_app::input::Modifiers::NONE
+            || !(tack_app::menu_access::is_key(tack_app::input::PhysicalControl::Key(
+                event.physical_key,
+            )) || tack_app::input::logical_key(event).is_some_and(|key| {
+                tack_app::menu_access::is_key(tack_app::input::PhysicalControl::LogicalKey(key))
+            }))
+        {
+            return Ok(false);
+        }
+        if !event.repeat
+            && !self.load_failed
+            && !self.local.saving_as
+            && !self.local.recovery_pending
+            && !self
+                .local
+                .ui
+                .as_ref()
+                .is_some_and(|ui| ui.blocks_menu_access())
+        {
+            self.local_action(tack_app::actions::Action::ApplicationMenu)?;
+        }
+        self.dirty = true;
+        Ok(true)
+    }
     pub(super) fn invalidate_context(&mut self) {
         if self.context.as_ref().is_some_and(|m| {
             self.editor

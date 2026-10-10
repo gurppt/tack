@@ -83,4 +83,5 @@ mod shortcut_capture;
 
 mod ui_scroll;
 
+pub mod menu_access;
 pub mod modal_shell;

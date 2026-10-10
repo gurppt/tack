@@ -1,6 +1,31 @@
 use super::*;
 type R = Result<(), tack_assets::AssetError>;
 #[test]
+fn fixed_menu_capture_is_refused_and_safe_confirmations_block_escape_hatch() -> R {
+    let mut profile = Preferences::defaults()?;
+    let mut map = profile.keymap()?;
+    let original = profile.clone();
+    let mut ui = LocalUi::new(Panel::Keymap);
+    ui.capture = true;
+    ui.capture_binding(
+        PhysicalControl::LogicalKey(crate::input::LogicalKey::Named(
+            winit::keyboard::NamedKey::F10,
+        )),
+        &mut map,
+        &mut profile,
+    );
+    assert!(ui.staged.is_none());
+    assert!(ui.message.contains("reserved"));
+    assert_eq!(profile, original);
+    assert!(!ui.blocks_menu_access());
+    ui.confirm_reset = Some(ResetScope::All);
+    assert!(ui.blocks_menu_access());
+    for panel in [Panel::Close, Panel::Recovery, Panel::Connecting] {
+        assert!(LocalUi::new(panel).blocks_menu_access());
+    }
+    Ok(())
+}
+#[test]
 fn toolbar_add_scroll_remove_reorder_and_button_keyboard_are_one_focus() -> R {
     let mut p = Preferences::defaults()?;
     let mut map = p.keymap()?;

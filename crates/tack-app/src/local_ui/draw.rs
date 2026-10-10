@@ -18,7 +18,7 @@ impl LocalUi {
         }
         if matches!(
             self.panel,
-            Panel::Preferences | Panel::Keymap | Panel::Scale | Panel::Theme
+            Panel::Preferences | Panel::Keymap | Panel::Theme
         ) {
             self.draw_settings(gizmo, camera, keymap, profile);
             return;
@@ -109,7 +109,6 @@ impl LocalUi {
             Panel::Connecting => "Join shared board",
             Panel::Menu => "Tack - local files",
             Panel::Preferences => "Preferences",
-            Panel::Scale => "UI Scale - choose directly",
             Panel::Theme => "Background - choose directly",
             Panel::Keymap => "Keymap - type to search",
             Panel::Recent => "Recent boards - open in another window",
@@ -140,7 +139,7 @@ impl LocalUi {
                 .iter()
                 .map(|a| a.label().into())
                 .collect(),
-            Panel::Keymap | Panel::Preferences | Panel::Scale | Panel::Theme => Vec::new(),
+            Panel::Keymap | Panel::Preferences | Panel::Theme => Vec::new(),
             Panel::Recent => profile
                 .recent
                 .iter()

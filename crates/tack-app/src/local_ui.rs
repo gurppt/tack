@@ -38,7 +38,6 @@ pub enum Panel {
     About,
     Menu,
     Preferences,
-    Scale,
     Theme,
     Keymap,
     Recent,
@@ -200,6 +199,12 @@ impl LocalUi {
             confirm_reset: None,
         }
     }
+    pub fn blocks_menu_access(&self) -> bool {
+        matches!(
+            self.panel,
+            Panel::Close | Panel::Recovery | Panel::Connecting
+        ) || self.confirm_reset.is_some()
+    }
     fn enter(&mut self, panel: Panel, selected: usize) {
         if self.parents.len() < 4 {
             self.parents.push((self.panel, self.selected));
@@ -266,8 +271,7 @@ impl LocalUi {
             | Panel::Join
             | Panel::Connecting => self.daily_rows().len(),
             Panel::Menu | Panel::Keymap => self.actions(keymap).len(),
-            Panel::Preferences => 10,
-            Panel::Scale => 5,
+            Panel::Preferences => 9,
             Panel::Theme => 3,
             Panel::Recent => profile.recent.len(),
             Panel::Close => 3,
@@ -418,7 +422,11 @@ impl LocalUi {
                 if let Action::SelectTool(tool) = action {
                     keymap.unassign(Action::TemporaryTool(tool));
                 }
-                self.message = format!("Unassigned {}", action.label());
+                self.message = if action == Action::ApplicationMenu {
+                    "Additional menu shortcuts cleared; F10 remains fixed".into()
+                } else {
+                    format!("Unassigned {}", action.label())
+                };
                 self.persist(keymap, profile)
             }
             Command::Reset => self.reset(keymap, profile, None),
@@ -504,11 +512,11 @@ impl LocalUi {
     }
     fn adjust(&mut self, profile: &mut Preferences, increment: bool) -> Option<UiResult> {
         let value = match self.selected {
-            5 => &mut profile.handle_size,
-            6 => &mut profile.hit_radius,
+            4 => &mut profile.handle_size,
+            5 => &mut profile.hit_radius,
             _ => return None,
         };
-        let (min, max) = if self.selected == 5 { (3, 21) } else { (5, 32) };
+        let (min, max) = if self.selected == 4 { (3, 21) } else { (5, 32) };
         let next = if increment {
             value.saturating_add(1).min(max)
         } else {
@@ -557,13 +565,8 @@ impl LocalUi {
                 UiResult::DiscardRecovery
             }),
             Panel::Error | Panel::About => Some(UiResult::Dismiss),
-            Panel::Scale | Panel::Theme => {
-                let scale = self.panel == Panel::Scale;
-                if scale {
-                    profile.ui_scale = self.selected as u8;
-                } else {
-                    profile.theme = crate::ui_theme::Theme::ALL[self.selected];
-                }
+            Panel::Theme => {
+                profile.theme = crate::ui_theme::Theme::ALL[self.selected];
                 Some(UiResult::PreferencesChanged)
             }
             Panel::Preferences => {
@@ -579,10 +582,6 @@ impl LocalUi {
                     }
                     2 => profile.embedded_import = !profile.embedded_import,
                     3 => {
-                        self.enter(Panel::Scale, usize::from(profile.ui_scale.min(4)));
-                        return None;
-                    }
-                    4 => {
                         let selected = crate::ui_theme::Theme::ALL
                             .iter()
                             .position(|t| *t == profile.theme)
@@ -590,9 +589,9 @@ impl LocalUi {
                         self.enter(Panel::Theme, selected);
                         return None;
                     }
-                    5 | 6 => return self.adjust(profile, true),
-                    7 => profile.frame_title_scale = profile.frame_title_scale % 3 + 1,
-                    8 => return Some(UiResult::Action(Action::ExportPreferences)),
+                    4 | 5 => return self.adjust(profile, true),
+                    6 => profile.frame_title_scale = profile.frame_title_scale % 3 + 1,
+                    7 => return Some(UiResult::Action(Action::ExportPreferences)),
                     _ => return self.back(),
                 }
                 Some(UiResult::PreferencesChanged)

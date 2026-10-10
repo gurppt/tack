@@ -1,0 +1,7 @@
+{
+  "rust_passed": 383,
+  "python_passed": 28,
+  "gate": "tools/check.sh",
+  "result": "passed",
+  "independent_review": "menu_safety_review: no remaining blockers"
+}

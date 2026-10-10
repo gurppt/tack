@@ -23,7 +23,7 @@ def main():
  root=a.output.resolve();root.mkdir(parents=True,exist_ok=False);binary=a.binary.resolve();checks=[];sessions=[];windows=[]
  env=dict(os.environ,TACK_NATIVE_DIAGNOSTICS="1",TACK_TEST_WINDOW_SIZE='800x600',WINIT_X11_SCALE_FACTOR='1',XDG_DATA_HOME=str(root/'data'),XDG_CONFIG_HOME=str(root/'config'),GSETTINGS_BACKEND='memory')
  profile=json.loads(a.profile.read_text());profile.update(recent=[],ui_scale=1)
- remaps={'F6':'ShareBoard','F7':'StopSharing','F8':'EditToolbar','F9':'JoinSharedBoard','F10':'ToggleToolbar','F12':'CopySharedBoardAddress'}
+ remaps={'F6':'ShareBoard','F7':'StopSharing','F8':'EditToolbar','F9':'JoinSharedBoard','F11':'ToggleToolbar','F12':'CopySharedBoardAddress'}
  profile['keymap']=[b for b in profile['keymap'] if b['action'] not in remaps.values() and b['control'] not in [{'LogicalKey':{'Named':k}} for k in remaps]]
  for key,action in remaps.items():profile['keymap'].append(dict(action=action,control={'LogicalKey':{'Named':key}},modifiers=0,modifier_match='Exact',trigger='Press'))
  def record(name,ok,detail=None):
@@ -53,7 +53,7 @@ def main():
   img=root/'large.png';Image.new('RGB',(4096,2160),(215,37,68)).save(img);local=root/'artist.tack';cli('create',local,'--embedded',img)
   before_hash=digest(local);before_id=cli('inspect',local)['document_id'];s=session('artist-a',['open',local]);time.sleep(1)
   record('ordinary local starts without IP sockets',not any(x['kind']!='unix' for x in process_snapshot(s.process.pid)['sockets']))
-  s.shot('toolbar-default');s.key('F10');s.shot('toolbar-hidden');s.key('F10');s.key('F8');s.shot('toolbar-editor');s.key('Escape')
+  s.shot('toolbar-default');s.key('F11');s.shot('toolbar-hidden');s.key('F11');s.key('F8');s.shot('toolbar-editor');s.key('Escape')
   # Full GUI share path and real native Save picker; server starts only inside owned hosted child.
   s.key('F6');s.shot('share-choice');s.key('Return');s.shot('share-confirm');target=root/'artist-shared.tack';s.picker('Return',target)
   host=child_window(s,'host');server=hosted_server(host);meta=json.loads(Path(str(target)+'.sharing.json').read_text());uri=meta['invite'];address=uri[7:].split('/')[0];board=meta['board']

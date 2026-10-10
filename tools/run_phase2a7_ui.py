@@ -41,7 +41,7 @@ def main():
         remaps={'F1':'About','F2':'KeymapEditor','F3':'EditToolbar','F4':'ResetAspectRatio',
                 'F5':'AnnotationStyle(Fill)','F6':'AnnotationStyle(Color)',
                 'F7':'SelectTool(Text)','F8':'SelectTool(Rectangle)',
-                'F9':'SaveKeymap','F10':'ExportKeymap','F11':'ImportKeymap','F12':'ImportImages'}
+                'F9':'SaveKeymap','F13':'ExportKeymap','F11':'ImportKeymap','F12':'ImportImages'}
         # The Action identifiers are deliberately validated by the production profile reader.
         settings['keymap']=[b for b in settings['keymap'] if b['action'] not in remaps.values()
             and b['control'] not in [{'LogicalKey':{'Named':key}} for key in remaps]]
@@ -93,7 +93,7 @@ def main():
         record('shortcut collision Escape keeps previous binding',binding('Undo')==before and bool(binding('Paste')))
         s.key('Return','ctrl+v','Return');time.sleep(.4);shot('assigned')
         record('shortcut collision Enter commits reassignment and dirty marker',binding('Undo')[0]['control']=={'LogicalKey':{'Character':'v'}} and not binding('Paste') and read()['keyset']['dirty'])
-        s.key('Escape','Escape');target=root/(root.name+'-artist.tackey');s.picker('F10',target);time.sleep(.4)
+        s.key('Escape','Escape');target=root/(root.name+'-artist.tackey');s.picker('F13',target);time.sleep(.4)
         record('Save As names keyset and clears dirty marker',target.is_file() and read()['keyset']['name']==target.stem and not read()['keyset']['dirty'])
         s.key('F2');s.text('Undo');s.key('Right','Right','Return');time.sleep(.3);s.key('Escape','Escape','F9');time.sleep(.5)
         record('Save overwrites loaded user keyset without picker',not s.picker_window() and not read()['keyset']['dirty'] and json.loads(target.read_text())['bindings']==read()['keymap'])
@@ -113,7 +113,7 @@ def main():
         doc=saved_objects(board);rects=[o for o in doc['objects'] if o['kind']==4];shot('rectangle')
         record('Rectangle fill Color Cycle persists both hues and opacity',bool(rects) and rects[-1]['fill'][:3]==rects[-1]['stroke'][:3] and rects[-1]['fill'][3]==191,rects[-1] if rects else None)
         board_before=digest(board)
-        for key in ('ctrl+shift+s','ctrl+o','F12','F11','F10'):
+        for key in ('ctrl+shift+s','ctrl+o','F12','F11','F13'):
             s.key(key);window=wait(s.picker_window,'owned cancel picker');command('xdotool','windowfocus',window);s.key('Escape');wait(lambda:not s.picker_window(),'picker cancelled');s.focus();time.sleep(.2);shot('cancel-'+key.replace('+','-'))
             record('native '+key+' cancel retains document and opens no Error',s.process.poll() is None and digest(board)==board_before and 'error' not in s.title().lower())
             s.key('Escape')

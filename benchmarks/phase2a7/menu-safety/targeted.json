@@ -1,0 +1,45 @@
+{
+  "checks": [
+    {
+      "name": "empty F10 opens menu independently of bindings",
+      "passed": true
+    },
+    {
+      "name": "empty menu dismiss restores canvas",
+      "passed": true
+    },
+    {
+      "name": "empty legacy UI Scale ignored and toolbar 3 retained",
+      "passed": true
+    },
+    {
+      "name": "legacy right-click About remains explicitly assigned",
+      "passed": true
+    },
+    {
+      "name": "legacy F10 opens menu independently of bindings",
+      "passed": true
+    },
+    {
+      "name": "F10 escapes About without invoking it again",
+      "passed": true
+    },
+    {
+      "name": "legacy menu dismiss restores canvas",
+      "passed": true
+    },
+    {
+      "name": "Ctrl+F10 in About does not open fixed menu",
+      "passed": true
+    },
+    {
+      "name": "released Ctrl then F10 escapes About",
+      "passed": true
+    },
+    {
+      "name": "legacy legacy UI Scale ignored and toolbar 3 retained",
+      "passed": true
+    }
+  ],
+  "scope": "owned Xvfb/software Vulkan"
+}

@@ -6,20 +6,6 @@ fn live_choices_keep_submenu_and_back_returns_to_parent() -> Result<(), tack_ass
     let mut ui = LocalUi::new(Panel::Preferences);
     ui.selected = 3;
     ui.activate(&mut keymap, &mut profile);
-    for scale in [2, 1, 4, 0] {
-        ui.selected = scale;
-        assert!(matches!(
-            ui.activate(&mut keymap, &mut profile),
-            Some(UiResult::PreferencesChanged)
-        ));
-        assert_eq!(profile.ui_scale, scale as u8);
-        assert_eq!(ui.panel, Panel::Scale);
-    }
-    assert!(ui.back().is_none());
-    assert_eq!(ui.panel, Panel::Preferences);
-    assert_eq!(ui.selected, 3);
-    ui.selected = 4;
-    ui.activate(&mut keymap, &mut profile);
     for (index, theme) in crate::ui_theme::Theme::ALL.into_iter().enumerate() {
         ui.selected = index;
         ui.activate(&mut keymap, &mut profile);
@@ -60,13 +46,13 @@ fn numeric_changes_are_bounded_and_reversible_without_wrap() -> Result<(), tack_
 {
     let mut profile = Preferences::defaults()?;
     let mut ui = LocalUi::new(Panel::Preferences);
-    for (row, min, max) in [(5, 3, 21), (6, 5, 32)] {
+    for (row, min, max) in [(4, 3, 21), (5, 5, 32)] {
         ui.selected = row;
         for _ in 0..100 {
             ui.adjust(&mut profile, false);
         }
         assert_eq!(
-            if row == 5 {
+            if row == 4 {
                 profile.handle_size
             } else {
                 profile.hit_radius
@@ -78,7 +64,7 @@ fn numeric_changes_are_bounded_and_reversible_without_wrap() -> Result<(), tack_
             ui.adjust(&mut profile, true);
         }
         assert_eq!(
-            if row == 5 {
+            if row == 4 {
                 profile.handle_size
             } else {
                 profile.hit_radius
@@ -88,7 +74,7 @@ fn numeric_changes_are_bounded_and_reversible_without_wrap() -> Result<(), tack_
         assert!(ui.adjust(&mut profile, true).is_none());
         ui.adjust(&mut profile, false);
         assert_eq!(
-            if row == 5 {
+            if row == 4 {
                 profile.handle_size
             } else {
                 profile.hit_radius

@@ -141,7 +141,7 @@ pub struct Preferences {
     pub grid: bool,
     pub sampling: String,
     pub embedded_import: bool,
-    /// Zero follows native DPI; positive values are integer logical presentation.
+    /// Legacy manual override retained for file compatibility; native UI uses system DPI.
     pub ui_scale: u8,
     #[serde(default)]
     pub theme: crate::ui_theme::Theme,
@@ -222,6 +222,10 @@ impl Preferences {
                 )
             {
                 binding.control = crate::input::LogicalKey::from_legacy(code).map(PhysicalControl::LogicalKey).ok_or("unsupported version-1 key; export with an explicit physical version-2 binding")?;
+            }
+            // Keep legacy records on disk, but never activate a reassigned escape hatch.
+            if crate::menu_access::reserved(&binding) && !crate::menu_access::canonical(&binding) {
+                continue;
             }
             keymap.bind(binding)?;
         }

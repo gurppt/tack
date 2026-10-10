@@ -103,6 +103,7 @@ struct App {
     context: Option<Box<tack_app::context_menu::ContextMenu>>,
     pointer: [f64; 2],
     cursor_icon: winit::window::CursorIcon,
+    native_modifiers: tack_app::input::Modifiers,
     lod_trace: Option<tack_app::lod_diagnostics::LodDiagnostics>,
 }
 impl App {
@@ -1156,6 +1157,13 @@ pub use launch::{run, run_new, run_shared};
 
 impl App {
     fn handle_window_event(&mut self, e: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
+        match &event {
+            WindowEvent::ModifiersChanged(modifiers) => {
+                self.native_modifiers = modifiers.state().into();
+            }
+            WindowEvent::Focused(false) => self.native_modifiers = Default::default(),
+            _ => {}
+        }
         if matches!(&event, WindowEvent::KeyboardInput {event, ..} if event.state == winit::event::ElementState::Pressed)
             || matches!(
                 &event,
@@ -1253,7 +1261,14 @@ impl App {
             self.redraw()
         } else {
             let ui = self
-                .chrome_event(&event)
+                .menu_access_event(&event)
+                .and_then(|used| {
+                    if used {
+                        Ok(true)
+                    } else {
+                        self.chrome_event(&event)
+                    }
+                })
                 .and_then(|used| {
                     if used {
                         Ok(true)

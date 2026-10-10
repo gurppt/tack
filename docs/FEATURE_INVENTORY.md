@@ -152,7 +152,7 @@ runtime remain pending. See [Phase 1J](MISSION_1J_REPORT.md).
 | Drag/drop image files | implemented | OS drop into canvas | native window | per admitted image | Board | Bounded batch/debounce; Escape cancels remaining admission. |
 | Linked / embedded import | implemented | Preferences → Import; picker/drop; CLI create | temporary preferences | import undo | Board and profile default | Original authority and shared sources preserved. |
 | Default sampling | implemented | Preferences → Image sampling | temporary preferences | No for default; image override Yes | profile / image override Board | Renderer samples Default independently from stored representation. |
-| UI scale / handle size / hit radius | implemented | Preferences | direct scale chooser; handles/radius bounded -/+ | No | profile | Auto or 1–4 selectable in either direction; Auto uses rounded system DPI bounded 1–8. Native 800×600 1×/2× tested. Very large scale on small screens still truncates labels. |
+| Native DPI / toolbar scale / handle size / hit radius | implemented | Preferences / Edit Toolbar | handles/radius bounded -/+; toolbar 1×/2×/3× | No | profile | Manual global UI Scale removed. UI follows system DPI; legacy profile scale is ignored. Toolbar scale stays independent. |
 | Background theme | implemented | Preferences → Background | three direct choices | No | profile only | Very Dark / Neutral Gray / Light, flat fill in existing grid pass. Bitmap UI and immutable cyan/magenta/yellow palette; no board/schema changes. Old profiles default Neutral Gray; unknown future themes rejected without overwriting profile. |
 | Keymap search/capture | implemented | Tack → Edit → Keymap; type, Enter, F6; Delete; F5 / Shift+F5 / Ctrl+F5 | temporary panel | No | profile | Press/release/hold/wheel, atomic capture/conflict refusal with requested shortcut and owning action; mouse Change/Unassign/Reset; confirmed category/all resets. Search also matches active shortcut labels; Escape clears search before closing. Menu labels follow actual configured press bindings. Nested Escape returns to Preferences; direct entry closes after search/capture cancellation. |
 | About Tack | implemented | right-click Tack / F10 | temporary flat bitmap modal | No | `gfx/about.toml` and artwork, compiled into package | Owner text editable; Cargo version checked; compact artwork decoded only on opening, texture released on dismissal; readable links, 800×600 at 1×/2×. |
@@ -226,7 +226,7 @@ resident dimensions and source revisions. See the
 [2A1 report](MISSION_2A1_CORE_IMAGE_REPORT.md),
 [2A2 report](MISSION_2A2_HUGE_RASTER_STREAMING_REPORT.md) and decoder design note.
 
-Preferences Theme/Scale choices stay inside their submenu for live preview;
+Preferences Theme choices stay inside their submenu for live preview;
 Escape or Back returns to Preferences. Last successful Open/Save As folder uses
 a bounded native path descriptor and worker-only fallback checks.
 

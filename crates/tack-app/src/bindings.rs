@@ -84,6 +84,9 @@ pub struct Keymap {
 }
 impl Keymap {
     pub fn bind(&mut self, mut binding: Binding) -> Result<(), BindingError> {
+        if crate::menu_access::reserved(&binding) && !crate::menu_access::canonical(&binding) {
+            return Err(BindingError::ReservedMenu);
+        }
         if let PhysicalControl::LogicalKey(LogicalKey::Character(c)) = binding.control {
             if c.is_control() {
                 return Err(BindingError::InvalidControl);
@@ -181,6 +184,7 @@ impl Keymap {
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum BindingError {
+    ReservedMenu,
     InvalidTrigger,
     InvalidControl,
     Conflict { existing: usize },
@@ -188,7 +192,11 @@ pub enum BindingError {
 }
 impl fmt::Display for BindingError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "binding rejected: {self:?}")
+        if *self == Self::ReservedMenu {
+            write!(f, "F10 is reserved for the menu and cannot be changed")
+        } else {
+            write!(f, "binding rejected: {self:?}")
+        }
     }
 }
 impl Error for BindingError {}

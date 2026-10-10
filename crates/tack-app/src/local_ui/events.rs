@@ -223,7 +223,7 @@ impl LocalUi {
                     if !(matches!(
                         self.panel,
                         Panel::Toolbar | Panel::Keymap | Panel::Info | Panel::Connecting
-                    ) || self.panel == Panel::Preferences && matches!(selected, 5 | 6))
+                    ) || self.panel == Panel::Preferences && matches!(selected, 4 | 5))
                     {
                         return self.activate(keymap, profile);
                     }

@@ -108,7 +108,7 @@ platform setup and the optional X11 startup workaround.
 | Left click / drag | Select / move |
 | Shift + click | Add or remove an item from the selection |
 | Resize / rotation handles | Resize / rotate the selection |
-| Right-click / F10 | Context and application commands / application menu |
+| Right-click / F10 | Context commands / fixed application menu access |
 | Ctrl+I / Ctrl+V | Import images / paste |
 | T / R / L / A / P | Text / rectangle / line / arrow / freehand |
 | Ctrl+D | Duplicate local selection |
@@ -119,7 +119,10 @@ platform setup and the optional X11 startup workaround.
 | Escape | Cancel an interaction or dismiss a menu |
 
 These are the default bindings. Open **Keymap** from right-click or F10 to
-search, change or reset shortcuts. In a text note, **Ctrl+Enter** confirms editing.
+search, change or reset shortcuts. **F10 is reserved** and always opens the menu,
+even with an empty keymap; unsaved-work confirmations remain protected.
+Only the toolbar has a manual size setting (1× / 2× / 3×); other UI follows
+system DPI. In a text note, **Ctrl+Enter** confirms editing.
 
 ## Project status
 

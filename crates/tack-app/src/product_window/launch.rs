@@ -261,6 +261,7 @@ fn run_mode(
         context: None,
         pointer: [0.; 2],
         cursor_icon: winit::window::CursorIcon::Default,
+        native_modifiers: Default::default(),
     };
     events.run_app(&mut app)?;
     app.local.worker.cancel();

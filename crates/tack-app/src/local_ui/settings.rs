@@ -118,7 +118,6 @@ impl LocalUi {
         let width = crate::modal_shell::ModalShell::work(camera, [600., 440.]).rect[2];
         let maximum = match self.panel {
             Panel::Preferences => 310.,
-            Panel::Scale => 178.,
             Panel::Theme => 134.,
             _ => 440.,
         };
@@ -129,7 +128,7 @@ impl LocalUi {
         let end = 12. + height;
         let footer_y = end - footer;
         self.layout = [scale, width, height, top];
-        if matches!(self.panel, Panel::Scale | Panel::Theme) {
+        if matches!(self.panel, Panel::Theme) {
             self.modal = Some(crate::modal_shell::ModalShell::short(
                 camera,
                 [width, height],
@@ -153,7 +152,6 @@ impl LocalUi {
 
         let heading = match self.panel {
             Panel::Preferences => "Preferences",
-            Panel::Scale => "UI Scale - choose",
             Panel::Theme => "Background - choose",
             _ => "Keymap",
         };
@@ -166,7 +164,22 @@ impl LocalUi {
         } else {
             heading.into()
         };
-        paint.text(24., 22., width - 24., &name, p.accent_primary);
+        paint.text(
+            24.,
+            22.,
+            width - if key_panel { 200. } else { 24. },
+            &name,
+            p.accent_primary,
+        );
+        if key_panel {
+            paint.text(
+                width - 176.,
+                22.,
+                176.,
+                crate::menu_access::LABEL,
+                p.accent_attention,
+            );
+        }
         if key_panel {
             self.draw_keymap(&mut paint, width, footer_y, keymap);
         } else {
@@ -240,12 +253,16 @@ impl LocalUi {
                     p.text_primary
                 },
             );
-            let bindings: Vec<_> = keymap
+            let mut bindings: Vec<_> = keymap
                 .bindings()
                 .iter()
                 .filter(|b| shortcut_matches(*action, b.action))
+                .filter(|b| !crate::menu_access::canonical(b))
                 .map(crate::context_menu::binding_label)
                 .collect();
+            if *action == Action::ApplicationMenu {
+                bindings.insert(0, "F10 (fixed)".into());
+            }
             let label = if bindings.is_empty() {
                 "Unassigned".into()
             } else {
@@ -432,14 +449,6 @@ impl LocalUi {
                     }
                     .into(),
                 ),
-                (
-                    "UI scale".into(),
-                    if profile.ui_scale == 0 {
-                        "Auto/System >".into()
-                    } else {
-                        format!("{}x >", profile.ui_scale)
-                    },
-                ),
                 ("Background".into(), format!("{} >", profile.theme.label())),
                 ("Handle Size".into(), format!("{} px", profile.handle_size)),
                 ("Hit Radius".into(), format!("{} px", profile.hit_radius)),
@@ -450,21 +459,6 @@ impl LocalUi {
                 ("Export Preferences...".into(), String::new()),
                 ("Close".into(), String::new()),
             ],
-            Panel::Scale => ["Auto/System", "1x", "2x", "3x", "4x"]
-                .into_iter()
-                .enumerate()
-                .map(|(i, label)| {
-                    (
-                        label.into(),
-                        if i == usize::from(profile.ui_scale) {
-                            "[x] Current"
-                        } else {
-                            "[ ]"
-                        }
-                        .into(),
-                    )
-                })
-                .collect(),
             Panel::Theme => crate::ui_theme::Theme::ALL
                 .into_iter()
                 .map(|t| {
@@ -490,7 +484,7 @@ impl LocalUi {
         for (index, (label, value)) in rows.iter().enumerate().skip(self.first).take(self.visible) {
             let y = 48. + (index - self.first) as f64 * 22.;
             self.row(paint, index, y, width);
-            let numeric = self.panel == Panel::Preferences && matches!(index, 5 | 6);
+            let numeric = self.panel == Panel::Preferences && matches!(index, 4 | 5);
             paint.text(
                 24.,
                 y + 2.,
@@ -507,12 +501,12 @@ impl LocalUi {
                 },
             );
             if numeric {
-                let v = if index == 5 {
+                let v = if index == 4 {
                     profile.handle_size
                 } else {
                     profile.hit_radius
                 };
-                let (min, max) = if index == 5 { (3, 21) } else { (5, 32) };
+                let (min, max) = if index == 4 { (3, 21) } else { (5, 32) };
                 self.button(
                     paint,
                     [width - 136., y, width - 104., y + 22.],
@@ -545,7 +539,7 @@ impl LocalUi {
             [20., 48., width + 4., 48. + self.visible as f64 * 22.],
             (self.first, self.visible, rows.len()),
         );
-        let nested = matches!(self.panel, Panel::Scale | Panel::Theme);
+        let nested = matches!(self.panel, Panel::Theme);
         if nested {
             self.button(
                 paint,
