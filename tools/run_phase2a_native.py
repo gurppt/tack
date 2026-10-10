@@ -27,7 +27,7 @@ from x11_drop import drop
 
 def send_message(connection, message):
     payload = json.dumps(message, separators=(',', ':')).encode()
-    connection.sendall(b'TLAN' + struct.pack('>HI', 2, len(payload)) + payload)
+    connection.sendall(b'TLAN' + struct.pack('>HI', 3, len(payload)) + payload)
 
 
 def read_exact(connection, length):
@@ -44,7 +44,7 @@ def read_exact(connection, length):
 def read_message(connection):
     header = read_exact(connection, 10)
     magic, major, length = struct.unpack('>4sHI', header)
-    if magic != b'TLAN' or major != 2 or not 0 < length <= 64 * 1024 * 1024:
+    if magic != b'TLAN' or major != 3 or not 0 < length <= 64 * 1024 * 1024:
         raise AssertionError('invalid server frame')
     return json.loads(read_exact(connection, length))
 

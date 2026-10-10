@@ -19,7 +19,7 @@ def main():
     log=(root/'xvfb.log').open('w');x=subprocess.Popen([str(xroot/'usr/bin/Xvfb'),':110','-screen','0','1280x1024x24','-nolisten','tcp','-noreset'],stdout=log,stderr=subprocess.STDOUT)
     s=None;checks=[]
     def record(name,ok,detail=None):
-        checks.append(dict(name=name,observed=bool(ok),detail=detail));(root/'checks.json').write_text(json.dumps(checks,indent=2)+'\n')
+        checks.append(dict(name=name,observed=bool(ok),detail=detail,title=s.title() if s else 'closed'));(root/'checks.json').write_text(json.dumps(checks,indent=2)+'\n')
         if not ok:raise AssertionError(name)
     def motion(px,py):
         command('xdotool','mousemove','--window',s.window,str(round(px)),str(round(py)));time.sleep(.04)
@@ -37,21 +37,21 @@ def main():
         settings=json.loads(a.profile.read_text());settings.update(recent=[],local_views=[],status_bar=True)
         settings['toolbar'].update(scale=1,placement='Top',edge_position=0)
         settings['toolbar']['actions'].insert(7,'LinkToFrame')
-        remaps={'F1':'LinkToFrame','F2':'UnlinkFromFrame','F3':'SelectLinkedObjects','F4':'FinishScribble','F5':'MergeScribbles','F6':'SelectTool(Eraser)'}
+        remaps={'F1':'LinkToFrame','F2':'UnlinkFromFrame','F3':'SelectLinkedObjects','F4':'FinishScribble','F5':'MergeScribbles','F6':'SelectTool(Eraser)','F7':'CreateFrame'}
         settings['keymap']=[b for b in settings['keymap'] if b['action'] not in remaps.values() and b['control'] not in [{'LogicalKey':{'Named':key}} for key in remaps]]
         for key,action in remaps.items():settings['keymap'].append(dict(action=action,control={'LogicalKey':{'Named':key}},modifiers=0,modifier_match='Exact',trigger='Press'))
         profile=root/'profile';profile.mkdir();(profile/'preferences.json').write_text(json.dumps(settings))
         s=Session(binary,root,'board-edit',['open',board],dict(os.environ,TACK_PROFILE_DIR=str(profile),TACK_TEST_WINDOW_SIZE='800x600'))
-        time.sleep(1);s.key('Escape');click(750,550);s.key('ctrl+shift+f');framed=save();f=one(framed,'frame')
+        time.sleep(1);s.key('Escape');click(750,550);s.key('F7');framed=save();f=one(framed,'frame')
         record('Frame created for native interaction',f['size'][0]>0)
-        s.key('p');drag((200,200),(400,220));drag((200,260),(400,260));s.shot('two-strokes-live')
+        s.key('p');drag((200,200),(400,220));drag((200,260),(400,260));s.shot('two-strokes-live');live=Image.open(root/'board-edit-two-strokes-live.png').convert('RGB');record('completed draft strokes stay visible between pointer releases',sum(r>200 and g>150 and b<200 for r,g,b in live.getdata())>100)
         s.key('F4');drawn=save();sc=one(drawn,9)
         record('two pointer strokes become one compound Scribble',len([o for o in drawn['objects'] if o['kind']==9])==1 and len(sc['strokes'])==2,sc)
         s.key('F1');motion(600,400);s.shot('link-dots');click(600,400);linked=save()
         record('selected-object Link commits parent relation',linked['schema']==7 and linked['links']==[[sc['id'],f['id']]],linked['links'])
         s.key('ctrl+z');unlinked=save();record('Link undo removes only relation',unlinked==drawn)
         s.key('ctrl+y');record('Link redo exact',save()==linked)
-        s.key('v');click(160,300);drag((160,300),(190,320));moved=save();mf=one(moved,'frame');ms=one(moved,9)
+        s.key('v');drag((160,350),(190,370));moved=save();mf=one(moved,'frame');ms=one(moved,9)
         delta=lambda new,old:[round(new['center'][j]-old['center'][j],6) for j in range(2)]
         record('native Frame move translates linked Scribble exactly',delta(mf,f)==[30,20] and delta(ms,sc)==[30,20],dict(frame=delta(mf,f),child=delta(ms,sc)))
         drag((670,500),(690,520));resized=save()
@@ -66,7 +66,7 @@ def main():
         s.key('v');command('xdotool','keydown','shift');click(330,230);command('xdotool','keyup','shift');s.key('F5');merged=save();merged_sc=one(merged,9)
         record('Merge creates one Scribble with three independent strokes',len([o for o in merged['objects'] if o['kind'] in (8,9)])==1 and len(merged_sc['strokes'])==3)
         s.key('ctrl+z');record('Merge undo exact',save()==both);s.key('ctrl+y');record('Merge redo exact',save()==merged)
-        s.key('F6');drag((330,200),(330,310));erased=save();es=one(erased,9)
+        click(330,230);s.key('F6');drag((330,200),(330,310));s.shot('eraser');erased=save();es=one(erased,9)
         record('target-only swept Eraser splits Scribble segments',es!=merged_sc and len(es['strokes'])>3 and one(erased,'image')==one(merged,'image') and one(erased,'frame')==one(merged,'frame'))
         s.key('ctrl+z');record('Eraser undo exact',save()==merged);s.key('ctrl+y');record('Eraser redo exact',save()==erased)
         s.shot('final');s.close();report=json.loads(s.report.read_text());s=None

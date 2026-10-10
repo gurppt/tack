@@ -590,6 +590,8 @@ impl App {
             .as_ref()
             .is_some_and(|e| e.document().annotation_count() > 0)
             || self.input.annotation.creation.is_some()
+            || !self.input.annotation.scribble.is_empty()
+            || self.input.annotation.eraser.is_some()
             || self.input.annotation.edit.is_some();
         let render_start = Instant::now();
         let scene_ms =

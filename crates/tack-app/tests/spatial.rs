@@ -887,3 +887,93 @@ fn linked_group_selection_invalid_cursor_and_duplicate_parent_are_coherent() -> 
     assert_eq!(e.document(), &before);
     Ok(())
 }
+
+#[test]
+fn frame_chrome_remains_pickable_above_an_image_filling_its_body() -> R {
+    use winit::event::{ElementState, MouseButton};
+    let mut e = fixture()?;
+    let frame = ObjectId::new(99)?;
+    e.execute(Command::AddObject {
+        object: DocumentObject::frame(
+            frame,
+            "Frame".into(),
+            Transform::new([0., 0.], [60., 40.], 0., [false; 2])?,
+        )?,
+        index: 0,
+    })?;
+    let mut i = ImageInput::new()?;
+    let mut c = Camera::new([800, 600]);
+    i.cursor_moved(c.world_to_screen([-30., 10.]), &e, &mut c)?;
+    i.context_selection(&e, &c);
+    assert_eq!(i.images.selection.ids().collect::<Vec<_>>(), vec![frame]);
+    i.images.selection.clear();
+    i.physical(
+        PhysicalEvent::Button {
+            control: PhysicalControl::Pointer(PointerButton::Mouse(MouseButton::Left)),
+            state: ElementState::Pressed,
+            repeat: false,
+        },
+        &mut e,
+        &mut c,
+    )?;
+    assert!(i.images.selection.contains(frame));
+    i.cursor_moved(c.world_to_screen([-20., 15.]), &e, &mut c)?;
+    i.physical(
+        PhysicalEvent::Button {
+            control: PhysicalControl::Pointer(PointerButton::Mouse(MouseButton::Left)),
+            state: ElementState::Released,
+            repeat: false,
+        },
+        &mut e,
+        &mut c,
+    )?;
+    assert_eq!(
+        e.document()
+            .object(frame)
+            .ok_or("Frame")?
+            .transform()
+            .center(),
+        [10., 5.]
+    );
+    assert_eq!(
+        e.document()
+            .object(ObjectId::new(1)?)
+            .ok_or("Image")?
+            .transform()
+            .center(),
+        [0., 0.]
+    );
+    i.images.selection.clear();
+    i.cursor_moved(c.world_to_screen([0., 0.]), &e, &mut c)?;
+    i.context_selection(&e, &c);
+    assert_eq!(
+        i.images.selection.ids().collect::<Vec<_>>(),
+        vec![ObjectId::new(1)?]
+    );
+    i.images.selection.annotations_locked = true;
+    i.images.selection.clear();
+    i.cursor_moved(c.world_to_screen([-20., 15.]), &e, &mut c)?;
+    i.context_selection(&e, &c);
+    assert!(i.images.selection.contains(ObjectId::new(1)?));
+    i.images.selection.clear();
+    i.physical(
+        PhysicalEvent::Button {
+            control: PhysicalControl::Pointer(PointerButton::Mouse(MouseButton::Left)),
+            state: ElementState::Pressed,
+            repeat: false,
+        },
+        &mut e,
+        &mut c,
+    )?;
+    assert!(i.images.selection.contains(ObjectId::new(1)?));
+    i.physical(
+        PhysicalEvent::Button {
+            control: PhysicalControl::Pointer(PointerButton::Mouse(MouseButton::Left)),
+            state: ElementState::Released,
+            repeat: false,
+        },
+        &mut e,
+        &mut c,
+    )?;
+    Ok(())
+}

@@ -41,7 +41,7 @@ class Peer:
         from run_phase2a_native import read_exact
         header = read_exact(self.socket, 10)
         magic, major, length = struct.unpack('>4sHI', header)
-        if magic != b'TLAN' or major != 1 or length > 64*1024*1024: raise AssertionError('framing')
+        if magic != b'TLAN' or major != 3 or length > 64*1024*1024: raise AssertionError('framing')
         payload = read_exact(self.socket, length)
         self.received += length + 10
         self.messages_received += 1

@@ -186,14 +186,13 @@ impl ImageInput {
     /// Right click targets the same geometry as left click, preserving a selected
     /// group/multiselection and clearing selection on genuinely empty canvas.
     pub fn context_selection(&mut self, editor: &DocumentEditor, camera: &Camera) {
-        let hit = self
-            .images
-            .hit_with_tolerance(
+        let hit = self.frame_hit(editor, camera).or_else(|| {
+            self.images.hit_with_tolerance(
                 editor.document(),
                 camera.screen_to_world(self.cursor),
                 6. * self.gizmo.scale / camera.zoom(),
             )
-            .or_else(|| self.frame_hit(editor, camera));
+        });
         if !hit.is_some_and(|id| self.images.selection.contains(id)) {
             self.images
                 .selection
@@ -498,14 +497,15 @@ impl ImageInput {
                 self.images.begin(kind, pointer, editor)?;
                 return Ok(false);
             }
-            let hit = self
-                .images
-                .hit_with_tolerance(
+            // Frame chrome renders above content; its narrow border/title hit
+            // must follow that same order even when an image fills the Frame.
+            let hit = self.frame_hit(editor, camera).or_else(|| {
+                self.images.hit_with_tolerance(
                     editor.document(),
                     pointer,
                     6. * self.gizmo.scale / camera.zoom(),
                 )
-                .or_else(|| self.frame_hit(editor, camera));
+            });
             if action == Action::ToggleSelection {
                 self.images
                     .selection

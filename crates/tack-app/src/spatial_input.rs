@@ -312,7 +312,7 @@ impl ImageInput {
             .contains(self.cursor())
     }
     pub(crate) fn frame_hit(&self, editor: &DocumentEditor, camera: &Camera) -> Option<ObjectId> {
-        if editor.document().frame_count() == 0 {
+        if editor.document().frame_count() == 0 || self.images.selection.annotations_locked {
             return None;
         }
         let p = self.cursor();

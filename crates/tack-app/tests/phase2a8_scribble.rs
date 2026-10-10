@@ -337,3 +337,37 @@ fn merge_refuses_intervening_overlap_without_mutation() -> R {
     assert_eq!(e.document().annotation_count(), 2);
     Ok(())
 }
+
+#[test]
+fn physical_eraser_splits_one_target_and_commits_one_undo() -> R {
+    let mut e = DocumentEditor::new(
+        Document::new(DocumentId::new(1)?, DocumentLimits::default()),
+        100,
+    );
+    let mut i = ImageInput::new()?;
+    let mut c = Camera::new([800, 600]);
+    invoke(&mut i, &mut e, &mut c, Action::SelectTool(Tool::Scribble))?;
+    stroke(&mut i, &mut e, &mut c, -30.)?;
+    stroke(&mut i, &mut e, &mut c, 30.)?;
+    invoke(&mut i, &mut e, &mut c, Action::FinishScribble)?;
+    let before = e.document().clone();
+    let id = i.images.selection.ids().next().ok_or("Scribble")?;
+    invoke(&mut i, &mut e, &mut c, Action::SelectTool(Tool::Eraser))?;
+    i.cursor_moved(c.world_to_screen([0., -60.]), &e, &mut c)?;
+    button(&mut i, &mut e, &mut c, true)?;
+    for y in [-40., -20., 0., 20., 40., 60.] {
+        i.cursor_moved(c.world_to_screen([0., y]), &e, &mut c)?;
+    }
+    assert_eq!(e.document(), &before);
+    button(&mut i, &mut e, &mut c, false)?;
+    assert_eq!(
+        scribble(e.document().object(id).ok_or("Scribble")?)?
+            .strokes()
+            .len(),
+        4
+    );
+    assert_eq!(e.undo_len(), 2);
+    e.undo()?;
+    assert_eq!(e.document(), &before);
+    Ok(())
+}
