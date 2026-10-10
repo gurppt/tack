@@ -5,7 +5,7 @@ The defaults in `gfx/icons/` and `gfx/cursors/` include the author's October 10,
 no redrawing, recoloring or regeneration was performed. About uses the supplied
 75 × 35 logo in `gfx/logo_tack_about.png`.
 
-Toolbar, keymap previews and action cells share the same symbol table. The 36
+Toolbar, keymap previews and action cells share the same symbol table. The 37
 symbols occupy a single nearest-filtered 128 × 80 RGBA atlas loaded once at
 startup. The extra atlas row costs 8 KiB; the draw bound remains 32 visible quads.
 Each symbol must be 16 × 16, at most 16 KiB, with alpha 0 or 255. Invalid/missing
@@ -49,7 +49,7 @@ source image.
 | `rotate_cursor` | `cursor_rotate` | 7, 7 |
 
 Crop, linking-state and forbidden cursors retain the existing defaults. Alternate
-single-direction resize drawings, mouse illustrations and Aseprite originals
+single-direction resize drawings and Aseprite originals
 remain in the author's working directory; there is no matching runtime action.
 
 ## Preservation
@@ -59,3 +59,13 @@ only. They preserve runtime PNG edits under `bin/**/gfx/`. A fresh portable rele
 includes the tracked source defaults. The explicit author-requested import is a
 separate one-time copy, not a new overwrite step in build scripts. Restart Tack to
 load edited icons or cursors; there is no file watcher or idle polling.
+
+## Optional Mouse (Mulot)
+
+The nine author-approved `work_icons` PNGs are copied byte for byte into tracked
+defaults: `mulot_icone` and the six `pawL/R_{n,45,w}` plus `poo_easter` under
+`gfx/icons/`, and `minimulot` under `gfx/cursors/` (hotspot 7,7). The semantic
+Mouse/Temporary Mouse actions share atlas slot 36; no default toolbar or keymap
+entry is added. The atlas remains 128 × 80. Paws use startup-cached binary masks,
+with mirrors of the authored orientations; original files are never generated
+or rewritten. Import hashes: [artwork receipt](../benchmarks/mouse-polish/artwork-import.json).

@@ -232,7 +232,7 @@ impl LocalUi {
                             | Panel::UpdateChecking
                             | Panel::UpdateOffer
                             | Panel::UpdateReady
-                    ) || self.panel == Panel::Preferences && matches!(selected, 4 | 5))
+                    ) || self.panel == Panel::Preferences && matches!(selected, 6 | 7))
                     {
                         return self.activate(keymap, profile);
                     }

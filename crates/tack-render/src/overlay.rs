@@ -9,6 +9,8 @@ pub struct OverlayQuad {
     pub points: [[f64; 2]; 4],
     pub color: [f32; 4],
     pub bitmap: Option<[u32; 8]>,
+    /// Pixel-space 4-on/4-off decorative line in this same overlay batch.
+    pub dashed: bool,
 }
 #[repr(C)]
 #[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
@@ -132,12 +134,17 @@ impl Overlay {
             let envelope = [lo, [lo[0], hi[1]], [hi[0], lo[1]], hi];
             for i in [0, 1, 2, 2, 1, 3] {
                 self.vertices.push(Vertex {
-                    position: camera
-                        .world_to_clip(camera.screen_to_world(envelope[i].map(|v| v * scale))),
+                    position: camera.world_to_clip(camera.screen_to_world(
+                        if q.dashed { points[i] } else { envelope[i] }.map(|v| v * scale),
+                    )),
                     color: q.color,
                     bits0: q.bitmap.map_or([0; 4], |b| [b[0], b[1], b[2], b[3]]),
                     bits1: q.bitmap.map_or([0; 4], |b| [b[4], b[5], b[6], b[7]]),
-                    bitmap: u32::from(q.bitmap.is_some()),
+                    bitmap: if q.dashed {
+                        2
+                    } else {
+                        u32::from(q.bitmap.is_some())
+                    },
                     origin,
                     axes,
                 });

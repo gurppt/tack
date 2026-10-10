@@ -24,6 +24,7 @@ pub struct ImportRequest {
     pub embedded: bool,
     pub position: [f64; 2],
     pub sampling: ImageFiltering,
+    pub mouse_easter_zoom: Option<f64>,
     pub work: PathBuf,
     pub spool: Option<Arc<File>>,
 }
@@ -190,13 +191,17 @@ impl ImportRequest {
                     asset.id(),
                     Transform::new(center, size, 0., [false; 2])?,
                 );
-                Ok(AdmittedImage {
+                let mut image = AdmittedImage {
                     source,
                     asset,
                     object,
                     original,
                     sampling: self.sampling,
-                })
+                };
+                if let Some(zoom) = self.mouse_easter_zoom {
+                    crate::mouse_tool::prepare_easter(&mut image, zoom)?;
+                }
+                Ok(image)
             })();
             match result {
                 Ok(image) => {

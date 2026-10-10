@@ -115,6 +115,18 @@ impl App {
             self.chrome.status = "COPIED".into();
             return;
         }
+        if self.mouse_canvas()
+            && let Some(editor) = &self.editor
+            && let Some(id) = self
+                .input
+                .images
+                .hit(editor.document(), self.camera.screen_to_world(self.pointer))
+            && let Some(status) = tack_app::mouse_tool::hover_status(editor.document(), id)
+        {
+            self.chrome.status = status.into();
+            self.chrome.last_state = "";
+            return;
+        }
         let state = if let Some(s) = &self.shared {
             match s.ui_connection() {
                 tack_app::capabilities::UiConnection::Online => "Shared board online",

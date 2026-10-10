@@ -37,6 +37,7 @@ impl App {
             && paths[0].parent() == Some(self.work.join("helpers").as_path()))
         .then(|| paths[0].clone());
         let request = ImportRequest {
+            mouse_easter_zoom: None,
             temporary,
             paths,
             embedded: force_embedded || self.local.profile.embedded_import,

@@ -1,6 +1,6 @@
-# Current feature inventory — Phase 2A8
+# Current feature inventory — pre-alpha Mouse/Link polish
 
-Code audit of the local prototype on 2026-10-10, based on `Action::ALL`,
+Code audit of the local prototype on 2026-10-11, based on `Action::ALL`,
 `product_bindings`, `ImageInput`, annotation/spatial input, local file workers,
 storage/recovery and tests. This inventories shipped and reachable code, not a roadmap.
 Historical Phase 1I evidence has 170 automated native assertions on US and French XKB layouts at
@@ -40,6 +40,7 @@ selection, tool choice, camera and text drafts. Menu paths are one submenu deep.
 | Edit Toolbar (`EditToolbar`) | implemented | chrome | — | Tack → View / keymap | shared Tack menu | No | profile | Tools → Edit Toolbar; two independent wheel/thumb lists; Add/Remove, reorder, Reset, 1×/2×/3×; proportional edge anchor, ≤32 semantic IDs. |
 | Toggle Status Bar (`ToggleStatusBar`) | implemented | chrome | — | Tack → View / keymap | shared Tack menu | No | profile | One cached hover/shortcut/state line; fixed shared indicator also visible without strip. |
 | Pointer tool (`SelectTool(Pointer)`) | implemented | selection | V | Tack → Tools | No | No | session | Direct canvas selection/manipulation. |
+| Mouse / Mulot (`SelectTool(Mouse)`, `TemporaryTool(Mouse)`) | implemented | local transient paws/ping; ordinary image after deadline | — | Keymap / Edit Toolbar catalog only | No | paws/ping No; generated image one step | image Board; effects session | Custom cursor, eight directions; 64 effects maximum. One 600-second deadline per continuous activation, cancelled on tool exit. No new LAN messages. |
 | Pan tool (`SelectTool(Pan)`) | implemented | camera | — | toolbar / keymap | No | No | session | Left drag uses existing camera pan, no document mutation. |
 | Rotate view tool (`SelectTool(RotateView)`) | experimental | tool state | — | keymap catalog only | No | No | session | Generic Interaction state exists; native pointer pipeline does not implement a complete dedicated pan/rotate-view tool. |
 | Temporary pointer tool (`TemporaryTool(Pointer)`) | experimental | tool state | — | keymap hold binding only | No | No | session | Generic held-tool restoration tested; no default binding or menu; complete native tool combinations not validated. |
@@ -226,7 +227,7 @@ resident dimensions and source revisions. See the
 [2A1 report](MISSION_2A1_CORE_IMAGE_REPORT.md),
 [2A2 report](MISSION_2A2_HUGE_RASTER_STREAMING_REPORT.md) and decoder design note.
 
-Preferences Theme choices stay inside their submenu for live preview;
+Preferences Theme choices stay inline in the Preferences panel for live preview;
 Escape or Back returns to Preferences. Last successful Open/Save As folder uses
 a bounded native path descriptor and worker-only fallback checks.
 
@@ -280,7 +281,7 @@ and sides change box/wrap only; Shift+corner scales box and text together.
 | Action/capability | Current behavior | Default | Persistence / authority |
 | --- | --- | --- | --- |
 | Check for Updates | Manual bounded GitHub published-Release check; no polling | Dev channel | Profile; separate non-resident verified portable updater |
-| Link to Frame | Existing selection or normal acquisition; pixel dots, target hover and bounded confirmation | Ctrl+L; default toolbar | Flat links, schema 7; local Undo/shared authority |
+| Link to Frame | Existing selection or normal acquisition; bounded 1px 4-on/4-off dotted lines, target hover and bounded confirmation | Ctrl+L; default toolbar | Flat links, schema 7; local Undo/shared authority |
 | Unlink from Frame | Removes selected unit/group relations, retains exact positions | Ctrl+Shift+L | One semantic command |
 | Select Linked Objects | Selection only, respects annotation selection lock | Frame context menu | Transient |
 | Finish Scribble | Several independent strokes become one local object | Enter | Compound/per-stroke schema 6; protocol major 3 |

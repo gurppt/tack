@@ -15,6 +15,7 @@ impl ImageGizmo {
             return;
         }
         self.quads.push(OverlayQuad {
+            dashed: false,
             points: [lo, [lo[0], hi[1]], [hi[0], lo[1]], hi].map(|p| {
                 camera
                     .screen_to_world(p.map(|v| (v / camera.ui_scale()).round() * camera.ui_scale()))

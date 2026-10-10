@@ -40,6 +40,7 @@ pub struct ImageInput {
     center_handle: bool,
     marquee: Option<([f64; 2], [f64; 2], bool)>,
     click: Option<(tack_core::ObjectId, [f64; 2], Instant)>,
+    pub link_preview: crate::link_preview::Stats,
     pub link_feedback: crate::feedback::Feedback,
     link: Option<link::Stage>,
     link_flash: Option<tack_core::ObjectId>,
@@ -74,6 +75,7 @@ impl ImageInput {
             center_handle: false,
             marquee: None,
             click: None,
+            link_preview: Default::default(),
             link_feedback: Default::default(),
             link: None,
             link_flash: None,
@@ -102,6 +104,10 @@ impl ImageInput {
     }
     pub fn cancel(&mut self) {
         self.link = None;
+        self.link_pending = None;
+        self.link_flash = None;
+        self.link_feedback = Default::default();
+        self.link_preview = Default::default();
         self.gesture_waiting = false;
         if let Some(c) = &self.annotation.creation {
             self.annotation.tools.complete_creation(c.tool);
@@ -296,6 +302,19 @@ impl ImageInput {
             );
         }
         let ActionEvent { action, phase } = event;
+        if self.active_tool() == crate::actions::Tool::Mouse
+            && matches!(phase, ActionPhase::Invoke | ActionPhase::Begin(_))
+            && matches!(
+                action,
+                Action::ImagePointer
+                    | Action::ToggleSelection
+                    | Action::RotateImage
+                    | Action::ScaleImage
+                    | Action::AdjustOpacity
+            )
+        {
+            return Ok(false);
+        }
         if !action.available() {
             return Ok(false);
         }
@@ -309,6 +328,10 @@ impl ImageInput {
                 self.finish_annotation(editor, camera)?;
             }
             self.finish_scribble(editor)?;
+        }
+        if action == Action::SelectTool(crate::actions::Tool::Mouse) && phase == ActionPhase::Invoke
+        {
+            self.cancel_gesture();
         }
         if phase == ActionPhase::Invoke {
             self.status.clear();
@@ -328,6 +351,11 @@ impl ImageInput {
                 self.finish_annotation(editor, camera)?;
             }
             self.finish_scribble(editor)?;
+            if action == Action::TemporaryTool(crate::actions::Tool::Mouse)
+                && matches!(phase, ActionPhase::Begin(_))
+            {
+                self.cancel_gesture();
+            }
             self.annotation_action(event, editor)?;
             return Ok(false);
         }

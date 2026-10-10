@@ -118,6 +118,7 @@ impl ImageGizmo {
             delta[0] * width / length / 2.,
         ];
         self.quads.push(OverlayQuad {
+            dashed: false,
             bitmap: None,
             points: [
                 [a[0] - n[0], a[1] - n[1]],
@@ -205,6 +206,7 @@ impl ImageGizmo {
                     })
                     || images.active();
                 self.quads.push(OverlayQuad {
+                    dashed: false,
                     bitmap: None,
                     points: [
                         [p[0] - r, p[1] - r],

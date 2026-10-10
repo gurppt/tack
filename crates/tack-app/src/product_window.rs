@@ -21,6 +21,7 @@ mod chrome;
 mod hosting;
 mod huge;
 mod local;
+mod mouse;
 mod shared;
 use local::{LoadedBoard, LocalState};
 struct OpenOptions {
@@ -104,6 +105,9 @@ struct App {
     pointer: [f64; 2],
     cursor_icon: tack_app::cursors::Kind,
     cursors: tack_app::cursors::Cache,
+    mouse: tack_app::mouse_tool::MouseTool,
+    mouse_pending: Option<(tack_core::DocumentId, [f64; 2], f64)>,
+    mouse_import_document: Option<tack_core::DocumentId>,
     native_modifiers: tack_app::input::Modifiers,
     lod_trace: Option<tack_app::lod_diagnostics::LodDiagnostics>,
 }
@@ -125,6 +129,7 @@ impl App {
             )?,
         );
         self.cursors = tack_app::cursors::Cache::load(event_loop);
+        self.mouse.load();
         self.cursors.set(&window, tack_app::cursors::Kind::Pointer);
         let gpu_started = Instant::now();
         let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::from_env_or_default());
@@ -522,6 +527,7 @@ impl App {
                     .overlay(&mut self.input.gizmo, editor.document(), &self.camera);
             }
         }
+        self.mouse.draw(&mut self.input.gizmo, &self.camera);
         let active_tool = self.input.active_tool();
         chrome::draw(
             &self.chrome,
@@ -752,6 +758,10 @@ impl App {
             .map(|s| s.iter().map(|s| json!({"pass_ms":s.pass_ms})).collect())
             .unwrap_or_default();
         let mut report = json!({"about":{"requests":self.local.about_ticket,"image_gpu_bytes":gpu.map_or(0, |g| g.ui_image_bytes()),"version":tack_app::about::METADATA.version},"window_size":self.camera.screen_size(),"load_failed":self.load_failed,"local":{"operations":self.local.worker.operations,"recoveries":self.save.recoveries,"recovery_generation":self.save.recovery_generation,"recovery_bytes":self.save.recovery_bytes,"last_storage_worker_ms":self.save.last_worker_ms,"ui_scale":self.camera.ui_scale(),"discarded_asset_results":stats.discarded},"first_frame_ms":self.first_frame_ms,"gpu_setup_ms":self.gpu_setup_ms,"annotation_resources":gpu.map(|g|g.annotation_bytes()),"annotations":self.editor.as_ref().map(|e|e.document().annotation_count()).unwrap_or(0),"spatial":{"grid":self.input.grid_visible,"snapping":self.input.snap.enabled,"frames":self.editor.as_ref().map(|e|e.document().objects().filter(|o|matches!(o.kind(),tack_core::ObjectKind::Frame(_))).count()).unwrap_or(0),"groups":self.editor.as_ref().map(|e|e.document().groups().count()).unwrap_or(0)},"redraw_count":self.redraws,"wait_count":self.wakeups,"operation":"open","editing":self.editor.as_ref().map(|e|json!({"dirty":e.is_dirty(),"generation":e.generation(),"undo_entries":e.undo_len(),"redo_entries":e.redo_len(),"selected":self.input.images.selection.len(),"save_completed":self.save.completed})),"interaction":self.benchmark.as_ref().map(|b|json!({"scenario":b.name(),"input_ms":b.samples,"snap_query_ms":b.snap_queries,"commits":b.commits,"cancels":b.cancels,"invariants":b.invariants})),"native_startup_ms":self.native_startup_ms,"camera_clamped":self.camera_clamped,"navigation_end_pending":self.navigation_end_pending,"drain_ms":self.drain_ms,"chrome":{"toolbar_cells":self.chrome.toolbar.buttons[..self.chrome.toolbar.count].iter().map(|b|json!({"rect":b.rect,"action":b.action.map(|a|a.id())})).collect::<Vec<_>>(),"toolbar_bounds":self.chrome.toolbar.bounds,"selection_outline_count":self.input.gizmo.selection.len(),"caret_deadline_active":self.input.caret.deadline().is_some(),"toolbar_entries":self.chrome.toolbar.count,"placement":format!("{:?}",self.local.profile.toolbar.placement),"config_bytes":serde_json::to_vec(&self.local.profile.toolbar)?.len(),"icon_atlas_gpu_bytes":gpu.map(|g|g.ui_icon_bytes()).unwrap_or(0),"status_bar":self.local.profile.status_bar},"state_counts_scope":"requested sources only","recognizable_clock":"CPU submission before present","metadata_load_ms":self.metadata_ms,"metadata_bytes":self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"first_recognizable_ms":self.first_content_ms,"ordinary_view_80_percent_ms":self.useful_ms,"source_bytes_before_detail":stats.source_bytes,"container_bytes":stats.container_bytes+self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"overview_reused":stats.reused,"overview_regenerated":stats.regenerated,"errors":stats.errors,"source_missing":counts(SourceState::Missing),"source_changed":counts(SourceState::Changed),"source_foreign":counts(SourceState::Foreign),"source_unavailable":counts(SourceState::Unavailable),"peak_pending":stats.peak_pending,"cpu_payload_bytes":stats.cpu_bytes,"adapter":gpu.map(|g|g.adapter_info.name.clone()),"backend":gpu.map(|g|format!("{:?}",g.adapter_info.backend)),"frames":self.frames,"gpu_samples":samples,"detail":"bounded projected 128/512/2048 display supply"});
+        report["link_preview"] = json!({"units":self.input.link_preview.units,"lines":self.input.link_preview.lines,"vertices":self.input.link_preview.vertices,"simplified":self.input.link_preview.simplified});
+        report["mouse"] = json!({"effects":self.mouse.effect_count(),"deadline_active":self.mouse.deadline().is_some(),"spawn_requests":self.mouse.spawns});
+        report["chrome"]["status_text"] = json!(self.chrome.status);
+
         let supply_receipt = json!({"potato":self.options.potato,"present_mode":self.config.as_ref().map(|c|format!("{:?}",c.present_mode)),"event_samples_ms":self.event_samples,"wheel_samples_ms":self.wheel_samples,"codec_requests":stats.codec_requests,"region_jobs":stats.region_jobs,"tile_outputs":stats.tile_outputs,"tile_cache_hits":stats.tile_cache_hits,"tile_cache_read_bytes":stats.tile_cache_read_bytes,"tile_cache_write_bytes":stats.tile_cache_write_bytes,"tile_disk_bytes":stats.tile_disk_bytes,"decoded_bytes":stats.decoded_bytes,"cpu_payload_peak":stats.cpu_peak,"cpu_evictions":stats.evictions,"reprioritized":stats.reprioritized,"discarded":stats.discarded,"peak_queued":stats.peak_queued,"visibility_memo_bytes":self.visibility.bytes()});
         if let Some(shared) = &self.shared {
             let canonical = self
@@ -843,6 +853,7 @@ impl ApplicationHandler<Event> for App {
             shared.probe(self.started);
         }
         self.poll_local();
+        self.settle_mouse();
         if self
             .input
             .settle_link_feedback(Instant::now(), self.editor.as_ref())
@@ -1152,6 +1163,7 @@ impl ApplicationHandler<Event> for App {
                     .filter(|_| self.options.output.is_some())
                     .and_then(|shared| shared.probe_deadline(self.started)),
             )
+            .chain(self.mouse.deadline())
             .chain(self.input.caret.deadline())
             .chain(self.input.link_feedback.deadline())
             .chain(self.local.feedback.deadline())
@@ -1377,6 +1389,7 @@ impl App {
                 }
                 _ => {}
             }
+            self.mouse_event(&event, consumed);
             self.update_cursor();
             Ok(())
         };

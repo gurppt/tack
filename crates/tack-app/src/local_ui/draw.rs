@@ -16,10 +16,7 @@ impl LocalUi {
             self.draw_toolbar(gizmo, camera, profile);
             return;
         }
-        if matches!(
-            self.panel,
-            Panel::Preferences | Panel::Keymap | Panel::Theme
-        ) {
+        if matches!(self.panel, Panel::Preferences | Panel::Keymap) {
             self.draw_settings(gizmo, camera, keymap, profile);
             return;
         }
@@ -117,7 +114,6 @@ impl LocalUi {
             Panel::UpdateReady => "Tack update verified",
             Panel::Menu => "Tack - local files",
             Panel::Preferences => "Preferences",
-            Panel::Theme => "Background - choose directly",
             Panel::Keymap => "Keymap - type to search",
             Panel::Recent => "Recent boards - open in another window",
             Panel::Close => "Unsaved work - save before closing?",
@@ -151,7 +147,7 @@ impl LocalUi {
                 .iter()
                 .map(|a| a.label().into())
                 .collect(),
-            Panel::Keymap | Panel::Preferences | Panel::Theme => Vec::new(),
+            Panel::Keymap | Panel::Preferences => Vec::new(),
             Panel::Recent => profile
                 .recent
                 .iter()

@@ -13,6 +13,7 @@ pub enum Tool {
     Arrow,
     Scribble,
     Eraser,
+    Mouse,
 }
 impl Tool {
     pub fn is_one_shot(self) -> bool {
@@ -38,6 +39,7 @@ impl Tool {
             Self::Arrow => "Arrow",
             Self::Scribble => "Scribble",
             Self::Eraser => "Scribble eraser",
+            Self::Mouse => "Mouse (Mulot)",
         }
     }
 }
@@ -127,7 +129,9 @@ pub enum Action {
 }
 impl Action {
     /// Enumerable action catalog, including currently unassigned actions.
-    pub const ALL: [Self; 130] = [
+    pub const ALL: [Self; 132] = [
+        Self::SelectTool(Tool::Mouse),
+        Self::TemporaryTool(Tool::Mouse),
         Self::SelectTool(Tool::Pointer),
         Self::SelectTool(Tool::Pan),
         Self::SelectTool(Tool::RotateView),

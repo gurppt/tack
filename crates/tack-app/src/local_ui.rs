@@ -42,7 +42,6 @@ pub enum Panel {
     About,
     Menu,
     Preferences,
-    Theme,
     Keymap,
     Recent,
     Close,
@@ -212,14 +211,6 @@ impl LocalUi {
             Panel::Close | Panel::Recovery | Panel::Connecting | Panel::UpdateApplying
         ) || self.confirm_reset.is_some()
     }
-    fn enter(&mut self, panel: Panel, selected: usize) {
-        if self.parents.len() < 4 {
-            self.parents.push((self.panel, self.selected));
-            self.panel = panel;
-            self.selected = selected;
-            self.clear_focus();
-        }
-    }
     fn clear_focus(&mut self) {
         self.capture = false;
         self.behavior = Default::default();
@@ -282,8 +273,7 @@ impl LocalUi {
             | Panel::UpdateOffer
             | Panel::UpdateReady => self.daily_rows().len(),
             Panel::Menu | Panel::Keymap => self.actions(keymap).len(),
-            Panel::Preferences => 10,
-            Panel::Theme => 3,
+            Panel::Preferences => 12,
             Panel::Recent => profile.recent.len(),
             Panel::Close => 3,
             Panel::Recovery => 2,
@@ -523,11 +513,11 @@ impl LocalUi {
     }
     fn adjust(&mut self, profile: &mut Preferences, increment: bool) -> Option<UiResult> {
         let value = match self.selected {
-            4 => &mut profile.handle_size,
-            5 => &mut profile.hit_radius,
+            6 => &mut profile.handle_size,
+            7 => &mut profile.hit_radius,
             _ => return None,
         };
-        let (min, max) = if self.selected == 4 { (3, 21) } else { (5, 32) };
+        let (min, max) = if self.selected == 6 { (3, 21) } else { (5, 32) };
         let next = if increment {
             value.saturating_add(1).min(max)
         } else {
@@ -578,10 +568,6 @@ impl LocalUi {
                 UiResult::DiscardRecovery
             }),
             Panel::Error | Panel::About => Some(UiResult::Dismiss),
-            Panel::Theme => {
-                profile.theme = crate::ui_theme::Theme::ALL[self.selected];
-                Some(UiResult::PreferencesChanged)
-            }
             Panel::Preferences => {
                 match self.selected {
                     0 => profile.grid = !profile.grid,
@@ -594,23 +580,16 @@ impl LocalUi {
                         .into()
                     }
                     2 => profile.embedded_import = !profile.embedded_import,
-                    3 => {
-                        let selected = crate::ui_theme::Theme::ALL
-                            .iter()
-                            .position(|t| *t == profile.theme)
-                            .unwrap_or(1);
-                        self.enter(Panel::Theme, selected);
-                        return None;
-                    }
-                    4 | 5 => return self.adjust(profile, true),
-                    6 => profile.frame_title_scale = profile.frame_title_scale % 3 + 1,
-                    7 => {
+                    3..=5 => profile.theme = crate::ui_theme::Theme::ALL[self.selected - 3],
+                    6 | 7 => return self.adjust(profile, true),
+                    8 => profile.frame_title_scale = profile.frame_title_scale % 3 + 1,
+                    9 => {
                         profile.update_channel = match profile.update_channel {
                             tack_update::Channel::Dev => tack_update::Channel::Stable,
                             tack_update::Channel::Stable => tack_update::Channel::Dev,
                         };
                     }
-                    8 => return Some(UiResult::Action(Action::ExportPreferences)),
+                    10 => return Some(UiResult::Action(Action::ExportPreferences)),
                     _ => return self.back(),
                 }
                 Some(UiResult::PreferencesChanged)

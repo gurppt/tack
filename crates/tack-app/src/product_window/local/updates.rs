@@ -159,6 +159,12 @@ impl App {
                 }
             }
             LocalUpdate::Imported(ImportUpdate::Admitted(image)) => {
+                if self
+                    .mouse_import_document
+                    .is_some_and(|id| self.editor.as_ref().is_none_or(|e| e.document().id() != id))
+                {
+                    return Ok(());
+                }
                 let editor = self.editor.as_mut().ok_or("document unavailable")?;
                 tack_app::local_import::admit(editor, &image)?;
                 if let Some(original) = image.original {
@@ -193,6 +199,7 @@ impl App {
                 if spool.is_some() {
                     self.local.spool = spool;
                 }
+                self.mouse_import_document = None;
                 self.local.importing = false;
                 self.local.import_status = if cancelled {
                     format!(

@@ -10,7 +10,7 @@ use std::{
     path::{Path, PathBuf},
 };
 use tack_assets::{AssetError, Decoded};
-pub const NAMES: [&str; 36] = [
+pub const NAMES: [&str; 37] = [
     "pointer",
     "pan",
     "text",
@@ -47,6 +47,7 @@ pub const NAMES: [&str; 36] = [
     "rotate_view_tool",
     "toggle_snap",
     "unlink",
+    "mulot_icone",
 ];
 pub const ATLAS_WIDTH: usize = 128;
 pub const ATLAS_HEIGHT: usize = NAMES.len().div_ceil(8) * 16;
@@ -86,6 +87,7 @@ pub fn index(a: Action) -> usize {
         Action::SelectTool(Tool::RotateView) | Action::TemporaryTool(Tool::RotateView) => 33,
         Action::ToggleSnapping => 34,
         Action::UnlinkFromFrame => 35,
+        Action::SelectTool(Tool::Mouse) | Action::TemporaryTool(Tool::Mouse) => 36,
         _ => 15,
     }
 }

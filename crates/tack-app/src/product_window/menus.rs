@@ -199,9 +199,12 @@ impl App {
         let ui = self.context.is_some()
             || self.local.ui.is_some()
             || self.chrome.toolbar.contains_point(self.pointer)
-            || self.chrome.toolbar.grip_hit(self.pointer);
+            || self.chrome.toolbar.grip_hit(self.pointer)
+            || !self.mouse_canvas();
         let icon = if ui {
             Kind::Pointer
+        } else if self.input.active_tool() == tack_app::actions::Tool::Mouse {
+            Kind::Mouse
         } else if let Some(kind) = self.input.link_cursor() {
             kind
         } else {

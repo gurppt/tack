@@ -71,6 +71,7 @@ impl App {
         input.gizmo.set_scale(camera.ui_scale());
         input.gizmo.frame_title_scale = profile.frame_title_scale;
         if reuse {
+            self.mouse_pending = None;
             self.release_about();
             self.input.cancel();
             self.input = input;

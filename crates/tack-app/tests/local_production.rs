@@ -43,6 +43,7 @@ const PNG: &[u8] = &[
 ];
 fn request(root: &Root, paths: Vec<PathBuf>, embedded: bool) -> ImportRequest {
     ImportRequest {
+        mouse_easter_zoom: None,
         temporary: None,
         paths,
         embedded,
@@ -499,5 +500,141 @@ fn shared_original_spool_survives_interleaved_range_reads_and_session_quota() ->
         true
     })?;
     assert!(refused);
+    Ok(())
+}
+
+#[test]
+fn mulot_is_an_ordinary_embedded_image_one_undo_and_exact_reopen() -> Result {
+    use tack_app::mouse_tool;
+    let root = Root::new()?;
+    let png = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../gfx/icons/poo_easter.png");
+    let mut req = request(&root, vec![png.clone()], true);
+    req.position = [48., 32.];
+    req.mouse_easter_zoom = Some(1.);
+    let mut e = editor()?;
+    let empty = e.document().clone();
+    let mut original = None;
+    let mut image = None;
+    req.run(&AtomicBool::new(false), |update| {
+        if let ImportUpdate::Admitted(admitted) = update {
+            image = Some(admitted);
+        }
+        true
+    })?;
+    let admitted = image.ok_or("expected admitted Mulot image")?;
+    let id = admitted.object.id();
+    assert!(matches!(admitted.object.kind(), ObjectKind::Image(_)));
+    assert_eq!(admitted.object.transform().size(), [36.; 2]);
+    assert_eq!(admitted.object.transform().center(), [48., 32.]);
+    if let Some(payload) = &admitted.original {
+        original = Some(payload.clone());
+    }
+    admit(&mut e, &admitted)?;
+    assert_eq!(e.undo_len(), 1);
+    assert_eq!(e.document().object_order().last(), Some(&id));
+    assert_eq!(
+        mouse_tool::hover_status(e.document(), id),
+        Some("Puzzo puzzo !")
+    );
+    e.undo()?;
+    assert_eq!(*e.document(), empty);
+    e.redo()?;
+    let seed = root.0.join("seed.tack");
+    save(&seed, &empty, vec![])?;
+    let board = TackFile::open(&seed)?;
+    let originals = BTreeMap::from([(
+        (admitted.source.id(), admitted.source.revision()),
+        original.ok_or("embedded original")?,
+    )]);
+    save(
+        root.0.join("mulot.tack"),
+        e.document(),
+        snapshot_inputs(&board, e.document(), &BTreeMap::new(), &originals)?,
+    )?;
+    let loaded = TackFile::open(root.0.join("mulot.tack"))?;
+    assert_eq!(loaded.document, *e.document());
+    assert_eq!(
+        mouse_tool::hover_status(&loaded.document, id),
+        Some("Puzzo puzzo !")
+    );
+    let mut bytes = Vec::new();
+    loaded
+        .original_reader(admitted.source.id())?
+        .read_to_end(&mut bytes)?;
+    assert_eq!(bytes, fs::read(png)?);
+    // Repeated activation reuses the same normal asset and inserts one image.
+    let reused = mouse_tool::easter_object(new_object_id()?, admitted.asset.id(), [96., 64.], 1.)?;
+    let reused_id = reused.id();
+    e.execute(Command::AddObject {
+        object: reused,
+        index: e.document().object_order().len(),
+    })?;
+    assert_eq!(e.document().sources().count(), 1);
+    assert_eq!(e.document().assets().count(), 1);
+    assert_eq!(e.document().objects().count(), 2);
+    assert_eq!(
+        mouse_tool::hover_status(e.document(), reused_id),
+        Some("Puzzo puzzo !")
+    );
+    e.undo()?;
+    assert_eq!(e.document().objects().count(), 1);
+    Ok(())
+}
+
+#[test]
+fn concurrent_first_mouse_imports_have_independent_normal_asset_and_source_ids() -> Result {
+    let roots = [Root::new()?, Root::new()?];
+    let png = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../gfx/icons/poo_easter.png");
+    let mut admitted = Vec::new();
+    for root in &roots {
+        let mut req = request(root, vec![png.clone()], true);
+        req.mouse_easter_zoom = Some(1.);
+        req.run(&AtomicBool::new(false), |update| {
+            if let ImportUpdate::Admitted(image) = update {
+                admitted.push(image);
+            }
+            true
+        })?;
+    }
+    assert_ne!(admitted[0].source.id(), admitted[1].source.id());
+    assert_ne!(admitted[0].asset.id(), admitted[1].asset.id());
+    // Authority can accept both existing import batches; no joke protocol operation.
+    let mut authority = editor()?;
+    for image in &admitted {
+        admit(&mut authority, image)?;
+    }
+    assert_eq!(authority.document().objects().count(), 2);
+    for image in &admitted {
+        assert_eq!(
+            tack_app::mouse_tool::hover_status(authority.document(), image.object.id()),
+            Some("Puzzo puzzo !")
+        );
+    }
+    Ok(())
+}
+
+/// Explicit fixture for the native Save As/reset test; never uses an artist board.
+#[test]
+#[ignore = "writes the explicitly supplied owned native lifecycle fixture"]
+fn mouse_lifecycle_relative_fixture() -> Result {
+    let root = PathBuf::from(
+        std::env::var_os("TACK_MOUSE_FIXTURE_ROOT").ok_or("owned fixture root required")?,
+    );
+    fs::create_dir_all(&root)?;
+    fs::write(root.join("fixture.png"), PNG)?;
+    let mut e = editor()?;
+    let source = new_source_id()?;
+    let asset = new_asset_id()?;
+    e.execute(Command::AddSource(Source::linked(source, "fixture.png")?))?;
+    e.execute(Command::AddAsset(ImageAsset::new(asset, source, [2, 1])?))?;
+    e.execute(Command::AddObject {
+        object: DocumentObject::image(
+            new_object_id()?,
+            asset,
+            Transform::new([0.; 2], [320., 200.], 0., [false; 2])?,
+        ),
+        index: 0,
+    })?;
+    save(root.join("relative.tack"), e.document(), vec![])?;
     Ok(())
 }

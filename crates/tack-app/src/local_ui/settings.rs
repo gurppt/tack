@@ -117,8 +117,7 @@ impl LocalUi {
         let screen = camera.screen_size();
         let width = crate::modal_shell::ModalShell::work(camera, [600., 440.]).rect[2];
         let maximum = match self.panel {
-            Panel::Preferences => 332.,
-            Panel::Theme => 134.,
+            Panel::Preferences => 376.,
             _ => 440.,
         };
         let height = (f64::from(screen[1]) / scale - 24.).clamp(1., maximum);
@@ -128,14 +127,6 @@ impl LocalUi {
         let end = 12. + height;
         let footer_y = end - footer;
         self.layout = [scale, width, height, top];
-        if matches!(self.panel, Panel::Theme) {
-            self.modal = Some(crate::modal_shell::ModalShell::short(
-                camera,
-                [width, height],
-                true,
-            ));
-            self.panel_offset = self.modal.map_or([0.; 2], |m| m.offset());
-        }
         self.visible = ((footer_y - top) / 22.).floor().clamp(1., 12.) as usize;
         crate::modal_shell::ModalShell::work(camera, [width, height]).paint(
             gizmo,
@@ -152,7 +143,6 @@ impl LocalUi {
 
         let heading = match self.panel {
             Panel::Preferences => "Preferences",
-            Panel::Theme => "Background - choose",
             _ => "Keymap",
         };
         let name = if key_panel {
@@ -449,7 +439,33 @@ impl LocalUi {
                     }
                     .into(),
                 ),
-                ("Background".into(), format!("{} >", profile.theme.label())),
+                (
+                    "Theme: Very Dark".into(),
+                    if profile.theme == crate::ui_theme::Theme::VeryDark {
+                        "[x]"
+                    } else {
+                        "[ ]"
+                    }
+                    .into(),
+                ),
+                (
+                    "       Neutral Gray".into(),
+                    if profile.theme == crate::ui_theme::Theme::NeutralGray {
+                        "[x]"
+                    } else {
+                        "[ ]"
+                    }
+                    .into(),
+                ),
+                (
+                    "       Light".into(),
+                    if profile.theme == crate::ui_theme::Theme::Light {
+                        "[x]"
+                    } else {
+                        "[ ]"
+                    }
+                    .into(),
+                ),
                 ("Handle Size".into(), format!("{} px", profile.handle_size)),
                 ("Hit Radius".into(), format!("{} px", profile.hit_radius)),
                 (
@@ -463,20 +479,6 @@ impl LocalUi {
                 ("Export Preferences...".into(), String::new()),
                 ("Close".into(), String::new()),
             ],
-            Panel::Theme => crate::ui_theme::Theme::ALL
-                .into_iter()
-                .map(|t| {
-                    (
-                        t.label().into(),
-                        if t == profile.theme {
-                            "[x] Current"
-                        } else {
-                            "[ ]"
-                        }
-                        .into(),
-                    )
-                })
-                .collect(),
             _ => Vec::new(),
         };
         self.first = if self.reveal_row {
@@ -488,7 +490,7 @@ impl LocalUi {
         for (index, (label, value)) in rows.iter().enumerate().skip(self.first).take(self.visible) {
             let y = 48. + (index - self.first) as f64 * 22.;
             self.row(paint, index, y, width);
-            let numeric = self.panel == Panel::Preferences && matches!(index, 4 | 5);
+            let numeric = self.panel == Panel::Preferences && matches!(index, 6 | 7);
             paint.text(
                 24.,
                 y + 2.,
@@ -505,12 +507,12 @@ impl LocalUi {
                 },
             );
             if numeric {
-                let v = if index == 4 {
+                let v = if index == 6 {
                     profile.handle_size
                 } else {
                     profile.hit_radius
                 };
-                let (min, max) = if index == 4 { (3, 21) } else { (5, 32) };
+                let (min, max) = if index == 6 { (3, 21) } else { (5, 32) };
                 self.button(
                     paint,
                     [width - 136., y, width - 104., y + 22.],
@@ -543,35 +545,17 @@ impl LocalUi {
             [20., 48., width + 4., 48. + self.visible as f64 * 22.],
             (self.first, self.visible, rows.len()),
         );
-        let nested = matches!(self.panel, Panel::Theme);
-        if nested {
-            self.button(
-                paint,
-                [width - 72., footer + 4., width, footer + 26.],
-                if self.parents.is_empty() {
-                    "Close"
-                } else {
-                    "Back"
-                },
-                Command::Close,
-                true,
-            );
-        }
         paint.text(
             24.,
             footer + 2.,
-            width - if nested { 108. } else { 24. },
-            if nested {
-                "Click/Enter: preview"
-            } else {
-                "Click or Enter; Left/Right: -/+"
-            },
+            width - 24.,
+            "Click or Enter; Left/Right: -/+",
             p.text_secondary,
         );
         paint.text(
             24.,
             footer + 18.,
-            width - if nested { 108. } else { 24. },
+            width - 24.,
             if self.parents.is_empty() {
                 "Up/Down choose; Escape closes"
             } else {

@@ -24,8 +24,9 @@ pub enum Kind {
     LinkOpen,
     LinkClosed,
     Forbidden,
+    Mouse,
 }
-pub const TABLE: [(&str, u16, u16); 17] = [
+pub const TABLE: [(&str, u16, u16); 18] = [
     ("cursor_pointer", 1, 1),
     ("cursor_hand_open", 7, 7),
     ("cursor_hand_closed", 7, 7),
@@ -43,6 +44,7 @@ pub const TABLE: [(&str, u16, u16); 17] = [
     ("cursor_link_open", 7, 7),
     ("cursor_link_closed", 7, 7),
     ("cursor_forbidden", 7, 7),
+    ("minimulot", 7, 7),
 ];
 #[derive(Default)]
 pub struct Cache {

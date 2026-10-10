@@ -977,3 +977,74 @@ fn frame_chrome_remains_pickable_above_an_image_filling_its_body() -> R {
     )?;
     Ok(())
 }
+
+#[test]
+fn bounded_dotted_preview_keeps_mixed_group_and_large_selection_link_usable() -> R {
+    for count in [1, 3, 1024] {
+        let mut e = linked_fixture()?;
+        let frame = ObjectId::new(10)?;
+        let mut ids = vec![ObjectId::new(1)?];
+        if count == 3 {
+            let note = ObjectId::new(20)?;
+            e.execute(Command::AddObject {
+                object: DocumentObject::annotation(
+                    note,
+                    Annotation::new(AnnotationKind::Rect, AnnotationStyle::default()),
+                    Transform::new([0., 80.], [30., 30.], 0., [false; 2])?,
+                )?,
+                index: e.document().object_order().len(),
+            })?;
+            ids.extend([ObjectId::new(2)?, note]);
+            e.execute(Command::AddGroup(Group::new(
+                GroupId::new(40)?,
+                vec![ids[0], ids[1]],
+            )?))?;
+        }
+        if count == 1024 {
+            for n in 0..1023 {
+                let id = ObjectId::new(100 + n)?;
+                e.execute(Command::AddObject {
+                    object: DocumentObject::image(
+                        id,
+                        AssetId::new(1)?,
+                        Transform::new([0., 0.], [10., 10.], 0., [false; 2])?,
+                    ),
+                    index: e.document().object_order().len(),
+                })?;
+                ids.push(id);
+            }
+        }
+        let before = e.document().clone();
+        e.clear_history();
+        let mut i = ImageInput::new()?;
+        let mut c = Camera::new([1280, 720]);
+        i.images.selection.annotations_locked = false;
+        for id in &ids {
+            i.images.selection.select(Some(*id), true);
+        }
+        invoke(&mut i, &mut e, &mut c, Action::LinkToFrame)?;
+        i.cursor_moved(c.world_to_screen([500., 0.]), &e, &mut c)?;
+        i.build_overlay(&e, &c);
+        assert!(i.link_preview.lines > 0);
+        assert!(i.link_preview.lines <= tack_app::link_preview::MAX_LINES);
+        assert!(i.gizmo.quads.len() <= tack_render::MAX_OVERLAY_QUADS);
+        assert!(i.gizmo.quads.iter().any(|q| q.dashed));
+        assert_eq!(i.link_preview.simplified, count == 1024);
+        assert_eq!(i.link_cursor(), Some(tack_app::cursors::Kind::LinkOpen));
+        click_state(&mut i, &mut e, &mut c, true)?;
+        click_state(&mut i, &mut e, &mut c, false)?;
+        for id in &ids {
+            assert_eq!(e.document().frame_parent(*id), Some(frame));
+        }
+        assert!(i.link_feedback.active());
+        e.undo()?;
+        assert_eq!(*e.document(), before);
+        invoke(&mut i, &mut e, &mut c, Action::LinkToFrame)?;
+        invoke(&mut i, &mut e, &mut c, Action::CancelInteraction)?;
+        i.build_overlay(&e, &c);
+        assert_eq!(i.link_preview.lines, 0);
+        assert!(i.gizmo.quads.iter().all(|q| !q.dashed));
+        assert!(i.link_feedback.deadline().is_none());
+    }
+    Ok(())
+}

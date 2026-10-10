@@ -304,6 +304,13 @@ impl ImageInput {
         Ok(true)
     }
     pub(super) fn link_overlay(&mut self, editor: &DocumentEditor, camera: &Camera) {
+        self.link_preview = Default::default();
+        if self.link.is_some() {
+            // Selection outlines are transient too. Reserve target/preview/chrome room.
+            self.gizmo
+                .quads
+                .truncate(tack_render::MAX_OVERLAY_QUADS - 512);
+        }
         if let Some(frame) = self
             .link_flash
             .filter(|_| self.link_feedback.active())
@@ -319,44 +326,15 @@ impl ImageInput {
             self.gizmo
                 .outline(frame.transform(), camera, self.gizmo.style.selection);
         }
-        let screen = camera.screen_size().map(f64::from);
-        let mut budget = 4096;
-        for anchor in &stage.anchors {
-            let a = camera.world_to_screen(*anchor);
-            if a[0] < 0. || a[1] < 0. || a[0] >= screen[0] || a[1] >= screen[1] {
-                continue;
-            }
-            let b = self.cursor;
-            let delta = [b[0] - a[0], b[1] - a[1]];
-            let length = delta[0].hypot(delta[1]);
-            if length < 1. || !length.is_finite() {
-                continue;
-            }
-            let dots = ((length / 4.).ceil() as usize).min(budget);
-            for dot in 0..dots {
-                let p = std::array::from_fn::<_, 2, _>(|i| {
-                    (a[i] + delta[i] * (dot as f64 * 4. / length)).round()
-                });
-                if p[0] < 0. || p[1] < 0. || p[0] >= screen[0] || p[1] >= screen[1] {
-                    continue;
-                }
-                let points = [
-                    [p[0], p[1]],
-                    [p[0] + 1., p[1]],
-                    [p[0] + 1., p[1] + 1.],
-                    [p[0], p[1] + 1.],
-                ]
-                .map(|p| camera.screen_to_world(p));
-                self.gizmo.quads.push(tack_render::OverlayQuad {
-                    bitmap: None,
-                    points,
-                    color: self.gizmo.style.selection,
-                });
-            }
-            budget -= dots;
-            if budget == 0 {
-                break;
-            }
+        self.link_preview = crate::link_preview::draw(
+            &mut self.gizmo,
+            camera,
+            &stage.anchors,
+            self.cursor,
+            tack_render::MAX_OVERLAY_QUADS - 384,
+        );
+        if self.link_preview.simplified {
+            self.status = "Link preview simplified".into();
         }
     }
 }

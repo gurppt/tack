@@ -93,3 +93,7 @@ pub mod cursors;
 pub mod capabilities;
 
 pub mod scribble_edit;
+
+pub mod mouse_tool;
+
+pub mod link_preview;

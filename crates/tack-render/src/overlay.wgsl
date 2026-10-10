@@ -15,7 +15,10 @@ fn cross(a:vec2<f32>,b:vec2<f32>)->f32 {return a.x*b.y-a.y*b.x;}
  let det=cross(o.axes.xy,o.axes.zw);if abs(det)<1e-12 {discard;}
  let uv=vec2(cross(p,o.axes.zw),cross(o.axes.xy,p))/det;
  if any(uv<vec2(0.)) || any(uv>=vec2(1.)) {discard;}
- if o.bitmap!=0u {
+ if o.bitmap==2u {
+  if (u32(floor(uv.x*length(o.axes.xy)))%8u)>=4u {discard;}
+ }
+ if o.bitmap==1u {
   let x=min(u32(uv.x*16.),15u);let y=min(u32(uv.y*16.),15u);
   var pair:u32;if y<8u {pair=o.bits0[y/2u];} else {pair=o.bits1[(y-8u)/2u];}
   let row=(pair>>((y%2u)*16u))&65535u;if (row&(1u<<(15u-x)))==0u {discard;}

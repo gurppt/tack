@@ -219,6 +219,7 @@ fn procedural_grid_hidden_path_and_bitmap_labels_are_crisp() -> Result<(), Asset
     let hidden_again = pixels_spatial(&mut gpu, d, key, &[], None)?;
     assert_eq!(hidden, hidden_again);
     let bitmap = OverlayQuad {
+        dashed: false,
         points: [[16., 16.], [16., 32.], [32., 16.], [32., 32.]],
         color: [0., 1., 0., 1.],
         bitmap: Some([0x8000; 8]),
@@ -355,6 +356,7 @@ fn canvas_overlay_is_on_top_without_asset_or_document_changes() -> Result<(), As
         d,
         key,
         &[OverlayQuad {
+            dashed: false,
             bitmap: None,
             points: [[20., 20.], [20., 40.], [40., 20.], [40., 40.]],
             color: [0., 1., 0., 1.],
@@ -370,6 +372,7 @@ fn canvas_overlay_is_on_top_without_asset_or_document_changes() -> Result<(), As
             key,
             &vec![
                 OverlayQuad {
+                    dashed: false,
                     bitmap: None,
                     points: [[0.; 2]; 4],
                     color: [1.; 4]
@@ -642,6 +645,7 @@ fn integer_logical_pixels_preserve_all_bitmap_rows_without_aa() -> Result<(), As
                 .all(|p| p == [0, 255, 0, 255] || p == [255, 0, 0, 255])
         );
         let overlay = OverlayQuad {
+            dashed: false,
             points: p.points,
             color: p.stroke,
             bitmap: Some(p.bitmap),
@@ -690,6 +694,7 @@ fn lazy_ui_artwork_is_nearest_above_overlay_and_released_after_close() -> Result
         revision: 1,
     };
     let overlay = [OverlayQuad {
+        dashed: false,
         bitmap: None,
         points: [[0., 0.], [0., 64.], [64., 0.], [64., 64.]],
         color: [0., 1., 0., 1.],
@@ -820,11 +825,13 @@ fn context_overlays_icon_atlas_without_hiding_uncovered_toolbar() -> Result<(), 
     }])?;
     let overlay = [
         OverlayQuad {
+            dashed: false,
             points: [[0., 0.], [0., 32.], [32., 0.], [32., 32.]],
             color: [0., 0., 1., 1.],
             bitmap: None,
         },
         OverlayQuad {
+            dashed: false,
             points: [[16., 0.], [16., 32.], [32., 0.], [32., 32.]],
             color: [1., 0., 0., 1.],
             bitmap: None,
@@ -838,5 +845,40 @@ fn context_overlays_icon_atlas_without_hiding_uncovered_toolbar() -> Result<(), 
     let editor = pixels_overlay(&mut gpu, d, key, &overlay)?;
     assert_eq!(pixel(&editor, 20, 10), [0, 255, 0, 255]);
     assert_eq!(gpu.ui_icon_bytes(), atlas_bytes);
+    Ok(())
+}
+
+#[test]
+#[ignore = "explicit pixel-dashed overlay GPU readback"]
+fn dashed_line_keeps_hard_four_on_four_off_in_one_quad() -> Result<(), AssetError> {
+    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::from_env_or_default());
+    let mut gpu = pollster::block_on(Gpu::new(
+        &instance,
+        None,
+        wgpu::TextureFormat::Rgba8UnormSrgb,
+        1024 * 1024,
+    ))?;
+    let mut d = data();
+    d.opacity = Opacity::new(0.)?;
+    let key = ProductKey {
+        asset: Some(d.asset_id),
+        source: SourceId::new(d.asset_id.value())?,
+        lod: Lod::Thumbnail,
+        edge: 128,
+        revision: 1,
+    };
+    let quad = OverlayQuad {
+        dashed: true,
+        points: [[8., 20.], [8., 21.], [56., 20.], [56., 21.]],
+        color: [1., 0., 0., 1.],
+        bitmap: None,
+    };
+    let pixels = pixels_overlay(&mut gpu, d, key, &[quad])?;
+    for x in 8..56 {
+        let red = pixel(&pixels, x, 20) == [255, 0, 0, 255];
+        assert_eq!(red, (x - 8) % 8 < 4, "pixel {x}");
+        assert_ne!(pixel(&pixels, x, 19), [255, 0, 0, 255]);
+        assert_ne!(pixel(&pixels, x, 21), [255, 0, 0, 255]);
+    }
     Ok(())
 }

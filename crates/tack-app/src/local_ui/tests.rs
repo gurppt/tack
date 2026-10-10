@@ -1,19 +1,27 @@
 use super::*;
 #[test]
-fn live_choices_keep_submenu_and_back_returns_to_parent() -> Result<(), tack_assets::AssetError> {
+fn themes_are_inline_live_persistent_and_never_instantiate_modal()
+-> Result<(), tack_assets::AssetError> {
     let mut profile = Preferences::defaults()?;
     let mut keymap = profile.keymap()?;
     let mut ui = LocalUi::new(Panel::Preferences);
-    ui.selected = 3;
-    ui.activate(&mut keymap, &mut profile);
+    let camera = Camera::new([800, 600]);
+    let mut gizmo = ImageGizmo::default();
     for (index, theme) in crate::ui_theme::Theme::ALL.into_iter().enumerate() {
-        ui.selected = index;
-        ui.activate(&mut keymap, &mut profile);
+        ui.selected = index + 3;
+        assert!(matches!(
+            ui.activate(&mut keymap, &mut profile),
+            Some(UiResult::PreferencesChanged)
+        ));
+        ui.draw(&mut gizmo, &camera, &keymap, &profile);
         assert_eq!(profile.theme, theme);
-        assert_eq!(ui.panel, Panel::Theme);
+        assert_eq!(ui.panel, Panel::Preferences);
+        assert!(ui.modal.is_none());
+        assert!(ui.parents.is_empty());
+        let persisted: Preferences = serde_json::from_slice(&serde_json::to_vec(&profile)?)?;
+        assert_eq!(persisted.theme, theme);
+        gizmo.quads.clear();
     }
-    assert!(ui.back().is_none());
-    assert_eq!(ui.panel, Panel::Preferences);
     assert!(matches!(ui.back(), Some(UiResult::Dismiss)));
     Ok(())
 }
@@ -46,13 +54,13 @@ fn numeric_changes_are_bounded_and_reversible_without_wrap() -> Result<(), tack_
 {
     let mut profile = Preferences::defaults()?;
     let mut ui = LocalUi::new(Panel::Preferences);
-    for (row, min, max) in [(4, 3, 21), (5, 5, 32)] {
+    for (row, min, max) in [(6, 3, 21), (7, 5, 32)] {
         ui.selected = row;
         for _ in 0..100 {
             ui.adjust(&mut profile, false);
         }
         assert_eq!(
-            if row == 4 {
+            if row == 6 {
                 profile.handle_size
             } else {
                 profile.hit_radius
@@ -64,7 +72,7 @@ fn numeric_changes_are_bounded_and_reversible_without_wrap() -> Result<(), tack_
             ui.adjust(&mut profile, true);
         }
         assert_eq!(
-            if row == 4 {
+            if row == 6 {
                 profile.handle_size
             } else {
                 profile.hit_radius
@@ -74,7 +82,7 @@ fn numeric_changes_are_bounded_and_reversible_without_wrap() -> Result<(), tack_
         assert!(ui.adjust(&mut profile, true).is_none());
         ui.adjust(&mut profile, false);
         assert_eq!(
-            if row == 4 {
+            if row == 6 {
                 profile.handle_size
             } else {
                 profile.hit_radius

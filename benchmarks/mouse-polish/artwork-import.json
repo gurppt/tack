@@ -1,0 +1,38 @@
+[
+  {
+    "file": "gfx/icons/mulot_icone.png",
+    "sha256": "e1c440550a4170cee79f3b32becade387431d1992f57ca6c37200fd62884b622"
+  },
+  {
+    "file": "gfx/icons/pawL_n.png",
+    "sha256": "5aa2e4d1c5ab03c6571cb705e480b6d139ace95802081589437605d9d7ae8522"
+  },
+  {
+    "file": "gfx/icons/pawR_n.png",
+    "sha256": "904f259c829cb2c29d6c7d44fee9c839153f30c73a826a91132dbc153cda36e8"
+  },
+  {
+    "file": "gfx/icons/pawL_45.png",
+    "sha256": "c1a491e2399be49cd9b0365dbc8a601eb8d7c3c3b47c07ea7a3dafe3b3e7db6a"
+  },
+  {
+    "file": "gfx/icons/pawR_45.png",
+    "sha256": "d8a34608b1a3e466dcb43c649e797a899370571536d939a5be5cf7bafa4bbb30"
+  },
+  {
+    "file": "gfx/icons/pawL_w.png",
+    "sha256": "91ef8964d07f5efa35130b4101eba31bf123c42b0fb278b66c6bebd0aeb75ed1"
+  },
+  {
+    "file": "gfx/icons/pawR_w.png",
+    "sha256": "751085826c99667aadb808e90623ceda7190dada6046e58bcecd59c803c17161"
+  },
+  {
+    "file": "gfx/icons/poo_easter.png",
+    "sha256": "2bb59df7d29ec46dee2f2ef98eda74f5720dbfa7950148b9d2b97b502ea86826"
+  },
+  {
+    "file": "gfx/cursors/minimulot.png",
+    "sha256": "ab90bc6198a936557452dfa3abc0756fbe4f9f7509fe3b148a0e0088774c58f9"
+  }
+]

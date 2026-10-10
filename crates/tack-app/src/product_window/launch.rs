@@ -262,6 +262,20 @@ fn run_mode(
         pointer: [0.; 2],
         cursor_icon: Default::default(),
         cursors: Default::default(),
+        mouse_pending: None,
+        mouse_import_document: None,
+        mouse: {
+            let wait = if std::env::var_os("TACK_NATIVE_DIAGNOSTICS").is_some() {
+                std::env::var("TACK_TEST_MOUSE_EASTER_MS")
+                    .ok()
+                    .and_then(|s| s.parse::<u64>().ok())
+                    .filter(|ms| (100..=600_000).contains(ms))
+                    .map(Duration::from_millis)
+            } else {
+                None
+            };
+            tack_app::mouse_tool::MouseTool::new(wait.unwrap_or(tack_app::mouse_tool::EASTER_WAIT))
+        },
         native_modifiers: Default::default(),
     };
     events.run_app(&mut app)?;
