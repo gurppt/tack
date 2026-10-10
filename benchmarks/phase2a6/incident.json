@@ -1,0 +1,32 @@
+{
+  "observed": "2026-10-10T12:15:51.166237+02:00",
+  "reboot": "2026-10-10 12:11:29",
+  "previous_journal_last": "2026-10-10 12:09:50 Europe/Paris",
+  "persisted_crash_records": "/var/lib/systemd/pstore/1791627013/{001,002}/dmesg.txt",
+  "records_readable": false,
+  "previous_boot_id": "397bcacaea1c43cbb9ca7b2365e974c9",
+  "current_boot_id": "0eea88ca-964b-4d7a-b8df-45b42585ad02",
+  "interrupted_or_lost": [
+    "shared-final/receipt.json",
+    "shared-final/client-0.json",
+    "shared-final/client-1.json"
+  ],
+  "surviving_final_checks": 16,
+  "surviving_ui_checks": 38,
+  "surviving_windows_checks": 6,
+  "git_fsck": "no missing/corrupt objects; pre-existing dangling blobs only",
+  "accessible_log_findings": [
+    "No recent OOM/NVRM Xid/panic trace in accessible previous-boot journal",
+    "sdc unrecovered read errors at current boot and previous boot startup",
+    "persistent EFI crash records present but root-only"
+  ],
+  "causality": "Undetermined. Do not attribute the system crash to Tack, NVIDIA or the other disk without the persisted trace.",
+  "recovery_policy": "No simultaneous native hardware-GPU clients until trace available. Final concurrent checks rerun on explicitly selected software Vulkan; preserve all prior valid receipts and invalid attempts separately.",
+  "recovery_completed": {
+    "shared_checks": 16,
+    "adapter": "llvmpipe Vulkan",
+    "paired_runs": 4,
+    "final_linux_hash": "1312983951762b2b41d7a094630d61b11ca9f1463474355ebea4305fb6fc702a",
+    "implementation_ci": "success: Linux, Windows, dependencies"
+  }
+}

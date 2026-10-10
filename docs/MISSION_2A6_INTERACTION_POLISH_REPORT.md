@@ -1,6 +1,7 @@
 # Phase 2A6 — interaction polish
 
-Implementation and local automated validation PASS; physical artist acceptance
+Implementation `80f7014fefc6420491f5ee65891280ee384eb84e` and automated validation
+PASS; physical artist acceptance
 remains pending. Phase 2A5 authority and document/storage formats are retained.
 Source base `0e92f45` includes 2A5 implementation `688afb9` plus icon preservation.
 The prerequisite gate, repository status, binary/dependency baseline and local
@@ -65,15 +66,20 @@ owned displays on one host are not a physical two-computer acceptance test.
 [Windows receipt](../benchmarks/phase2a6/windows.json) proves the cross-built
 Windows CLI creates/reopens a JPEG board under Wine, and the packaged scalar,
 SSE2 and automatic-SIMD decoder paths execute with identical output. Physical
-Windows UI acceptance remains pending. Linux/Windows CI result is recorded
-below after publication of the implementation commit.
+Windows UI acceptance remains pending. The exact implementation passes [Quality CI 38043789172](https://github.com/gurppt/tack/actions/runs/38043789172):
+Linux, Windows and dependencies all succeed. The [CI receipt](../benchmarks/phase2a6/ci.json)
+records job/step conclusions. Linux also executes software Vulkan and LOD
+convergence/churn; Windows runs the pinned-toolchain workspace gate.
 
 ## Measured cost
 
-Two serial paired runs on the same owned display/GPU and small local board,
+Two serial paired runs before the reboot, on the same owned NVIDIA display/GPU
+and small local board,
 warm/unspecified OS page cache; [raw comparison](../benchmarks/phase2a6/local-paired.json)
 and [frame telemetry](../benchmarks/phase2a6/local-frame-telemetry.json) are retained.
-This narrow sample does not establish startup or large-board performance gains.
+These runs measured validation candidate `4a28e5ea`; the final binary
+`13129839` was rebuilt after adding the last regression tests. This narrow
+sample does not establish startup or large-board performance gains.
 
 | Metric | 2A5 baseline | 2A6 |
 | --- | ---: | ---: |
@@ -100,7 +106,7 @@ covered by the menu, and expecting a stricter gray than the Frame palette uses.
 Neither attempt is counted as passing evidence.
 
 Shared target reused; one baseline executable retained. Generated phase evidence
-is about 24 MiB; committed compact evidence is under 200 KiB. An owned Wine
+is under 32 MiB; committed compact evidence is under 300 KiB. An owned Wine
 prefix temporarily used the documented allowance of up to 2 GiB, then was stopped
 and removed by the harness. The 10 GiB free-space reserve was retained. No user
 board/profile/artwork or broad cache directory was cleaned.
@@ -109,3 +115,37 @@ The [human checklist](HUMAN_TEST_2A6_INTERACTION_POLISH.md) covers artist feel,
 physical Windows and physical two-computer acceptance, which are still pending.
 No Studio Server, WAN/auth, media, importer, new text tool or other 2B work was
 started. Stop after 2A6.
+
+## System incident and recovery
+
+The owner reported a whole-system crash and reboot at 12:11:29 CEST on October
+10. See the [incident record](INCIDENT_2026_10_10_SYSTEM_CRASH.md). The persisted
+EFI kernel trace is root-only and awaits a readable owner copy. Accessible logs
+do not determine the cause. Pre-existing unreadable sectors on another disk are
+recorded without attributing this crash to them or to Tack/GPU.
+
+Final native UI (38 checks), separator pixels and Windows execution receipts
+survived and match the delivered executable hashes. The final hardware
+three-client receipt and two reports became empty during the reboot; this
+attempt is excluded from complete evidence despite its surviving 16 check rows.
+The earlier valid NVIDIA receipt is retained as candidate evidence.
+[Post-reboot concurrent checks](../benchmarks/phase2a6/shared-post-reboot.json)
+repeat all 16 checks on the delivered binary with explicitly selected llvmpipe
+Vulkan. No simultaneous hardware-GPU clients were restarted while cause
+investigation awaits the kernel trace. Final paired software measurements are
+recorded separately from the pre-reboot hardware comparison.
+
+[Final software-Vulkan paired runs](../benchmarks/phase2a6/local-paired-post-reboot.json)
+and [frame telemetry](../benchmarks/phase2a6/local-frames-post-reboot.json)
+use the delivered hash on both repeats. Results:
+
+| Final software comparison | 2A5 | 2A6 |
+| --- | ---: | ---: |
+| Idle threads | 39.00 | 39.00 |
+| Mean RSS | 107.11 MiB | 108.65 MiB |
+| Mean native startup | 85.06 ms | 61.11 ms |
+| Recurring redraw / I/O / IP sockets | 0 / 0 / 0 | 0 / 0 / 0 |
+
+The 1.55 MiB software-driver RSS difference is a small measured variation,
+not a permanent worker/dependency increase. Hardware and software timings/RSS
+are distinct environments and must not be compared across those tables.

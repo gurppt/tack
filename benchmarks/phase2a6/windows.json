@@ -1,9 +1,9 @@
 {
   "scope": "Linux Wine Windows CLI/decoder execution; no Windows desktop/physical LAN claim",
-  "executable_sha256": "c64a57fcd6d1c7b70625c2800190f1414dd2815eef79340efaaeb8e50a8f0b1e",
-  "decoder_sha256": "4e5285aeb0c9b948a3b86a4172231217d22a7484d2fed92b8fb8b18c6deeb440",
+  "executable_sha256": "c4a8f7a0944629544b58bc0d65e64e61aaf1d88acff7d69c960a6e806ea45da4",
+  "decoder_sha256": "5410356a9c3e02a71bc6254d92831cec399b1f6d3d1ed806f01022825afa2430",
   "harness_sha256": "26dc1a392b86d5fb9eb952614a045507b233d7d4d79085706ff535752a3d10dd",
-  "seconds": 41.05010467104148,
+  "seconds": 40.88451311492827,
   "checks": [
     {
       "name": "Windows executable creates/reopens JPEG board",
@@ -16,38 +16,38 @@
           "embedded": true,
           "errors": 0,
           "file_bytes": 1845,
-          "metadata_import_ms": 1.7013,
+          "metadata_import_ms": 1.4403000000000001,
           "metadata_source_bytes": 625,
           "objects": 1,
           "operation": "create",
           "overview_generated": 1,
           "overview_reused": 0,
           "peak_pending": 1,
-          "preparation_ms": 5.6776,
+          "preparation_ms": 4.4568,
           "progress": [
             {
-              "elapsed_ms": 0.0147,
+              "elapsed_ms": 0.0133,
               "errors": 0,
               "ready": 0
             },
             {
-              "elapsed_ms": 5.6772,
+              "elapsed_ms": 4.4562,
               "errors": 0,
               "ready": 1
             }
           ],
-          "save_ms": 7.9577,
+          "save_ms": 7.3165000000000004,
           "source_bytes_read": 1535,
-          "total_ms": 27.2304
+          "total_ms": 18.866999999999997
         },
         "inspected": {
           "assets": 1,
           "bookmarks": [],
           "discarded_overviews": 0,
-          "document_id": "1c55f83d7832e12a459209775c9123f0",
+          "document_id": "e70a9af7d977d888450565493fc61c07",
           "embedded": 1,
           "metadata_bytes": 453,
-          "metadata_ms": 1.0299,
+          "metadata_ms": 0.8727,
           "objects": 1,
           "original_bytes_read": 0,
           "overviews": 1,

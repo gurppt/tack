@@ -1,6 +1,6 @@
 {
   "binary_bytes": 19968512,
-  "binary_sha256": "4a28e5ead9e4df7e5bcc90a7b0f9d32f214011c09655856bcb65a6a27b2cb756",
+  "binary_sha256": "1312983951762b2b41d7a094630d61b11ca9f1463474355ebea4305fb6fc702a",
   "baseline_bytes": 19947776,
   "dependencies": 278,
   "baseline_dependencies": 278,
@@ -29,8 +29,8 @@
   ],
   "icon_policy": "Builds use install_missing, preserve every pre-existing PNG. Four runtime PNG timestamps differ across the session (some after build); no attempt to restore artist edits to baseline.",
   "windows": {
-    "commit": "0e92f45fce59ab32c3da32ef798c35135cd64b0e",
-    "built_utc": "2026-10-10T10:01:21.173796+00:00",
+    "commit": "80f7014fefc6420491f5ee65891280ee384eb84e",
+    "built_utc": "2026-10-10T10:07:30.720259+00:00",
     "target": "x86_64-pc-windows-gnu",
     "working_tree": true,
     "jpeg": "libjpeg-turbo 3.2.0 static SIMD SSE2/AVX2",
@@ -109,16 +109,22 @@
     "files": {
       "tack-jpeg-decoder.exe": {
         "bytes": 872960,
-        "sha256": "4e5285aeb0c9b948a3b86a4172231217d22a7484d2fed92b8fb8b18c6deeb440"
+        "sha256": "5410356a9c3e02a71bc6254d92831cec399b1f6d3d1ed806f01022825afa2430"
       },
       "tack-server.exe": {
         "bytes": 3095552,
-        "sha256": "d2ed106093c9dde6d69d87490d7b76d51a569c8187c9e7794c6422321c41b08e"
+        "sha256": "c016f72b737bcc7556785fc36342d7aec2c15276df8723073a374c9813e23dc7"
       },
       "tack.exe": {
         "bytes": 24339456,
-        "sha256": "c64a57fcd6d1c7b70625c2800190f1414dd2815eef79340efaaeb8e50a8f0b1e"
+        "sha256": "c4a8f7a0944629544b58bc0d65e64e61aaf1d88acff7d69c960a6e806ea45da4"
       }
     }
+  },
+  "implementation_commit": "80f7014fefc6420491f5ee65891280ee384eb84e",
+  "linux_build_stamp": "STATUS: CURRENT\ncommit: 80f7014fefc6420491f5ee65891280ee384eb84e\nprofile: release\nbuilt_utc: 2026-10-10T10:07:30Z\nbinary: ./bin/tack\nserver_binary: ./bin/tack-server\nworktree_dirty: true\nsha256: 1312983951762b2b41d7a094630d61b11ca9f1463474355ebea4305fb6fc702a\nserver_sha256: 606435b69c0f301908899be9fcc190687beca9a8e13e37aa4e33d470b4d54941\nabout_asset_sha256: d22641555380426ad6567153edca7b83548ad964acdc9c3fbdb70b59ac7759ee\njpeg_decoder_sha256: 4fcef9b973c80de96ecf2d5babe86ef87b1be2459f22559243c8e85da3ebe587\ncheckpoint: Phase 2A6 implementation 80f7014; validated UI/GPU/shared/idle; artist icons preserved\n",
+  "windows_zip": {
+    "bytes": 11316933,
+    "sha256": "2a7950fe92ba48c50c36600af18e84b7a508c00572a32bbe5c5a6c58443682a6"
   }
 }

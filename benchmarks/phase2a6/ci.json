@@ -1,0 +1,202 @@
+{
+  "implementation_commit": "80f7014fefc6420491f5ee65891280ee384eb84e",
+  "run_id": 38043789172,
+  "url": "https://github.com/gurppt/tack/actions/runs/38043789172",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "rust (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install pinned Rust",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native build prerequisites (Linux)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native build prerequisites (Windows)",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Prepare pinned native decoder",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install About asset preparation dependency",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo fmt --all -- --check",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo check --workspace --all-targets --all-features --locked",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo clippy --workspace --all-targets --all-features --locked -- -D warnings",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo test --workspace --all-features --locked",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo doc --workspace --no-deps --locked",
+          "conclusion": "success"
+        },
+        {
+          "name": "Corpus correctness tests",
+          "conclusion": "success"
+        },
+        {
+          "name": "GPU smoke on software Vulkan",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "rust (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install pinned Rust",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native build prerequisites (Linux)",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Native build prerequisites (Windows)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Prepare pinned native decoder",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install About asset preparation dependency",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo fmt --all -- --check",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo check --workspace --all-targets --all-features --locked",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo clippy --workspace --all-targets --all-features --locked -- -D warnings",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo test --workspace --all-features --locked",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo doc --workspace --no-deps --locked",
+          "conclusion": "success"
+        },
+        {
+          "name": "Corpus correctness tests",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "GPU smoke on software Vulkan",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "dependencies",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run rustup toolchain install 1.95.0 --profile minimal",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo install cargo-deny --version 0.20.2 --locked",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo deny check",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ]
+}
