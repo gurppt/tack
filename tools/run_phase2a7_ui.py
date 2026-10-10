@@ -62,10 +62,11 @@ def main():
             s=start(f'{size}-bar{bar}',size,bar);time.sleep(.8);s.key('Escape');motion(760,520)
             plain=shot('canvas');s.key('F1');time.sleep(.5);about=shot('about')
             w,h=map(int,size.split('x'));px=(w-600)//2;py=(h-288)//2
-            supplied=Image.open(binary.parent/'tack-about-logo.png').convert('RGBA')
+            editable=binary.parent/'gfx/icons/work_icons/logo_tack_about.png'
+            supplied=Image.open(editable if editable.is_file() else binary.parent/'tack-about-logo.png').convert('RGBA')
             portrait_width=round(286*207/224);lx=px+portrait_width+12;ly=py+8
-            opaque=[(xx,yy) for yy in range(33) for xx in range(73) if supplied.getpixel((xx,yy))[3]==255]
-            record(f'{size} bar{bar} provided logo exact nearest pixels',all(about.getpixel((lx+xx,ly+yy))==supplied.getpixel((xx,yy))[:3] for xx,yy in opaque),dict(logo_rect=[lx,ly,73,33]))
+            opaque=[(xx,yy) for yy in range(supplied.height) for xx in range(supplied.width) if supplied.getpixel((xx,yy))[3]==255]
+            record(f'{size} bar{bar} provided logo exact nearest pixels',all(about.getpixel((lx+xx,ly+yy))==supplied.getpixel((xx,yy))[:3] for xx,yy in opaque),dict(logo_rect=[lx,ly,supplied.width,supplied.height]))
             record(f'{size} bar{bar} centered About and border',about.getpixel((px,py))!=plain.getpixel((px,py)))
             click(w-5,h-50);dismiss=shot('outside-dismiss')
             record(f'{size} bar{bar} About outside dismissal',ImageChops.difference(plain.crop((px,py,px+600,py+288)),dismiss.crop((px,py,px+600,py+288))).getbbox() is None)

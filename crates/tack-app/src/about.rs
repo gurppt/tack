@@ -40,14 +40,22 @@ pub fn load_artwork() -> Result<Artwork, tack_assets::AssetError> {
     if bytes.len() > 16 * 1024 {
         return Err("About logo exceeds 16 KiB".into());
     }
-    let logo = tack_assets::decode_ui_png(&bytes)?;
-    if [logo.width, logo.height] != [73, 33] {
-        return Err("About logo must remain 73 x 33 pixels".into());
-    }
+    let logo = decode_logo(&bytes)?;
     Ok(Artwork {
         portrait: load_image()?,
         logo,
     })
+}
+/// Small editable variants fit the heading without resampling or text overlap.
+pub fn decode_logo(bytes: &[u8]) -> Result<tack_assets::Decoded, tack_assets::AssetError> {
+    if bytes.len() > 16 * 1024 {
+        return Err("About logo exceeds 16 KiB".into());
+    }
+    let logo = tack_assets::decode_ui_png(bytes)?;
+    if logo.width > 128 || logo.height > 35 {
+        return Err("About logo must fit 128 x 35 pixels".into());
+    }
+    Ok(logo)
 }
 /// Invoked only by the explicit local About worker, never during startup.
 pub fn load_image() -> Result<tack_assets::Decoded, tack_assets::AssetError> {

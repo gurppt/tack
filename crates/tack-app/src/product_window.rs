@@ -570,7 +570,10 @@ impl App {
                 && let Some(layout) = ui.about_layout
             {
                 gpu.set_ui_image_rect(layout.physical_image());
-                gpu.set_ui_logo_rect(layout.physical_logo());
+                let mut logo_rect = layout.physical_logo();
+                logo_rect[2] = f64::from(ui.about_logo_size[0]) * layout.scale;
+                logo_rect[3] = f64::from(ui.about_logo_size[1]) * layout.scale;
+                gpu.set_ui_logo_rect(logo_rect);
             }
         }
         let palette = self.local.profile.theme.palette();

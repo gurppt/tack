@@ -95,7 +95,9 @@ SWF is passive main/Graphic/static MovieClip visualization: no VM, scripts,
 interaction, network or independent timelines.
 
 Seventeen 16×16 hard-alpha cursor assets have fixed hotspots and cached handles.
-Runtime files are seeded only if missing, just like toolbar artwork. The manual
+Runtime files are seeded only if missing, just like toolbar artwork. About retains
+the editable local logo, accepting PNG variants up to 128×35 pixels/16 KiB and
+drawing them at natural integer pixels; the packaged fallback remains 73×33. The manual
 seed script is never a build hook. Annotation lock ON/OFF has one action identity.
 Visible selected images, including group members, derive individual outlines;
 handles remain one selection frame. Flip includes images and non-text annotations.

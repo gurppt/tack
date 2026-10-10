@@ -126,9 +126,11 @@ impl App {
                         let gpu = self.gpu.as_mut().ok_or("About renderer unavailable")?;
                         gpu.set_ui_image(&art.portrait)
                             .and_then(|_| gpu.set_ui_logo(&art.logo))
+                            .map(|_| [art.logo.width, art.logo.height])
                             .map_err(|e| e.to_string())
                     }) {
-                        Ok(()) => {
+                        Ok(logo_size) => {
+                            ui.about_logo_size = logo_size;
                             ui.about_image = true;
                             ui.message.clear();
                         }
