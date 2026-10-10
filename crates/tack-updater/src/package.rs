@@ -5,8 +5,18 @@ use std::{
 };
 use tack_update::{Error, MAX_UNPACKED, Manifest, Response};
 pub const MAX_FILES: usize = 256;
+// Filesystem components use native separators; ZIP entry names are checked separately.
+fn portable_name(path: &Path) -> Option<String> {
+    path.components()
+        .map(|component| match component {
+            Component::Normal(part) => part.to_str(),
+            _ => None,
+        })
+        .collect::<Option<Vec<_>>>()
+        .map(|parts| parts.join("/"))
+}
 pub fn allowed(path: &Path) -> bool {
-    let Some(s) = path.to_str() else {
+    let Some(s) = portable_name(path) else {
         return false;
     };
     if s.split('/').any(|part| {
@@ -25,7 +35,7 @@ pub fn allowed(path: &Path) -> bool {
         return false;
     }
     matches!(
-        s,
+        s.as_str(),
         "tack"
             | "tack.exe"
             | "tack-server"
@@ -96,6 +106,9 @@ pub fn extract(archive: &Path, destination: &Path) -> Result<Vec<PathBuf>, Error
         let mut entry = zip.by_index(i)?;
         if entry.is_dir() {
             continue;
+        }
+        if entry.name()?.contains('\\') {
+            return Err("ZIP entry names must use portable forward slashes".into());
         }
         let path = entry.enclosed_name().ok_or("Unsafe archive path")?;
         if !entry.is_file()
@@ -239,7 +252,7 @@ fn owned_files(directory: &Path, expected: &Manifest) -> Result<Vec<PathBuf>, Er
             }
             if e.file_type()?.is_dir() {
                 if matches!(
-                    relative.to_str(),
+                    portable_name(relative).as_deref(),
                     Some(
                         "package"
                             | "verified"
@@ -334,6 +347,10 @@ mod tests {
         let files = extract(&zip, &t.0.join("good"))?;
         assert_eq!(files.len(), 2);
         assert_eq!(std::fs::read(t.0.join("good/tack"))?, b"fixture");
+        assert!(allowed(&Path::new("gfx").join("icons").join("link.png")));
+        assert!(allowed(
+            &Path::new("gfx").join("cursors").join("cursor_pointer.png")
+        ));
         Ok(())
     }
     #[test]
@@ -347,6 +364,8 @@ mod tests {
             "root/LICENSES/CON.txt",
             "root/LICENSES/notice. ",
             "root/LICENSES/LPT1.txt",
+            "root/gfx\\icons/pointer.png",
+            "root/gfx/cursors\\cursor_pointer.png",
         ]
         .iter()
         .enumerate()
@@ -380,6 +399,9 @@ mod tests {
         std::fs::write(d.join("package.zip"), b"partial")?;
         std::fs::create_dir(d.join("verified"))?;
         std::fs::write(d.join("verified/tack"), b"half extraction")?;
+        let nested = d.join("verified").join("gfx").join("icons");
+        std::fs::create_dir_all(&nested)?;
+        std::fs::write(nested.join("pointer.png"), b"recognized partial icon")?;
         clear_verified(&d, &manifest)?;
         assert!(!d.join("verified").exists());
         assert_eq!(std::fs::read(d.join("package.zip"))?, b"partial");
