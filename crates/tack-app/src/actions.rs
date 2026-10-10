@@ -87,6 +87,7 @@ pub enum Action {
     CopySourcePath,
     ApplicationMenu,
     About,
+    CheckForUpdates,
     NewBoard,
     CloseBoard,
     OpenBoard,
@@ -119,7 +120,7 @@ pub enum Action {
 }
 impl Action {
     /// Enumerable action catalog, including currently unassigned actions.
-    pub const ALL: [Self; 122] = [
+    pub const ALL: [Self; 123] = [
         Self::SelectTool(Tool::Pointer),
         Self::SelectTool(Tool::Pan),
         Self::SelectTool(Tool::RotateView),
@@ -204,6 +205,7 @@ impl Action {
         Self::CopySourcePath,
         Self::ApplicationMenu,
         Self::About,
+        Self::CheckForUpdates,
         Self::NewBoard,
         Self::CloseBoard,
         Self::OpenBoard,
@@ -263,6 +265,7 @@ impl Action {
             self,
             Self::ApplicationMenu
                 | Self::About
+                | Self::CheckForUpdates
                 | Self::NewBoard
                 | Self::CloseBoard
                 | Self::OpenBoard
@@ -292,6 +295,17 @@ impl Action {
                 | Self::EditToolbar
                 | Self::ToggleStatusBar
         )
+    }
+    pub fn available(self) -> bool {
+        (!matches!(
+            self,
+            Self::ShareBoard
+                | Self::StopSharing
+                | Self::JoinSharedBoard
+                | Self::CopySharedBoardAddress
+                | Self::SaveToLocal
+        ) || cfg!(feature = "network"))
+            && (self != Self::CheckForUpdates || cfg!(feature = "updater"))
     }
     pub fn category(self) -> &'static str {
         match self {
@@ -423,6 +437,7 @@ impl Action {
             Self::CopySourcePath => "Copy linked source path",
             Self::ApplicationMenu => "Local menu",
             Self::About => "About Tack",
+            Self::CheckForUpdates => "Check for Updates",
             Self::CloseBoard => "Close Board",
             Self::NewBoard => "New board",
             Self::OpenBoard => "Open board",

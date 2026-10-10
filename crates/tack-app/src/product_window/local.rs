@@ -4,6 +4,7 @@ mod daily;
 mod fresh;
 mod installer;
 mod updates;
+mod updates_ui;
 mod workflows;
 use tack_app::{
     actions::Action,
@@ -27,6 +28,8 @@ pub(super) struct LoadedBoard {
 pub(super) struct LocalState {
     pub about_ticket: u64,
     pub feedback: tack_app::feedback::Feedback,
+    pub update_offer: Option<tack_update::Offer>,
+    pub update_stage: Option<PathBuf>,
     pub lease: Option<Arc<tack_storage::BoardLease>>,
     pub worker: LocalWorker,
     pub queued: Option<Operation>,
@@ -87,6 +90,8 @@ impl LocalState {
             Box::new(ui)
         });
         Ok(Self {
+            update_offer: None,
+            update_stage: None,
             about_ticket: 0,
             feedback: Default::default(),
             lease: None,

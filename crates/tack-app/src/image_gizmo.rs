@@ -1,6 +1,6 @@
 //! Logical UI preferences, shared drawing/hit geometry; never document state.
 use crate::{image_geometry as geometry, image_interaction::ImageInteraction};
-use tack_core::{Camera, Document, Transform};
+use tack_core::{Camera, Document, DocumentQuery, Transform};
 use tack_render::{MAX_OVERLAY_QUADS, OverlayQuad, SelectionRect};
 #[derive(Clone, Copy)]
 pub struct GizmoStyle {
@@ -157,6 +157,23 @@ impl ImageGizmo {
             self.selection = Vec::new();
             return;
         };
+        let viewport = camera.viewport();
+        for id in images.selection.ids() {
+            if self.selection.len() >= tack_render::MAX_SELECTION_RECTS {
+                break;
+            }
+            if doc.object_render_data(id).is_some()
+                && let Some(transform) = images.preview_transform(doc, id)
+                && transform.bounds().intersects(viewport)
+            {
+                self.selection.push(SelectionRect {
+                    transform,
+                    color,
+                    width: 1.,
+                });
+            }
+        }
+        // One coherent handle set, plus a light outline for each visible selected image.
         // Transform chrome is handles plus a rotation stem only. Foreign
         // manipulation indication is supplied separately by shared leases.
         let crop = images.crop_mode && images.selection.len() == 1;

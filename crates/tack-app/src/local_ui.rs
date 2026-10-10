@@ -35,6 +35,10 @@ pub enum Panel {
     Info,
     Join,
     Connecting,
+    UpdateApplying,
+    UpdateChecking,
+    UpdateOffer,
+    UpdateReady,
     About,
     Menu,
     Preferences,
@@ -47,6 +51,7 @@ pub enum Panel {
     ViewCapture,
 }
 pub enum UiResult {
+    UpdateAdvance,
     AssignCameraSlot(u8),
     JumpBookmark(tack_core::BookmarkId),
     SaveBookmark(Option<tack_core::BookmarkId>, String),
@@ -202,7 +207,7 @@ impl LocalUi {
     pub fn blocks_menu_access(&self) -> bool {
         matches!(
             self.panel,
-            Panel::Close | Panel::Recovery | Panel::Connecting
+            Panel::Close | Panel::Recovery | Panel::Connecting | Panel::UpdateApplying
         ) || self.confirm_reset.is_some()
     }
     fn enter(&mut self, panel: Panel, selected: usize) {
@@ -269,9 +274,13 @@ impl LocalUi {
             | Panel::BookmarkName
             | Panel::Info
             | Panel::Join
-            | Panel::Connecting => self.daily_rows().len(),
+            | Panel::Connecting
+            | Panel::UpdateApplying
+            | Panel::UpdateChecking
+            | Panel::UpdateOffer
+            | Panel::UpdateReady => self.daily_rows().len(),
             Panel::Menu | Panel::Keymap => self.actions(keymap).len(),
-            Panel::Preferences => 9,
+            Panel::Preferences => 10,
             Panel::Theme => 3,
             Panel::Recent => profile.recent.len(),
             Panel::Close => 3,
@@ -536,7 +545,9 @@ impl LocalUi {
             | Panel::Bookmarks
             | Panel::BookmarkName
             | Panel::Join => self.daily_activate(),
-            Panel::Info | Panel::Connecting => Some(UiResult::Dismiss),
+            Panel::UpdateApplying => None,
+            Panel::UpdateOffer | Panel::UpdateReady => self.daily_activate(),
+            Panel::UpdateChecking | Panel::Info | Panel::Connecting => Some(UiResult::Dismiss),
             Panel::ViewCapture => None,
             Panel::Menu => self
                 .actions(keymap)
@@ -591,7 +602,13 @@ impl LocalUi {
                     }
                     4 | 5 => return self.adjust(profile, true),
                     6 => profile.frame_title_scale = profile.frame_title_scale % 3 + 1,
-                    7 => return Some(UiResult::Action(Action::ExportPreferences)),
+                    7 => {
+                        profile.update_channel = match profile.update_channel {
+                            tack_update::Channel::Dev => tack_update::Channel::Stable,
+                            tack_update::Channel::Stable => tack_update::Channel::Dev,
+                        };
+                    }
+                    8 => return Some(UiResult::Action(Action::ExportPreferences)),
                     _ => return self.back(),
                 }
                 Some(UiResult::PreferencesChanged)
@@ -622,7 +639,7 @@ pub fn filtered_actions(search: &str, keymap: &Keymap) -> Vec<Action> {
                 .map(|b| b.action)
                 .filter(|a| !Action::ALL.contains(a)),
         )
-        .filter(|a| !matches!(a, Action::TemporaryTool(_)))
+        .filter(|a| a.available() && !matches!(a, Action::TemporaryTool(_)))
         .filter(|a| {
             matches(a.label())
                 || matches(&a.id())

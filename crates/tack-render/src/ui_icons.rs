@@ -10,6 +10,7 @@ pub struct UiIcon {
 }
 pub(super) struct UiIcons {
     texture: Texture,
+    rows: usize,
     buffer: wgpu::Buffer,
     icons: [UiIcon; 32],
     count: usize,
@@ -27,9 +28,14 @@ impl UiIcons {
             let [x, y, w, h] = icon.rect;
             let i = icon.index;
             let u = (i % 8) as f32 / 8.;
-            let v = (i / 8) as f32 / 2.;
+            let v = (i / 8) as f32 / self.rows as f32;
             let points = [[x, y], [x, y + h], [x + w, y], [x + w, y + h]];
-            let uv = [[u, v], [u, v + 0.5], [u + 0.125, v], [u + 0.125, v + 0.5]];
+            let uv = [
+                [u, v],
+                [u, v + 1. / self.rows as f32],
+                [u + 0.125, v],
+                [u + 0.125, v + 1. / self.rows as f32],
+            ];
             for (k, p) in [0, 1, 2, 2, 1, 3].into_iter().enumerate() {
                 vertices[j * 6 + k] = Vertex {
                     position: camera.world_to_clip(camera.screen_to_world(points[p])),
@@ -58,10 +64,14 @@ impl UiIcons {
 }
 impl Gpu {
     pub fn set_ui_icon_atlas(&mut self, image: &Decoded) -> Result<(), AssetError> {
-        if image.width != 128 || image.height != 32 || image.rgba.len() != 16384 {
+        if image.width != 128
+            || !matches!(image.height, 32 | 64)
+            || image.rgba.len() != (128 * image.height * 4) as usize
+        {
             return Err("UI icon atlas dimensions".into());
         }
         self.ui_icons = Some(Box::new(UiIcons {
+            rows: image.height as usize / 16,
             texture: Self::texture(
                 &self.device,
                 &self.queue,
@@ -84,9 +94,10 @@ impl Gpu {
     }
     pub fn set_ui_icons(&mut self, icons: &[UiIcon]) -> Result<(), AssetError> {
         if icons.len() > 32
-            || icons
-                .iter()
-                .any(|i| i.index >= 16 || i.rect.iter().any(|v| !v.is_finite()))
+            || icons.iter().any(|i| {
+                i.index >= self.ui_icons.as_ref().map_or(16, |a| a.rows * 8)
+                    || i.rect.iter().any(|v| !v.is_finite())
+            })
         {
             return Err("UI icon draw bound".into());
         }
@@ -106,7 +117,8 @@ impl Gpu {
     }
     pub fn ui_icon_bytes(&self) -> usize {
         if self.ui_icons.is_some() {
-            16384 + 192 * std::mem::size_of::<Vertex>()
+            self.ui_icons.as_ref().map_or(0, |a| 128 * a.rows * 16 * 4)
+                + 192 * std::mem::size_of::<Vertex>()
         } else {
             0
         }

@@ -5,7 +5,14 @@ edition.workspace = true
 rust-version.workspace = true
 publish.workspace = true
 
+[features]
+default = ["network", "updater"]
+# Network admission gate; protocol/model extraction is documented separately.
+network = []
+updater = []
+
 [dependencies]
+tack-update.workspace = true
 tack-shared.workspace = true
 tack-storage.workspace = true
 tack-core.workspace = true

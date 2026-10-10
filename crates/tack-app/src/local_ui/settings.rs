@@ -117,7 +117,7 @@ impl LocalUi {
         let screen = camera.screen_size();
         let width = crate::modal_shell::ModalShell::work(camera, [600., 440.]).rect[2];
         let maximum = match self.panel {
-            Panel::Preferences => 310.,
+            Panel::Preferences => 332.,
             Panel::Theme => 134.,
             _ => 440.,
         };
@@ -455,6 +455,10 @@ impl LocalUi {
                 (
                     "Frame title size".into(),
                     format!("{}x", profile.frame_title_scale),
+                ),
+                (
+                    "Update channel".into(),
+                    format!("{} >", profile.update_channel.label()),
                 ),
                 ("Export Preferences...".into(), String::new()),
                 ("Close".into(), String::new()),

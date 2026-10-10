@@ -260,7 +260,8 @@ fn run_mode(
         visibility: Default::default(),
         context: None,
         pointer: [0.; 2],
-        cursor_icon: winit::window::CursorIcon::Default,
+        cursor_icon: Default::default(),
+        cursors: Default::default(),
         native_modifiers: Default::default(),
     };
     events.run_app(&mut app)?;

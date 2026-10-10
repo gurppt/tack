@@ -30,6 +30,7 @@ impl LocalUi {
     pub(super) fn daily_activate(&mut self) -> Option<UiResult> {
         let data = self.daily.as_ref()?;
         match self.panel {
+            Panel::UpdateOffer | Panel::UpdateReady => Some(UiResult::UpdateAdvance),
             Panel::Sharing => data
                 .choices
                 .get(self.selected)
@@ -151,6 +152,10 @@ impl LocalUi {
             return Vec::new();
         };
         match self.panel {
+            Panel::UpdateApplying
+            | Panel::UpdateChecking
+            | Panel::UpdateOffer
+            | Panel::UpdateReady => data.rows.clone(),
             Panel::Sharing => data.rows.clone(),
             Panel::Bookmarks => data.bookmarks.iter().map(|b| b.name().to_owned()).collect(),
             Panel::BookmarkName | Panel::Join | Panel::Server => vec![

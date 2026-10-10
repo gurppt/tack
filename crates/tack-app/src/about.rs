@@ -89,7 +89,11 @@ impl Layout {
         let scale = camera.ui_scale();
         let shell = crate::modal_shell::ModalShell::short(camera, [600., 288.], true);
         let [x, y, width, height] = shell.rect;
-        let image_height = (height - 2.).max(1.);
+        let image_height = (height - 2.).max(1.).min(if width < 500. {
+            width * 0.48 * f64::from(IMAGE_SIZE[1]) / f64::from(IMAGE_SIZE[0])
+        } else {
+            height
+        });
         let image_width =
             (image_height * f64::from(IMAGE_SIZE[0]) / f64::from(IMAGE_SIZE[1])).round();
 
@@ -159,6 +163,14 @@ pub fn text_rows(cells: usize, palette: Palette) -> Vec<(String, [f32; 4])> {
         rows.extend(wrap(&text, cells).into_iter().map(|s| (s, color)));
     };
 
+    add(
+        format!(
+            "{} / {}",
+            &env!("TACK_GIT_SHA")[..env!("TACK_GIT_SHA").len().min(8)],
+            env!("TACK_BUILD_CHANNEL")
+        ),
+        palette.text_secondary,
+    );
     if !METADATA.tagline.is_empty() {
         add(METADATA.tagline.into(), palette.text_secondary);
     }

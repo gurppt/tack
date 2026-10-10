@@ -56,6 +56,9 @@ impl App {
         Ok(())
     }
     pub(in super::super) fn local_action(&mut self, action: Action) -> Result<(), AssetError> {
+        if !action.available() {
+            return Err("Capability omitted from this build".into());
+        }
         if (self.shared.is_some() || self.offline.is_some())
             && matches!(action, Action::Save | Action::SaveAs)
         {
@@ -137,6 +140,7 @@ impl App {
                     ticket: self.local.about_ticket,
                 })?;
             }
+            CheckForUpdates => self.check_for_updates()?,
             Preferences => self.panel(Panel::Preferences),
             KeymapEditor => self.panel(Panel::Keymap),
             RecentBoards => self.panel(Panel::Recent),
@@ -247,6 +251,7 @@ impl App {
         self.dirty = true;
         if let Some(result) = result {
             match result {
+                UiResult::UpdateAdvance => self.advance_update()?,
                 UiResult::AssignCameraSlot(slot) => {
                     self.camera_slot(slot)?;
                     self.local.profile_pending = true;
@@ -283,12 +288,12 @@ impl App {
                     if self.shared.as_ref().is_some_and(|s| s.transitioning) {
                         self.abort_shared_transition();
                     }
-                    if self
-                        .local
-                        .ui
-                        .as_ref()
-                        .is_some_and(|ui| matches!(ui.panel, Panel::Connecting | Panel::Join))
-                        && !self.local.reload_offline
+                    if self.local.ui.as_ref().is_some_and(|ui| {
+                        matches!(
+                            ui.panel,
+                            Panel::Connecting | Panel::Join | Panel::UpdateChecking
+                        )
+                    }) && !self.local.reload_offline
                         && !self.close_after_host
                     {
                         self.local.worker.cancel();

@@ -44,6 +44,8 @@ jobs:
       - run: cargo check --workspace --all-targets --all-features --locked
       - run: cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
       - run: cargo test --workspace --all-features --locked
+      - run: cargo check -p tack-app --no-default-features --all-targets --locked
+      - run: cargo test -p tack-core -p tack-storage --no-default-features --locked
       - run: cargo doc --workspace --no-deps --locked
       - name: Corpus correctness tests
         if: runner.os == 'Linux'

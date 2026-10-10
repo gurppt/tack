@@ -97,6 +97,16 @@ impl Options {
 fn main() -> Result<(), AssetError> {
     if std::env::args_os()
         .nth(1)
+        .is_some_and(|a| a == "--build-info")
+    {
+        println!(
+            "{}",
+            serde_json::json!({"version":env!("CARGO_PKG_VERSION"),"git_sha":env!("TACK_GIT_SHA"),"channel":env!("TACK_BUILD_CHANNEL"),"protocol_major":tack_shared::PROTOCOL_MAJOR,"network":cfg!(feature="network"),"updater":cfg!(feature="updater")})
+        );
+        return Ok(());
+    }
+    if std::env::args_os()
+        .nth(1)
         .is_some_and(|a| a == "--font-license")
     {
         print!(
@@ -131,6 +141,9 @@ fn main() -> Result<(), AssetError> {
         && let Some(command) = command.to_str()
         && ["publish", "join"].contains(&command)
     {
+        if !cfg!(feature = "network") {
+            return Err("Network capability omitted from this build".into());
+        }
         if command == "join" {
             return product_window::run_shared(product_args.collect(), started);
         }

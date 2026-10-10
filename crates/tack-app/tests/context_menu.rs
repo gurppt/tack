@@ -91,7 +91,7 @@ fn context_resolution_and_real_available_commands_are_specific() -> R {
         );
         assert_eq!(rows[app_rows.len()].command, MenuCommand::Heading);
         if kind == ContextKind::Canvas {
-            assert_eq!(rows.len(), 14);
+            assert_eq!(rows.len(), 15);
             assert!(contains(Action::ImportImages));
             assert!(contains(Action::Preferences));
             assert!(contains(Action::KeymapEditor));
@@ -103,7 +103,10 @@ fn context_resolution_and_real_available_commands_are_specific() -> R {
             assert!(contains(Action::RelinkSource));
         } else {
             assert!(!contains(Action::CropMode));
-            assert!(!contains(Action::FlipHorizontal));
+            assert_eq!(
+                contains(Action::FlipHorizontal),
+                matches!(kind, ContextKind::Multiple | ContextKind::Annotation)
+            );
         }
         if kind == ContextKind::Note {
             assert!(contains(Action::RenameFrame));

@@ -28,3 +28,5 @@ pub type AssetError = Box<dyn std::error::Error + Send + Sync>;
 
 pub const THUMBNAIL_DECODER_ID: &str = "turbojpeg 1.5.1 / libjpeg-turbo 3.2.0 DCT";
 pub mod huge_image;
+
+pub mod timed;

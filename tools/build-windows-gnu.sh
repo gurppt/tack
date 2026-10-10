@@ -16,5 +16,5 @@ export TACK_JPEG_NATIVE_ROOT="$native"
 export TURBOJPEG_LIB_DIR="$native/lib"
 export TURBOJPEG_INCLUDE_DIR="$native/include"
 export CARGO_TARGET_X86_64_PC_WINDOWS_GNU_LINKER=x86_64-w64-mingw32-gcc
-cargo build --target x86_64-pc-windows-gnu --release --locked -p tack-app -p tack-server
+cargo build --target x86_64-pc-windows-gnu --release --locked -p tack-app -p tack-server -p tack-updater
 python3 tools/package_windows.py

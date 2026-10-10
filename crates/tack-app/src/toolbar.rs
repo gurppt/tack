@@ -196,12 +196,20 @@ impl Toolbar {
         // A 16px grip is a real layout cell, not outer padding. Every action
         // retains its complete 16px hit area. Separators occupy only one pixel.
         let limit = if vertical { h } else { w }.max(16.);
-        let count = config.actions.len().min(MAX_ENTRIES);
+        let enabled: Vec<_> = config
+            .actions
+            .iter()
+            .filter(|id| {
+                id.as_str() == SEPARATOR || Action::from_id(id).is_some_and(Action::available)
+            })
+            .take(MAX_ENTRIES)
+            .collect();
+        let count = enabled.len();
         let mut main = 16.;
         let mut cross = 0.;
         let mut extent: f64 = 16.;
-        for (i, id) in config.actions.iter().take(count).enumerate() {
-            let length = if id == SEPARATOR { 1. } else { 16. };
+        for (i, id) in enabled.iter().enumerate() {
+            let length = if id.as_str() == SEPARATOR { 1. } else { 16. };
             if main + length > limit {
                 main = 0.;
                 cross += 16.;
@@ -277,6 +285,9 @@ impl Toolbar {
             .and_then(|b| b.action)
     }
     pub fn contains(&self, p: [f64; 2]) -> bool {
+        self.count > 0 && contains(self.bounds, p)
+    }
+    pub fn contains_point(&self, p: [f64; 2]) -> bool {
         self.count > 0 && contains(self.bounds, p)
     }
     pub fn grip_hit(&self, p: [f64; 2]) -> bool {

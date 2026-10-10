@@ -5,7 +5,7 @@ use std::{
     path::{Path, PathBuf},
 };
 use tack_assets::{AssetError, Decoded};
-pub const NAMES: [&str; 16] = [
+pub const NAMES: [&str; 18] = [
     "pointer",
     "pan",
     "text",
@@ -22,6 +22,8 @@ pub const NAMES: [&str; 16] = [
     "save",
     "grid",
     "placeholder",
+    "annotation_lock_on",
+    "annotation_lock_off",
 ];
 pub fn index(a: Action) -> usize {
     match a {
@@ -40,13 +42,14 @@ pub fn index(a: Action) -> usize {
         Action::JoinSharedBoard => 12,
         Action::Save => 13,
         Action::ToggleGrid => 14,
+        Action::ToggleAnnotationSelectionLock => 17,
         _ => 15,
     }
 }
 /// Only authored symbols; the fallback placeholder is not an action preview.
 pub fn actual_index(a: Action) -> Option<usize> {
     let i = index(a);
-    (i < 15).then_some(i)
+    (i != 15).then_some(i)
 }
 pub fn root() -> PathBuf {
     if let Some(p) = std::env::var_os("TACK_ICON_DIR") {
@@ -67,7 +70,7 @@ pub fn root() -> PathBuf {
     PathBuf::from("gfx/icons")
 }
 pub fn load(path: &Path) -> Decoded {
-    let mut rgba = vec![0; 128 * 32 * 4];
+    let mut rgba = vec![0; 128 * 64 * 4];
     for (i, name) in NAMES.iter().enumerate() {
         let pixels = match read(&path.join(format!("{name}.png"))) {
             Ok(p) => p,
@@ -83,7 +86,7 @@ pub fn load(path: &Path) -> Decoded {
     }
     Decoded {
         width: 128,
-        height: 32,
+        height: 64,
         rgba,
     }
 }
@@ -116,4 +119,13 @@ fn placeholder() -> Vec<u8> {
         }
     }
     p
+}
+
+/// Two artworks, one semantic action. All existing cell state chrome is retained.
+pub fn state_index(action: Action, annotation_locked: bool) -> usize {
+    if action == Action::ToggleAnnotationSelectionLock {
+        if annotation_locked { 16 } else { 17 }
+    } else {
+        index(action)
+    }
 }

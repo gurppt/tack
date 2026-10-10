@@ -221,6 +221,10 @@ impl DocumentObject {
             kind: ObjectKind::Frame(name),
         })
     }
+    pub fn can_flip(&self) -> bool {
+        matches!(self.kind(), ObjectKind::Image(_))
+            || matches!(self.kind(), ObjectKind::Annotation(a) if !matches!(a.kind(),crate::AnnotationKind::Text(_)))
+    }
     pub fn frame_color(&self) -> crate::Color {
         self.frame_color.unwrap_or(DEFAULT_FRAME_COLOR)
     }

@@ -21,13 +21,14 @@ def main():
     symbols=subprocess.check_output(['x86_64-w64-mingw32-nm',str(native/'lib/libjpeg.a')],text=True)
     if not all(' T jsimd_' in symbols and suffix in symbols for suffix in ['_sse2','_avx2']):
         raise RuntimeError('Windows SIMD objects missing')
-    for source,name in [(built/'tack-app.exe','tack.exe'),(built/'tack-server.exe','tack-server.exe'),(native/'bin/djpeg.exe','tack-jpeg-decoder.exe')]:
+    for source,name in [(built/'tack-app.exe','tack.exe'),(built/'tack-server.exe','tack-server.exe'),(built/'tack-updater.exe','tack-updater.exe'),(native/'bin/djpeg.exe','tack-jpeg-decoder.exe')]:
         shutil.copy2(source,package/name)
         subprocess.run(['x86_64-w64-mingw32-strip','--strip-all',str(package/name)],check=True)
     for p in built.glob('tack-icon*'):shutil.copy2(p,package/p.name)
     shutil.copy2(built/'tack-about.png',package/'tack-about.png')
     shutil.copy2(built/'tack-about-logo.png',package/'tack-about-logo.png')
     install_missing(root/'gfx/icons', package/'gfx/icons')
+    install_missing(root/'gfx/cursors', package/'gfx/cursors')
     imports={}
     for p in package.glob('*.exe'):
         data=subprocess.check_output(['x86_64-w64-mingw32-objdump','-p',str(p)],text=True)
@@ -38,6 +39,7 @@ def main():
     for p in (native/'notices').iterdir():
         if p.is_file():shutil.copy2(p,notices/p.name)
     shutil.copy2(native/'native-build.json',notices/'native-build.json')
+    shutil.copy2(root/'assets/licenses/webpki-roots-CDLA-Permissive-2.0.txt',notices/'webpki-roots-CDLA-Permissive-2.0.txt')
     (package/'README.txt').write_text('Tack — Windows x64\nRun tack.exe. Keep this folder together (server, SIMD JPEG decoder, icons and About).\nTrusted LAN sharing only. Application license/contact to be defined.\nCross-built on Linux; physical Windows desktop acceptance pending.\n',encoding='utf8')
     (package/'LISEZ-MOI.txt').write_text('Tack — Windows x64\nLancer tack.exe et conserver le dossier complet.\nDécodeur JPEG libjpeg-turbo 3.2.0 avec SIMD SSE2/AVX2 intégré.\nLicence et contact Tack à définir. Test desktop Windows physique en attente.\n',encoding='utf8')
     (package/'BUILD.json').write_text(json.dumps(dict(

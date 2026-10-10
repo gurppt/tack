@@ -81,9 +81,21 @@ fn note(e: &DocumentEditor, id: ObjectId) -> R<(&TextObject, AnnotationStyle)> {
 }
 fn assert_visible(g: &mut ImageGizmo, images: &ImageInteraction, e: &DocumentEditor, c: &Camera) {
     g.build(images, e.document(), c, None);
-    assert!(
-        g.selection.is_empty(),
-        "2A6 selection chrome has no member outlines"
+    let visible = images
+        .selection
+        .ids()
+        .filter(|id| {
+            e.document().object_render_data(*id).is_some()
+                && images
+                    .preview_transform(e.document(), *id)
+                    .is_some_and(|t| t.bounds().intersects(c.viewport()))
+        })
+        .count()
+        .min(tack_render::MAX_SELECTION_RECTS);
+    assert_eq!(
+        g.selection.len(),
+        visible,
+        "every visible selected image gets one light outline"
     );
     assert!(
         g.quads.len() < 32,
@@ -105,10 +117,10 @@ fn large_marquee_keeps_only_bounded_handles_and_clears_on_deselect() -> R {
     assert_eq!(images.selection.len(), 3000);
     let mut g = ImageGizmo::default();
     assert_visible(&mut g, &images, &e, &c);
-    assert!(g.selection.is_empty());
+    assert_eq!(g.selection.len(), 3000);
     c.set_view([100., 100.], 2.)?;
     assert_visible(&mut g, &images, &e, &c);
-    assert!(g.selection.is_empty());
+    assert!(!g.selection.is_empty() && g.selection.len() < 3000);
     assert_eq!(e.document(), &before);
     images.selection.clear();
     g.build(&images, e.document(), &c, None);

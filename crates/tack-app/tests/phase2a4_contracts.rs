@@ -214,7 +214,7 @@ fn startup_icons_are_bounded_repairable_and_edited_pixels_replace_previous_load(
     let first = toolbar_icons::load(&temp.0);
     assert_eq!(
         (first.width, first.height, first.rgba.len()),
-        (128, 32, 16384)
+        (128, 64, 32768)
     );
     fs::write(&arrow, png(16, 16, [90, 80, 70, 255]))?;
     let second = toolbar_icons::load(&temp.0);
@@ -232,11 +232,11 @@ fn startup_icons_are_bounded_repairable_and_edited_pixels_replace_previous_load(
         assert!(toolbar_icons::read(&arrow).is_err());
         let a = toolbar_icons::load(&temp.0);
         let b = toolbar_icons::load(&temp.0);
-        assert_eq!(a.rgba.len(), 16384);
+        assert_eq!(a.rgba.len(), 32768);
         assert_eq!(a.rgba, b.rgba);
     }
     fs::remove_file(&arrow)?;
     assert!(toolbar_icons::read(&arrow).is_err());
-    assert_eq!(toolbar_icons::load(&temp.0).rgba.len(), 16384);
+    assert_eq!(toolbar_icons::load(&temp.0).rgba.len(), 32768);
     Ok(())
 }

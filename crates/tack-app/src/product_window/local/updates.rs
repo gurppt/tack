@@ -3,6 +3,7 @@ use super::*;
 impl App {
     pub(in super::super) fn local_update(&mut self, update: LocalUpdate) -> Result<(), AssetError> {
         match update {
+            LocalUpdate::Update(result) => self.update_response(result)?,
             LocalUpdate::EmptyBoard(result) => {
                 let opened = result.map_err(AssetError::from)?;
                 self.install_loaded(

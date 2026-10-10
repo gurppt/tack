@@ -28,6 +28,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     ] {
         fs::create_dir_all(&directory)?;
         let target = directory.join(format!("tack-jpeg-decoder{suffix}"));
+        println!("cargo:rerun-if-changed={}", target.display());
         if fs::read(&target).ok().as_deref() != Some(bytes.as_slice()) {
             fs::copy(&native, target)?;
         }

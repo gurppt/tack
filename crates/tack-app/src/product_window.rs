@@ -102,7 +102,8 @@ struct App {
     visibility: tack_app::visibility::Visibility,
     context: Option<Box<tack_app::context_menu::ContextMenu>>,
     pointer: [f64; 2],
-    cursor_icon: winit::window::CursorIcon,
+    cursor_icon: tack_app::cursors::Kind,
+    cursors: tack_app::cursors::Cache,
     native_modifiers: tack_app::input::Modifiers,
     lod_trace: Option<tack_app::lod_diagnostics::LodDiagnostics>,
 }
@@ -123,6 +124,8 @@ impl App {
                     )),
             )?,
         );
+        self.cursors = tack_app::cursors::Cache::load(event_loop);
+        self.cursors.set(&window, tack_app::cursors::Kind::Pointer);
         let gpu_started = Instant::now();
         let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::from_env_or_default());
         let surface = instance.create_surface(Arc::clone(&window))?;
@@ -529,11 +532,12 @@ impl App {
             gpu,
             (
                 self.local.ui.is_some(),
-                self.shared.as_ref().map(|s| s.state).or_else(|| {
+                self.shared.as_ref().map(|s| s.ui_connection()).or_else(|| {
                     self.offline
                         .as_ref()
-                        .map(|_| tack_shared::client::ConnectionState::Disconnected)
+                        .map(|_| tack_app::capabilities::UiConnection::Offline)
                 }),
+                self.input.images.selection.annotations_locked,
             ),
         )?;
         // Reserve the bounded popup budget only while a popup is open.

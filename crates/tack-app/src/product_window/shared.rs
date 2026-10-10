@@ -7,6 +7,7 @@ use tack_core::{BackendRequest, SourceId};
 use tack_shared::client::{ClientConfig, ClientEvent, ConnectionState, SharedClient};
 use tack_shared::{CommandDto, SourceBinding, WireId};
 
+use tack_app::capabilities::UiConnection;
 pub(super) struct SharedState {
     pub leases: LeaseState,
     pub duplicate_selection: Vec<tack_core::ObjectId>,
@@ -27,6 +28,13 @@ pub(super) struct SharedState {
     pub probes: Vec<serde_json::Value>,
 }
 impl SharedState {
+    pub fn ui_connection(&self) -> UiConnection {
+        match self.state {
+            ConnectionState::Connected => UiConnection::Online,
+            ConnectionState::Connecting | ConnectionState::Reconnecting => UiConnection::Connecting,
+            _ => UiConnection::Offline,
+        }
+    }
     pub fn has_in_flight(&self) -> bool {
         self.in_flight.is_some()
     }
@@ -36,6 +44,9 @@ impl SharedState {
         cache_dir: PathBuf,
         proxy: winit::event_loop::EventLoopProxy<Event>,
     ) -> Result<Self, AssetError> {
+        if !cfg!(feature = "network") {
+            return Err("Network capability omitted from this build".into());
+        }
         let client_id = WireId::new(tack_storage::new_document_id()?.value())?;
         let client = SharedClient::start(
             ClientConfig {

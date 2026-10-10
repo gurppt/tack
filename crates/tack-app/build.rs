@@ -1,3 +1,4 @@
+include!("../../tools/build_identity.rs");
 use std::fs;
 use std::{env, error::Error, path::PathBuf, process::Command};
 
@@ -16,7 +17,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         println!("cargo:rerun-if-changed={}", root.join(file).display());
     }
     println!("cargo:rerun-if-env-changed=PYTHON");
-    let output = PathBuf::from(env::var("OUT_DIR")?);
+    emit_build_identity(&root);
+    let output = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(env::var("OUT_DIR")?);
     let python = env::var_os("PYTHON")
         .unwrap_or_else(|| if cfg!(windows) { "python" } else { "python3" }.into());
     let status = Command::new(python)
@@ -71,6 +73,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     if env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("linux") {
         // Optional local libXi fixes startup reentrancy on older X11 distributions.
         // No download or native compilation is performed by Cargo itself.
+        println!("cargo:rustc-link-arg-bin=tack-app=-Wl,-rpath,$ORIGIN/lib");
         let manifest = PathBuf::from(env::var("CARGO_MANIFEST_DIR")?);
         let library = manifest.join("../../target/native/libXi-1.8.3/lib");
         println!("cargo:rerun-if-changed={}/libXi.so.6", library.display());

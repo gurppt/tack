@@ -1,5 +1,15 @@
 use tack_server::{ServerConfig, serve};
 fn main() {
+    if std::env::args_os()
+        .nth(1)
+        .is_some_and(|a| a == "--build-info")
+    {
+        println!(
+            "{}",
+            serde_json::json!({"version":env!("CARGO_PKG_VERSION"),"git_sha":env!("TACK_GIT_SHA"),"channel":env!("TACK_BUILD_CHANNEL"),"protocol_major":tack_shared::PROTOCOL_MAJOR})
+        );
+        return;
+    }
     if let Err(error) = run() {
         eprintln!("tack-server: {error}");
         std::process::exit(1);

@@ -6,6 +6,9 @@ impl LocalUi {
         keymap: &mut Keymap,
         profile: &mut Preferences,
     ) -> Option<UiResult> {
+        if self.panel == Panel::UpdateApplying {
+            return None;
+        }
         if matches!(
             event,
             WindowEvent::MouseInput {
@@ -222,7 +225,13 @@ impl LocalUi {
                     }
                     if !(matches!(
                         self.panel,
-                        Panel::Toolbar | Panel::Keymap | Panel::Info | Panel::Connecting
+                        Panel::Toolbar
+                            | Panel::Keymap
+                            | Panel::Info
+                            | Panel::Connecting
+                            | Panel::UpdateChecking
+                            | Panel::UpdateOffer
+                            | Panel::UpdateReady
                     ) || self.panel == Panel::Preferences && matches!(selected, 4 | 5))
                     {
                         return self.activate(keymap, profile);

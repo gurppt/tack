@@ -303,3 +303,48 @@ fn bookmark_focus_loss_dismisses_and_capacity_race_preserves_staged_binding() ->
     assert!(ui.message.contains("64"));
     Ok(())
 }
+#[test]
+fn update_metadata_rows_cannot_download_or_restart() -> R {
+    let mut p = Preferences::defaults()?;
+    let mut map = p.keymap()?;
+    let c = Camera::new([800, 600]);
+    for panel in [Panel::UpdateOffer, Panel::UpdateReady] {
+        let mut ui = LocalUi::daily(
+            panel,
+            DailyPanel {
+                rows: vec!["Current: old".into(), "Available: new".into()],
+                ..Default::default()
+            },
+        );
+        let mut g = ImageGizmo::default();
+        ui.draw(&mut g, &c, &map, &p);
+        let offset = ui.panel_offset;
+        ui.cursor = [
+            (40. + offset[0]) * ui.layout[0],
+            (ui.layout[3] + 5. + offset[1]) * ui.layout[0],
+        ];
+        assert!(
+            ui.handle(
+                &WindowEvent::MouseInput {
+                    device_id: winit::event::DeviceId::dummy(),
+                    state: ElementState::Pressed,
+                    button: winit::event::MouseButton::Left
+                },
+                &mut map,
+                &mut p
+            )
+            .is_none()
+        );
+        assert!(matches!(
+            ui.command(Command::ConfirmDaily, &mut map, &mut p),
+            Some(UiResult::UpdateAdvance)
+        ));
+    }
+    let mut ui = LocalUi::new(Panel::UpdateApplying);
+    assert!(ui.blocks_menu_access());
+    assert!(
+        ui.handle(&WindowEvent::Focused(false), &mut map, &mut p)
+            .is_none()
+    );
+    Ok(())
+}

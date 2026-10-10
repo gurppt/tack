@@ -270,6 +270,9 @@ impl ImageInput {
             );
         }
         let ActionEvent { action, phase } = event;
+        if !action.available() {
+            return Ok(false);
+        }
         if phase == ActionPhase::Invoke {
             self.status.clear();
         }

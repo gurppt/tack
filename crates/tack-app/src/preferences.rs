@@ -138,6 +138,8 @@ pub struct Preferences {
     pub toolbar: crate::toolbar::Config,
     #[serde(default = "status_default")]
     pub status_bar: bool,
+    #[serde(default)]
+    pub update_channel: tack_update::Channel,
     pub grid: bool,
     pub sampling: String,
     pub embedded_import: bool,
@@ -165,6 +167,7 @@ impl Preferences {
             local_views: Vec::new(),
             toolbar: crate::toolbar::Config::default(),
             status_bar: true,
+            update_channel: Default::default(),
             grid: false,
             sampling: "Smooth".into(),
             embedded_import: true,
@@ -501,6 +504,7 @@ pub fn merge_settings(
     field!(
         toolbar,
         status_bar,
+        update_channel,
         grid,
         sampling,
         embedded_import,
@@ -535,6 +539,7 @@ pub fn adopt_saved(local: &mut Preferences, submitted: &Preferences, saved: &Pre
     field!(
         toolbar,
         status_bar,
+        update_channel,
         grid,
         sampling,
         embedded_import,

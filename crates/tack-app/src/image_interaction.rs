@@ -252,7 +252,7 @@ impl ImageInteraction {
             .selection
             .ids()
             .filter_map(|id| editor.document().object(id))
-            .filter(|o| matches!(o.kind(), tack_core::ObjectKind::Image(_)))
+            .filter(|o| o.can_flip())
             .map(|o| {
                 let t = o.transform();
                 let mut flips = t.flips();

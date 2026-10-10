@@ -64,6 +64,15 @@ impl App {
             self.input
                 .cursor_moved(self.pointer, editor, &mut self.camera)?;
         }
+        if self
+            .local
+            .ui
+            .as_ref()
+            .is_some_and(|u| u.panel == tack_app::local_ui::Panel::UpdateChecking)
+        {
+            self.local.worker.cancel();
+            self.local.queued = None;
+        }
         self.local.ui = None;
         Ok(())
     }
@@ -185,18 +194,48 @@ impl App {
         Ok(true)
     }
     pub(super) fn update_cursor(&mut self) {
-        let icon = if self.context.is_some() || self.local.ui.is_some() {
-            winit::window::CursorIcon::Default
+        use tack_app::cursors::Kind;
+        use winit::window::CursorIcon;
+        let ui = self.context.is_some()
+            || self.local.ui.is_some()
+            || self.chrome.toolbar.contains_point(self.pointer)
+            || self.chrome.toolbar.grip_hit(self.pointer);
+        let icon = if ui {
+            Kind::Pointer
         } else {
-            self.editor
-                .as_ref()
-                .map_or(winit::window::CursorIcon::Default, |e| {
-                    self.input.cursor_icon(e, &self.camera)
-                })
+            let native = self.editor.as_ref().map_or(CursorIcon::Default, |e| {
+                self.input.cursor_icon(e, &self.camera)
+            });
+            match native {
+                CursorIcon::Grab => Kind::HandOpen,
+                CursorIcon::Grabbing => Kind::HandClosed,
+                CursorIcon::Text => Kind::Text,
+                CursorIcon::Move => Kind::Move,
+                CursorIcon::NwseResize => Kind::ResizeNwse,
+                CursorIcon::NeswResize => Kind::ResizeNesw,
+                CursorIcon::NsResize => Kind::ResizeNs,
+                CursorIcon::EwResize => Kind::ResizeEw,
+                CursorIcon::Crosshair
+                    if self.editor.as_ref().is_some_and(|e| {
+                        self.input.hover(e, &self.camera)
+                            == Some(tack_app::image_gizmo::GizmoHit::Rotate)
+                    }) =>
+                {
+                    Kind::Rotate
+                }
+                CursorIcon::Crosshair if self.input.images.crop_mode => Kind::Crop,
+                CursorIcon::Crosshair
+                    if self.input.annotation.tools.tool() == tack_app::actions::Tool::Scribble =>
+                {
+                    Kind::Draw
+                }
+                CursorIcon::Crosshair => Kind::Crosshair,
+                _ => Kind::Pointer,
+            }
         };
         if icon != self.cursor_icon {
             if let Some(window) = &self.window {
-                window.set_cursor(icon);
+                self.cursors.set(window, icon);
             }
             self.cursor_icon = icon;
         }

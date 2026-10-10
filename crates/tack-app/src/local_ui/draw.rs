@@ -49,6 +49,10 @@ impl LocalUi {
                 | Panel::ViewCapture
                 | Panel::BookmarkName
                 | Panel::Join
+                | Panel::UpdateApplying
+                | Panel::UpdateChecking
+                | Panel::UpdateOffer
+                | Panel::UpdateReady
                 | Panel::Connecting
                 | Panel::Close
                 | Panel::Recovery
@@ -76,7 +80,7 @@ impl LocalUi {
                 [width, height],
                 !matches!(
                     self.panel,
-                    Panel::Close | Panel::Recovery | Panel::Connecting
+                    Panel::Close | Panel::Recovery | Panel::Connecting | Panel::UpdateApplying
                 ),
             ));
             self.panel_offset = self.modal.map_or([0.; 2], |m| m.offset());
@@ -104,9 +108,13 @@ impl LocalUi {
             Panel::Toolbar => "Edit Toolbar",
             Panel::Bookmarks => "Camera bookmarks - Enter jumps",
             Panel::BookmarkName => "Bookmark name - Ctrl+A replaces",
-            Panel::Info => "Image information - existing metadata",
+            Panel::Info => "Information",
             Panel::Join => "Join Shared Board - paste invite",
             Panel::Connecting => "Join shared board",
+            Panel::UpdateApplying => "Applying Tack update",
+            Panel::UpdateChecking => "Checking for Updates",
+            Panel::UpdateOffer => "Tack update available",
+            Panel::UpdateReady => "Tack update verified",
             Panel::Menu => "Tack - local files",
             Panel::Preferences => "Preferences",
             Panel::Theme => "Background - choose directly",
@@ -133,7 +141,11 @@ impl LocalUi {
             | Panel::BookmarkName
             | Panel::Info
             | Panel::Join
-            | Panel::Connecting => self.daily_rows(),
+            | Panel::Connecting
+            | Panel::UpdateApplying
+            | Panel::UpdateChecking
+            | Panel::UpdateOffer
+            | Panel::UpdateReady => self.daily_rows(),
             Panel::Menu => self
                 .actions(keymap)
                 .iter()
@@ -197,6 +209,15 @@ impl LocalUi {
         );
         if height >= 240. && self.daily.is_some() {
             let commands: &[(&str, Command)] = match self.panel {
+                Panel::UpdateApplying => &[],
+                Panel::UpdateOffer => &[
+                    ("Download", Command::ConfirmDaily),
+                    ("Cancel", Command::Close),
+                ],
+                Panel::UpdateReady => &[
+                    ("Restart and Update", Command::ConfirmDaily),
+                    ("Cancel", Command::Close),
+                ],
                 Panel::Bookmarks => &[
                     ("Rename (F2)", Command::RenameBookmark),
                     ("Delete (Del)", Command::DeleteBookmark),

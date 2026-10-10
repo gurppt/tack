@@ -85,3 +85,9 @@ mod ui_scroll;
 
 pub mod menu_access;
 pub mod modal_shell;
+
+pub mod updates;
+
+pub mod cursors;
+
+pub mod capabilities;

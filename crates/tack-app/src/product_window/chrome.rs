@@ -116,12 +116,9 @@ impl App {
             return;
         }
         let state = if let Some(s) = &self.shared {
-            match s.state {
-                tack_shared::client::ConnectionState::Connected => "Shared board online",
-                tack_shared::client::ConnectionState::Connecting
-                | tack_shared::client::ConnectionState::Reconnecting => {
-                    "Connecting to shared board"
-                }
+            match s.ui_connection() {
+                tack_app::capabilities::UiConnection::Online => "Shared board online",
+                tack_app::capabilities::UiConnection::Connecting => "Connecting to shared board",
                 _ => "Shared board offline",
             }
         } else if self.host.is_some() {
@@ -335,9 +332,9 @@ pub(super) fn draw(
     p: &tack_app::preferences::Preferences,
     tool: tack_app::actions::Tool,
     gpu: &mut Gpu,
-    state: (bool, Option<tack_shared::client::ConnectionState>),
+    state: (bool, Option<tack_app::capabilities::UiConnection>, bool),
 ) -> Result<(), AssetError> {
-    let (popup, shared) = state;
+    let (popup, shared, annotations_locked) = state;
     let status_camera = *c;
     let mut pixel_camera = *c;
     pixel_camera.set_ui_scale(f64::from(p.toolbar.scale));
@@ -366,7 +363,8 @@ pub(super) fn draw(
             if let Some(a) = button.action {
                 let r = button.rect;
                 g.pixel_rect(c, [r[0], r[1]], [r[2], r[3]], palette.menu_bg, None);
-                if a == Action::SelectTool(tool)
+                if a == Action::ToggleAnnotationSelectionLock && annotations_locked
+                    || a == Action::SelectTool(tool)
                     || chrome.toolbar.hover == Some(a)
                     || chrome.toolbar.pressed == Some(a)
                 {
@@ -374,7 +372,10 @@ pub(super) fn draw(
                         c,
                         [r[0], r[1]],
                         [r[2], r[3]],
-                        if a == Action::SelectTool(tool) || chrome.toolbar.pressed == Some(a) {
+                        if a == Action::SelectTool(tool)
+                            || (a == Action::ToggleAnnotationSelectionLock && annotations_locked)
+                            || chrome.toolbar.pressed == Some(a)
+                        {
                             palette.accent_secondary
                         } else {
                             palette.selection
@@ -384,7 +385,7 @@ pub(super) fn draw(
                 }
                 icons[count] = tack_render::UiIcon {
                     rect: [r[0], r[1], 16. * scale, 16. * scale],
-                    index: tack_app::toolbar_icons::index(a),
+                    index: tack_app::toolbar_icons::state_index(a, annotations_locked),
                     disabled: chrome.disabled & (1 << position) != 0,
                 };
                 count += 1;
@@ -421,9 +422,8 @@ pub(super) fn draw(
     }
     if let Some(state) = shared {
         let color = match state {
-            tack_shared::client::ConnectionState::Connected => [0., 0.8, 0.08, 1.],
-            tack_shared::client::ConnectionState::Connecting
-            | tack_shared::client::ConnectionState::Reconnecting => palette.accent_attention,
+            tack_app::capabilities::UiConnection::Online => [0., 0.8, 0.08, 1.],
+            tack_app::capabilities::UiConnection::Connecting => palette.accent_attention,
             _ => [0.85, 0.02, 0.02, 1.],
         };
         let y = h - 14. * scale;

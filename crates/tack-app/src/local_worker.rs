@@ -22,6 +22,7 @@ pub enum LocalUpdate {
     EmptyBoard(Result<OpenedBoard, String>),
     SharedReady(Result<Option<crate::hosting::ShareReady>, String>),
     SavedLocal(Result<OpenedBoard, String>),
+    Update(Result<tack_update::Response, String>),
     AddressCopied,
     Joined(Result<bool, String>),
     Hosted(Result<crate::hosting::Hosted, String>),
@@ -81,6 +82,7 @@ impl OpenedBoard {
     }
 }
 pub enum Operation {
+    Update(crate::updates::Request),
     EmptyBoard(PathBuf),
     SaveLocal(crate::independent_copy::Request),
     Share(Box<crate::hosting::ShareRequest>, PathBuf),
@@ -203,6 +205,11 @@ impl LocalWorker {
                 };
                 let result = (|| -> Result<(), AssetError> {
                     match operation {
+                        Operation::Update(request) => {
+                            emit(LocalUpdate::Update(
+                                request.run(&stop).map_err(|e| e.to_string()),
+                            ));
+                        }
                         Operation::EmptyBoard(root) => {
                             let result = (|| -> Result<OpenedBoard, AssetError> {
                                 let lease = untitled_lease(&root)?;
@@ -429,7 +436,8 @@ impl LocalWorker {
                         if active.cancel.load(Ordering::Relaxed)
                             && matches!(
                                 update,
-                                LocalUpdate::Opened(_)
+                                LocalUpdate::Update(_)
+                                    | LocalUpdate::Opened(_)
                                     | LocalUpdate::EmptyBoard(_)
                                     | LocalUpdate::SavedLocal(_)
                                     | LocalUpdate::SharedReady(_)

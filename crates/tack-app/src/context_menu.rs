@@ -40,6 +40,7 @@ pub struct Context {
     redo: bool,
     any: bool,
     all_images: bool,
+    all_flippable: bool,
     group: bool,
     ungroup: bool,
     align: bool,
@@ -106,6 +107,7 @@ impl Context {
         Self {
             kind,
             selection_kind: kind,
+            all_flippable: ids().all(|id|doc.object(id).is_some_and(|o|o.can_flip())),
             shared: false,
             hosted: false,
             generation: editor.generation(),
@@ -137,6 +139,9 @@ impl Context {
         self
     }
     pub fn enabled(self, action: Action) -> bool {
+        if !action.available() {
+            return false;
+        }
         match action {
             Action::DuplicateSelection => self.any,
             Action::AddCameraBookmark => true,
@@ -158,10 +163,8 @@ impl Context {
             }
             Action::ResetAspectRatio => self.all_images,
             Action::CropMode => self.selection_kind == ContextKind::Image,
-            Action::FlipHorizontal
-            | Action::FlipVertical
-            | Action::Filtering(_)
-            | Action::Opacity(_) => self.all_images,
+            Action::FlipHorizontal | Action::FlipVertical => self.any && self.all_flippable,
+            Action::Filtering(_) | Action::Opacity(_) => self.all_images,
             Action::GroupSelection => self.group,
             Action::UngroupSelection => self.ungroup,
             Action::Layout(Arrangement::SnapToGrid) => self.any,
@@ -350,6 +353,15 @@ fn heading(label: &'static str) -> Item {
     }
 }
 fn context_items(context: Context, submenu: Option<Group>, keymap: &Keymap) -> Vec<Item> {
+    context_items_all(context, submenu, keymap)
+        .into_iter()
+        .filter(|i| match i.command {
+            Command::Action(a) => a.available(),
+            _ => true,
+        })
+        .collect()
+}
+fn context_items_all(context: Context, submenu: Option<Group>, keymap: &Keymap) -> Vec<Item> {
     use Action::*;
     let a = |label, command| action(label, command, context, keymap);
     if let Some(g) = submenu {
@@ -504,6 +516,7 @@ fn context_items(context: Context, submenu: Option<Group>, keymap: &Keymap) -> V
             group("Tools", Group::Tools, true),
             a("Preferences...", Preferences),
             a("Keymap...", KeymapEditor),
+            a("Check for Updates", CheckForUpdates),
             a("About Tack", About),
         ];
     }
@@ -534,6 +547,12 @@ fn context_items(context: Context, submenu: Option<Group>, keymap: &Keymap) -> V
         ContextKind::Annotation => v.push(group("Style", Group::Style, true)),
         ContextKind::Multiple => v.push(group("Arrange", Group::Arrange, context.any)),
         _ => {}
+    }
+    if context.kind != ContextKind::Image && context.any && context.all_flippable {
+        v.extend([
+            a("Flip horizontal", FlipHorizontal),
+            a("Flip vertical", FlipVertical),
+        ]);
     }
     v.push(group(
         "Order",
