@@ -1,9 +1,9 @@
 # Phase 2A5 — concurrent editing and interaction corrective
 
 Date: 2026-10-10. Baseline: phase 2A4, repository checkpoint `d8e0cdcc`.
-Status: **Linux technical checks PASS; physical two-computer acceptance PENDING.**
+Status: **Technical checks PASS, including Linux/Windows CI; physical two-computer acceptance PENDING.**
 The Windows x64 SIMD package is built and its CLI/decoder execute under Wine.
-The exact remote CI run is recorded below when available. No physical Windows desktop acceptance
+The exact remote CI run is recorded below. No physical Windows desktop acceptance
 is claimed. The next drawing/text mission has not been started.
 
 ## Result
@@ -57,6 +57,14 @@ The final local gate passes formatting, check, Clippy with warnings denied,
 Advisories, bans, licenses and sources pass; inherited duplicate-version warnings
 remain informational. Explicit NVIDIA Vulkan renderer tests pass: 1 GPU smoke,
 1 selection test and 9 product tests.
+
+The exact implementation commit `688afb989f159f6eef222d1f7abf9ba95c1d3d04`
+also passes [Quality CI run 38037658554](https://github.com/gurppt/tack/actions/runs/38037658554):
+Linux, Windows and dependency jobs all succeed. Windows compiles/checks Clippy,
+runs the workspace tests and generates documentation with the pinned native
+decoder. Linux additionally passes software-Vulkan GPU and LOD convergence/churn
+tests. The compact [CI receipt](../benchmarks/phase2a5/ci.json) records job/step
+conclusions. This proves automated execution, not physical artist acceptance.
 
 [Three-client evidence](../benchmarks/phase2a5/native-three.json) records **16
 passing checks** using three native Linux clients on separately owned displays
@@ -129,6 +137,11 @@ while manipulation leases exist; settled idle has no permanent timer.
 Linux: `bin/tack`, sibling server, JPEG decoder, icons and About artwork.
 Windows: `bin/tack-windows-x86_64.zip`, including `tack.exe`, sibling server,
 statically compiled libjpeg-turbo 3.2.0 SIMD JPEG decoder and artwork/notices.
+Both source trees match implementation commit `688afb989f159f6eef222d1f7abf9ba95c1d3d04`.
+[Build checksums](../benchmarks/phase2a5/builds.json) identify the ready artifacts;
+the final Linux hash exactly matches the tested native/performance executable.
+The Windows ZIP SHA-256 is
+`3dce42ba3306f7ce0f60a48c96c98d16e64e43d9a3092061cc273f86794cda5d`.
 The package checks SSE2/AVX2 symbols and rejects external MinGW/turbojpeg runtime
 DLL imports. Build source archive SHA-256 and NASM/compiler provenance live in
 the package's `BUILD.json`/`LICENSES/native-build.json`. Reproduce with

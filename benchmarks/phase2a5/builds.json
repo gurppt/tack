@@ -1,0 +1,37 @@
+{
+  "source_commit": "688afb989f159f6eef222d1f7abf9ba95c1d3d04",
+  "source_tracked_clean": true,
+  "files": {
+    "bin/tack": {
+      "bytes": 19947776,
+      "sha256": "a44797c860d0ca2ca7a45a7fbe87bc3d61efdb77a338687c2936b16cfbce8a85"
+    },
+    "bin/tack-server": {
+      "bytes": 2021824,
+      "sha256": "606435b69c0f301908899be9fcc190687beca9a8e13e37aa4e33d470b4d54941"
+    },
+    "bin/tack-jpeg-decoder": {
+      "bytes": 890896,
+      "sha256": "4fcef9b973c80de96ecf2d5babe86ef87b1be2459f22559243c8e85da3ebe587"
+    },
+    "bin/tack-windows-x86_64/tack.exe": {
+      "bytes": 24311296,
+      "sha256": "9b2ae7e772358c6cbeec058ce265ba5270f6e1da9e1ad95fd256754e61f71f3f"
+    },
+    "bin/tack-windows-x86_64/tack-server.exe": {
+      "bytes": 3095552,
+      "sha256": "acad7c38040e1cf72f5fc8f3c015bccbfafee38957daa338c4574651ea85112f"
+    },
+    "bin/tack-windows-x86_64/tack-jpeg-decoder.exe": {
+      "bytes": 872960,
+      "sha256": "3473a4ed362432e08099a366c4fc15e2e463e8834fd810102c9adccdb66ab9e2"
+    },
+    "bin/tack-windows-x86_64.zip": {
+      "bytes": 11300262,
+      "sha256": "3dce42ba3306f7ce0f60a48c96c98d16e64e43d9a3092061cc273f86794cda5d"
+    }
+  },
+  "windows_target": "x86_64-pc-windows-gnu",
+  "windows_simd": "SSE2 and AVX2 linked; scalar/SSE2/automatic runtime outputs verified under Wine",
+  "physical_acceptance": "PENDING"
+}
