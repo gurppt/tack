@@ -39,8 +39,13 @@ def main():
         s.key('Escape');time.sleep(.3);s.key('F1');move(700,512);command('xdotool','click','1');time.sleep(.4)
         linked=s.save(board);record('all 32 Link operations complete despite bounded preview',len(linked.get('links',[]))==32,linked.get('links',[]))
         s.key('ctrl+z');record('Link Undo exact',s.save(board)==base);s.key('ctrl+y');record('Link Redo exact',s.save(board)==linked)
-        s.key('F1');move(100,100);s.shot('final-preview');s.close();report=json.loads(s.report.read_text());s=None
-        stats=report['link_preview'];record('one logical quad per unit, bounded vertices',stats['units']==32 and stats['lines']==32 and stats['vertices']==192,stats)
+        s.key('F1');move(100,100);s.shot('final-preview');s.key('Escape');time.sleep(.8)
+        idle_start=time.monotonic()-s.started;time.sleep(2.);idle_end=time.monotonic()-s.started
+        s.close();report=json.loads(s.report.read_text());s=None
+        stats=max((frame['link_preview'] for frame in report['frames']),key=lambda value:value['lines'])
+        record('one logical quad per unit, bounded vertices',stats['units']==32 and stats['lines']==32 and stats['vertices']==192,stats)
+        idle_frames=[frame for frame in report['frames'] if idle_start<=frame['elapsed_ms']/1000<=idle_end]
+        record('Escape clears Link preview and no recurring redraw follows',report['link_preview']['lines']==0 and not idle_frames,dict(final=report['link_preview'],idle_seconds=2,redraws=len(idle_frames)))
         samples=[v for v in report['frames'] if start<=v['elapsed_ms']/1000<=end]
         (root/'receipt.json').write_text(json.dumps(dict(checks=len(checks),passed=all(c['observed'] for c in checks),binary_sha256=hashlib.sha256(binary.read_bytes()).hexdigest(),build_info=json.loads(subprocess.check_output([str(binary),'--build-info'])),link_preview=stats,old_primitives=4096,old_limit=2048,new_logical_quads=32,new_vertices=192,overlay_passes_per_frame=1,shader_pattern='4 logical pixels on / 4 off, no per-dash vertex geometry',frames=samples,report=report),indent=2)+'\n')
     finally:
