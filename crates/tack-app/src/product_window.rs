@@ -565,6 +565,7 @@ impl App {
                 && let Some(layout) = ui.about_layout
             {
                 gpu.set_ui_image_rect(layout.physical_image());
+                gpu.set_ui_logo_rect(layout.physical_logo());
             }
         }
         let palette = self.local.profile.theme.palette();
@@ -1070,6 +1071,22 @@ impl ApplicationHandler<Event> for App {
             } else {
                 title
             };
+            let title = if self.options.output.is_none()
+                && std::env::var_os("TACK_NATIVE_DIAGNOSTICS").is_none()
+            {
+                let name = if self.local.untitled {
+                    "Untitled".into()
+                } else {
+                    self.options
+                        .path
+                        .file_name()
+                        .map(|n| n.to_string_lossy().into_owned())
+                        .unwrap_or_default()
+                };
+                format!("Tack — {name}{}", if editor.is_dirty() { " *" } else { "" })
+            } else {
+                title
+            };
             if self.title != title {
                 window.set_title(&title);
                 self.title = title;
@@ -1139,11 +1156,29 @@ pub use launch::{run, run_new, run_shared};
 
 impl App {
     fn handle_window_event(&mut self, e: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
+        if matches!(&event, WindowEvent::KeyboardInput {event, ..} if event.state == winit::event::ElementState::Pressed)
+            || matches!(
+                &event,
+                WindowEvent::MouseInput {
+                    state: winit::event::ElementState::Pressed,
+                    ..
+                }
+            )
+        {
+            self.input.status.clear();
+            if !self.local.importing {
+                self.local.import_status.clear();
+            }
+            if !self.load_failed {
+                self.interaction_error = None;
+            }
+            if !self.save.active() {
+                self.save.last_error = None;
+            }
+            self.chrome.last_state = "";
+        }
         if let WindowEvent::Focused(focused) = &event {
             self.input.edit_focused = *focused;
-        }
-        if self.local.ui.is_none() && self.context.is_none() && self.camera_capture(&event) {
-            return;
         }
         if matches!(&event, WindowEvent::KeyboardInput { event, .. }
             if event.state == winit::event::ElementState::Pressed

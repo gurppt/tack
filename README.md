@@ -16,12 +16,15 @@ Built in Rust, with a native GPU-rendered canvas. Boards are saved locally as
 - **Collect references.** Drag and drop PNG/JPEG images, import files, or paste
   screenshots and copied image files on Linux. Paste text to create a note.
 - **Compare and adjust.** Move, resize, rotate and flip images. Adjust opacity,
-  crop without destroying the original, and choose Smooth or Nearest sampling.
+  crop without destroying the original, restore distorted proportions, and choose
+  Smooth or Nearest sampling.
 - **Arrange your board.** Group images, align and distribute selections, pack
   rows or columns, and arrange references in a grid. Use snapping when needed.
 - **Mark up ideas.** Add text notes, rectangles, lines, arrows and freehand
-  strokes. Label regions with frames and jump between them.
-- **Save useful views.** Name exact camera positions and zoom levels without adding canvas objects; jump back from View → Camera bookmarks.
+  strokes. Keep colored post-it backgrounds, adjust text size with Numpad +/−,
+  and cycle rectangle fill opacity. Label regions with frames and jump between them.
+- **Save useful views.** Capture exact camera positions and zoom levels without
+  adding canvas objects, then return using your chosen shortcut.
 - **Duplicate quickly.** Press Ctrl+D to duplicate a selection locally or on a
   shared board, reusing image originals and keeping one Undo step.
 - **Edit with confidence.** Undo and redo board edits, save your work, and recover
@@ -40,11 +43,15 @@ Built in Rust, with a native GPU-rendered canvas. Boards are saved locally as
   editable copy when you need to leave the shared board.
 - **Keep tools close.** One compact pixel toolbar offers mouse access to tools
   and commands. Move it to an edge or float it, choose up to 32 actions, and hide
-  it whenever you want. The optional status strip shows current shortcuts/state.
+  it whenever you want. Choose 1×, 2× or 3× controls independently of the menus;
+  toolbar positions follow window resizing. The optional status strip shows
+  current shortcuts and editing feedback.
   Shared connection state always stays visible at the bottom.
-- **Recall a view.** Press B, then a digit to store your camera; press that digit
-  to return. These views stay local. Existing customized keymaps keep their
-  shortcuts; Keymap Reset adopts the new defaults.
+- **Recall a view.** Press B, capture a keyboard or mouse shortcut, and confirm
+  with Enter. Use that shortcut to return. These views stay local.
+- **Customize shortcuts.** Navigate the Action / Shortcut / Behavior grid, choose
+  Normal, Hold or Release, and save named `.tackey` keysets. Existing customized
+  keymaps keep their shortcuts; Keymap Reset adopts the new defaults.
 
 The renderer loads image detail progressively and uses bounded caches. See the
 [feature inventory](docs/FEATURE_INVENTORY.md) for exact behavior and limits.

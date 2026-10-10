@@ -26,6 +26,7 @@ def main():
         subprocess.run(['x86_64-w64-mingw32-strip','--strip-all',str(package/name)],check=True)
     for p in built.glob('tack-icon*'):shutil.copy2(p,package/p.name)
     shutil.copy2(built/'tack-about.png',package/'tack-about.png')
+    shutil.copy2(built/'tack-about-logo.png',package/'tack-about-logo.png')
     install_missing(root/'gfx/icons', package/'gfx/icons')
     imports={}
     for p in package.glob('*.exe'):

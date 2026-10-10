@@ -1,0 +1,982 @@
+{
+  "harness_sha256": "7f6c15839fe51cfa9d49bf2a15fb725e1fd542f6e1afaa608caa2bb71bd9383b",
+  "runs": [
+    {
+      "name": "0-source-phase2a6",
+      "mode": "phase2a6",
+      "binary_sha256": "1312983951762b2b41d7a094630d61b11ca9f1463474355ebea4305fb6fc702a",
+      "board_sha256": "943fc46d801bb147a438f2bc244313887073d1de004b8e0d2b17b6c5d37a8c18",
+      "quiet_detected": true,
+      "settle_seconds": 2.411056721000932,
+      "idle": {
+        "seconds": 3.018216606998976,
+        "rss_before": 112939008,
+        "rss_after": 112939008,
+        "threads": 39,
+        "tasks": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-1",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-2",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-3",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-4",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-5",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-6",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-7",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-8",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-9",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-10",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-11",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-12",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-13",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-14",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-15",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack:disk$0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "WSI swapchain q",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "WSI swapchain e",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "ticks": 0,
+        "cpu_percent_one_core": 0.0,
+        "socket_records": [
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 139314"
+          }
+        ],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        }
+      },
+      "report": "0-source-phase2a6/0-source-phase2a6.json",
+      "report_sha256": "c4c8f0742a05f2cf9d24f930b0220c3d8a0b11685f111f81eee4ab95989dde82",
+      "native_startup_ms": 77.397589,
+      "first_frame_ms": 80.109326,
+      "first_recognizable_ms": 102.50877999999999,
+      "useful_ms": 102.50877999999999,
+      "gpu_bytes_peak": 104960,
+      "callbacks": {
+        "samples": 3,
+        "p50_ms": 4.10546,
+        "p99_ms": 4.10546,
+        "max_ms": 21.466852000000003
+      },
+      "wait_count": 13,
+      "redraw_count": 3,
+      "idle_redraws": 0
+    },
+    {
+      "name": "0-source-phase2a7",
+      "mode": "phase2a7",
+      "binary_sha256": "7fbc8f3e65c91865c6f41132da4a218eed942a745d6b05e059074b5309925fb7",
+      "board_sha256": "943fc46d801bb147a438f2bc244313887073d1de004b8e0d2b17b6c5d37a8c18",
+      "quiet_detected": true,
+      "settle_seconds": 2.427373347001776,
+      "idle": {
+        "seconds": 3.01324874599959,
+        "rss_before": 112484352,
+        "rss_after": 112484352,
+        "threads": 39,
+        "tasks": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-1",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-2",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-3",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-4",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-5",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-6",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-7",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-8",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-9",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-10",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-11",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-12",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-13",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-14",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-15",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack:disk$0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "WSI swapchain q",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "WSI swapchain e",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "ticks": 0,
+        "cpu_percent_one_core": 0.0,
+        "socket_records": [
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 132675"
+          }
+        ],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        }
+      },
+      "report": "0-source-phase2a7/0-source-phase2a7.json",
+      "report_sha256": "422381ddaad67641719c5c80897b2626e1b71d373ce81ffc19c016cca176aa30",
+      "native_startup_ms": 57.905561,
+      "first_frame_ms": 61.730591000000004,
+      "first_recognizable_ms": 81.475439,
+      "useful_ms": 81.475439,
+      "gpu_bytes_peak": 104960,
+      "callbacks": {
+        "samples": 3,
+        "p50_ms": 3.687579,
+        "p99_ms": 3.687579,
+        "max_ms": 18.656766
+      },
+      "wait_count": 15,
+      "redraw_count": 3,
+      "idle_redraws": 0
+    },
+    {
+      "name": "1-source-phase2a6",
+      "mode": "phase2a6",
+      "binary_sha256": "1312983951762b2b41d7a094630d61b11ca9f1463474355ebea4305fb6fc702a",
+      "board_sha256": "943fc46d801bb147a438f2bc244313887073d1de004b8e0d2b17b6c5d37a8c18",
+      "quiet_detected": true,
+      "settle_seconds": 2.407609476998914,
+      "idle": {
+        "seconds": 3.021340875000533,
+        "rss_before": 112861184,
+        "rss_after": 112861184,
+        "threads": 39,
+        "tasks": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-1",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-2",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-3",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-4",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-5",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-6",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-7",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-8",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-9",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-10",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-11",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-12",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-13",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-14",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-15",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack:disk$0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "WSI swapchain q",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "WSI swapchain e",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "ticks": 0,
+        "cpu_percent_one_core": 0.0,
+        "socket_records": [
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 135309"
+          }
+        ],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        }
+      },
+      "report": "1-source-phase2a6/1-source-phase2a6.json",
+      "report_sha256": "eee11b368527c76d47cc531344e72785713914c1231f367643496d9aa9121155",
+      "native_startup_ms": 64.90329799999999,
+      "first_frame_ms": 67.389064,
+      "first_recognizable_ms": 86.884602,
+      "useful_ms": 86.884602,
+      "gpu_bytes_peak": 104960,
+      "callbacks": {
+        "samples": 3,
+        "p50_ms": 3.9418689999999996,
+        "p99_ms": 3.9418689999999996,
+        "max_ms": 18.347475
+      },
+      "wait_count": 15,
+      "redraw_count": 3,
+      "idle_redraws": 0
+    },
+    {
+      "name": "1-source-phase2a7",
+      "mode": "phase2a7",
+      "binary_sha256": "7fbc8f3e65c91865c6f41132da4a218eed942a745d6b05e059074b5309925fb7",
+      "board_sha256": "943fc46d801bb147a438f2bc244313887073d1de004b8e0d2b17b6c5d37a8c18",
+      "quiet_detected": true,
+      "settle_seconds": 2.396358854000937,
+      "idle": {
+        "seconds": 3.0179544929997064,
+        "rss_before": 112480256,
+        "rss_after": 112480256,
+        "threads": 39,
+        "tasks": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-1",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-2",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-3",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-4",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-5",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-6",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-7",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-8",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-9",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-10",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-11",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-12",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-13",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-14",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-15",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack:disk$0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "WSI swapchain q",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "WSI swapchain e",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "ticks": 0,
+        "cpu_percent_one_core": 0.0,
+        "socket_records": [
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 126785"
+          }
+        ],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        }
+      },
+      "report": "1-source-phase2a7/1-source-phase2a7.json",
+      "report_sha256": "e827f886ad6aa9dc2b65bc42e57de3fd47ced8dad26132cceb8e92c350102c26",
+      "native_startup_ms": 59.540385,
+      "first_frame_ms": 62.897102999999994,
+      "first_recognizable_ms": 81.15974800000001,
+      "useful_ms": 81.15974800000001,
+      "gpu_bytes_peak": 104960,
+      "callbacks": {
+        "samples": 3,
+        "p50_ms": 3.766089,
+        "p99_ms": 3.766089,
+        "max_ms": 17.360402
+      },
+      "wait_count": 15,
+      "redraw_count": 3,
+      "idle_redraws": 0
+    }
+  ],
+  "scope": "Warm/unspecified OS page cache; serial native800x600 samehost/display. Socket records distinguish OS X11 Unix sockets from Tack-created TCP/UDP. CPU /proc ticks, no perprocess VRAM attribution."
+}

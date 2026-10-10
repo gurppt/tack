@@ -1,4 +1,4 @@
-//! Ten remappable local camera slots per board; never shared document commands.
+//! Sixty-four remappable local camera slots per board; never shared document commands.
 use serde::{Deserialize, Serialize};
 use tack_assets::AssetError;
 use tack_core::Camera;
@@ -16,7 +16,7 @@ pub fn validate(views: &[View]) -> Result<(), AssetError> {
         return Err("Too many local views (maximum 64)".into());
     }
     for (i, view) in views.iter().enumerate() {
-        if view.slot > 9
+        if usize::from(view.slot) >= MAX_VIEWS
             || view.board.len() != 32
             || !view.board.bytes().all(|b| b.is_ascii_hexdigit())
             || views[..i]

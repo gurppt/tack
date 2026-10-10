@@ -36,6 +36,7 @@ fn compact_cells_and_separator_geometry_on_every_edge_and_scale() -> R {
         cfg.placement = placement;
         for scale in [1., 2.] {
             let mut bar = Toolbar::default();
+            cfg.scale = scale as u8;
             bar.layout(&cfg, [800, 600], scale, false);
             if placement == Placement::Hidden {
                 assert_eq!(bar.count, 0);

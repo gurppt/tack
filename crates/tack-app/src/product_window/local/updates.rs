@@ -121,11 +121,10 @@ impl App {
                 if ticket == self.local.about_ticket
                     && let Some(ui) = self.local.ui.as_mut().filter(|ui| ui.panel == Panel::About)
                 {
-                    match result.and_then(|image| {
-                        self.gpu
-                            .as_mut()
-                            .ok_or("About renderer unavailable")?
-                            .set_ui_image(&image)
+                    match result.and_then(|art| {
+                        let gpu = self.gpu.as_mut().ok_or("About renderer unavailable")?;
+                        gpu.set_ui_image(&art.portrait)
+                            .and_then(|_| gpu.set_ui_logo(&art.logo))
                             .map_err(|e| e.to_string())
                     }) {
                         Ok(()) => {
@@ -140,11 +139,21 @@ impl App {
                 }
             }
             LocalUpdate::Picked(action, result) => {
-                if result.is_err() && action == Action::SaveAs {
+                if (result.is_err() || result.as_ref().is_ok_and(|paths| paths.is_empty()))
+                    && action == Action::SaveAs
+                {
                     // Cancellation must keep an unsaved Untitled board open.
                     self.local.close_after_save = false;
                 }
-                self.picked(action, result.map_err(AssetError::from)?)?
+                let paths = result.map_err(AssetError::from)?;
+                if paths.is_empty() {
+                    self.interaction_error = Some("Cancelled".into());
+                    if let Some(ui) = &mut self.local.ui {
+                        ui.message = "Cancelled".into();
+                    }
+                } else {
+                    self.picked(action, paths)?;
+                }
             }
             LocalUpdate::Imported(ImportUpdate::Admitted(image)) => {
                 let editor = self.editor.as_mut().ok_or("document unavailable")?;
@@ -266,13 +275,18 @@ impl App {
             },
             LocalUpdate::Keymap(action, result) => {
                 if let Some(profile) = result.map_err(AssetError::from)? {
-                    self.local.profile.keymap = profile.keymap;
+                    if action == Action::ImportKeymap {
+                        self.local.profile.keymap = profile.keymap;
+                        self.local.profile.keyset = profile.keyset;
+                        self.apply_preferences()?;
+                        if self.local.ui.is_none() {
+                            self.panel(Panel::Keymap);
+                        }
+                    } else {
+                        preferences::acknowledge_keyset_export(&mut self.local.profile, &profile);
+                    }
                     self.local.profile_pending = true;
                     self.local.profile_changed = true;
-                    self.apply_preferences()?;
-                    if self.local.ui.is_none() {
-                        self.panel(Panel::Keymap);
-                    }
                 }
                 if let Some(ui) = &mut self.local.ui {
                     ui.message = if action == Action::ImportKeymap {

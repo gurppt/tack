@@ -75,14 +75,7 @@ impl AnnotationScene {
         .unwrap_or(style)
     }
     fn editor_style(&self, style: AnnotationStyle) -> AnnotationStyle {
-        let color = |c: [f32; 4]| Color(c.map(|v| (v.clamp(0., 1.) * 255.).round() as u8));
-        AnnotationStyle::new(
-            color(self.palette.text_primary),
-            Some(color(self.palette.menu_bg)),
-            style.width(),
-            Opacity::OPAQUE,
-        )
-        .unwrap_or(style)
+        style
     }
 
     pub(crate) fn push(&mut self, p: AnnotationPrimitive) -> bool {

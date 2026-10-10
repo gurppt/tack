@@ -120,11 +120,10 @@ fn keymap_worker_exports_tackey_and_imports_legacy_json_without_mutating_on_fail
         || {},
     )?;
     let updates = finish(&mut worker)?;
-    assert!(
-        updates
-            .iter()
-            .any(|update| matches!(update, LocalUpdate::Keymap(Action::ExportKeymap, Ok(None))))
-    );
+    assert!(updates.iter().any(|update| matches!(
+        update,
+        LocalUpdate::Keymap(Action::ExportKeymap, Ok(Some(_)))
+    )));
     let exported = root.0.join("studio.v3.tackey");
     assert_eq!(
         preferences::read_keymap(&exported)?.keymap()?.bindings(),
@@ -280,11 +279,57 @@ fn keymap_suffix_added_target_requires_explicit_replacement_choice() -> R {
         },
         || {},
     )?;
-    assert!(
-        finish(&mut worker)?
-            .iter()
-            .any(|update| matches!(update, LocalUpdate::Keymap(Action::ExportKeymap, Ok(None))))
-    );
+    assert!(finish(&mut worker)?.iter().any(|update| matches!(
+        update,
+        LocalUpdate::Keymap(Action::ExportKeymap, Ok(Some(_)))
+    )));
     assert!(preferences::read_keymap(&target).is_ok());
+    Ok(())
+}
+
+#[test]
+fn named_keyset_save_acknowledges_only_exported_snapshot_and_preferences_stay_separate() -> R {
+    let root = Root::new()?;
+    let path = root.0.join("artist.tackey");
+    let mut current = Preferences::defaults()?;
+    assert_eq!(current.keyset.name, "Default");
+    assert!(current.keyset.path.is_none());
+    preferences::export_keymap(&path, &current)?;
+    let exported = preferences::read_keymap(&path)?;
+    assert_eq!(exported.keyset.name, "artist");
+    assert_eq!(exported.keyset.path.as_ref().ok_or("path")?.path()?, path);
+    current.keymap.retain(|b| b.action != Action::Undo.id());
+    let edits = current.keymap.clone();
+    preferences::acknowledge_keyset_export(&mut current, &exported);
+    assert_eq!(current.keymap, edits);
+    assert!(current.keyset.dirty);
+    preferences::export_keymap(&path, &current)?;
+    let exported = preferences::read_keymap(&path)?;
+    preferences::acknowledge_keyset_export(&mut current, &exported);
+    assert!(!current.keyset.dirty);
+    let settings = root.0.join("settings.json");
+    preferences::export_preferences(&settings, &current)?;
+    let value: serde_json::Value = serde_json::from_slice(&fs::read(settings)?)?;
+    assert!(value.get("keyset").is_none());
+    assert!(value.get("keymap").is_none());
+    Ok(())
+}
+
+#[test]
+fn concurrent_keyset_identity_and_bindings_merge_and_adopt_atomically() -> R {
+    let base = Preferences::defaults()?;
+    let mut save_as = base.clone();
+    save_as.keyset.name = "D".into();
+    let mut loaded = base.clone();
+    loaded.keyset.name = "C".into();
+    loaded.keymap.retain(|b| b.action != Action::Undo.id());
+    assert!(preferences::merge_settings(&base, &save_as, &loaded).is_err());
+    let mut newer = save_as.clone();
+    preferences::adopt_saved(&mut newer, &base, &loaded);
+    assert_eq!(newer.keyset, save_as.keyset);
+    assert_eq!(newer.keymap, save_as.keymap);
+    let merged = preferences::merge_settings(&base, &loaded, &base)?;
+    assert_eq!(merged.keymap, loaded.keymap);
+    assert_eq!(merged.keyset, loaded.keyset);
     Ok(())
 }

@@ -1,0 +1,970 @@
+{
+  "binary_sha256": "7fbc8f3e65c91865c6f41132da4a218eed942a745d6b05e059074b5309925fb7",
+  "harness_sha256": "0654b24362cd1ed025717f4fe34214308f18cbf345ddd2765b3f61ba80c3d04b",
+  "scope": "Three native Linux clients on three owned displays, one physical host; physical two-computer test pending",
+  "checks": [
+    {
+      "name": "three native clients keep independent focused displays",
+      "observed": true,
+      "detail": {
+        "displays": [
+          ":91",
+          ":101",
+          ":111"
+        ],
+        "image_points": [
+          [
+            195.0,
+            300.0
+          ],
+          [
+            399.5,
+            300.0
+          ]
+        ],
+        "zoom": 0.30119421191220214
+      }
+    },
+    {
+      "name": "A image movement survives B unrelated scribble",
+      "observed": true,
+      "detail": {
+        "revision": 2
+      }
+    },
+    {
+      "name": "separate image rotate and move converge",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "foreign red outline and no same-object steal",
+      "observed": true,
+      "detail": {
+        "red_pixels": 677
+      }
+    },
+    {
+      "name": "context menu survives unrelated native edit",
+      "observed": true,
+      "detail": {
+        "crop": [
+          260,
+          340,
+          560,
+          540
+        ]
+      }
+    },
+    {
+      "name": "shared Duplicate adds a fresh object",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "shared Duplicate undo exact count",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "native image distortion changes its aspect",
+      "observed": true,
+      "detail": {
+        "actual": {
+          "id": 115607320463417797283958726729266655838,
+          "kind": "image",
+          "center": [
+            1129.4052615231449,
+            253.90233845473097
+          ],
+          "size": [
+            699.6035076820965,
+            375.0
+          ],
+          "rotation": 0.0
+        },
+        "corner": [
+          519.8582635736607,
+          320.0
+        ]
+      }
+    },
+    {
+      "name": "shared Reset Aspect Ratio shortcut is one edit with exact undo",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "shared Rectangle fill/contextual opacity use semantic history",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "B captured shortcuts 7/8 are local profile state",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "shared native edit input-to-receipts measured",
+      "observed": true,
+      "detail": {
+        "milliseconds": [
+          420.69600600007107,
+          421.0196570002154,
+          422.07575800057384,
+          420.9654860005685,
+          419.34806399876834,
+          421.4422690001811
+        ],
+        "scope": "Includes injected input sleeps and receipt polling; not pure transport latency"
+      }
+    },
+    {
+      "name": "bounded server RSS stages measured",
+      "observed": true,
+      "detail": {
+        "empty": 2867200,
+        "three_clients": 4222976,
+        "one_active_lease": 4284416
+      }
+    },
+    {
+      "name": "settled server has zero CPU; clients have bounded driver idle cost and no data I/O",
+      "observed": true,
+      "detail": [
+        {
+          "seconds": 3.000102819998574,
+          "rss_before": 4804608,
+          "rss_after": 4804608,
+          "threads": 7,
+          "tasks": [
+            {
+              "name": "tack-server",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-lan-sessio",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-lan-writer",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-lan-sessio",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-lan-writer",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-lan-sessio",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-lan-writer",
+              "ticks": 0,
+              "voluntary_switches": 0
+            }
+          ],
+          "ticks": 0,
+          "cpu_percent_one_core": 0.0,
+          "socket_records": [
+            {
+              "kind": "tcp",
+              "record": "1: 0100007F:8AB3 00000000:0000 0A 00000000:00000000 00:00000000 00000000  1000        0 131378 1 0000000000000000 100 0 0 10 0"
+            },
+            {
+              "kind": "tcp",
+              "record": "10: 0100007F:8AB3 0100007F:8E2E 01 00000000:00000000 00:00000000 00000000  1000        0 123817 1 0000000000000000 20 4 29 10 -1"
+            },
+            {
+              "kind": "tcp",
+              "record": "16: 0100007F:8AB3 0100007F:8E40 01 00000000:00000000 00:00000000 00000000  1000        0 131386 1 0000000000000000 20 4 29 10 -1"
+            },
+            {
+              "kind": "tcp",
+              "record": "17: 0100007F:8AB3 0100007F:8E4A 01 00000000:00000000 00:00000000 00000000  1000        0 135194 1 0000000000000000 21 4 29 10 -1"
+            }
+          ],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          }
+        },
+        {
+          "seconds": 3.000102819998574,
+          "rss_before": 117760000,
+          "rss_after": 117760000,
+          "threads": 43,
+          "tasks": [
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-shared-con",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-shared-ass",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-shared-pub",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-shared-rea",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-1",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-2",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-3",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-4",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-5",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-6",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-7",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-8",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-9",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-10",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-11",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-12",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-13",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-14",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-15",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack:disk$0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain q",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain e",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            }
+          ],
+          "ticks": 0,
+          "cpu_percent_one_core": 0.0,
+          "socket_records": [
+            {
+              "kind": "tcp",
+              "record": "12: 0100007F:8E2E 0100007F:8AB3 01 00000000:00000000 00:00000000 00000000  1000        0 120761 1 0000000000000000 20 4 28 10 -1"
+            },
+            {
+              "kind": "unix",
+              "record": "0000000000000000: 00000003 00000000 00000000 0001 03 126686"
+            }
+          ],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          }
+        },
+        {
+          "seconds": 3.000102819998574,
+          "rss_before": 116576256,
+          "rss_after": 116576256,
+          "threads": 43,
+          "tasks": [
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-shared-con",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-shared-ass",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-shared-pub",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-shared-rea",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-1",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-2",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-3",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-4",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-5",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-6",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-7",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-8",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-9",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-10",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-11",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-12",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-13",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-14",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-15",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack:disk$0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain q",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain e",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            }
+          ],
+          "ticks": 0,
+          "cpu_percent_one_core": 0.0,
+          "socket_records": [
+            {
+              "kind": "tcp",
+              "record": "13: 0100007F:8E40 0100007F:8AB3 01 00000000:00000000 00:00000000 00000000  1000        0 134332 1 0000000000000000 20 4 28 10 -1"
+            },
+            {
+              "kind": "unix",
+              "record": "0000000000000000: 00000003 00000000 00000000 0001 03 134331"
+            }
+          ],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          }
+        },
+        {
+          "seconds": 3.000102819998574,
+          "rss_before": 117760000,
+          "rss_after": 117760000,
+          "threads": 43,
+          "tasks": [
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-shared-con",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-shared-ass",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-shared-pub",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-shared-rea",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-1",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-2",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-3",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-4",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-5",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-6",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-7",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-8",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-9",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-10",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-11",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-12",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-13",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-14",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-15",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack:disk$0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain q",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain e",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            }
+          ],
+          "ticks": 0,
+          "cpu_percent_one_core": 0.0,
+          "socket_records": [
+            {
+              "kind": "tcp",
+              "record": "14: 0100007F:8E4A 0100007F:8AB3 01 00000000:00000000 00:00000000 00000000  1000        0 120769 1 0000000000000000 20 4 28 10 -1"
+            },
+            {
+              "kind": "unix",
+              "record": "0000000000000000: 00000003 00000000 00000000 0001 03 133283"
+            }
+          ],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "original local file stays untouched",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "deleted menu target degrades without crash or stale edit",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "crashed native lease owner can be reclaimed",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "disconnect is visible without attempted edit",
+      "observed": true,
+      "detail": "Tack \u2014 snapshot-6bac2b891322abccbaf8acda3b570126-1424b72f36c3c05bfaf572ebedb72a83.tack \u00b7 server authority \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 LAN I/O: failed to fill whole buffer \u00b7 Pointer \u00b7 shared 127.0.0.1:35507 / 6bac2b891322abccbaf8acda3b570126 \u00b7 Disconnected \u00b7 rev 26 \u00b7 F5 reconnect"
+    },
+    {
+      "name": "no native redraw during settled idle interval",
+      "observed": true,
+      "detail": [
+        0,
+        0
+      ]
+    }
+  ]
+}

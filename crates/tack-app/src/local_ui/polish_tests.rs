@@ -94,3 +94,187 @@ fn pointer_hover_cannot_retarget_a_shortcut_capture() -> R {
     assert!(ui.capture);
     Ok(())
 }
+#[test]
+fn scrollbar_wheel_drag_and_hover_never_retarget_or_scroll_from_pointer_position() -> R {
+    let mut p = Preferences::defaults()?;
+    let mut map = p.keymap()?;
+    let c = Camera::new([800, 600]);
+    let mut g = ImageGizmo::default();
+    for panel in [Panel::Keymap, Panel::Toolbar] {
+        let mut ui = LocalUi::new(panel);
+        ui.draw(&mut g, &c, &map, &p);
+        let motion = |x, y| WindowEvent::CursorMoved {
+            device_id: winit::event::DeviceId::dummy(),
+            position: winit::dpi::PhysicalPosition::new(x, y),
+        };
+        let wheel = WindowEvent::MouseWheel {
+            device_id: winit::event::DeviceId::dummy(),
+            delta: winit::event::MouseScrollDelta::LineDelta(0., -1.),
+            phase: winit::event::TouchPhase::Moved,
+        };
+        for y in [85., 86., 100., 200., 300.] {
+            ui.handle(&motion(50., y), &mut map, &mut p);
+            g.quads.clear();
+            ui.draw(&mut g, &c, &map, &p);
+            assert_eq!(ui.first, 0);
+            assert_eq!(ui.selected, 0);
+        }
+        ui.handle(&motion(50., 100.), &mut map, &mut p);
+        ui.handle(&wheel, &mut map, &mut p);
+        g.quads.clear();
+        ui.draw(&mut g, &c, &map, &p);
+        assert_eq!(ui.first, 1);
+        assert_eq!(ui.selected, 0);
+        let viewport = ui.scroll[0].viewport;
+        ui.handle(
+            &motion(viewport[2] - 4., viewport[1] + 4.),
+            &mut map,
+            &mut p,
+        );
+        ui.handle(
+            &WindowEvent::MouseInput {
+                device_id: winit::event::DeviceId::dummy(),
+                state: ElementState::Pressed,
+                button: winit::event::MouseButton::Left,
+            },
+            &mut map,
+            &mut p,
+        );
+        ui.handle(
+            &motion(viewport[2] - 4., viewport[3] - 1.),
+            &mut map,
+            &mut p,
+        );
+        assert!(ui.first > 1);
+        ui.modifiers = Modifiers::CONTROL;
+        ui.focus = Some(Command::Search);
+        ui.handle(&WindowEvent::Focused(false), &mut map, &mut p);
+        assert_eq!(ui.modifiers, Modifiers::NONE);
+        assert!(ui.focus.is_none());
+    }
+    Ok(())
+}
+#[test]
+fn capture_is_staged_cancelable_and_clears_refused_candidates() -> R {
+    let mut p = Preferences::defaults()?;
+    let mut map = p.keymap()?;
+    let before = map.bindings().to_vec();
+    let mut ui = LocalUi::new(Panel::Keymap);
+    ui.search = "Undo".into();
+    ui.command(Command::Change, &mut map, &mut p);
+    ui.modifiers = Modifiers::CONTROL;
+    ui.capture_binding(
+        PhysicalControl::LogicalKey(crate::input::LogicalKey::Character('v')),
+        &mut map,
+        &mut p,
+    );
+    assert!(ui.staged.is_some());
+    assert_eq!(map.bindings(), before);
+    assert!(ui.message.contains("Paste"));
+    ui.capture_binding(
+        PhysicalControl::Wheel(crate::input::WheelAxis::Vertical),
+        &mut map,
+        &mut p,
+    );
+    assert!(ui.staged.is_none());
+    assert_eq!(map.bindings(), before);
+    ui.command(Command::Cancel, &mut map, &mut p);
+    assert!(!ui.capture);
+    assert_eq!(map.bindings(), before);
+    Ok(())
+}
+#[test]
+fn release_behavior_is_real_and_captured_actions_refuse_illegal_modes() -> R {
+    let mut p = Preferences::defaults()?;
+    let mut map = p.keymap()?;
+    let mut ui = LocalUi::new(Panel::Keymap);
+    ui.search = "Undo".into();
+    ui.command(Command::Trigger, &mut map, &mut p);
+    assert_eq!(
+        map.for_action(Action::Undo).next().ok_or("undo")?.trigger,
+        Trigger::Release
+    );
+    ui.command(Command::Trigger, &mut map, &mut p);
+    assert_eq!(
+        map.for_action(Action::Undo).next().ok_or("undo")?.trigger,
+        Trigger::Press
+    );
+    ui.search = "SnapDisable".into();
+    ui.selected = 0;
+    ui.command(Command::Trigger, &mut map, &mut p);
+    assert_eq!(
+        map.for_action(Action::SnapDisable)
+            .next()
+            .ok_or("snap")?
+            .trigger,
+        Trigger::Hold
+    );
+    ui.search = "ZoomView".into();
+    ui.command(Command::Trigger, &mut map, &mut p);
+    assert!(ui.message.contains("Normal"));
+    Ok(())
+}
+#[test]
+fn bookmark_capture_displaces_release_conflict_and_returns_only_after_confirmation() -> R {
+    let mut p = Preferences::defaults()?;
+    let mut map = Keymap::default();
+    let control = PhysicalControl::LogicalKey(crate::input::LogicalKey::Named(
+        winit::keyboard::NamedKey::F4,
+    ));
+    map.bind(Binding {
+        action: Action::Undo,
+        control,
+        modifiers: ModifierMatch::Exact(Modifiers::NONE),
+        trigger: Trigger::Release,
+    })?;
+    let mut ui = LocalUi::view_capture(11);
+    assert!(ui.capture_binding(control, &mut map, &mut p).is_none());
+    assert!(ui.message.contains("Undo"));
+    assert_eq!(map.for_action(Action::Undo).count(), 1);
+    assert!(matches!(
+        ui.command(Command::ConfirmCapture, &mut map, &mut p),
+        Some(UiResult::AssignCameraSlot(11))
+    ));
+    assert_eq!(map.for_action(Action::Undo).count(), 0);
+    assert_eq!(map.for_action(Action::JumpCameraSlot(11)).count(), 1);
+    assert_eq!(
+        Action::from_id("JumpCameraSlot(11)"),
+        Some(Action::JumpCameraSlot(11))
+    );
+    assert!(Action::from_id("JumpCameraSlot(64)").is_none());
+    assert!(filtered_actions("F4", &map).contains(&Action::JumpCameraSlot(11)));
+    Ok(())
+}
+
+#[test]
+fn bookmark_focus_loss_dismisses_and_capacity_race_preserves_staged_binding() -> R {
+    let mut p = Preferences::defaults()?;
+    let mut map = p.keymap()?;
+    let mut ui = LocalUi::view_capture(12);
+    assert!(matches!(
+        ui.handle(&WindowEvent::Focused(false), &mut map, &mut p),
+        Some(UiResult::Dismiss)
+    ));
+    let mut ui = LocalUi::view_capture(12);
+    ui.capture_binding(
+        PhysicalControl::LogicalKey(crate::input::LogicalKey::Character('q')),
+        &mut map,
+        &mut p,
+    );
+    let before = map.bindings().to_vec();
+    p.local_views = (0..64)
+        .map(|slot| crate::camera_slots::View {
+            board: format!("{:032x}", 1),
+            slot,
+            center: [0.; 2],
+            zoom: 1.,
+        })
+        .collect();
+    assert!(
+        ui.command(Command::ConfirmCapture, &mut map, &mut p)
+            .is_none()
+    );
+    assert_eq!(map.bindings(), before);
+    assert!(ui.message.contains("64"));
+    Ok(())
+}

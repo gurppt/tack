@@ -46,11 +46,22 @@ pub(crate) fn capture(
 }
 #[cfg(not(target_os = "linux"))]
 pub(crate) fn capture(
+    command: Command,
+    work: &Path,
+    cancel: &AtomicBool,
+    limit: u64,
+    timeout: Duration,
+) -> Result<Vec<u8>, AssetError> {
+    capture_with_cancel(command, work, cancel, limit, timeout, None)
+}
+#[cfg(not(target_os = "linux"))]
+fn capture_with_cancel(
     mut command: Command,
     work: &Path,
     cancel: &AtomicBool,
     limit: u64,
     timeout: Duration,
+    cancel_code: Option<i32>,
 ) -> Result<Vec<u8>, AssetError> {
     let _ = work;
     let mut child = command
@@ -100,6 +111,9 @@ pub(crate) fn capture(
             }
         }
         match child.try_wait() {
+            Ok(Some(status)) if cancel_code.is_some() && status.code() == cancel_code => {
+                break Ok(Vec::new());
+            }
             Ok(Some(status)) if !status.success() => {
                 break Err("native operation cancelled or unavailable".into());
             }
@@ -204,14 +218,34 @@ pub fn pick_with_options(
     }
     #[cfg(any(target_os = "linux", windows))]
     {
-        let bytes = capture(command, work, cancel, 64 * 1024, Duration::from_secs(300))?;
+        #[cfg(target_os = "linux")]
+        let bytes = crate::clipboard::capture_with_cancel(
+            command,
+            cancel,
+            64 * 1024,
+            Duration::from_secs(300),
+            Some(1),
+        )?;
+        #[cfg(windows)]
+        let bytes = capture_with_cancel(
+            command,
+            work,
+            cancel,
+            64 * 1024,
+            Duration::from_secs(300),
+            Some(42),
+        )?;
+        let _ = work;
         let text = std::str::from_utf8(&bytes)?;
         let paths: Vec<_> = text
             .lines()
             .filter(|s| !s.is_empty())
             .map(PathBuf::from)
             .collect();
-        if paths.is_empty() || paths.len() > crate::local_import::MAX_IMPORT_FILES {
+        if paths.is_empty() {
+            return Ok(paths);
+        }
+        if paths.len() > crate::local_import::MAX_IMPORT_FILES {
             return Err("picker returned no paths or too many paths".into());
         }
         for path in &paths {
@@ -240,7 +274,7 @@ if ($args[0] -eq 'ExportPreferences') { $d.Filter = 'Tack preferences (*.json)|*
 if ($args[0] -eq 'ExportKeymap') { $d.Filter = 'Tack keymaps (*.tackey)|*.tackey' }
 if ($args[0] -eq 'Import' -or $args[0] -eq 'Relink') { $d.Filter = 'Images (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg' }
 if ($args[0] -eq 'Import') { $d.Multiselect = $true }
-if ($d.ShowDialog() -ne [System.Windows.Forms.DialogResult]::OK) { exit 1 }
+if ($d.ShowDialog() -ne [System.Windows.Forms.DialogResult]::OK) { exit 42 }
 foreach ($p in $d.FileNames) { [Console]::WriteLine($p) }
 $d.Dispose()
 "#;

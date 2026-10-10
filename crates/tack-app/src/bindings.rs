@@ -29,7 +29,7 @@ impl ModifierMatch {
             Self::Any => true,
         }
     }
-    fn overlaps(self, other: Self) -> bool {
+    pub(crate) fn overlaps(self, other: Self) -> bool {
         (0..16).any(|mask| {
             self.matches(Modifiers::from_mask(mask)) && other.matches(Modifiers::from_mask(mask))
         })
@@ -44,6 +44,37 @@ pub struct Binding {
     pub action: Action,
 }
 
+/// Dedicated keypad controls cannot alias ordinary layout keys. Physical
+/// resolution takes precedence only for the keypad key that is actually pressed.
+pub(crate) fn controls_overlap(a: PhysicalControl, b: PhysicalControl) -> bool {
+    use winit::keyboard::{KeyCode, PhysicalKey};
+    let keypad = |c| {
+        matches!(
+            c,
+            PhysicalControl::Key(PhysicalKey::Code(
+                KeyCode::NumpadAdd
+                    | KeyCode::NumpadSubtract
+                    | KeyCode::Numpad0
+                    | KeyCode::Numpad1
+                    | KeyCode::Numpad2
+                    | KeyCode::Numpad3
+                    | KeyCode::Numpad4
+                    | KeyCode::Numpad5
+                    | KeyCode::Numpad6
+                    | KeyCode::Numpad7
+                    | KeyCode::Numpad8
+                    | KeyCode::Numpad9
+            ))
+        )
+    };
+    a == b
+        || (matches!(
+            (a, b),
+            (PhysicalControl::Key(_), PhysicalControl::LogicalKey(_))
+                | (PhysicalControl::LogicalKey(_), PhysicalControl::Key(_))
+        ) && !keypad(a)
+            && !keypad(b))
+}
 /// Bounded user preferences. An empty map assigns nothing. Configuration changes
 /// are explicit; callers can replace it while held temporary tools still retain
 /// their original release action/token in InputState.
@@ -81,7 +112,7 @@ impl Keymap {
                 (PhysicalControl::Key(_), PhysicalControl::LogicalKey(_))
                     | (PhysicalControl::LogicalKey(_), PhysicalControl::Key(_))
             );
-            (b.control == binding.control || mixed)
+            controls_overlap(b.control, binding.control)
                 && (mixed
                     || b.trigger == binding.trigger
                     || matches!(
@@ -130,6 +161,12 @@ impl Keymap {
     }
     pub fn for_action(&self, action: Action) -> impl Iterator<Item = &Binding> {
         self.bindings.iter().filter(move |b| b.action == action)
+    }
+    /// Explicit pointer bindings take priority over native fallback gestures.
+    pub fn pointer_bound(&self, button: crate::input::PointerButton, modifiers: Modifiers) -> bool {
+        self.bindings.iter().any(|b| {
+            b.control == PhysicalControl::Pointer(button) && b.modifiers.matches(modifiers)
+        })
     }
     pub(crate) fn matching(
         &self,

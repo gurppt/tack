@@ -19,6 +19,7 @@ mod daily_tests;
 mod events;
 #[cfg(test)]
 mod polish_tests;
+mod scroll;
 mod settings;
 #[cfg(test)]
 mod tests;
@@ -44,8 +45,10 @@ pub enum Panel {
     Close,
     Recovery,
     Error,
+    ViewCapture,
 }
 pub enum UiResult {
+    AssignCameraSlot(u8),
     JumpBookmark(tack_core::BookmarkId),
     SaveBookmark(Option<tack_core::BookmarkId>, String),
     RenameBookmark(tack_core::BookmarkId),
@@ -65,11 +68,14 @@ pub enum UiResult {
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Command {
+    ConfirmCapture,
+    SaveKeyset,
     ToolbarToggle,
     ToolbarRemove,
     ToolbarUp,
     ToolbarDown,
     ToolbarPlacement,
+    ToolbarScale,
     ToolbarReset,
     RenameBookmark,
     DeleteBookmark,
@@ -106,6 +112,8 @@ enum ResetScope {
 }
 pub struct LocalUi {
     daily: Option<Box<DailyPanel>>,
+    pub view_capture_slot: Option<u8>,
+    modal: Option<crate::modal_shell::ModalShell>,
     pub about_image: bool,
     pub about_layout: Option<crate::about::Layout>,
     pub panel: Panel,
@@ -121,7 +129,9 @@ pub struct LocalUi {
     search: String,
     capture: bool,
     shortcut_click: Option<(usize, std::time::Instant)>,
-    release: bool,
+    behavior: crate::shortcut_capture::Behavior,
+    staged: Option<crate::shortcut_capture::Capture>,
+    key_column: usize,
     modifiers: Modifiers,
     pub message: String,
     cursor: [f64; 2],
@@ -129,6 +139,8 @@ pub struct LocalUi {
     layout: [f64; 4],
     first: usize,
     visible: usize,
+    scroll: [crate::ui_scroll::Scrollbar; 2],
+    reveal_row: bool,
     hits: Vec<Hit>,
     focus: Option<Command>,
     confirm_reset: Option<ResetScope>,
@@ -154,6 +166,8 @@ impl LocalUi {
     pub fn new(panel: Panel) -> Self {
         Self {
             daily: None,
+            view_capture_slot: None,
+            modal: None,
             about_image: false,
             about_layout: None,
             panel,
@@ -169,7 +183,9 @@ impl LocalUi {
             search: String::new(),
             capture: false,
             shortcut_click: None,
-            release: false,
+            behavior: Default::default(),
+            staged: None,
+            key_column: 0,
             modifiers: Modifiers::NONE,
             message: String::new(),
             cursor: [0.; 2],
@@ -177,6 +193,8 @@ impl LocalUi {
             layout: [1., 600., 405., 60.],
             first: 0,
             visible: 12,
+            scroll: Default::default(),
+            reveal_row: true,
             hits: Vec::new(),
             focus: None,
             confirm_reset: None,
@@ -192,7 +210,8 @@ impl LocalUi {
     }
     fn clear_focus(&mut self) {
         self.capture = false;
-        self.release = false;
+        self.behavior = Default::default();
+        self.staged = None;
         self.focus = None;
         self.confirm_reset = None;
         self.modifiers = Modifiers::NONE;
@@ -200,6 +219,13 @@ impl LocalUi {
         self.message.clear();
         self.hits.clear();
         self.first = 0;
+    }
+    pub fn view_capture(slot: u8) -> Self {
+        let mut ui = Self::new(Panel::ViewCapture);
+        ui.view_capture_slot = Some(slot);
+        ui.capture = true;
+        ui.message = "Press a shortcut; Enter confirms; Escape cancels".into();
+        ui
     }
     fn back(&mut self) -> Option<UiResult> {
         self.clear_focus();
@@ -212,6 +238,9 @@ impl LocalUi {
         }
     }
     fn actions(&self, keymap: &Keymap) -> Vec<Action> {
+        if let Some(slot) = self.view_capture_slot {
+            return vec![Action::JumpCameraSlot(slot)];
+        }
         if self.panel == Panel::Menu {
             Action::ALL
                 .into_iter()
@@ -243,10 +272,11 @@ impl LocalUi {
             Panel::Recent => profile.recent.len(),
             Panel::Close => 3,
             Panel::Recovery => 2,
-            Panel::Error | Panel::About => 1,
+            Panel::Error | Panel::About | Panel::ViewCapture => 1,
         }
     }
     fn persist(&mut self, keymap: &Keymap, profile: &mut Preferences) -> Option<UiResult> {
+        profile.keyset.dirty = true;
         profile.keymap = keymap
             .bindings()
             .iter()
@@ -261,80 +291,25 @@ impl LocalUi {
         profile: &mut Preferences,
     ) -> Option<UiResult> {
         let action = *self.actions(keymap).get(self.selected)?;
-        let trigger = if matches!(control, PhysicalControl::Wheel(_)) {
-            Trigger::Wheel
-        } else if action.captured_hold() || action == Action::PanView {
-            Trigger::Hold
-        } else if self.release {
-            Trigger::Release
-        } else {
-            Trigger::Press
-        };
-        let binding = Binding {
+        let binding = self.behavior.binding(
             action,
-            control,
-            trigger,
-            modifiers: ModifierMatch::Exact(self.modifiers),
-        };
-        let mut candidate = keymap.clone();
-        candidate.unassign(action);
-        if let Action::SelectTool(tool) = action {
-            candidate.unassign(Action::TemporaryTool(tool));
-        }
-        let binding = if let Action::SelectTool(tool) = action {
             Binding {
-                action: if self.release {
-                    Action::TemporaryTool(tool)
-                } else {
-                    action
-                },
-                trigger: if self.release {
-                    Trigger::Hold
-                } else {
-                    Trigger::Press
-                },
-                ..binding
-            }
-        } else {
-            Binding {
-                trigger: if action.captured_hold() || action == Action::PanView {
-                    Trigger::Hold
-                } else {
-                    Trigger::Press
-                },
-                ..binding
-            }
-        };
-        let mut displaced = None;
-        if let Err(error) = candidate.bind(binding) {
-            if let BindingError::Conflict { existing } = error {
-                let old = candidate.bindings()[existing].action;
-                displaced = Some(old);
-                candidate.unassign(old);
-                if candidate.bind(binding).is_err() {
-                    self.message = "Shortcut cannot be assigned".into();
-                    return None;
-                }
-            } else {
-                self.message = error.to_string();
-                return None;
-            }
-        }
-        *keymap = candidate;
-        self.capture = false;
-        self.focus = None;
-        self.message = displaced.map_or_else(
-            || format!("Changed {}", action.label()),
-            |old| {
-                format!(
-                    "{} assigned to {}; {} is now unbound",
-                    crate::context_menu::binding_label(&binding),
-                    action.label(),
-                    old.label()
-                )
+                action,
+                control,
+                trigger: Trigger::Press,
+                modifiers: ModifierMatch::Exact(self.modifiers),
             },
         );
-        self.persist(keymap, profile)
+        self.staged = None;
+        match crate::shortcut_capture::Capture::stage(keymap, action, binding) {
+            Ok(staged) => {
+                self.message = staged.message();
+                self.staged = Some(staged);
+            }
+            Err(e) => self.message = e.to_string(),
+        }
+        let _ = profile;
+        None
     }
 
     fn reset(
@@ -386,10 +361,30 @@ impl LocalUi {
             return self.toolbar_command(command, profile);
         }
         match command {
+            Command::SaveKeyset => Some(UiResult::Action(Action::SaveKeymap)),
+            Command::ConfirmCapture => {
+                if self.view_capture_slot.is_some()
+                    && profile.local_views.len() >= crate::camera_slots::MAX_VIEWS
+                {
+                    self.message = "Too many local views (maximum 64)".into();
+                    return None;
+                }
+                let staged = self.staged.take()?;
+                self.message = staged.message();
+                *keymap = staged.candidate;
+                self.capture = false;
+
+                let result = self.persist(keymap, profile);
+                if let Some(slot) = self.view_capture_slot {
+                    return Some(UiResult::AssignCameraSlot(slot));
+                }
+                result
+            }
             Command::ToolbarToggle
             | Command::ToolbarRemove
             | Command::ToolbarUp
             | Command::ToolbarDown
+            | Command::ToolbarScale
             | Command::ToolbarPlacement
             | Command::ToolbarReset => None,
             Command::RenameBookmark => self.daily_command(true),
@@ -404,10 +399,14 @@ impl LocalUi {
             }
             Command::Change => {
                 if let Some(action) = self.actions(keymap).get(self.selected) {
-                    self.release = keymap
+                    self.behavior = keymap
                         .bindings()
                         .iter()
-                        .any(|b| shortcut_matches(*action, b.action) && b.trigger == Trigger::Hold);
+                        .find(|b| shortcut_matches(*action, b.action))
+                        .map_or(Default::default(), |b| {
+                            crate::shortcut_capture::Behavior::from_trigger(b.trigger)
+                        });
+                    self.staged = None;
                     self.capture = true;
                     self.message.clear();
                 }
@@ -431,53 +430,65 @@ impl LocalUi {
             Command::ConfirmReset => self.reset(keymap, profile, self.confirm_reset),
             Command::Cancel => {
                 self.capture = false;
+                self.staged = None;
                 self.confirm_reset = None;
                 self.message.clear();
                 None
             }
             Command::Trigger => {
                 let action = *self.actions(keymap).get(self.selected)?;
-                let Action::SelectTool(tool) = action else {
-                    self.message = "This action has fixed Normal/Hold semantics".into();
-                    return None;
-                };
-                self.release = !keymap
-                    .bindings()
-                    .iter()
-                    .any(|b| shortcut_matches(action, b.action) && b.trigger == Trigger::Hold);
                 let bindings: Vec<_> = keymap
                     .bindings()
                     .iter()
                     .filter(|b| shortcut_matches(action, b.action))
                     .copied()
                     .collect();
+                let current = bindings.first().map_or(self.behavior, |b| {
+                    crate::shortcut_capture::Behavior::from_trigger(b.trigger)
+                });
+                if bindings
+                    .iter()
+                    .any(|b| matches!(b.control, PhysicalControl::Wheel(_)))
+                {
+                    self.message = "Wheel shortcuts have Normal behavior only".into();
+                    return None;
+                }
+                let mut next = current.next();
                 let mut candidate = keymap.clone();
                 candidate.unassign(action);
-                candidate.unassign(Action::TemporaryTool(tool));
+                if let Action::SelectTool(t) = action {
+                    candidate.unassign(Action::TemporaryTool(t));
+                }
+                // Skip illegal behavior without silently binding a different action.
+                let prototype = bindings.first().copied().unwrap_or(Binding {
+                    action,
+                    control: PhysicalControl::LogicalKey(crate::input::LogicalKey::Character('q')),
+                    trigger: Trigger::Press,
+                    modifiers: ModifierMatch::Exact(Modifiers::NONE),
+                });
+                for _ in 0..3 {
+                    let mut check = Keymap::default();
+                    if check.bind(next.binding(action, prototype)).is_ok() {
+                        break;
+                    }
+                    next = next.next();
+                }
+                if next == current {
+                    self.message =
+                        format!("{} supports only {:?} behavior", action.label(), current);
+                    return None;
+                }
                 for binding in bindings {
-                    if candidate
-                        .bind(Binding {
-                            action: if self.release {
-                                Action::TemporaryTool(tool)
-                            } else {
-                                action
-                            },
-                            trigger: if self.release {
-                                Trigger::Hold
-                            } else {
-                                Trigger::Press
-                            },
-                            ..binding
-                        })
-                        .is_err()
-                    {
-                        self.message = "Cannot change shortcut mode".into();
+                    if candidate.bind(next.binding(action, binding)).is_err() {
+                        self.message = "Cannot change shortcut behavior".into();
                         return None;
                     }
                 }
+                self.behavior = next;
                 *keymap = candidate;
                 self.persist(keymap, profile)
             }
+
             Command::Import => Some(UiResult::Action(Action::ImportKeymap)),
             Command::Export => Some(UiResult::Action(Action::ExportKeymap)),
             Command::Close => self.back(),
@@ -518,6 +529,7 @@ impl LocalUi {
             | Panel::BookmarkName
             | Panel::Join => self.daily_activate(),
             Panel::Info | Panel::Connecting => Some(UiResult::Dismiss),
+            Panel::ViewCapture => None,
             Panel::Menu => self
                 .actions(keymap)
                 .get(self.selected)
@@ -604,16 +616,30 @@ pub fn filtered_actions(search: &str, keymap: &Keymap) -> Vec<Action> {
     };
     Action::ALL
         .into_iter()
+        .chain(
+            keymap
+                .bindings()
+                .iter()
+                .map(|b| b.action)
+                .filter(|a| !Action::ALL.contains(a)),
+        )
         .filter(|a| !matches!(a, Action::TemporaryTool(_)))
         .filter(|a| {
             matches(a.label())
                 || matches(&a.id())
                 || matches(a.category())
                 || keymap
-                    .for_action(*a)
+                    .bindings()
+                    .iter()
+                    .filter(|b| shortcut_matches(*a, b.action))
                     .any(|b| matches(&crate::context_menu::binding_label(b)))
         })
-        .collect()
+        .fold(Vec::new(), |mut actions, action| {
+            if !actions.contains(&action) {
+                actions.push(action);
+            }
+            actions
+        })
 }
 
 fn shortcut_matches(action: Action, binding: Action) -> bool {

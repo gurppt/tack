@@ -42,7 +42,7 @@ class Session:
             result = subprocess.run(['xdotool', 'search', '--onlyvisible', '--pid', str(self.process.pid)], capture_output=True, text=True, timeout=3)
             return result.stdout.splitlines()[-1] if result.stdout.strip() else None
         self.window = wait(mapped, 'owned window mapped')
-        wait(lambda: 'selected' in self.title(), 'authoring title')
+        wait(lambda: 'selected' in self.title() or self.title().startswith('Tack — '), 'authoring title')
         if not arguments and requested_size:
             command('xdotool', 'windowsize', self.window, *requested_size.split('x'))
             time.sleep(.2)
@@ -79,7 +79,7 @@ class Session:
                 continue
         return None
 
-    def picker(self, key, path):
+    def picker(self, key, path, selects_file=None):
         self.key(key)
         dialog = self.picker_window
         window = wait(dialog, 'real owned zenity picker')
@@ -90,7 +90,8 @@ class Session:
         (self.root / f'{self.name}-pickers.json').write_text(json.dumps(self.pickers, indent=2) + '\n')
         command('xdotool', 'windowfocus', '--sync', window)
         self.key('ctrl+l', 'ctrl+a')
-        selects_file = key in ('ctrl+i', 'ctrl+shift+r', 'ctrl+o')
+        if selects_file is None:
+            selects_file = key in ('ctrl+i', 'ctrl+shift+r', 'ctrl+o')
         self.text(str(path.parent) + '/' if selects_file else str(path))
         self.key('Return')
         time.sleep(.6)

@@ -96,7 +96,41 @@ impl RecentPath {
 }
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub struct Keyset {
+    pub name: String,
+    pub path: Option<RecentPath>,
+    pub dirty: bool,
+}
+impl Default for Keyset {
+    fn default() -> Self {
+        Self {
+            name: "Default".into(),
+            path: None,
+            dirty: false,
+        }
+    }
+}
+impl Keyset {
+    pub fn loaded(path: &Path) -> Result<Self, AssetError> {
+        let name = path
+            .file_stem()
+            .unwrap_or_default()
+            .to_string_lossy()
+            .chars()
+            .take(128)
+            .collect();
+        Ok(Self {
+            name,
+            path: Some(RecentPath::native(path)?),
+            dirty: false,
+        })
+    }
+}
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Preferences {
+    #[serde(default)]
+    pub keyset: Keyset,
     #[serde(default)]
     pub local_views: Vec<crate::camera_slots::View>,
     pub version: u32,
@@ -127,6 +161,7 @@ impl Preferences {
     pub fn defaults() -> Result<Self, AssetError> {
         Ok(Self {
             version: 2,
+            keyset: Keyset::default(),
             local_views: Vec::new(),
             toolbar: crate::toolbar::Config::default(),
             status_bar: true,
@@ -149,6 +184,12 @@ impl Preferences {
         })
     }
     pub fn keymap(&self) -> Result<Keymap, AssetError> {
+        if self.keyset.name.len() > 512 || self.keyset.name.chars().any(char::is_control) {
+            return Err("invalid keyset name".into());
+        }
+        if let Some(path) = &self.keyset.path {
+            path.descriptor()?;
+        }
         if !matches!(self.version, 1 | 2)
             || self.keymap.len() > crate::bindings::MAX_BINDINGS
             || self.recent.len() > MAX_RECENT
@@ -175,6 +216,10 @@ impl Preferences {
             if self.version == 1
                 && let PhysicalControl::Key(winit::keyboard::PhysicalKey::Code(code)) =
                     binding.control
+                && !matches!(
+                    code,
+                    winit::keyboard::KeyCode::NumpadAdd | winit::keyboard::KeyCode::NumpadSubtract
+                )
             {
                 binding.control = crate::input::LogicalKey::from_legacy(code).map(PhysicalControl::LogicalKey).ok_or("unsupported version-1 key; export with an explicit physical version-2 binding")?;
             }
@@ -402,10 +447,13 @@ pub fn read_keymap(path: &Path) -> Result<Preferences, AssetError> {
         }
         let mut profile = Preferences::defaults()?;
         profile.keymap = file.bindings;
+        profile.keyset = Keyset::loaded(path)?;
         profile.keymap()?;
         Ok(profile)
     } else {
-        read(path)
+        let mut profile = read(path)?;
+        profile.keyset = Keyset::loaded(path)?;
+        Ok(profile)
     } // Legacy combined preferences/keymap exports remain readable.
 }
 pub fn export_preferences(path: &Path, profile: &Preferences) -> Result<(), AssetError> {
@@ -413,6 +461,7 @@ pub fn export_preferences(path: &Path, profile: &Preferences) -> Result<(), Asse
     let mut value = serde_json::to_value(profile)?;
     if let Some(object) = value.as_object_mut() {
         object.remove("keymap");
+        object.remove("keyset");
         object.remove("recent");
         object.remove("last_board_directory");
         object.remove("local_views");
@@ -455,9 +504,17 @@ pub fn merge_settings(
         theme,
         frame_title_scale,
         handle_size,
-        hit_radius,
-        keymap
+        hit_radius
     );
+    if desired.keymap != base.keymap || desired.keyset != base.keyset {
+        let current_changed = current.keymap != base.keymap || current.keyset != base.keyset;
+        if current_changed && (current.keymap != desired.keymap || current.keyset != desired.keyset)
+        {
+            return Err("Keyset changed in another window".into());
+        }
+        next.keymap = desired.keymap.clone();
+        next.keyset = desired.keyset.clone();
+    }
     next.local_views = crate::camera_slots::merge(
         &base.local_views,
         &desired.local_views,
@@ -482,11 +539,14 @@ pub fn adopt_saved(local: &mut Preferences, submitted: &Preferences, saved: &Pre
         frame_title_scale,
         handle_size,
         hit_radius,
-        keymap,
         local_views,
         recent,
         last_board_directory
     );
+    if local.keymap == submitted.keymap && local.keyset == submitted.keyset {
+        local.keymap = saved.keymap.clone();
+        local.keyset = saved.keyset.clone();
+    }
 }
 pub struct SavedProfile {
     pub fingerprint: u32,
@@ -518,4 +578,10 @@ pub fn save_profile_merged(
         submitted: profile,
         saved,
     })
+}
+
+/// A completed export acknowledges its snapshot, without replacing newer edits.
+pub fn acknowledge_keyset_export(current: &mut Preferences, exported: &Preferences) {
+    current.keyset = exported.keyset.clone();
+    current.keyset.dirty = current.keymap != exported.keymap;
 }

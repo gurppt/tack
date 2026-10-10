@@ -38,14 +38,19 @@ fn nested_keymap_back_and_direct_close_release_all_capture_state()
     let mut keymap = profile.keymap()?;
     let mut ui = LocalUi::new(Panel::Keymap);
     ui.capture = true;
-    ui.release = true;
+    ui.behavior = crate::shortcut_capture::Behavior::Hold;
     ui.focus = Some(Command::Search);
     ui.confirm_reset = Some(ResetScope::All);
     assert!(matches!(
         ui.command(Command::Close, &mut keymap, &mut profile),
         Some(UiResult::Dismiss)
     ));
-    assert!(!ui.capture && !ui.release && ui.focus.is_none() && ui.confirm_reset.is_none());
+    assert!(
+        !ui.capture
+            && ui.behavior == crate::shortcut_capture::Behavior::Normal
+            && ui.focus.is_none()
+            && ui.confirm_reset.is_none()
+    );
     let mut direct = LocalUi::new(Panel::Keymap);
     assert!(matches!(direct.back(), Some(UiResult::Dismiss)));
     Ok(())
@@ -110,8 +115,14 @@ fn capture_conflict_reassigns_binding_and_global_reset_requires_confirm()
         _ => Modifiers::NONE,
     };
     ui.command(Command::Change, &mut keymap, &mut profile);
+    assert!(
+        ui.capture_binding(paste.control, &mut keymap, &mut profile)
+            .is_none()
+    );
+    assert_eq!(keymap.for_action(Action::Paste).count(), 1);
+    assert!(ui.message.contains(Action::Paste.label()));
     assert!(matches!(
-        ui.capture_binding(paste.control, &mut keymap, &mut profile),
+        ui.command(Command::ConfirmCapture, &mut keymap, &mut profile),
         Some(UiResult::PreferencesChanged)
     ));
     assert_eq!(keymap.for_action(Action::Paste).count(), 0);
@@ -123,7 +134,7 @@ fn capture_conflict_reassigns_binding_and_global_reset_requires_confirm()
             .control,
         paste.control
     );
-    assert!(ui.message.contains(Action::Paste.label()) && ui.message.contains("unbound"));
+    assert!(ui.message.contains(Action::Paste.label()) && ui.message.contains("replaces"));
     ui.command(Command::Cancel, &mut keymap, &mut profile);
     ui.command(Command::Unassign, &mut keymap, &mut profile);
     assert_eq!(keymap.for_action(Action::Undo).count(), 0);

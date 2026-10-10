@@ -78,6 +78,14 @@ impl App {
                 ..
             }
         ) {
+            if self.context.is_none()
+                && self.input.keymap.pointer_bound(
+                    tack_app::input::PointerButton::Mouse(MouseButton::Right),
+                    self.input.modifiers(),
+                )
+            {
+                return Ok(false);
+            }
             self.prepare_menu()?;
             if let Some(editor) = &self.editor {
                 self.input.context_selection(editor, &self.camera);

@@ -7,6 +7,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         "Cargo.toml",
         "gfx/about.toml",
         "gfx/tack_about.png",
+        "gfx/logo_tack_about.png",
         "tools/prepare_about.py",
         "tools/prepare_icon.py",
         "gfx/tack-icon.svg",
@@ -44,6 +45,13 @@ fn main() -> Result<(), Box<dyn Error>> {
         if fs::read(&asset).ok().as_deref() != Some(bytes.as_slice()) {
             // Build/package preparation only; the ordinary app never reads here.
             fs::write(&asset, &bytes)?;
+        }
+    }
+    let logo = fs::read(root.join("gfx/logo_tack_about.png"))?;
+    for directory in [profile.to_owned(), profile.join("deps")] {
+        let asset = directory.join("tack-about-logo.png");
+        if fs::read(&asset).ok().as_deref() != Some(logo.as_slice()) {
+            fs::write(&asset, &logo)?;
         }
     }
     for name in [

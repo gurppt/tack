@@ -21,22 +21,29 @@ const PALETTE: [Color; 8] = [
     Color([18, 22, 28, 255]),
     Color([252, 153, 85, 255]),
 ];
-fn next_style(s: AnnotationStyle, action: StyleAction) -> Result<AnnotationStyle, ModelError> {
+pub(crate) fn next_style(
+    s: AnnotationStyle,
+    action: StyleAction,
+) -> Result<AnnotationStyle, ModelError> {
     let mut color = s.stroke();
     let mut fill = s.fill();
     let mut width = s.width();
     let mut opacity = s.opacity();
     match action {
         StyleAction::Color => {
-            color =
-                PALETTE[(PALETTE.iter().position(|c| *c == color).unwrap_or(0) + 1) % PALETTE.len()]
+            color = PALETTE
+                [(PALETTE.iter().position(|c| *c == color).unwrap_or(0) + 1) % PALETTE.len()];
+            fill = fill.map(|old| Color([color.0[0], color.0[1], color.0[2], old.0[3]]));
         }
         StyleAction::Fill => {
-            fill = if fill.is_some() {
-                None
-            } else {
-                Some(Color([color.0[0], color.0[1], color.0[2], 64]))
-            }
+            let alpha = match fill.map(|c| c.0[3]) {
+                None => Some(255),
+                Some(255) => Some(191),
+                Some(191) => Some(128),
+                Some(128) => Some(64),
+                _ => None,
+            };
+            fill = alpha.map(|a| Color([color.0[0], color.0[1], color.0[2], a]));
         }
         StyleAction::Wider => width = (width + if width < 10. { 1. } else { 2. }).min(256.),
         StyleAction::Narrower => width = (width - if width <= 10. { 1. } else { 2. }).max(1.),
@@ -83,7 +90,7 @@ impl ImageInput {
                 0.,
                 [false; 2],
             )?,
-            style: self.annotation.style,
+            style: crate::context_adjust::note_style(self.annotation.style),
             generation: editor.generation(),
             is_new: true,
             replace: false,
@@ -99,6 +106,15 @@ impl ImageInput {
         event: ActionEvent,
         editor: &mut DocumentEditor,
     ) -> Result<bool, AssetError> {
+        if event.phase == ActionPhase::Invoke
+            && matches!(
+                event.action,
+                Action::ContextIncrease | Action::ContextDecrease
+            )
+        {
+            self.context_adjust(event.action == Action::ContextIncrease, editor)?;
+            return Ok(true);
+        }
         match event.action {
             Action::SelectTool(_) | Action::TemporaryTool(_) => {
                 self.annotation.tools.apply(event)?;
@@ -114,6 +130,12 @@ impl ImageInput {
                 Ok(true)
             }
             Action::AnnotationStyle(action) if event.phase == ActionPhase::Invoke => {
+                self.adjust_fill =
+                    if action == StyleAction::Fill && self.images.selection.len() == 1 {
+                        self.images.selection.ids().next()
+                    } else {
+                        None
+                    };
                 let mut commands = Vec::new();
                 for id in self.images.selection.ids() {
                     let Some(o) = editor.document().object(id) else {
@@ -145,8 +167,12 @@ impl ImageInput {
                         )
                     {
                         let size = match action {
-                            StyleAction::LargerText => (t.font_size() * 1.25).min(256.),
-                            StyleAction::SmallerText => (t.font_size() / 1.25).max(4.),
+                            StyleAction::LargerText => {
+                                crate::context_adjust::text_size(t.font_size(), true)
+                            }
+                            StyleAction::SmallerText => {
+                                crate::context_adjust::text_size(t.font_size(), false)
+                            }
                             _ => t.font_size(),
                         };
                         let alignment = if action == StyleAction::AlignText {
@@ -158,15 +184,23 @@ impl ImageInput {
                         } else {
                             t.alignment()
                         };
+                        self.status = format!("Text size {} px", size as u16);
                         commands.push(Command::SetText {
                             object: id,
                             text: TextObject::new(t.value().to_owned(), size, alignment)?,
                         });
                     } else {
-                        commands.push(Command::SetAnnotationStyle {
-                            object: id,
-                            style: next_style(a.style(), action)?,
-                        });
+                        let style = next_style(a.style(), action)?;
+                        self.status = if action == StyleAction::Fill {
+                            format!(
+                                "Fill {}%",
+                                (f64::from(style.fill().map_or(0, |c| c.0[3])) * 100. / 255.)
+                                    .round() as u16
+                            )
+                        } else {
+                            format!("Stroke {} px", style.width() as u16)
+                        };
+                        commands.push(Command::SetAnnotationStyle { object: id, style });
                     }
                 }
                 editor.execute(Command::Batch(commands))?;
@@ -210,8 +244,9 @@ impl ImageInput {
     }
     pub(crate) fn reset_modal_inputs(&mut self) {
         // A modal draft owns keyboard input: no captured temporary tool may
-        // outlive the physical state it replaces. Completion returns Pointer.
-        self.annotation.tools.reset_pointer();
+        // outlive the physical state it replaces. Restore the base of a Hold;
+        // ordinary one-shot Note creation still completes to Pointer.
+        self.annotation.tools.release_for_modal();
         self.state = InputState::default();
         self.snap.disabled = false;
         self.snap.clear();
@@ -276,7 +311,7 @@ impl ImageInput {
                 size: NOTE_DEFAULT_SIZE * self.gizmo.scale / camera.zoom(),
                 alignment: TextAlignment::Left,
                 transform,
-                style: c.style,
+                style: crate::context_adjust::note_style(c.style),
                 generation: editor.generation(),
                 is_new: true,
                 replace: false,

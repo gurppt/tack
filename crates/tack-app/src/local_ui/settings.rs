@@ -64,7 +64,9 @@ impl LocalUi {
         enabled: bool,
     ) {
         let p = paint.palette;
-        let cursor = self.cursor.map(|v| v / self.layout[0]);
+        let cursor = std::array::from_fn::<_, 2, _>(|i| {
+            self.cursor[i] / self.layout[0] - self.panel_offset[i]
+        });
         let hit = Hit {
             rect,
             command,
@@ -110,9 +112,10 @@ impl LocalUi {
         keymap: &Keymap,
         profile: &Preferences,
     ) {
+        let start_quad = gizmo.quads.len();
         let scale = camera.ui_scale();
         let screen = camera.screen_size();
-        let width = (f64::from(screen[0]) / scale - 24.).clamp(1., 600.);
+        let width = crate::modal_shell::ModalShell::work(camera, [600., 440.]).rect[2];
         let maximum = match self.panel {
             Panel::Preferences => 310.,
             Panel::Scale => 178.,
@@ -126,7 +129,20 @@ impl LocalUi {
         let end = 12. + height;
         let footer_y = end - footer;
         self.layout = [scale, width, height, top];
+        if matches!(self.panel, Panel::Scale | Panel::Theme) {
+            self.modal = Some(crate::modal_shell::ModalShell::short(
+                camera,
+                [width, height],
+                true,
+            ));
+            self.panel_offset = self.modal.map_or([0.; 2], |m| m.offset());
+        }
         self.visible = ((footer_y - top) / 22.).floor().clamp(1., 12.) as usize;
+        crate::modal_shell::ModalShell::work(camera, [width, height]).paint(
+            gizmo,
+            camera,
+            profile.theme.palette(),
+        );
         let mut paint = Paint {
             gizmo,
             camera,
@@ -134,19 +150,30 @@ impl LocalUi {
             budget: 900,
         };
         let p = paint.palette;
-        paint.rect([12., 12., 12. + width, end], p.menu_border);
-        paint.rect([13., 13., 11. + width, end - 1.], p.menu_bg);
+
         let heading = match self.panel {
             Panel::Preferences => "Preferences",
             Panel::Scale => "UI Scale - choose",
             Panel::Theme => "Background - choose",
             _ => "Keymap",
         };
-        paint.text(24., 22., width - 24., heading, p.accent_primary);
+        let name = if key_panel {
+            format!(
+                "KEYMAP: {}{}",
+                profile.keyset.name,
+                if profile.keyset.dirty { " *" } else { "" }
+            )
+        } else {
+            heading.into()
+        };
+        paint.text(24., 22., width - 24., &name, p.accent_primary);
         if key_panel {
             self.draw_keymap(&mut paint, width, footer_y, keymap);
         } else {
             self.draw_preferences(&mut paint, width, footer_y, profile);
+        }
+        if let Some(shell) = self.modal {
+            shell.translate(paint.gizmo, start_quad, camera);
         }
     }
     fn draw_keymap(&mut self, paint: &mut Paint<'_>, width: f64, footer: f64, keymap: &Keymap) {
@@ -161,30 +188,31 @@ impl LocalUi {
             Command::Search,
             !self.capture && self.confirm_reset.is_none(),
         );
-        let column = 24. + (width - 24.) * 0.55;
+        let column = 24. + (width - 24.) * 0.42;
+        let behavior_column = 24. + (width - 24.) * 0.76;
         paint.text(24., 66., column - 28., "Action", p.text_secondary);
         paint.text(
             column,
             66.,
-            width - column,
-            "Current shortcut",
+            behavior_column - column - 4.,
+            "Shortcut",
             p.accent_attention,
         );
         let actions = self.actions(keymap);
         self.selected = self.selected.min(actions.len().saturating_sub(1));
-        if !self.capture
-            && let Some(action) = actions.get(self.selected)
-            && let Some(binding) = keymap
-                .bindings()
-                .iter()
-                .find(|b| shortcut_matches(*action, b.action))
-        {
-            self.release = binding.trigger == Trigger::Hold;
-        }
-        self.first = self
-            .selected
-            .saturating_sub(self.visible / 2)
-            .min(actions.len().saturating_sub(self.visible));
+        paint.text(
+            behavior_column,
+            66.,
+            width - behavior_column,
+            "Behavior",
+            p.text_secondary,
+        );
+        self.first = if self.reveal_row {
+            crate::ui_scroll::reveal(self.first, self.selected, self.visible, actions.len())
+        } else {
+            self.first.min(actions.len().saturating_sub(self.visible))
+        };
+        self.reveal_row = false;
         for (index, action) in actions
             .iter()
             .enumerate()
@@ -193,6 +221,14 @@ impl LocalUi {
         {
             let y = 84. + (index - self.first) as f64 * 22.;
             self.row(paint, index, y, width);
+            if index == self.selected && self.focus.is_none() {
+                let (lo, hi) = match self.key_column {
+                    0 => (24., column - 4.),
+                    1 => (column, behavior_column - 4.),
+                    _ => (behavior_column, width - 8.),
+                };
+                paint.rect([lo, y + 19., hi, y + 20.], p.accent_secondary);
+            }
             paint.text(
                 24.,
                 y + 2.,
@@ -208,17 +244,7 @@ impl LocalUi {
                 .bindings()
                 .iter()
                 .filter(|b| shortcut_matches(*action, b.action))
-                .map(|b| {
-                    format!(
-                        "{} [{}]",
-                        crate::context_menu::binding_label(b),
-                        if b.trigger == Trigger::Hold {
-                            "Hold"
-                        } else {
-                            "Normal"
-                        }
-                    )
-                })
+                .map(crate::context_menu::binding_label)
                 .collect();
             let label = if bindings.is_empty() {
                 "Unassigned".into()
@@ -228,7 +254,7 @@ impl LocalUi {
             paint.text(
                 column,
                 y + 2.,
-                width - column,
+                behavior_column - column - 4.,
                 &label,
                 if bindings.is_empty() {
                     p.text_disabled
@@ -236,7 +262,31 @@ impl LocalUi {
                     p.accent_attention
                 },
             );
+            let behavior = keymap
+                .bindings()
+                .iter()
+                .find(|b| shortcut_matches(*action, b.action))
+                .map_or(Default::default(), |b| {
+                    crate::shortcut_capture::Behavior::from_trigger(b.trigger)
+                });
+            if index == self.selected && self.key_column == 2 {
+                paint.rect([behavior_column - 2., y, width - 8., y + 20.], p.selection);
+            }
+            paint.text(
+                behavior_column,
+                y + 2.,
+                width - behavior_column - 8.,
+                behavior.label(),
+                p.accent_secondary,
+            );
         }
+        self.scroll[0].draw(
+            paint.gizmo,
+            paint.camera,
+            p,
+            [20., 84., width + 4., 84. + self.visible as f64 * 22.],
+            (self.first, self.visible, actions.len()),
+        );
         if actions.is_empty() {
             paint.text(
                 24.,
@@ -258,24 +308,19 @@ impl LocalUi {
                 ("Cancel", Command::Cancel, true),
             ]
         } else if self.capture {
-            vec![("Cancel capture", Command::Cancel, true)]
+            vec![
+                ("Confirm", Command::ConfirmCapture, self.staged.is_some()),
+                ("Cancel", Command::Cancel, true),
+            ]
         } else {
             vec![
                 ("Change", Command::Change, available),
                 ("Unassign", Command::Unassign, available),
                 ("Reset action", Command::Reset, available),
-                ("Import...", Command::Import, true),
-                ("Export...", Command::Export, true),
+                ("Load...", Command::Import, true),
+                ("Save as...", Command::Export, true),
+                ("Save", Command::SaveKeyset, true),
                 ("Reset all...", Command::ResetAll, true),
-                (
-                    if self.release {
-                        "Mode: Hold"
-                    } else {
-                        "Mode: Normal"
-                    },
-                    Command::Trigger,
-                    true,
-                ),
                 (
                     if self.parents.is_empty() {
                         "Close"
@@ -347,17 +392,19 @@ impl LocalUi {
         }
     }
     fn row(&self, paint: &mut Paint<'_>, index: usize, y: f64, width: f64) {
-        let cursor = self.cursor.map(|v| v / self.layout[0]);
+        let cursor = std::array::from_fn::<_, 2, _>(|i| {
+            self.cursor[i] / self.layout[0] - self.panel_offset[i]
+        });
         let p = paint.palette;
         if index == self.selected {
-            paint.rect([20., y, width + 4., y + 20.], p.selection);
+            paint.rect([20., y, width - 4., y + 20.], p.selection);
             paint.rect([20., y, 22., y + 20.], p.accent_primary);
         } else if cursor[0] >= 20.
             && cursor[0] < width + 4.
             && cursor[1] >= y
             && cursor[1] < y + 20.
         {
-            paint.rect([20., y, width + 4., y + 20.], p.selection);
+            paint.rect([20., y, width - 4., y + 20.], p.selection);
             paint.rect([20., y, 21., y + 20.], p.menu_border);
         }
     }
@@ -434,10 +481,12 @@ impl LocalUi {
                 .collect(),
             _ => Vec::new(),
         };
-        self.first = self
-            .selected
-            .saturating_sub(self.visible / 2)
-            .min(rows.len().saturating_sub(self.visible));
+        self.first = if self.reveal_row {
+            crate::ui_scroll::reveal(self.first, self.selected, self.visible, rows.len())
+        } else {
+            self.first.min(rows.len().saturating_sub(self.visible))
+        };
+        self.reveal_row = false;
         for (index, (label, value)) in rows.iter().enumerate().skip(self.first).take(self.visible) {
             let y = 48. + (index - self.first) as f64 * 22.;
             self.row(paint, index, y, width);
@@ -489,6 +538,13 @@ impl LocalUi {
                 );
             }
         }
+        self.scroll[0].draw(
+            paint.gizmo,
+            paint.camera,
+            p,
+            [20., 48., width + 4., 48. + self.visible as f64 * 22.],
+            (self.first, self.visible, rows.len()),
+        );
         let nested = matches!(self.panel, Panel::Scale | Panel::Theme);
         if nested {
             self.button(

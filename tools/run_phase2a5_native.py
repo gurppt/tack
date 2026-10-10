@@ -8,7 +8,7 @@ import argparse, contextlib, json, os, re, socket, subprocess, time, uuid
 from pathlib import Path
 from PIL import Image
 from run_local_production import Session, wait
-from run_native_annotation_checks import saved_objects
+from run_native_annotation_checks import saved_objects, metadata_objects
 from run_native_image_checks import command
 from run_image_interaction import digest
 from run_phase2a_native import snapshot, native_revision, send_message, read_message
@@ -25,6 +25,7 @@ def display(value):
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     for k in ['binary','server','output']: p.add_argument('--'+k,type=Path,required=True)
+    p.add_argument('--profile',type=Path,help='2A7 semantic edit coverage using a bounded isolated profile')
     args=p.parse_args(); root=args.output.resolve(); root.mkdir(parents=True,exist_ok=False)
     binary=args.binary.resolve(); checks=[]; clients=[]; xservers=[]; logs=[]; server=None
     env=dict(os.environ,TACK_NATIVE_NO_WM='1',WINIT_X11_SCALE_FACTOR='1',TACK_TEST_WINDOW_SIZE='800x600',TACK_NATIVE_DIAGNOSTICS='1',GSETTINGS_BACKEND='memory',GIO_USE_VFS='local',GSK_RENDERER='cairo',TACK_TRACE_INPUT='1')
@@ -66,6 +67,12 @@ def main():
         board=cli('inspect',local)['document_id'];cli('publish',local,address)
         for i,(_,d) in enumerate(xservers):
             name='client-'+str(i); e=dict(env,DISPLAY=d,TACK_PROFILE_DIR=str(root/(name+'-profile')))
+            if args.profile:
+                settings=json.loads(args.profile.read_text());settings.update(recent=[],local_views=[],ui_scale=1)
+                remaps={'F9':'ResetAspectRatio','F11':'ContextIncrease','F12':'AnnotationStyle(Fill)'}
+                settings['keymap']=[v for v in settings['keymap'] if v['action'] not in remaps.values() and v['control'] not in [{'LogicalKey':{'Named':key}} for key in remaps]]
+                for k,action in remaps.items():settings['keymap'].append(dict(action=action,control={'LogicalKey':{'Named':k}},modifiers=0,modifier_match='Exact',trigger='Press'))
+                profile=root/(name+'-profile');profile.mkdir();(profile/'preferences.json').write_text(json.dumps(settings))
             with display(d): c=Session(binary,root,name,['join',address,board],e)
             c.env_display=d;clients.append(c)
         converge(0); time.sleep(1)
@@ -129,10 +136,29 @@ def main():
         mouse(b,*points[0],'click');before=observed_revision();count=snapshot(address,board)['document']['counts'][2]
         key(b,'ctrl+d');converge(before+1);record('shared Duplicate adds a fresh object',snapshot(address,board)['document']['counts'][2]==count+1)
         key(b,'ctrl+z');converge(before+2);record('shared Duplicate undo exact count',snapshot(address,board)['document']['counts'][2]==count)
+        if args.profile:
+            # Distort the second image from its actual corner, then use the semantic shortcut.
+            mouse(c,*points[1],'click');before=observed_revision()
+            corner=[points[1][0]+second['size'][0]*zoom/2,points[1][1]]
+            mouse(c,*corner,'mousedown');mouse(c,corner[0]+30,corner[1],'mouseup');converge(before+1)
+            wire=snapshot(address,board)['document'];distorted=wire['metadata'];before=observed_revision()
+            actual=next(o for o in metadata_objects(wire)['objects'] if o['id']==second['id'])
+            shot(c,'distorted')
+            record('native image distortion changes its aspect',abs(actual['size'][0]/actual['size'][1]-1.6)>0.01,dict(actual=actual,corner=corner))
+            key(c,'F9');converge(before+1)
+            restored=snapshot(address,board)['document']['metadata']
+            key(c,'ctrl+z');converge(before+2)
+            record('shared Reset Aspect Ratio shortcut is one edit with exact undo',restored!=distorted and snapshot(address,board)['document']['metadata']==distorted)
+            key(c,'ctrl+y');converge(before+3)
+            mouse(c,190,480,'click');before=observed_revision()
+            unfilled=snapshot(address,board)['document']['metadata']
+            key(c,'F12');converge(before+1);key(c,'F12');converge(before+2);key(c,'F11');converge(before+3)
+            key(c,'ctrl+z','ctrl+z','ctrl+z');converge(before+6)
+            record('shared Rectangle fill/contextual opacity use semantic history',snapshot(address,board)['document']['metadata']==unfilled)
         # Local view assignment is not a shared revision.
-        before=observed_revision();key(c,'b','7');key(c,'b','8');time.sleep(.3)
+        before=observed_revision();key(c,'b','7','Return');key(c,'b','8','Return');time.sleep(.3)
         profile=json.loads((root/(c.name+'-profile')/'preferences.json').read_text())
-        record('B view7/view8 are local profile state',sorted(v['slot'] for v in profile.get('local_views',[]))==[7,8] and observed_revision()==before)
+        record('B captured shortcuts 7/8 are local profile state',sorted(v['slot'] for v in profile.get('local_views',[]))==[0,1] and observed_revision()==before)
         # Input-to-all-receipts upper bound (includes xdotool and polling).
         latency=[]
         for i in range(6):

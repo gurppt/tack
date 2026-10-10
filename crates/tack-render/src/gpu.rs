@@ -153,6 +153,7 @@ pub struct RenderStats {
 /// Texture ownership and GPU submission only; no file access or codec calls.
 pub struct Gpu {
     ui_image: Option<Box<ui_image::UiImage>>,
+    ui_logo: Option<Box<ui_image::UiImage>>,
     ui_icons: Option<Box<ui_icons::UiIcons>>,
     pub device: wgpu::Device,
     pub queue: wgpu::Queue,
@@ -349,6 +350,7 @@ impl Gpu {
             submit_ms: 0.,
             poll_ms: 0.,
             ui_image: None,
+            ui_logo: None,
             ui_icons: None,
             upload_budget: UPLOAD_BUDGET_BYTES,
             max_uploads: MAX_UPLOADS,
@@ -688,7 +690,7 @@ impl Gpu {
         if let Some(icons) = &self.ui_icons {
             icons.prepare(&self.queue, camera);
         }
-        if let Some(image) = &self.ui_image {
+        for image in self.ui_image.iter().chain(self.ui_logo.iter()) {
             image.prepare(&self.queue, camera);
         }
         let mut encoder = self.device.create_command_encoder(&Default::default());
@@ -773,7 +775,7 @@ impl Gpu {
             if let Some(split) = split {
                 self.overlay.draw_range(&mut pass, split, usize::MAX);
             }
-            if let Some(image) = &self.ui_image {
+            for image in self.ui_image.iter().chain(self.ui_logo.iter()) {
                 image.draw(&mut pass, &self.pipeline);
             }
         }

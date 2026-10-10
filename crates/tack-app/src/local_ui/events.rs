@@ -6,14 +6,39 @@ impl LocalUi {
         keymap: &mut Keymap,
         profile: &mut Preferences,
     ) -> Option<UiResult> {
+        if matches!(
+            event,
+            WindowEvent::MouseInput {
+                state: ElementState::Pressed,
+                button: winit::event::MouseButton::Left,
+                ..
+            }
+        ) && self
+            .modal
+            .is_some_and(|m| m.outside(self.cursor, self.layout[0]))
+        {
+            return self.back();
+        }
+        if self.scroll_event(event) {
+            return None;
+        }
+        if let WindowEvent::KeyboardInput { event, .. } = event
+            && event.state == ElementState::Pressed
+        {
+            self.reveal_row = true;
+        }
         if let WindowEvent::ModifiersChanged(m) = event {
             self.modifiers = m.state().into();
         }
         if let WindowEvent::Focused(false) = event {
             self.capture = false;
             self.focus = None;
-            self.release = false;
+            self.behavior = Default::default();
+            self.staged = None;
             self.modifiers = Modifiers::NONE;
+            if self.panel == Panel::ViewCapture {
+                return self.back();
+            }
         }
         if let WindowEvent::CursorMoved { position, .. } = event {
             self.cursor = [position.x, position.y];
@@ -23,19 +48,6 @@ impl LocalUi {
                 });
                 if let Some(hit) = self.hits.iter().find(|h| h.enabled && h.contains(p)) {
                     self.focus = Some(hit.command);
-                } else {
-                    let [_, width, _, top] = self.layout;
-                    if p[0] >= 20.
-                        && p[0] < width + 4.
-                        && p[1] >= top
-                        && p[1] < top + self.visible as f64 * 22.
-                    {
-                        let selected = self.first + ((p[1] - top) / 22.).floor() as usize;
-                        if selected < self.count(keymap, profile) {
-                            self.selected = selected;
-                            self.focus = None;
-                        }
-                    }
                 }
                 return None;
             }
@@ -79,9 +91,11 @@ impl LocalUi {
                     button: winit::event::MouseButton::Left,
                     ..
                 }
-            ) && hit.is_some_and(|h| h.command == Command::Cancel)
-            {
-                return self.command(Command::Cancel, keymap, profile);
+            ) && hit.is_some_and(|h| {
+                matches!(h.command, Command::Cancel | Command::ConfirmCapture)
+                    || (self.panel == Panel::ViewCapture && h.command == Command::Close)
+            }) {
+                return self.command(hit?.command, keymap, profile);
             }
             let control = match event {
                 WindowEvent::KeyboardInput { event, .. }
@@ -89,9 +103,16 @@ impl LocalUi {
                 {
                     match event.physical_key {
                         PhysicalKey::Code(KeyCode::Escape) => {
+                            if self.panel == Panel::ViewCapture {
+                                return self.back();
+                            }
                             self.capture = false;
+                            self.staged = None;
                             self.message.clear();
                             return None;
+                        }
+                        PhysicalKey::Code(KeyCode::Enter) if self.staged.is_some() => {
+                            return self.command(Command::ConfirmCapture, keymap, profile);
                         }
                         PhysicalKey::Code(
                             KeyCode::ControlLeft
@@ -103,7 +124,23 @@ impl LocalUi {
                             | KeyCode::SuperLeft
                             | KeyCode::SuperRight,
                         ) => None,
-                        _ => crate::input::logical_key(event).map(PhysicalControl::LogicalKey),
+                        _ => match event.physical_key {
+                            PhysicalKey::Code(
+                                KeyCode::NumpadAdd
+                                | KeyCode::NumpadSubtract
+                                | KeyCode::Numpad0
+                                | KeyCode::Numpad1
+                                | KeyCode::Numpad2
+                                | KeyCode::Numpad3
+                                | KeyCode::Numpad4
+                                | KeyCode::Numpad5
+                                | KeyCode::Numpad6
+                                | KeyCode::Numpad7
+                                | KeyCode::Numpad8
+                                | KeyCode::Numpad9,
+                            ) => Some(PhysicalControl::Key(event.physical_key)),
+                            _ => crate::input::logical_key(event).map(PhysicalControl::LogicalKey),
+                        },
                     }
                 }
                 WindowEvent::MouseInput {
@@ -123,78 +160,76 @@ impl LocalUi {
             };
             return control.and_then(|c| self.capture_binding(c, keymap, profile));
         }
-        match event {
-            WindowEvent::MouseInput {
-                state: ElementState::Pressed,
-                button: winit::event::MouseButton::Left,
-                ..
-            } => {
-                if let Some(hit) = hit {
-                    if hit.enabled {
-                        return self.command(hit.command, keymap, profile);
-                    }
-                    return None;
-                }
-                if self.confirm_reset.is_some() {
-                    return None;
-                }
-                let [_, width, _, top] = self.layout;
-                if p[0] >= 20.
-                    && p[0] < width + 4.
-                    && p[1] >= top
-                    && p[1] < top + self.visible as f64 * 22.
-                {
-                    if self.panel == Panel::Toolbar {
-                        let order = p[0] >= (width + 24.) / 2.;
-                        if order != self.toolbar_order {
-                            self.first = 0;
-                        }
-                        self.toolbar_order = order;
-                    }
-                    let selected = self.first + ((p[1] - top) / 22.).floor() as usize;
-                    if selected < self.count(keymap, profile) {
-                        self.selected = selected;
-                        self.focus = None;
-                        if self.panel == Panel::Keymap {
-                            let action = self.actions(keymap).get(selected).copied()?;
-                            self.release = keymap.bindings().iter().any(|b| {
-                                shortcut_matches(action, b.action) && b.trigger == Trigger::Hold
-                            });
-                            let column = 24. + (width - 24.) * 0.55;
-                            let now = std::time::Instant::now();
-                            let twice = self.shortcut_click.is_some_and(|(row, at)| {
-                                row == selected && now.duration_since(at).as_millis() <= 450
-                            });
-                            self.shortcut_click = (p[0] >= column).then_some((selected, now));
-                            if twice && p[0] >= column {
-                                return self.command(Command::Change, keymap, profile);
-                            }
-                        }
-                        if !(matches!(
-                            self.panel,
-                            Panel::Toolbar | Panel::Keymap | Panel::Info | Panel::Connecting
-                        ) || self.panel == Panel::Preferences && matches!(selected, 5 | 6))
-                        {
-                            return self.activate(keymap, profile);
-                        }
-                    }
+        if let WindowEvent::MouseInput {
+            state: ElementState::Pressed,
+            button: winit::event::MouseButton::Left,
+            ..
+        } = event
+        {
+            if let Some(hit) = hit {
+                if hit.enabled {
+                    return self.command(hit.command, keymap, profile);
                 }
                 return None;
             }
-            WindowEvent::MouseWheel { delta, .. } if self.confirm_reset.is_none() => {
-                let dy = crate::input::wheel_steps(*delta)[1];
-                let count = self.count(keymap, profile);
-                if count > 0 && dy != 0. {
-                    self.selected = if dy > 0. {
-                        self.selected.saturating_sub(1)
-                    } else {
-                        (self.selected + 1).min(count - 1)
-                    };
+            if self.confirm_reset.is_some() {
+                return None;
+            }
+            let [_, width, _, top] = self.layout;
+            if p[0] >= 20.
+                && p[0] < width + 4.
+                && p[1] >= top
+                && p[1] < top + self.visible as f64 * 22.
+            {
+                if self.panel == Panel::Toolbar {
+                    let order = p[0] >= (width + 24.) / 2.;
+                    if order != self.toolbar_order {
+                        self.first = 0;
+                    }
+                    self.toolbar_order = order;
+                }
+                let selected = self.first + ((p[1] - top) / 22.).floor() as usize;
+                if selected < self.count(keymap, profile) {
+                    self.selected = selected;
                     self.focus = None;
+                    if self.panel == Panel::Keymap {
+                        let action = self.actions(keymap).get(selected).copied()?;
+                        self.behavior = keymap
+                            .bindings()
+                            .iter()
+                            .find(|b| shortcut_matches(action, b.action))
+                            .map_or(Default::default(), |b| {
+                                crate::shortcut_capture::Behavior::from_trigger(b.trigger)
+                            });
+                        let column = 24. + (width - 24.) * 0.42;
+                        let behavior_column = 24. + (width - 24.) * 0.76;
+                        self.key_column = if p[0] >= behavior_column {
+                            2
+                        } else {
+                            usize::from(p[0] >= column)
+                        };
+                        if self.key_column == 2 {
+                            return self.command(Command::Trigger, keymap, profile);
+                        }
+                        let now = std::time::Instant::now();
+                        let twice = self.shortcut_click.is_some_and(|(row, at)| {
+                            row == selected && now.duration_since(at).as_millis() <= 450
+                        });
+                        self.shortcut_click = (p[0] >= column).then_some((selected, now));
+                        if twice && p[0] >= column {
+                            return self.command(Command::Change, keymap, profile);
+                        }
+                    }
+                    if !(matches!(
+                        self.panel,
+                        Panel::Toolbar | Panel::Keymap | Panel::Info | Panel::Connecting
+                    ) || self.panel == Panel::Preferences && matches!(selected, 5 | 6))
+                    {
+                        return self.activate(keymap, profile);
+                    }
                 }
-                return None;
             }
-            _ => {}
+            return None;
         }
         let WindowEvent::KeyboardInput { event, .. } = event else {
             return None;
@@ -283,6 +318,17 @@ impl LocalUi {
                 None
             }
             PhysicalKey::Code(KeyCode::ArrowLeft | KeyCode::ArrowRight)
+                if self.panel == Panel::Keymap =>
+            {
+                self.key_column = if event.physical_key == PhysicalKey::Code(KeyCode::ArrowRight) {
+                    (self.key_column + 1).min(2)
+                } else {
+                    self.key_column.saturating_sub(1)
+                };
+                self.focus = None;
+                None
+            }
+            PhysicalKey::Code(KeyCode::ArrowLeft | KeyCode::ArrowRight)
                 if self.panel == Panel::Preferences =>
             {
                 self.adjust(
@@ -294,7 +340,11 @@ impl LocalUi {
                 if let Some(command) = self.focus.filter(|c| *c != Command::Search) {
                     self.command(command, keymap, profile)
                 } else {
-                    self.activate(keymap, profile)
+                    if self.panel == Panel::Keymap && self.key_column == 2 {
+                        self.command(Command::Trigger, keymap, profile)
+                    } else {
+                        self.activate(keymap, profile)
+                    }
                 }
             }
             PhysicalKey::Code(KeyCode::KeyF)

@@ -119,7 +119,9 @@ impl OriginalExport {
         };
         let paths =
             native_files::pick_with_options(Picker::ExportOriginal, work, cancel, &options)?;
-        let path = paths.first().ok_or("export destination unavailable")?;
+        let Some(path) = paths.first() else {
+            return Ok(());
+        };
         if fs::canonicalize(path)
             .ok()
             .is_some_and(|path| fs::canonicalize(&self.board_path).ok().as_ref() == Some(&path))

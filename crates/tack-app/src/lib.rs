@@ -21,6 +21,7 @@ mod annotation_input;
 pub mod annotation_scene;
 mod annotation_text_scene;
 pub mod annotation_tool;
+mod context_adjust;
 pub mod note_layout;
 mod product_bindings;
 pub mod source_actions;
@@ -77,3 +78,9 @@ pub mod camera_slots;
 
 pub mod feedback;
 pub mod frame_ui;
+
+mod shortcut_capture;
+
+mod ui_scroll;
+
+pub mod modal_shell;

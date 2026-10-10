@@ -29,7 +29,7 @@ pub enum LocalUpdate {
     AddressText(Result<String, String>),
     About {
         ticket: u64,
-        result: Result<tack_assets::Decoded, String>,
+        result: Result<crate::about::Artwork, String>,
     },
     Picked(Action, Result<Vec<PathBuf>, String>),
     Opened(Result<OpenedBoard, String>),
@@ -274,7 +274,8 @@ impl LocalWorker {
                         }
                         Operation::About { ticket } => {
                             if !stop.load(Ordering::Relaxed) {
-                                let result = crate::about::load_image().map_err(|e| e.to_string());
+                                let result =
+                                    crate::about::load_artwork().map_err(|e| e.to_string());
                                 if !stop.load(Ordering::Relaxed) {
                                     emit(LocalUpdate::About { ticket, result });
                                 }
@@ -361,7 +362,13 @@ impl LocalWorker {
                             } else if action == Action::ExportPreferences {
                                 preferences::export_preferences(&path, &profile).map(|_| None)
                             } else {
-                                preferences::export_keymap(&path, &profile).map(|_| None)
+                                preferences::export_keymap(&path, &profile).and_then(|_| {
+                                    let mut saved = profile;
+                                    saved.keyset = preferences::Keyset::loaded(
+                                        &crate::file_names::keymap(&path),
+                                    )?;
+                                    Ok(Some(saved))
+                                })
                             };
                             emit(LocalUpdate::Keymap(
                                 action,
@@ -397,7 +404,11 @@ impl LocalWorker {
                     }
                     Ok(())
                 })();
-                emit(LocalUpdate::Done(result.map_err(|e| e.to_string())));
+                emit(LocalUpdate::Done(if stop.load(Ordering::Relaxed) {
+                    Ok(())
+                } else {
+                    result.map_err(|e| e.to_string())
+                }));
             })?;
         self.operations += 1;
         self.active = Some(Active {

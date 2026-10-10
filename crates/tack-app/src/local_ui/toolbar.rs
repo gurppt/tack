@@ -22,20 +22,14 @@ impl LocalUi {
     }
     pub(super) fn draw_toolbar(&mut self, g: &mut ImageGizmo, c: &Camera, p: &Preferences) {
         let s = c.ui_scale().round().clamp(1., 4.);
-        let width = (f64::from(c.screen_size()[0]) / s - 24.).clamp(1., 600.);
-        let height = (f64::from(c.screen_size()[1]) / s - 24.).clamp(1., 440.);
+        let shell = crate::modal_shell::ModalShell::work(c, [600., 440.]);
+        let [_, _, width, height] = shell.rect;
         let palette = p.theme.palette();
         let mut budget = 900;
         self.layout = [s, width, height, 76.];
         self.visible = ((height - 146.) / 22.).floor().clamp(1., 12.) as usize;
         self.icon_count = 0;
-        g.pixel_rect(
-            c,
-            [12. * s, 12. * s],
-            [(width + 12.) * s, (height + 12.) * s],
-            palette.menu_bg,
-            None,
-        );
+        shell.paint(g, c, palette);
         g.ui_text(
             c,
             [24. * s, 20. * s],
@@ -83,12 +77,10 @@ impl LocalUi {
         self.selected = self.selected.min(length.saturating_sub(1));
         // Scroll the smallest amount needed, retaining each column's position.
         self.first = self.first.min(length.saturating_sub(self.visible));
-        if self.selected < self.first {
-            self.first = self.selected;
+        if self.reveal_row {
+            self.first = crate::ui_scroll::reveal(self.first, self.selected, self.visible, length);
         }
-        if self.selected >= self.first + self.visible {
-            self.first = self.selected + 1 - self.visible;
-        }
+        self.reveal_row = false;
         self.toolbar_first[usize::from(self.toolbar_order)] = self.first;
         for right in [false, true] {
             let list: Vec<_> = if right {
@@ -110,7 +102,7 @@ impl LocalUi {
                     g.pixel_rect(
                         c,
                         [(x - 4.) * s, y * s],
-                        [(x + available) * s, (y + 20.) * s],
+                        [(x + available - 8.) * s, (y + 20.) * s],
                         if self.feedback.active() && right {
                             [0., 0.5, 0.08, 1.]
                         } else {
@@ -142,12 +134,19 @@ impl LocalUi {
                 g.ui_text(
                     c,
                     [(x + inset) * s, (y + 2.) * s],
-                    available - inset,
+                    available - inset - 8.,
                     item.label(),
                     palette.text_primary,
                     &mut budget,
                 );
             }
+            self.scroll[usize::from(right)].draw(
+                g,
+                c,
+                palette,
+                [x - 4., 76., x + available, 76. + self.visible as f64 * 22.],
+                (first, self.visible, list.len()),
+            );
         }
         let hint = if width < 420. {
             "Ctrl+Up/Down: reorder"
@@ -169,6 +168,7 @@ impl LocalUi {
             ("Up", Command::ToolbarUp),
             ("Down", Command::ToolbarDown),
             ("Position", Command::ToolbarPlacement),
+            ("Scale 1/2/3", Command::ToolbarScale),
             ("Reset", Command::ToolbarReset),
             ("Done", Command::Close),
         ];
@@ -235,6 +235,7 @@ impl LocalUi {
             item.and_then(|item| p.toolbar.actions.iter().position(|id| *id == item.id()))
         };
         self.focus = None;
+        self.reveal_row = true;
         match cmd {
             Command::ToolbarRemove => {
                 if let Some(i) = position {
@@ -275,6 +276,9 @@ impl LocalUi {
                         self.selected = next;
                     }
                 }
+            }
+            Command::ToolbarScale => {
+                p.toolbar.scale = p.toolbar.scale % 3 + 1;
             }
             Command::ToolbarPlacement => {
                 let all = crate::toolbar::Placement::ALL;

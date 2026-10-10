@@ -91,10 +91,17 @@ pub struct Config {
     pub placement: Placement,
     pub offset: u16,
     #[serde(default)]
+    pub edge_position: Option<u16>,
+    #[serde(default = "toolbar_scale_default")]
+    pub scale: u8,
+    #[serde(default)]
     pub offset_set: bool,
     #[serde(default)]
     pub last_visible: Placement,
     pub floating: [u16; 2],
+}
+fn toolbar_scale_default() -> u8 {
+    1
 }
 impl Default for Config {
     fn default() -> Self {
@@ -102,6 +109,8 @@ impl Default for Config {
             actions: DEFAULT_ACTIONS.map(Action::id).to_vec(),
             placement: Placement::Top,
             offset: 0,
+            edge_position: None,
+            scale: 1,
             offset_set: false,
             last_visible: Placement::Top,
             floating: [48, 48],
@@ -111,6 +120,8 @@ impl Default for Config {
 impl Config {
     pub fn normalize(&mut self) -> Result<(), tack_assets::AssetError> {
         if self.actions.len() > MAX_ENTRIES
+            || self.edge_position.is_some_and(|p| p > 10_000)
+            || !(1..=3).contains(&self.scale)
             || self.offset > 8192
             || self.floating.iter().any(|v| *v > 8192)
         {
@@ -173,9 +184,14 @@ impl Toolbar {
         if config.placement == Placement::Hidden || config.actions.is_empty() {
             return;
         }
-        let scale = scale.round().clamp(1., 4.);
+        let status_height = if status {
+            20. * scale.round().clamp(1., 4.)
+        } else {
+            0.
+        };
+        let scale = f64::from(config.scale.clamp(1, 3));
         let w = f64::from(size[0]) / scale;
-        let h = f64::from(size[1]) / scale - if status { 20. } else { 0. };
+        let h = (f64::from(size[1]) - status_height) / scale;
         let vertical = matches!(config.placement, Placement::Left | Placement::Right);
         // A 16px grip is a real layout cell, not outer padding. Every action
         // retains its complete 16px hit area. Separators occupy only one pixel.
@@ -206,7 +222,14 @@ impl Toolbar {
         } else {
             [extent, cross + 16.]
         };
-        let offset = if config.offset_set || config.offset > 0 {
+        let travel = if vertical {
+            (h - dims[1]).max(0.)
+        } else {
+            (w - dims[0]).max(0.)
+        };
+        let offset = if let Some(p) = config.edge_position {
+            travel * f64::from(p) / 10_000.
+        } else if config.offset_set || config.offset > 0 {
             f64::from(config.offset)
         } else if vertical {
             (h - dims[1]) / 2.

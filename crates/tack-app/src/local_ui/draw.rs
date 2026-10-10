@@ -10,6 +10,7 @@ impl LocalUi {
         self.hits.clear();
         self.icon_count = 0;
         self.panel_offset = [0.; 2];
+        self.modal = None;
         let start_quad = gizmo.quads.len();
         if self.panel == Panel::Toolbar {
             self.draw_toolbar(gizmo, camera, profile);
@@ -24,6 +25,12 @@ impl LocalUi {
         }
         let palette = profile.theme.palette();
         if self.panel == Panel::About {
+            self.layout[0] = camera.ui_scale();
+            self.modal = Some(crate::modal_shell::ModalShell::short(
+                camera,
+                [600., 288.],
+                true,
+            ));
             self.about_layout = Some(crate::about::draw(
                 gizmo,
                 camera,
@@ -36,8 +43,44 @@ impl LocalUi {
         let scale = camera.ui_scale();
         let mut budget = 900;
         let screen = camera.screen_size();
-        let width = (f64::from(screen[0]) / scale - 24.).clamp(1., 600.);
-        let height = (f64::from(screen[1]) / scale - 24.).clamp(1., 405.);
+        let compact = matches!(
+            self.panel,
+            Panel::Error
+                | Panel::ViewCapture
+                | Panel::BookmarkName
+                | Panel::Join
+                | Panel::Connecting
+                | Panel::Close
+                | Panel::Recovery
+                | Panel::Server
+                | Panel::Info
+                | Panel::Sharing
+        );
+        let width =
+            (f64::from(screen[0]) / scale - 24.).clamp(1., if compact { 480. } else { 600. });
+        let height = (f64::from(screen[1]) / scale - 24.).clamp(
+            1.,
+            if compact {
+                if self.panel == Panel::Info {
+                    310.
+                } else {
+                    240.
+                }
+            } else {
+                405.
+            },
+        );
+        if compact {
+            self.modal = Some(crate::modal_shell::ModalShell::short(
+                camera,
+                [width, height],
+                !matches!(
+                    self.panel,
+                    Panel::Close | Panel::Recovery | Panel::Connecting
+                ),
+            ));
+            self.panel_offset = self.modal.map_or([0.; 2], |m| m.offset());
+        }
         let top = if height < 100. {
             34.
         } else if height < 240. {
@@ -54,13 +97,7 @@ impl LocalUi {
         };
         self.layout = [scale, width, height, top];
         self.visible = ((height + 8. - top - footer) / 22.).floor().clamp(1., 12.) as usize;
-        gizmo.pixel_rect(
-            camera,
-            [12. * scale, 12. * scale],
-            [(12. + width) * scale, (12. + height) * scale],
-            palette.menu_bg,
-            None,
-        );
+        crate::modal_shell::ModalShell::work(camera, [width, height]).paint(gizmo, camera, palette);
         let heading = match self.panel {
             Panel::Sharing => "Share Board",
             Panel::Server => "Advanced: Tack server IP:port",
@@ -80,6 +117,7 @@ impl LocalUi {
             Panel::Recovery => "Newer recovery available - normal save is unchanged",
             Panel::Error => "Tack - local operation error",
             Panel::About => "About Tack",
+            Panel::ViewCapture => "Capture local camera view",
         };
         gizmo.ui_text(
             camera,
@@ -122,11 +160,14 @@ impl LocalUi {
                 "Discard recovery and keep normal save".into(),
             ],
             Panel::Error | Panel::About => vec!["Close this message".into()],
+            Panel::ViewCapture => vec!["Press keyboard/mouse shortcut".into()],
         };
-        let first = self
-            .selected
-            .saturating_sub(self.visible / 2)
-            .min(rows.len().saturating_sub(self.visible));
+        let first = if self.reveal_row {
+            crate::ui_scroll::reveal(self.first, self.selected, self.visible, rows.len())
+        } else {
+            self.first.min(rows.len().saturating_sub(self.visible))
+        };
+        self.reveal_row = false;
         self.first = first;
         for (index, row) in rows.iter().enumerate().skip(first).take(self.visible) {
             let y = top + (index - first) as f64 * 22.;
@@ -134,7 +175,7 @@ impl LocalUi {
                 gizmo.pixel_rect(
                     camera,
                     [20. * scale, y * scale],
-                    [(width + 4.) * scale, (y + 20.) * scale],
+                    [(width - 4.) * scale, (y + 20.) * scale],
                     palette.selection,
                     None,
                 );
@@ -148,6 +189,13 @@ impl LocalUi {
                 &mut budget,
             );
         }
+        self.scroll[0].draw(
+            gizmo,
+            camera,
+            palette,
+            [20., top, width + 4., top + self.visible as f64 * 22.],
+            (first, self.visible, rows.len()),
+        );
         if height >= 240. && self.daily.is_some() {
             let commands: &[(&str, Command)] = match self.panel {
                 Panel::Bookmarks => &[
@@ -195,6 +243,42 @@ impl LocalUi {
                 );
             }
         }
+        if self.panel == Panel::ViewCapture {
+            for (i, (label, command, enabled)) in [
+                ("Confirm", Command::ConfirmCapture, self.staged.is_some()),
+                ("Cancel", Command::Close, true),
+            ]
+            .into_iter()
+            .enumerate()
+            {
+                let x = 24. + i as f64 * 120.;
+                let rect = [x, height - 44., x + 108., height - 22.];
+                self.hits.push(Hit {
+                    rect,
+                    command,
+                    enabled,
+                });
+                gizmo.pixel_rect(
+                    camera,
+                    [rect[0] * scale, rect[1] * scale],
+                    [rect[2] * scale, rect[3] * scale],
+                    palette.selection,
+                    None,
+                );
+                gizmo.ui_text(
+                    camera,
+                    [(x + 4.) * scale, (height - 42.) * scale],
+                    100.,
+                    label,
+                    if enabled {
+                        palette.text_primary
+                    } else {
+                        palette.text_disabled
+                    },
+                    &mut budget,
+                );
+            }
+        }
         let hint = if self.panel == Panel::Bookmarks {
             "Enter jumps; F2 rename; Del delete; Escape close"
         } else {
@@ -210,7 +294,27 @@ impl LocalUi {
                 &mut budget,
             );
         }
-        if height >= 100. {
+        if matches!(self.panel, Panel::ViewCapture | Panel::Error) {
+            for (index, line) in
+                crate::about::wrap(&self.message, ((width - 32.) / 8.).floor().max(1.) as usize)
+                    .into_iter()
+                    .take(4)
+                    .enumerate()
+            {
+                let y = 96. + index as f64 * 16.;
+                if y + 16. < height - 44. {
+                    gizmo.ui_text(
+                        camera,
+                        [24. * scale, y * scale],
+                        width - 32.,
+                        &line,
+                        palette.accent_attention,
+                        &mut budget,
+                    );
+                }
+            }
+        }
+        if height >= 100. && !matches!(self.panel, Panel::ViewCapture | Panel::Error) {
             gizmo.ui_text(
                 camera,
                 [24. * scale, (height - 8.) * scale],
@@ -224,28 +328,8 @@ impl LocalUi {
                 &mut budget,
             );
         }
-        if self.panel == Panel::Sharing
-            && self
-                .daily
-                .as_ref()
-                .is_some_and(|d| d.rows.first().is_some_and(|r| r == "SHARED BOARD OFFLINE"))
-        {
-            self.panel_offset = [
-                ((f64::from(screen[0]) / scale - width) / 2. - 12.)
-                    .max(0.)
-                    .round(),
-                ((f64::from(screen[1]) / scale - height) / 2. - 12.)
-                    .max(0.)
-                    .round(),
-            ];
-            let offset = self.panel_offset.map(|v| v * scale / camera.zoom());
-            for quad in &mut gizmo.quads[start_quad..] {
-                for point in &mut quad.points {
-                    for i in 0..2 {
-                        point[i] += offset[i];
-                    }
-                }
-            }
+        if let Some(shell) = self.modal {
+            shell.translate(gizmo, start_quad, camera);
         }
     }
 }

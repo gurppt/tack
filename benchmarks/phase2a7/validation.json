@@ -1,0 +1,56 @@
+{
+  "toolchain": "1.95.0",
+  "cargo_deny": "0.20.2",
+  "workspace_rust_tests": 380,
+  "python_tests": 28,
+  "gpu_tests": {
+    "smoke": 1,
+    "selection": 1,
+    "product": 10,
+    "adapter": "llvmpipe software Vulkan"
+  },
+  "final_footer_edit_verified_by": {
+    "app_lib_tests": 49,
+    "fmt": "PASS",
+    "workspace_clippy": "PASS",
+    "native_ui_checks": 43,
+    "shared_checks": 19
+  },
+  "logs": {
+    "final-gate": {
+      "path": "/tmp/tack-2a7-final-gate.log",
+      "sha256": "99dd7d05aebda16d271cf77f8409f5ada8c3bd62e728c1b315292e44f1103192",
+      "bytes": 94664
+    },
+    "gpu": {
+      "path": "/tmp/tack-2a7-gpu.log",
+      "sha256": "58e6a895eaab05344e7c9080d15329798a1f3e00c2077be41161708dbfb6fe5a",
+      "bytes": 1902
+    },
+    "ui-unit": {
+      "path": "/tmp/tack-2a7-ui-unit.log",
+      "sha256": "33a70621e4fdf581348a088a848758fa70b2273dcfc7c29e7fe806d9e8c37577",
+      "bytes": 5034
+    },
+    "clippy": {
+      "path": "/tmp/tack-2a7-clippy.log",
+      "sha256": "aa36aefc654adeb6b98a2b3bac20c8041ee4878a8fc643622c155cfec7828b16",
+      "bytes": 141
+    },
+    "python-final": {
+      "path": "/tmp/tack-2a7-python-final.log",
+      "sha256": "b25675d788278371ef25525924dbd25cd42c5d1d0769f44ea6c3a4cc0473f8a3",
+      "bytes": 213
+    },
+    "sides": {
+      "path": "/tmp/tack-2a7-sides.log",
+      "sha256": "d25d2e5e1c9948d95ca1768f64b88008b1e144e7ffeb112791671f36ac78800e",
+      "bytes": 1861
+    },
+    "protocol": {
+      "path": "/tmp/tack-2a7-protocol.log",
+      "sha256": "6359176ab458f8e5065be1cb1e5df7d936011528e1db15b1defc568e8d8b2354",
+      "bytes": 892
+    }
+  }
+}

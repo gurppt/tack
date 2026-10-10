@@ -1,0 +1,10 @@
+{
+  "icons_count": 50,
+  "all_icon_hashes_and_mtimes_unchanged": true,
+  "logo": {
+    "gfx/logo_tack_about.png": "08bb1ee10ac00b6d48cfe81d10e33bef9b49d3f35d7c9285b89cfcf40caa56fc",
+    "bin/gfx/icons/work_icons/logo_tack_about.png": "08bb1ee10ac00b6d48cfe81d10e33bef9b49d3f35d7c9285b89cfcf40caa56fc",
+    "bin/tack-about-logo.png": "08bb1ee10ac00b6d48cfe81d10e33bef9b49d3f35d7c9285b89cfcf40caa56fc",
+    "bin/tack-windows-x86_64/tack-about-logo.png": "08bb1ee10ac00b6d48cfe81d10e33bef9b49d3f35d7c9285b89cfcf40caa56fc"
+  }
+}

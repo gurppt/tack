@@ -1,0 +1,111 @@
+{
+  "reason": "Harness setup corrections and earlier binaries; excluded from delivered acceptance. Final raw receipts retained separately.",
+  "removed": [
+    {
+      "path": "benchmark-results/phase2a7/perf",
+      "bytes": 0
+    },
+    {
+      "path": "benchmark-results/phase2a7/windows",
+      "bytes": 155302,
+      "checks": 6,
+      "failed": []
+    },
+    {
+      "path": "benchmark-results/phase2a7/windows-final",
+      "bytes": 155236,
+      "checks": 6,
+      "failed": []
+    },
+    {
+      "path": "benchmark-results/phase2a7/ui-final",
+      "bytes": 746481,
+      "checks": 42,
+      "failed": []
+    },
+    {
+      "path": "benchmark-results/phase2a7/ui-1",
+      "bytes": 20439,
+      "checks": 1,
+      "failed": [
+        "800x600 bar1 provided logo exact nearest pixels"
+      ]
+    },
+    {
+      "path": "benchmark-results/phase2a7/ui-2",
+      "bytes": 314876,
+      "checks": 17,
+      "failed": [
+        "Keymap pointer resting at edge does not scroll"
+      ]
+    },
+    {
+      "path": "benchmark-results/phase2a7/ui-3",
+      "bytes": 316613,
+      "checks": 17,
+      "failed": [
+        "Keymap pointer resting at edge does not scroll"
+      ]
+    },
+    {
+      "path": "benchmark-results/phase2a7/ui-4",
+      "bytes": 359321,
+      "checks": 24,
+      "failed": []
+    },
+    {
+      "path": "benchmark-results/phase2a7/ui-5",
+      "bytes": 384400,
+      "checks": 33,
+      "failed": []
+    },
+    {
+      "path": "benchmark-results/phase2a7/ui-6",
+      "bytes": 674230,
+      "checks": 35,
+      "failed": []
+    },
+    {
+      "path": "benchmark-results/phase2a7/ui-7",
+      "bytes": 325621,
+      "checks": 22,
+      "failed": [
+        "Edit Toolbar wheel scrolls Available independently of Order"
+      ]
+    },
+    {
+      "path": "benchmark-results/phase2a7/ui-8",
+      "bytes": 379875,
+      "checks": 31,
+      "failed": [
+        "Load restores saved keyset identity and bindings"
+      ]
+    },
+    {
+      "path": "benchmark-results/phase2a7/shared-1",
+      "bytes": 89461,
+      "checks": 7,
+      "failed": []
+    },
+    {
+      "path": "benchmark-results/phase2a7/shared-2",
+      "bytes": 92358,
+      "checks": 8,
+      "failed": [
+        "native image distortion changes its aspect"
+      ]
+    },
+    {
+      "path": "benchmark-results/phase2a7/shared-3",
+      "bytes": 97685,
+      "checks": 9,
+      "failed": []
+    },
+    {
+      "path": "benchmark-results/phase2a7/shared-4",
+      "bytes": 473625,
+      "checks": 19,
+      "failed": []
+    }
+  ]
+}

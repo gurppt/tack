@@ -27,6 +27,7 @@ chmod 755 "$server"
 if command -v strip >/dev/null 2>&1; then
     strip --strip-all "$binary" "$server"
 fi
+cp "$target_dir/release/tack-about-logo.png" bin/tack-about-logo.png
 cp "$target_dir/release/tack-about.png" "$artwork"
 cp "$target_dir/release/tack-jpeg-decoder" "$decoder"
 chmod 755 "$decoder"

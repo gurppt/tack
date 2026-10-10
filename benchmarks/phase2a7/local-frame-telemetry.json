@@ -1,0 +1,1670 @@
+{
+  "scope": "Owned Xvfb, explicitly selected llvmpipe Vulkan; no hardware timing claim",
+  "runs": [
+    {
+      "name": "0-source-phase2a6",
+      "binary_sha256": "1312983951762b2b41d7a094630d61b11ca9f1463474355ebea4305fb6fc702a",
+      "report_sha256": "c4c8f0742a05f2cf9d24f930b0220c3d8a0b11685f111f81eee4ab95989dde82",
+      "report": {
+        "about": {
+          "image_gpu_bytes": 0,
+          "requests": 0,
+          "version": "0.0.1"
+        },
+        "adapter": "llvmpipe (LLVM 20.1.2, 256 bits)",
+        "annotation_resources": [
+          0,
+          0
+        ],
+        "annotations": 0,
+        "backend": "Vulkan",
+        "camera_clamped": false,
+        "chrome": {
+          "caret_deadline_active": false,
+          "config_bytes": 308,
+          "icon_atlas_gpu_bytes": 20224,
+          "placement": "Top",
+          "selection_outline_count": 0,
+          "status_bar": true,
+          "toolbar_bounds": [
+            296.0,
+            0.0,
+            504.0,
+            16.0
+          ],
+          "toolbar_cells": [
+            {
+              "action": "SelectTool(Pointer)",
+              "rect": [
+                312.0,
+                0.0,
+                328.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Pan)",
+              "rect": [
+                328.0,
+                0.0,
+                344.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Text)",
+              "rect": [
+                344.0,
+                0.0,
+                360.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Rectangle)",
+              "rect": [
+                360.0,
+                0.0,
+                376.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Line)",
+              "rect": [
+                376.0,
+                0.0,
+                392.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Arrow)",
+              "rect": [
+                392.0,
+                0.0,
+                408.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Scribble)",
+              "rect": [
+                408.0,
+                0.0,
+                424.0,
+                16.0
+              ]
+            },
+            {
+              "action": "CreateFrame",
+              "rect": [
+                424.0,
+                0.0,
+                440.0,
+                16.0
+              ]
+            },
+            {
+              "action": "DuplicateSelection",
+              "rect": [
+                440.0,
+                0.0,
+                456.0,
+                16.0
+              ]
+            },
+            {
+              "action": "Undo",
+              "rect": [
+                456.0,
+                0.0,
+                472.0,
+                16.0
+              ]
+            },
+            {
+              "action": "Redo",
+              "rect": [
+                472.0,
+                0.0,
+                488.0,
+                16.0
+              ]
+            },
+            {
+              "action": "ShareBoard",
+              "rect": [
+                488.0,
+                0.0,
+                504.0,
+                16.0
+              ]
+            }
+          ],
+          "toolbar_entries": 12
+        },
+        "codec_requests": 2,
+        "container_bytes": 1999,
+        "cpu_evictions": 0,
+        "cpu_payload_bytes": 104960,
+        "cpu_payload_peak": 104960,
+        "decoded_bytes": 104960,
+        "detail": "bounded projected 128/512/2048 display supply",
+        "discarded": 0,
+        "drain_ms": 0.01189,
+        "editing": {
+          "dirty": false,
+          "generation": 0,
+          "redo_entries": 0,
+          "save_completed": 0,
+          "selected": 0,
+          "undo_entries": 0
+        },
+        "errors": 0,
+        "event_samples_ms": [
+          0.00573,
+          5.9999999999999995e-05,
+          0.00019,
+          8e-05,
+          0.00016999999999999999,
+          0.00033,
+          0.00011,
+          0.00017999999999999998,
+          7.000000000000001e-05,
+          0.00023999999999999998,
+          21.470132,
+          4.1081,
+          3.873189,
+          0.0035700000000000003
+        ],
+        "first_frame_ms": 80.109326,
+        "first_recognizable_ms": 102.50877999999999,
+        "frames": [
+          {
+            "acquire_ms": 0.00671,
+            "annotations": null,
+            "callback_ms": 21.466852000000003,
+            "camera": [
+              300.0,
+              187.5
+            ],
+            "cpu_ms": 1.193583,
+            "desired_detail": 1,
+            "detail_reserved": 64000,
+            "detailed": 0,
+            "elapsed_ms": 80.109326,
+            "encode_ms": 1.1308729999999998,
+            "gpu_bytes": 0,
+            "in_flight": 1,
+            "lod_trace": null,
+            "overview_edge": 128,
+            "poll_ms": 0.00204,
+            "present_ms": 20.246039,
+            "quality_resolved": 0,
+            "query_ms": 0.00462,
+            "recognizable": 0,
+            "scene_ms": 0.0138,
+            "submit_ms": 0.02561,
+            "supply": {
+              "codec_requests": 1,
+              "container_bytes": 0,
+              "cpu_bytes": 0,
+              "decode_count": 0,
+              "decode_ms": 0.0,
+              "decoded_bytes": 0,
+              "discarded": 0,
+              "evictions": 0,
+              "pending": 2,
+              "queued": 1,
+              "region_jobs": 0,
+              "source_bytes": 0,
+              "tile_cache_hits": 0,
+              "tile_cache_read_bytes": 0,
+              "tile_cache_write_bytes": 0,
+              "tile_disk_bytes": 0,
+              "tile_outputs": 0
+            },
+            "supply_ms": 0.0143,
+            "tiles_ready": 0,
+            "tiles_requested": 0,
+            "upload_bytes": 0,
+            "upload_cpu_ms": 0.0,
+            "uploads": 0,
+            "visible": 1,
+            "window_size": [
+              800,
+              600
+            ],
+            "zoom": 1.0
+          },
+          {
+            "acquire_ms": 0.01579,
+            "annotations": null,
+            "callback_ms": 4.10546,
+            "camera": [
+              300.0,
+              187.5
+            ],
+            "cpu_ms": 0.3692,
+            "desired_detail": 1,
+            "detail_reserved": 64000,
+            "detailed": 0,
+            "elapsed_ms": 102.50877999999999,
+            "encode_ms": 0.07422000000000001,
+            "gpu_bytes": 40960,
+            "in_flight": 1,
+            "lod_trace": null,
+            "overview_edge": 128,
+            "poll_ms": 0.00046,
+            "present_ms": 3.7003600000000003,
+            "quality_resolved": 0,
+            "query_ms": 0.00297,
+            "recognizable": 1,
+            "scene_ms": 0.018040000000000056,
+            "submit_ms": 0.023370000000000002,
+            "supply": {
+              "codec_requests": 2,
+              "container_bytes": 482,
+              "cpu_bytes": 40960,
+              "decode_count": 1,
+              "decode_ms": 0.142891,
+              "decoded_bytes": 40960,
+              "discarded": 0,
+              "evictions": 0,
+              "pending": 1,
+              "queued": 0,
+              "region_jobs": 0,
+              "source_bytes": 0,
+              "tile_cache_hits": 0,
+              "tile_cache_read_bytes": 0,
+              "tile_cache_write_bytes": 0,
+              "tile_disk_bytes": 0,
+              "tile_outputs": 0
+            },
+            "supply_ms": 0.24670999999999998,
+            "tiles_ready": 0,
+            "tiles_requested": 0,
+            "upload_bytes": 40960,
+            "upload_cpu_ms": 0.22432,
+            "uploads": 1,
+            "visible": 1,
+            "window_size": [
+              800,
+              600
+            ],
+            "zoom": 1.0
+          },
+          {
+            "acquire_ms": 0.00855,
+            "annotations": null,
+            "callback_ms": 3.870629,
+            "camera": [
+              300.0,
+              187.5
+            ],
+            "cpu_ms": 0.21633000000000002,
+            "desired_detail": 1,
+            "detail_reserved": 64000,
+            "detailed": 1,
+            "elapsed_ms": 124.21482400000001,
+            "encode_ms": 0.06903,
+            "gpu_bytes": 104960,
+            "in_flight": 1,
+            "lod_trace": null,
+            "overview_edge": 128,
+            "poll_ms": 0.00335,
+            "present_ms": 3.6283790000000002,
+            "quality_resolved": 1,
+            "query_ms": 0.00165,
+            "recognizable": 1,
+            "scene_ms": 0.013630000000000003,
+            "submit_ms": 0.01969,
+            "supply": {
+              "codec_requests": 2,
+              "container_bytes": 1427,
+              "cpu_bytes": 104960,
+              "decode_count": 2,
+              "decode_ms": 1.7422049999999998,
+              "decoded_bytes": 104960,
+              "discarded": 0,
+              "evictions": 0,
+              "pending": 0,
+              "queued": 0,
+              "region_jobs": 0,
+              "source_bytes": 0,
+              "tile_cache_hits": 0,
+              "tile_cache_read_bytes": 0,
+              "tile_cache_write_bytes": 0,
+              "tile_disk_bytes": 0,
+              "tile_outputs": 0
+            },
+            "supply_ms": 0.10862,
+            "tiles_ready": 0,
+            "tiles_requested": 0,
+            "upload_bytes": 64000,
+            "upload_cpu_ms": 0.09517,
+            "uploads": 1,
+            "visible": 1,
+            "window_size": [
+              800,
+              600
+            ],
+            "zoom": 1.0
+          }
+        ],
+        "gpu_samples": [
+          {
+            "pass_ms": 18.342295
+          },
+          {
+            "pass_ms": 3.385018
+          },
+          {
+            "pass_ms": 3.208278
+          }
+        ],
+        "gpu_setup_ms": 51.631306,
+        "interaction": null,
+        "load_failed": false,
+        "local": {
+          "discarded_asset_results": 0,
+          "last_storage_worker_ms": 0.0,
+          "operations": 1,
+          "recoveries": 0,
+          "recovery_bytes": 0,
+          "recovery_generation": null,
+          "ui_scale": 1.0
+        },
+        "metadata_bytes": 572,
+        "metadata_load_ms": 5.142943,
+        "native_startup_ms": 77.397589,
+        "navigation_end_pending": 0,
+        "operation": "open",
+        "ordinary_view_80_percent_ms": 102.50877999999999,
+        "overview_regenerated": 0,
+        "overview_reused": 2,
+        "peak_pending": 2,
+        "peak_queued": 1,
+        "potato": false,
+        "present_mode": "Fifo",
+        "recognizable_clock": "CPU submission before present",
+        "redraw_count": 3,
+        "region_jobs": 0,
+        "reprioritized": 0,
+        "source_bytes_before_detail": 0,
+        "source_changed": 0,
+        "source_foreign": 0,
+        "source_missing": 0,
+        "source_unavailable": 0,
+        "spatial": {
+          "frames": 1,
+          "grid": false,
+          "groups": 0,
+          "snapping": false
+        },
+        "state_counts_scope": "requested sources only",
+        "tile_cache_hits": 0,
+        "tile_cache_read_bytes": 0,
+        "tile_cache_write_bytes": 0,
+        "tile_disk_bytes": 0,
+        "tile_outputs": 0,
+        "visibility_memo_bytes": 0,
+        "wait_count": 13,
+        "wheel_samples_ms": [],
+        "window_size": [
+          800,
+          600
+        ]
+      }
+    },
+    {
+      "name": "0-source-phase2a7",
+      "binary_sha256": "7fbc8f3e65c91865c6f41132da4a218eed942a745d6b05e059074b5309925fb7",
+      "report_sha256": "422381ddaad67641719c5c80897b2626e1b71d373ce81ffc19c016cca176aa30",
+      "report": {
+        "about": {
+          "image_gpu_bytes": 0,
+          "requests": 0,
+          "version": "0.0.1"
+        },
+        "adapter": "llvmpipe (LLVM 20.1.2, 256 bits)",
+        "annotation_resources": [
+          0,
+          0
+        ],
+        "annotations": 0,
+        "backend": "Vulkan",
+        "camera_clamped": false,
+        "chrome": {
+          "caret_deadline_active": false,
+          "config_bytes": 339,
+          "icon_atlas_gpu_bytes": 20224,
+          "placement": "Top",
+          "selection_outline_count": 0,
+          "status_bar": true,
+          "toolbar_bounds": [
+            296.0,
+            0.0,
+            504.0,
+            16.0
+          ],
+          "toolbar_cells": [
+            {
+              "action": "SelectTool(Pointer)",
+              "rect": [
+                312.0,
+                0.0,
+                328.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Pan)",
+              "rect": [
+                328.0,
+                0.0,
+                344.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Text)",
+              "rect": [
+                344.0,
+                0.0,
+                360.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Rectangle)",
+              "rect": [
+                360.0,
+                0.0,
+                376.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Line)",
+              "rect": [
+                376.0,
+                0.0,
+                392.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Arrow)",
+              "rect": [
+                392.0,
+                0.0,
+                408.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Scribble)",
+              "rect": [
+                408.0,
+                0.0,
+                424.0,
+                16.0
+              ]
+            },
+            {
+              "action": "CreateFrame",
+              "rect": [
+                424.0,
+                0.0,
+                440.0,
+                16.0
+              ]
+            },
+            {
+              "action": "DuplicateSelection",
+              "rect": [
+                440.0,
+                0.0,
+                456.0,
+                16.0
+              ]
+            },
+            {
+              "action": "Undo",
+              "rect": [
+                456.0,
+                0.0,
+                472.0,
+                16.0
+              ]
+            },
+            {
+              "action": "Redo",
+              "rect": [
+                472.0,
+                0.0,
+                488.0,
+                16.0
+              ]
+            },
+            {
+              "action": "ShareBoard",
+              "rect": [
+                488.0,
+                0.0,
+                504.0,
+                16.0
+              ]
+            }
+          ],
+          "toolbar_entries": 12
+        },
+        "codec_requests": 2,
+        "container_bytes": 1999,
+        "cpu_evictions": 0,
+        "cpu_payload_bytes": 104960,
+        "cpu_payload_peak": 104960,
+        "decoded_bytes": 104960,
+        "detail": "bounded projected 128/512/2048 display supply",
+        "discarded": 0,
+        "drain_ms": 0.011640000000000001,
+        "editing": {
+          "dirty": false,
+          "generation": 0,
+          "redo_entries": 0,
+          "save_completed": 0,
+          "selected": 0,
+          "undo_entries": 0
+        },
+        "errors": 0,
+        "event_samples_ms": [
+          0.01541,
+          0.00011,
+          0.00032,
+          0.00016999999999999999,
+          0.00035999999999999997,
+          0.00046,
+          18.666076,
+          0.00613,
+          0.0022199999999999998,
+          0.00157,
+          3.687628,
+          3.690919,
+          0.00239
+        ],
+        "first_frame_ms": 61.730591000000004,
+        "first_recognizable_ms": 81.475439,
+        "frames": [
+          {
+            "acquire_ms": 0.01376,
+            "annotations": null,
+            "callback_ms": 18.656766,
+            "camera": [
+              300.0,
+              187.5
+            ],
+            "cpu_ms": 1.678225,
+            "desired_detail": 1,
+            "detail_reserved": 64000,
+            "detailed": 0,
+            "elapsed_ms": 61.730591000000004,
+            "encode_ms": 1.595904,
+            "gpu_bytes": 0,
+            "in_flight": 1,
+            "lod_trace": null,
+            "overview_edge": 128,
+            "poll_ms": 0.00479,
+            "present_ms": 16.937950999999998,
+            "quality_resolved": 0,
+            "query_ms": 0.00122,
+            "recognizable": 0,
+            "scene_ms": 0.020131,
+            "submit_ms": 0.026930000000000003,
+            "supply": {
+              "codec_requests": 1,
+              "container_bytes": 0,
+              "cpu_bytes": 0,
+              "decode_count": 0,
+              "decode_ms": 0.0,
+              "decoded_bytes": 0,
+              "discarded": 0,
+              "evictions": 0,
+              "pending": 2,
+              "queued": 1,
+              "region_jobs": 0,
+              "source_bytes": 0,
+              "tile_cache_hits": 0,
+              "tile_cache_read_bytes": 0,
+              "tile_cache_write_bytes": 0,
+              "tile_disk_bytes": 0,
+              "tile_outputs": 0
+            },
+            "supply_ms": 0.026690000000000002,
+            "tiles_ready": 0,
+            "tiles_requested": 0,
+            "upload_bytes": 0,
+            "upload_cpu_ms": 0.0,
+            "uploads": 0,
+            "visible": 1,
+            "window_size": [
+              800,
+              600
+            ],
+            "zoom": 1.0
+          },
+          {
+            "acquire_ms": 0.01239,
+            "annotations": null,
+            "callback_ms": 3.684528,
+            "camera": [
+              300.0,
+              187.5
+            ],
+            "cpu_ms": 0.490901,
+            "desired_detail": 1,
+            "detail_reserved": 64000,
+            "detailed": 0,
+            "elapsed_ms": 81.475439,
+            "encode_ms": 0.075831,
+            "gpu_bytes": 40960,
+            "in_flight": 1,
+            "lod_trace": null,
+            "overview_edge": 128,
+            "poll_ms": 0.00233,
+            "present_ms": 3.150757,
+            "quality_resolved": 0,
+            "query_ms": 0.00179,
+            "recognizable": 1,
+            "scene_ms": 0.024139999999999995,
+            "submit_ms": 0.02274,
+            "supply": {
+              "codec_requests": 2,
+              "container_bytes": 482,
+              "cpu_bytes": 40960,
+              "decode_count": 1,
+              "decode_ms": 0.168441,
+              "decoded_bytes": 40960,
+              "discarded": 0,
+              "evictions": 0,
+              "pending": 1,
+              "queued": 0,
+              "region_jobs": 0,
+              "source_bytes": 0,
+              "tile_cache_hits": 0,
+              "tile_cache_read_bytes": 0,
+              "tile_cache_write_bytes": 0,
+              "tile_disk_bytes": 0,
+              "tile_outputs": 0
+            },
+            "supply_ms": 0.36157,
+            "tiles_ready": 0,
+            "tiles_requested": 0,
+            "upload_bytes": 40960,
+            "upload_cpu_ms": 0.33359999999999995,
+            "uploads": 1,
+            "visible": 1,
+            "window_size": [
+              800,
+              600
+            ],
+            "zoom": 1.0
+          },
+          {
+            "acquire_ms": 0.00973,
+            "annotations": null,
+            "callback_ms": 3.687579,
+            "camera": [
+              300.0,
+              187.5
+            ],
+            "cpu_ms": 0.20626,
+            "desired_detail": 1,
+            "detail_reserved": 64000,
+            "detailed": 1,
+            "elapsed_ms": 98.994421,
+            "encode_ms": 0.05518,
+            "gpu_bytes": 104960,
+            "in_flight": 1,
+            "lod_trace": null,
+            "overview_edge": 128,
+            "poll_ms": 0.0062,
+            "present_ms": 3.4509689999999997,
+            "quality_resolved": 1,
+            "query_ms": 0.0015400000000000001,
+            "recognizable": 1,
+            "scene_ms": 0.013859999999999997,
+            "submit_ms": 0.02076,
+            "supply": {
+              "codec_requests": 2,
+              "container_bytes": 1427,
+              "cpu_bytes": 104960,
+              "decode_count": 2,
+              "decode_ms": 1.394014,
+              "decoded_bytes": 104960,
+              "discarded": 0,
+              "evictions": 0,
+              "pending": 0,
+              "queued": 0,
+              "region_jobs": 0,
+              "source_bytes": 0,
+              "tile_cache_hits": 0,
+              "tile_cache_read_bytes": 0,
+              "tile_cache_write_bytes": 0,
+              "tile_disk_bytes": 0,
+              "tile_outputs": 0
+            },
+            "supply_ms": 0.11142,
+            "tiles_ready": 0,
+            "tiles_requested": 0,
+            "upload_bytes": 64000,
+            "upload_cpu_ms": 0.09725,
+            "uploads": 1,
+            "visible": 1,
+            "window_size": [
+              800,
+              600
+            ],
+            "zoom": 1.0
+          }
+        ],
+        "gpu_samples": [
+          {
+            "pass_ms": 15.242377
+          },
+          {
+            "pass_ms": 2.961357
+          },
+          {
+            "pass_ms": 3.179858
+          }
+        ],
+        "gpu_setup_ms": 43.081435,
+        "interaction": null,
+        "load_failed": false,
+        "local": {
+          "discarded_asset_results": 0,
+          "last_storage_worker_ms": 0.0,
+          "operations": 1,
+          "recoveries": 0,
+          "recovery_bytes": 0,
+          "recovery_generation": null,
+          "ui_scale": 1.0
+        },
+        "metadata_bytes": 572,
+        "metadata_load_ms": 0.29404,
+        "native_startup_ms": 57.905561,
+        "navigation_end_pending": 0,
+        "operation": "open",
+        "ordinary_view_80_percent_ms": 81.475439,
+        "overview_regenerated": 0,
+        "overview_reused": 2,
+        "peak_pending": 2,
+        "peak_queued": 1,
+        "potato": false,
+        "present_mode": "Fifo",
+        "recognizable_clock": "CPU submission before present",
+        "redraw_count": 3,
+        "region_jobs": 0,
+        "reprioritized": 0,
+        "source_bytes_before_detail": 0,
+        "source_changed": 0,
+        "source_foreign": 0,
+        "source_missing": 0,
+        "source_unavailable": 0,
+        "spatial": {
+          "frames": 1,
+          "grid": false,
+          "groups": 0,
+          "snapping": false
+        },
+        "state_counts_scope": "requested sources only",
+        "tile_cache_hits": 0,
+        "tile_cache_read_bytes": 0,
+        "tile_cache_write_bytes": 0,
+        "tile_disk_bytes": 0,
+        "tile_outputs": 0,
+        "visibility_memo_bytes": 0,
+        "wait_count": 15,
+        "wheel_samples_ms": [],
+        "window_size": [
+          800,
+          600
+        ]
+      }
+    },
+    {
+      "name": "1-source-phase2a6",
+      "binary_sha256": "1312983951762b2b41d7a094630d61b11ca9f1463474355ebea4305fb6fc702a",
+      "report_sha256": "eee11b368527c76d47cc531344e72785713914c1231f367643496d9aa9121155",
+      "report": {
+        "about": {
+          "image_gpu_bytes": 0,
+          "requests": 0,
+          "version": "0.0.1"
+        },
+        "adapter": "llvmpipe (LLVM 20.1.2, 256 bits)",
+        "annotation_resources": [
+          0,
+          0
+        ],
+        "annotations": 0,
+        "backend": "Vulkan",
+        "camera_clamped": false,
+        "chrome": {
+          "caret_deadline_active": false,
+          "config_bytes": 308,
+          "icon_atlas_gpu_bytes": 20224,
+          "placement": "Top",
+          "selection_outline_count": 0,
+          "status_bar": true,
+          "toolbar_bounds": [
+            296.0,
+            0.0,
+            504.0,
+            16.0
+          ],
+          "toolbar_cells": [
+            {
+              "action": "SelectTool(Pointer)",
+              "rect": [
+                312.0,
+                0.0,
+                328.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Pan)",
+              "rect": [
+                328.0,
+                0.0,
+                344.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Text)",
+              "rect": [
+                344.0,
+                0.0,
+                360.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Rectangle)",
+              "rect": [
+                360.0,
+                0.0,
+                376.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Line)",
+              "rect": [
+                376.0,
+                0.0,
+                392.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Arrow)",
+              "rect": [
+                392.0,
+                0.0,
+                408.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Scribble)",
+              "rect": [
+                408.0,
+                0.0,
+                424.0,
+                16.0
+              ]
+            },
+            {
+              "action": "CreateFrame",
+              "rect": [
+                424.0,
+                0.0,
+                440.0,
+                16.0
+              ]
+            },
+            {
+              "action": "DuplicateSelection",
+              "rect": [
+                440.0,
+                0.0,
+                456.0,
+                16.0
+              ]
+            },
+            {
+              "action": "Undo",
+              "rect": [
+                456.0,
+                0.0,
+                472.0,
+                16.0
+              ]
+            },
+            {
+              "action": "Redo",
+              "rect": [
+                472.0,
+                0.0,
+                488.0,
+                16.0
+              ]
+            },
+            {
+              "action": "ShareBoard",
+              "rect": [
+                488.0,
+                0.0,
+                504.0,
+                16.0
+              ]
+            }
+          ],
+          "toolbar_entries": 12
+        },
+        "codec_requests": 2,
+        "container_bytes": 1999,
+        "cpu_evictions": 0,
+        "cpu_payload_bytes": 104960,
+        "cpu_payload_peak": 104960,
+        "decoded_bytes": 104960,
+        "detail": "bounded projected 128/512/2048 display supply",
+        "discarded": 0,
+        "drain_ms": 0.01029,
+        "editing": {
+          "dirty": false,
+          "generation": 0,
+          "redo_entries": 0,
+          "save_completed": 0,
+          "selected": 0,
+          "undo_entries": 0
+        },
+        "errors": 0,
+        "event_samples_ms": [
+          0.00435,
+          4.9999999999999996e-05,
+          0.00019,
+          8.999999999999999e-05,
+          0.00021,
+          0.00028000000000000003,
+          18.350555,
+          0.0056,
+          0.00162,
+          0.0009299999999999999,
+          3.944729,
+          3.8256900000000003,
+          0.0031599999999999996
+        ],
+        "first_frame_ms": 67.389064,
+        "first_recognizable_ms": 86.884602,
+        "frames": [
+          {
+            "acquire_ms": 0.00658,
+            "annotations": null,
+            "callback_ms": 18.347475,
+            "camera": [
+              300.0,
+              187.5
+            ],
+            "cpu_ms": 1.207803,
+            "desired_detail": 1,
+            "detail_reserved": 64000,
+            "detailed": 0,
+            "elapsed_ms": 67.389064,
+            "encode_ms": 1.140493,
+            "gpu_bytes": 0,
+            "in_flight": 1,
+            "lod_trace": null,
+            "overview_edge": 128,
+            "poll_ms": 0.0019,
+            "present_ms": 17.109122,
+            "quality_resolved": 0,
+            "query_ms": 0.0052499999999999995,
+            "recognizable": 0,
+            "scene_ms": 0.016460000000000006,
+            "submit_ms": 0.026109999999999998,
+            "supply": {
+              "codec_requests": 1,
+              "container_bytes": 0,
+              "cpu_bytes": 0,
+              "decode_count": 0,
+              "decode_ms": 0.0,
+              "decoded_bytes": 0,
+              "discarded": 0,
+              "evictions": 0,
+              "pending": 2,
+              "queued": 1,
+              "region_jobs": 0,
+              "source_bytes": 0,
+              "tile_cache_hits": 0,
+              "tile_cache_read_bytes": 0,
+              "tile_cache_write_bytes": 0,
+              "tile_disk_bytes": 0,
+              "tile_outputs": 0
+            },
+            "supply_ms": 0.01515,
+            "tiles_ready": 0,
+            "tiles_requested": 0,
+            "upload_bytes": 0,
+            "upload_cpu_ms": 0.0,
+            "uploads": 0,
+            "visible": 1,
+            "window_size": [
+              800,
+              600
+            ],
+            "zoom": 1.0
+          },
+          {
+            "acquire_ms": 0.00882,
+            "annotations": null,
+            "callback_ms": 3.9418689999999996,
+            "camera": [
+              300.0,
+              187.5
+            ],
+            "cpu_ms": 0.35165100000000005,
+            "desired_detail": 1,
+            "detail_reserved": 64000,
+            "detailed": 0,
+            "elapsed_ms": 86.884602,
+            "encode_ms": 0.06308,
+            "gpu_bytes": 40960,
+            "in_flight": 1,
+            "lod_trace": null,
+            "overview_edge": 128,
+            "poll_ms": 0.00181,
+            "present_ms": 3.558008,
+            "quality_resolved": 0,
+            "query_ms": 0.0015999999999999999,
+            "recognizable": 1,
+            "scene_ms": 0.014370000000000022,
+            "submit_ms": 0.02575,
+            "supply": {
+              "codec_requests": 2,
+              "container_bytes": 482,
+              "cpu_bytes": 40960,
+              "decode_count": 1,
+              "decode_ms": 0.121551,
+              "decoded_bytes": 40960,
+              "discarded": 0,
+              "evictions": 0,
+              "pending": 1,
+              "queued": 0,
+              "region_jobs": 0,
+              "source_bytes": 0,
+              "tile_cache_hits": 0,
+              "tile_cache_read_bytes": 0,
+              "tile_cache_write_bytes": 0,
+              "tile_disk_bytes": 0,
+              "tile_outputs": 0
+            },
+            "supply_ms": 0.242891,
+            "tiles_ready": 0,
+            "tiles_requested": 0,
+            "upload_bytes": 40960,
+            "upload_cpu_ms": 0.223291,
+            "uploads": 1,
+            "visible": 1,
+            "window_size": [
+              800,
+              600
+            ],
+            "zoom": 1.0
+          },
+          {
+            "acquire_ms": 0.009269999999999999,
+            "annotations": null,
+            "callback_ms": 3.82281,
+            "camera": [
+              300.0,
+              187.5
+            ],
+            "cpu_ms": 0.22088000000000002,
+            "desired_detail": 1,
+            "detail_reserved": 64000,
+            "detailed": 1,
+            "elapsed_ms": 111.163681,
+            "encode_ms": 0.06096,
+            "gpu_bytes": 104960,
+            "in_flight": 1,
+            "lod_trace": null,
+            "overview_edge": 128,
+            "poll_ms": 0.004971000000000001,
+            "present_ms": 3.573079,
+            "quality_resolved": 1,
+            "query_ms": 0.00137,
+            "recognizable": 1,
+            "scene_ms": 0.015179999999999971,
+            "submit_ms": 0.02285,
+            "supply": {
+              "codec_requests": 2,
+              "container_bytes": 1427,
+              "cpu_bytes": 104960,
+              "decode_count": 2,
+              "decode_ms": 1.130503,
+              "decoded_bytes": 104960,
+              "discarded": 0,
+              "evictions": 0,
+              "pending": 0,
+              "queued": 0,
+              "region_jobs": 0,
+              "source_bytes": 0,
+              "tile_cache_hits": 0,
+              "tile_cache_read_bytes": 0,
+              "tile_cache_write_bytes": 0,
+              "tile_disk_bytes": 0,
+              "tile_outputs": 0
+            },
+            "supply_ms": 0.11704,
+            "tiles_ready": 0,
+            "tiles_requested": 0,
+            "upload_bytes": 64000,
+            "upload_cpu_ms": 0.10306000000000001,
+            "uploads": 1,
+            "visible": 1,
+            "window_size": [
+              800,
+              600
+            ],
+            "zoom": 1.0
+          }
+        ],
+        "gpu_samples": [
+          {
+            "pass_ms": 15.516228
+          },
+          {
+            "pass_ms": 3.243288
+          },
+          {
+            "pass_ms": 3.194288
+          }
+        ],
+        "gpu_setup_ms": 41.880151999999995,
+        "interaction": null,
+        "load_failed": false,
+        "local": {
+          "discarded_asset_results": 0,
+          "last_storage_worker_ms": 0.0,
+          "operations": 1,
+          "recoveries": 0,
+          "recovery_bytes": 0,
+          "recovery_generation": null,
+          "ui_scale": 1.0
+        },
+        "metadata_bytes": 572,
+        "metadata_load_ms": 0.27575,
+        "native_startup_ms": 64.90329799999999,
+        "navigation_end_pending": 0,
+        "operation": "open",
+        "ordinary_view_80_percent_ms": 86.884602,
+        "overview_regenerated": 0,
+        "overview_reused": 2,
+        "peak_pending": 2,
+        "peak_queued": 1,
+        "potato": false,
+        "present_mode": "Fifo",
+        "recognizable_clock": "CPU submission before present",
+        "redraw_count": 3,
+        "region_jobs": 0,
+        "reprioritized": 0,
+        "source_bytes_before_detail": 0,
+        "source_changed": 0,
+        "source_foreign": 0,
+        "source_missing": 0,
+        "source_unavailable": 0,
+        "spatial": {
+          "frames": 1,
+          "grid": false,
+          "groups": 0,
+          "snapping": false
+        },
+        "state_counts_scope": "requested sources only",
+        "tile_cache_hits": 0,
+        "tile_cache_read_bytes": 0,
+        "tile_cache_write_bytes": 0,
+        "tile_disk_bytes": 0,
+        "tile_outputs": 0,
+        "visibility_memo_bytes": 0,
+        "wait_count": 15,
+        "wheel_samples_ms": [],
+        "window_size": [
+          800,
+          600
+        ]
+      }
+    },
+    {
+      "name": "1-source-phase2a7",
+      "binary_sha256": "7fbc8f3e65c91865c6f41132da4a218eed942a745d6b05e059074b5309925fb7",
+      "report_sha256": "e827f886ad6aa9dc2b65bc42e57de3fd47ced8dad26132cceb8e92c350102c26",
+      "report": {
+        "about": {
+          "image_gpu_bytes": 0,
+          "requests": 0,
+          "version": "0.0.1"
+        },
+        "adapter": "llvmpipe (LLVM 20.1.2, 256 bits)",
+        "annotation_resources": [
+          0,
+          0
+        ],
+        "annotations": 0,
+        "backend": "Vulkan",
+        "camera_clamped": false,
+        "chrome": {
+          "caret_deadline_active": false,
+          "config_bytes": 339,
+          "icon_atlas_gpu_bytes": 20224,
+          "placement": "Top",
+          "selection_outline_count": 0,
+          "status_bar": true,
+          "toolbar_bounds": [
+            296.0,
+            0.0,
+            504.0,
+            16.0
+          ],
+          "toolbar_cells": [
+            {
+              "action": "SelectTool(Pointer)",
+              "rect": [
+                312.0,
+                0.0,
+                328.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Pan)",
+              "rect": [
+                328.0,
+                0.0,
+                344.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Text)",
+              "rect": [
+                344.0,
+                0.0,
+                360.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Rectangle)",
+              "rect": [
+                360.0,
+                0.0,
+                376.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Line)",
+              "rect": [
+                376.0,
+                0.0,
+                392.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Arrow)",
+              "rect": [
+                392.0,
+                0.0,
+                408.0,
+                16.0
+              ]
+            },
+            {
+              "action": "SelectTool(Scribble)",
+              "rect": [
+                408.0,
+                0.0,
+                424.0,
+                16.0
+              ]
+            },
+            {
+              "action": "CreateFrame",
+              "rect": [
+                424.0,
+                0.0,
+                440.0,
+                16.0
+              ]
+            },
+            {
+              "action": "DuplicateSelection",
+              "rect": [
+                440.0,
+                0.0,
+                456.0,
+                16.0
+              ]
+            },
+            {
+              "action": "Undo",
+              "rect": [
+                456.0,
+                0.0,
+                472.0,
+                16.0
+              ]
+            },
+            {
+              "action": "Redo",
+              "rect": [
+                472.0,
+                0.0,
+                488.0,
+                16.0
+              ]
+            },
+            {
+              "action": "ShareBoard",
+              "rect": [
+                488.0,
+                0.0,
+                504.0,
+                16.0
+              ]
+            }
+          ],
+          "toolbar_entries": 12
+        },
+        "codec_requests": 2,
+        "container_bytes": 1999,
+        "cpu_evictions": 0,
+        "cpu_payload_bytes": 104960,
+        "cpu_payload_peak": 104960,
+        "decoded_bytes": 104960,
+        "detail": "bounded projected 128/512/2048 display supply",
+        "discarded": 0,
+        "drain_ms": 0.01171,
+        "editing": {
+          "dirty": false,
+          "generation": 0,
+          "redo_entries": 0,
+          "save_completed": 0,
+          "selected": 0,
+          "undo_entries": 0
+        },
+        "errors": 0,
+        "event_samples_ms": [
+          0.01096,
+          7.000000000000001e-05,
+          0.00022,
+          0.00011999999999999999,
+          0.00026,
+          0.00035,
+          17.371882000000003,
+          0.00634,
+          0.00208,
+          0.00134,
+          3.7691589999999997,
+          3.656159,
+          0.00557
+        ],
+        "first_frame_ms": 62.897102999999994,
+        "first_recognizable_ms": 81.15974800000001,
+        "frames": [
+          {
+            "acquire_ms": 0.01006,
+            "annotations": null,
+            "callback_ms": 17.360402,
+            "camera": [
+              300.0,
+              187.5
+            ],
+            "cpu_ms": 1.469453,
+            "desired_detail": 1,
+            "detail_reserved": 64000,
+            "detailed": 0,
+            "elapsed_ms": 62.897102999999994,
+            "encode_ms": 1.3818030000000001,
+            "gpu_bytes": 0,
+            "in_flight": 1,
+            "lod_trace": null,
+            "overview_edge": 128,
+            "poll_ms": 0.00313,
+            "present_ms": 15.860189,
+            "quality_resolved": 0,
+            "query_ms": 0.00132,
+            "recognizable": 0,
+            "scene_ms": 0.023780000000000003,
+            "submit_ms": 0.02288,
+            "supply": {
+              "codec_requests": 1,
+              "container_bytes": 0,
+              "cpu_bytes": 0,
+              "decode_count": 0,
+              "decode_ms": 0.0,
+              "decoded_bytes": 0,
+              "discarded": 0,
+              "evictions": 0,
+              "pending": 2,
+              "queued": 1,
+              "region_jobs": 0,
+              "source_bytes": 0,
+              "tile_cache_hits": 0,
+              "tile_cache_read_bytes": 0,
+              "tile_cache_write_bytes": 0,
+              "tile_disk_bytes": 0,
+              "tile_outputs": 0
+            },
+            "supply_ms": 0.03295,
+            "tiles_ready": 0,
+            "tiles_requested": 0,
+            "upload_bytes": 0,
+            "upload_cpu_ms": 0.0,
+            "uploads": 0,
+            "visible": 1,
+            "window_size": [
+              800,
+              600
+            ],
+            "zoom": 1.0
+          },
+          {
+            "acquire_ms": 0.01137,
+            "annotations": null,
+            "callback_ms": 3.766089,
+            "camera": [
+              300.0,
+              187.5
+            ],
+            "cpu_ms": 0.359591,
+            "desired_detail": 1,
+            "detail_reserved": 64000,
+            "detailed": 0,
+            "elapsed_ms": 81.15974800000001,
+            "encode_ms": 0.064481,
+            "gpu_bytes": 40960,
+            "in_flight": 1,
+            "lod_trace": null,
+            "overview_edge": 128,
+            "poll_ms": 0.00221,
+            "present_ms": 3.3638980000000003,
+            "quality_resolved": 0,
+            "query_ms": 0.00164,
+            "recognizable": 1,
+            "scene_ms": 0.015150000000000052,
+            "submit_ms": 0.02169,
+            "supply": {
+              "codec_requests": 2,
+              "container_bytes": 482,
+              "cpu_bytes": 40960,
+              "decode_count": 1,
+              "decode_ms": 0.14458000000000001,
+              "decoded_bytes": 40960,
+              "discarded": 0,
+              "evictions": 0,
+              "pending": 1,
+              "queued": 0,
+              "region_jobs": 0,
+              "source_bytes": 0,
+              "tile_cache_hits": 0,
+              "tile_cache_read_bytes": 0,
+              "tile_cache_write_bytes": 0,
+              "tile_disk_bytes": 0,
+              "tile_outputs": 0
+            },
+            "supply_ms": 0.25266,
+            "tiles_ready": 0,
+            "tiles_requested": 0,
+            "upload_bytes": 40960,
+            "upload_cpu_ms": 0.22927,
+            "uploads": 1,
+            "visible": 1,
+            "window_size": [
+              800,
+              600
+            ],
+            "zoom": 1.0
+          },
+          {
+            "acquire_ms": 0.0103,
+            "annotations": null,
+            "callback_ms": 3.652219,
+            "camera": [
+              300.0,
+              187.5
+            ],
+            "cpu_ms": 0.211721,
+            "desired_detail": 1,
+            "detail_reserved": 64000,
+            "detailed": 1,
+            "elapsed_ms": 105.72261800000001,
+            "encode_ms": 0.058291,
+            "gpu_bytes": 104960,
+            "in_flight": 1,
+            "lod_trace": null,
+            "overview_edge": 128,
+            "poll_ms": 0.00469,
+            "present_ms": 3.409608,
+            "quality_resolved": 1,
+            "query_ms": 0.0012699999999999999,
+            "recognizable": 1,
+            "scene_ms": 0.014290000000000011,
+            "submit_ms": 0.02254,
+            "supply": {
+              "codec_requests": 2,
+              "container_bytes": 1427,
+              "cpu_bytes": 104960,
+              "decode_count": 2,
+              "decode_ms": 1.215453,
+              "decoded_bytes": 104960,
+              "discarded": 0,
+              "evictions": 0,
+              "pending": 0,
+              "queued": 0,
+              "region_jobs": 0,
+              "source_bytes": 0,
+              "tile_cache_hits": 0,
+              "tile_cache_read_bytes": 0,
+              "tile_cache_write_bytes": 0,
+              "tile_disk_bytes": 0,
+              "tile_outputs": 0
+            },
+            "supply_ms": 0.11194,
+            "tiles_ready": 0,
+            "tiles_requested": 0,
+            "upload_bytes": 64000,
+            "upload_cpu_ms": 0.09833,
+            "uploads": 1,
+            "visible": 1,
+            "window_size": [
+              800,
+              600
+            ],
+            "zoom": 1.0
+          }
+        ],
+        "gpu_samples": [
+          {
+            "pass_ms": 14.271735
+          },
+          {
+            "pass_ms": 3.085457
+          },
+          {
+            "pass_ms": 3.024477
+          }
+        ],
+        "gpu_setup_ms": 41.638312,
+        "interaction": null,
+        "load_failed": false,
+        "local": {
+          "discarded_asset_results": 0,
+          "last_storage_worker_ms": 0.0,
+          "operations": 1,
+          "recoveries": 0,
+          "recovery_bytes": 0,
+          "recovery_generation": null,
+          "ui_scale": 1.0
+        },
+        "metadata_bytes": 572,
+        "metadata_load_ms": 0.324101,
+        "native_startup_ms": 59.540385,
+        "navigation_end_pending": 0,
+        "operation": "open",
+        "ordinary_view_80_percent_ms": 81.15974800000001,
+        "overview_regenerated": 0,
+        "overview_reused": 2,
+        "peak_pending": 2,
+        "peak_queued": 1,
+        "potato": false,
+        "present_mode": "Fifo",
+        "recognizable_clock": "CPU submission before present",
+        "redraw_count": 3,
+        "region_jobs": 0,
+        "reprioritized": 0,
+        "source_bytes_before_detail": 0,
+        "source_changed": 0,
+        "source_foreign": 0,
+        "source_missing": 0,
+        "source_unavailable": 0,
+        "spatial": {
+          "frames": 1,
+          "grid": false,
+          "groups": 0,
+          "snapping": false
+        },
+        "state_counts_scope": "requested sources only",
+        "tile_cache_hits": 0,
+        "tile_cache_read_bytes": 0,
+        "tile_cache_write_bytes": 0,
+        "tile_disk_bytes": 0,
+        "tile_outputs": 0,
+        "visibility_memo_bytes": 0,
+        "wait_count": 15,
+        "wheel_samples_ms": [],
+        "window_size": [
+          800,
+          600
+        ]
+      }
+    }
+  ]
+}

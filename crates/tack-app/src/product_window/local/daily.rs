@@ -41,11 +41,34 @@ impl App {
                 }
             }
             Action::AddCameraBookmark => {
+                if self.local.profile.local_views.len() >= tack_app::camera_slots::MAX_VIEWS {
+                    return Err("Too many local views (maximum 64)".into());
+                }
                 let screen = self.camera.screen_size().map(|v| f64::from(v) / 2.);
                 self.local.pending_camera =
                     Some((self.camera.screen_to_world(screen), self.camera.zoom()));
-                self.interaction_error =
-                    Some("Press a view shortcut (Num0-9); Escape cancels".into());
+                let board = format!(
+                    "{:032x}",
+                    self.editor
+                        .as_ref()
+                        .ok_or("document unavailable")?
+                        .document()
+                        .id()
+                        .value()
+                );
+                let slot = (0..tack_app::camera_slots::MAX_VIEWS as u8)
+                    .find(|slot| {
+                        !self
+                            .local
+                            .profile
+                            .local_views
+                            .iter()
+                            .any(|v| v.board == board && v.slot == *slot)
+                    })
+                    .ok_or("Too many local views")?;
+                self.panel(Panel::ViewCapture);
+                self.local.ui = Some(Box::new(LocalUi::view_capture(slot)));
+                self.interaction_error = None;
             }
             Action::JumpCameraSlot(slot) => self.camera_slot(slot)?,
             Action::CameraBookmarks => self.bookmarks_panel()?,
@@ -145,56 +168,6 @@ impl App {
         }
         self.dirty = true;
         Ok(())
-    }
-    pub(in super::super) fn camera_capture(&mut self, event: &WindowEvent) -> bool {
-        if self.local.pending_camera.is_none() {
-            return false;
-        }
-        let WindowEvent::KeyboardInput { event, .. } = event else {
-            return false;
-        };
-        // The B release must reach InputState: swallowing it would leave B held
-        // and make the next view assignment look like a repeated press.
-        if event.state != winit::event::ElementState::Pressed {
-            return false;
-        }
-        if event.repeat {
-            return true;
-        }
-        if event.physical_key
-            == winit::keyboard::PhysicalKey::Code(winit::keyboard::KeyCode::Escape)
-        {
-            self.local.pending_camera = None;
-            self.interaction_error = None;
-        } else {
-            let modifiers = self.input.modifiers();
-            let control = self.input.keymap.keyboard_control(
-                event.physical_key,
-                tack_app::input::logical_key(event),
-                modifiers,
-            );
-            let slot = self.input.keymap.bindings().iter().find_map(|b| {
-                if b.control == control
-                    && b.modifiers.matches(modifiers)
-                    && b.trigger == tack_app::bindings::Trigger::Press
-                    && let Action::JumpCameraSlot(slot) = b.action
-                {
-                    Some(slot)
-                } else {
-                    None
-                }
-            });
-            if let Some(slot) = slot {
-                if let Err(error) = self.camera_slot(slot) {
-                    self.interaction_error = Some(error.to_string());
-                }
-            } else {
-                self.interaction_error =
-                    Some("Choose a mapped view shortcut (Num0-9), or Escape".into());
-            }
-        }
-        self.dirty = true;
-        true
     }
     pub(in super::super) fn daily_panel(&mut self, panel: Panel, data: DailyPanel) {
         self.panel(panel);

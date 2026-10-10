@@ -83,6 +83,23 @@ impl App {
         {
             self.input.commit_drafts(editor)?;
         }
+        if action == SaveKeymap {
+            if let Some(path) = self
+                .local
+                .profile
+                .keyset
+                .path
+                .as_ref()
+                .and_then(|p| p.path().ok())
+            {
+                return self.operation(Operation::Keymap {
+                    action: ExportKeymap,
+                    path,
+                    profile: self.local.profile.clone(),
+                });
+            }
+            return self.local_action(ExportKeymap);
+        }
         let keymap_panel = matches!(action, ImportKeymap | ExportKeymap)
             .then(|| self.local.ui.take())
             .flatten();
@@ -234,6 +251,12 @@ impl App {
         self.dirty = true;
         if let Some(result) = result {
             match result {
+                UiResult::AssignCameraSlot(slot) => {
+                    self.camera_slot(slot)?;
+                    self.local.profile_pending = true;
+                    self.local.profile_changed = true;
+                    self.local.ui = None;
+                }
                 UiResult::JumpBookmark(_)
                 | UiResult::SaveBookmark(..)
                 | UiResult::RenameBookmark(_)
@@ -252,6 +275,7 @@ impl App {
                     self.apply_preferences()?;
                 }
                 UiResult::Dismiss => {
+                    self.local.pending_camera = None;
                     if self
                         .local
                         .ui

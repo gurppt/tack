@@ -66,6 +66,9 @@ pub enum Action {
     Opacity(crate::selection_commands::Alpha),
     Filtering(tack_core::ImageFiltering),
     CycleFiltering,
+    ResetAspectRatio,
+    ContextIncrease,
+    ContextDecrease,
     Save,
     ToggleGrid,
     ToggleSnapping,
@@ -98,6 +101,7 @@ pub enum Action {
     RecentBoards,
     ImportKeymap,
     ExportKeymap,
+    SaveKeymap,
     ExportPreferences,
     DuplicateSelection,
     AddCameraBookmark,
@@ -115,7 +119,7 @@ pub enum Action {
 }
 impl Action {
     /// Enumerable action catalog, including currently unassigned actions.
-    pub const ALL: [Self; 118] = [
+    pub const ALL: [Self; 122] = [
         Self::SelectTool(Tool::Pointer),
         Self::SelectTool(Tool::Pan),
         Self::SelectTool(Tool::RotateView),
@@ -150,6 +154,9 @@ impl Action {
         Self::Filtering(tack_core::ImageFiltering::Smooth),
         Self::Filtering(tack_core::ImageFiltering::Nearest),
         Self::CycleFiltering,
+        Self::ResetAspectRatio,
+        Self::ContextIncrease,
+        Self::ContextDecrease,
         Self::Save,
         Self::ToggleGrid,
         Self::ToggleSnapping,
@@ -211,6 +218,7 @@ impl Action {
         Self::RecentBoards,
         Self::ImportKeymap,
         Self::ExportKeymap,
+        Self::SaveKeymap,
         Self::ExportPreferences,
         Self::DuplicateSelection,
         Self::AddCameraBookmark,
@@ -240,7 +248,15 @@ impl Action {
         format!("{self:?}")
     }
     pub fn from_id(id: &str) -> Option<Self> {
-        Self::ALL.into_iter().find(|a| a.id() == id)
+        Self::ALL.into_iter().find(|a| a.id() == id).or_else(|| {
+            let slot: u8 = id
+                .strip_prefix("JumpCameraSlot(")?
+                .strip_suffix(')')?
+                .parse()
+                .ok()?;
+            (usize::from(slot) < crate::camera_slots::MAX_VIEWS)
+                .then_some(Self::JumpCameraSlot(slot))
+        })
     }
     pub fn is_local(self) -> bool {
         matches!(
@@ -260,6 +276,7 @@ impl Action {
                 | Self::KeymapEditor
                 | Self::RecentBoards
                 | Self::ImportKeymap
+                | Self::SaveKeymap
                 | Self::ExportKeymap
                 | Self::ExportPreferences
                 | Self::DuplicateSelection
@@ -322,6 +339,9 @@ impl Action {
     }
     pub fn label(self) -> &'static str {
         match self {
+            Self::ResetAspectRatio => "Reset aspect ratio",
+            Self::ContextIncrease => "Context increase",
+            Self::ContextDecrease => "Context decrease",
             Self::SelectTool(Tool::Pointer) => "Pointer tool",
             Self::SelectTool(Tool::Pan) => "Pan tool",
             Self::SelectTool(Tool::RotateView) => "Rotate view tool",
@@ -417,6 +437,7 @@ impl Action {
             Self::RecentBoards => "Recent boards",
             Self::ImportKeymap => "Import keymap",
             Self::ExportPreferences => "Export Preferences...",
+            Self::SaveKeymap => "Save keyset",
             Self::ExportKeymap => "Export keymap",
             Self::DuplicateSelection => "Duplicate selection",
             Self::AddCameraBookmark => "Assign view shortcut...",
@@ -475,8 +496,17 @@ pub struct Interaction {
 }
 impl Interaction {
     pub fn complete_creation(&mut self, tool: Tool) {
-        if tool.is_one_shot() {
+        if tool.is_one_shot()
+            && self.base == tool
+            && !self.temporary.iter().any(|(_, held)| *held == tool)
+        {
             self.reset_pointer();
+        }
+    }
+    pub fn release_for_modal(&mut self) {
+        self.temporary.clear();
+        if self.base == Tool::Text {
+            self.base = Tool::Pointer;
         }
     }
     pub fn reset_pointer(&mut self) {

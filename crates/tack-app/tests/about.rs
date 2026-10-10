@@ -28,7 +28,13 @@ fn every_metadata_row_and_close_fit_800_by_600_at_both_scales() {
         let mut camera = Camera::new([800, 600]);
         camera.set_ui_scale(scale);
         let layout = about::Layout::new(&camera);
-        for [x, y, w, h] in [layout.panel, layout.image, layout.text, layout.close] {
+        for [x, y, w, h] in [
+            layout.panel,
+            layout.image,
+            layout.logo,
+            layout.text,
+            layout.close,
+        ] {
             assert!(x >= 0. && y >= 0. && w > 0. && h > 0.);
             assert!((x + w) * scale <= 800. && (y + h) * scale <= 600.);
         }
@@ -72,7 +78,7 @@ fn repeated_on_demand_worker_finishes_and_drops_its_payload() -> Result<(), Asse
                         result,
                     } => {
                         assert_eq!(actual, ticket);
-                        assert_eq!(result?.rgba.len(), 185472);
+                        assert_eq!(result?.portrait.rgba.len(), 185472);
                         received = true;
                     }
                     LocalUpdate::Done(result) => result?,

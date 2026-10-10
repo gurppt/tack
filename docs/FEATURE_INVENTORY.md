@@ -28,7 +28,7 @@ selection, tool choice, camera and text drafts. Menu paths are one submenu deep.
 
 | Feature / semantic action | Status | Object type | Invocation / default shortcut | Other UI | Context menu | Undoable? | Persisted? | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Add camera bookmark (`AddCameraBookmark`) | implemented | invisible camera metadata | — | Tack → View → Add bookmark | shared Tack menu | Yes | Board, schema4 | Local editing only; at most 64 named exact views, 128 UTF-8 bytes per name. |
+| Add camera bookmark (`AddCameraBookmark`) | implemented | local camera slots | B | Tack → View → Add bookmark | shared Tack menu | No | Local profile | Centered shortcut capture, Enter confirms collision reassignment, Escape cancels; at most 64 local views, works on shared boards without a shared revision. |
 | Camera bookmarks (`CameraBookmarks`) | implemented | camera / bookmark metadata | — | Tack → View → Camera bookmarks | shared Tack menu | jump No; rename/delete Yes | Board metadata, camera session | Enter/click jumps; F2/visible Rename and Delete buttons. Shared snapshots allow jump, not editing. |
 | Duplicate selection (`DuplicateSelection`) | implemented | images, notes, all supported annotations, frames | Ctrl+D | Tack → Edit | shared Tack menu | Yes, one transaction | Board | Fresh object/group IDs, same image assets/sources/originals; one adaptive grid-step offset. Explicitly local-only. |
 | Image information (`SourceInfo`) | implemented | one selected image | — | Image → Source | Image information | No | temporary panel | Existing metadata and observed status only; no filesystem access, codec probing or decode requests. |
@@ -37,13 +37,13 @@ selection, tool choice, camera and text drafts. Menu paths are one submenu deep.
 | Share Board (`ShareBoard`) | implemented | local/shared incarnation | — | Tack → File / toolbar | shared Tack menu | No | independent shared file + companion | Start Sharing owns existing server process, local original remains independent; same-profile Put Online reuses Board ID. |
 | Stop Sharing (`StopSharing`) | implemented | owned hosted board | — | Tack → File / online panel | shared Tack menu | No | checked offline snapshot | Enabled only for owned host; checkpoint/reap outside UI, offline read-only. |
 | Toggle Toolbar (`ToggleToolbar`) | implemented | chrome | — | Tack → View / keymap | shared Tack menu | No | profile | One toolbar, six placements, hidden has no icon draw. |
-| Edit Toolbar (`EditToolbar`) | implemented | chrome | — | Tack → View / keymap | shared Tack menu | No | profile | Catalog Add/Remove, Up/Down, Reset; ≤32 semantic IDs, no duplicate tool system. |
+| Edit Toolbar (`EditToolbar`) | implemented | chrome | — | Tack → View / keymap | shared Tack menu | No | profile | Tools → Edit Toolbar; two independent wheel/thumb lists; Add/Remove, reorder, Reset, 1×/2×/3×; proportional edge anchor, ≤32 semantic IDs. |
 | Toggle Status Bar (`ToggleStatusBar`) | implemented | chrome | — | Tack → View / keymap | shared Tack menu | No | profile | One cached hover/shortcut/state line; fixed shared indicator also visible without strip. |
 | Pointer tool (`SelectTool(Pointer)`) | implemented | selection | V | Tack → Tools | No | No | session | Direct canvas selection/manipulation. |
 | Pan tool (`SelectTool(Pan)`) | implemented | camera | — | toolbar / keymap | No | No | session | Left drag uses existing camera pan, no document mutation. |
 | Rotate view tool (`SelectTool(RotateView)`) | experimental | tool state | — | keymap catalog only | No | No | session | Generic Interaction state exists; native pointer pipeline does not implement a complete dedicated pan/rotate-view tool. |
 | Temporary pointer tool (`TemporaryTool(Pointer)`) | experimental | tool state | — | keymap hold binding only | No | No | session | Generic held-tool restoration tested; no default binding or menu; complete native tool combinations not validated. |
-| Temporary pan tool (`TemporaryTool(Pan)`) | experimental | tool state | — | keymap catalog only | No | No | session | Generic Interaction state exists; native pointer pipeline does not implement a complete dedicated pan/rotate-view tool. |
+| Temporary pan tool (`TemporaryTool(Pan)`) | implemented | tool state | — | keymap catalog only | No | No | session | Mouse or keyboard Hold begins temporary Pan, uses the initiating pointer press, and restores the previous tool on release/focus loss. |
 | Temporary rotate view tool (`TemporaryTool(RotateView)`) | experimental | tool state | — | keymap catalog only | No | No | session | Generic Interaction state exists; native pointer pipeline does not implement a complete dedicated pan/rotate-view tool. |
 | Undo (`Undo`) | implemented | document | Ctrl+Z | Tack → Edit | all object menus | history operation | Board result; history session | Text drafts have no local undo buffer; Ctrl+Z is consumed while editing. |
 | Redo (`Redo`) | implemented | document | Ctrl+Shift+Z | Tack → Edit | all object menus | history operation | Board result; history session | Ctrl+Y is an additional Redo alias. |
@@ -259,3 +259,11 @@ Frame palette colors require schema 5 only when nondefault colors exist. LAN pee
 must use protocol major 2. Test evidence and remaining physical acceptance are
 recorded in [the 2A5 report](MISSION_2A5_CONCURRENT_EDITING_INTERACTION_REPORT.md).
 Quadratic curves, Post-it redesign and Plain Text remain deferred.
+
+Phase 2A7 adds Reset Aspect Ratio (crop-aware, area/center/rotation preserved,
+one undo), contextual Numpad +/− adjustments, Rectangle Fill opacity cycling,
+palette-aware ruled Notes, and named keyset Save / Save As / Load. Short dialogs
+center and ordinary ones dismiss outside; unsaved-data confirmations require an
+explicit choice. Keymap, Preferences and Edit Toolbar remain top-left work panels.
+Plain Text remains deferred; Note normal/side resize changes wrapping geometry,
+Shift+corner scales text and paper together.

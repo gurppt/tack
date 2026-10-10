@@ -712,12 +712,21 @@ fn lazy_ui_artwork_is_nearest_above_overlay_and_released_after_close() -> Result
         gpu.set_ui_image(&image)?;
         assert_eq!(gpu.ui_image_bytes(), 128);
         gpu.set_ui_image_rect([16., 16., 32., 16.]);
+        gpu.set_ui_logo(&Decoded {
+            width: 2,
+            height: 1,
+            rgba: vec![255, 255, 0, 255, 255, 255, 0, 0],
+        })?;
+        gpu.set_ui_logo_rect([16., 40., 32., 16.]);
+        assert_eq!(gpu.ui_image_bytes(), 256);
         for scale in [1., 2.] {
             let bytes = pixels_scene_scale(&mut gpu, d, key, &overlay, None, None, scale)?;
             assert_eq!(pixel(&bytes, 15, 20), [0, 255, 0, 255]);
             assert_eq!(pixel(&bytes, 31, 20), [255, 0, 0, 255]);
             assert_eq!(pixel(&bytes, 32, 20), [0, 0, 255, 255]);
             assert_eq!(pixel(&bytes, 48, 20), [0, 255, 0, 255]);
+            assert_eq!(pixel(&bytes, 31, 44), [255, 255, 0, 255]);
+            assert_eq!(pixel(&bytes, 32, 44), [0, 255, 0, 255]);
         }
         gpu.clear_ui_image();
         assert_eq!(gpu.ui_image_bytes(), 0);

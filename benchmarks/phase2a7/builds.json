@@ -1,0 +1,115 @@
+{
+  "files": {
+    "bin/tack": {
+      "bytes": 20036896,
+      "sha256": "7fbc8f3e65c91865c6f41132da4a218eed942a745d6b05e059074b5309925fb7"
+    },
+    "bin/tack-server": {
+      "bytes": 2021824,
+      "sha256": "606435b69c0f301908899be9fcc190687beca9a8e13e37aa4e33d470b4d54941"
+    },
+    "bin/tack-jpeg-decoder": {
+      "bytes": 890896,
+      "sha256": "4fcef9b973c80de96ecf2d5babe86ef87b1be2459f22559243c8e85da3ebe587"
+    },
+    "bin/tack-windows-x86_64.zip": {
+      "bytes": 11344016,
+      "sha256": "0d5d1b27a840c2505282fac0d371a41d3c3d5a19ca6dd78b6d5cbeba2b62e3fa"
+    }
+  },
+  "linux_stamp": "STATUS: CURRENT\ncommit: ff35c8953d8db71f046d28535f74c51770a33b7e\nprofile: release\nbuilt_utc: 2026-10-10T14:10:55Z\nbinary: ./bin/tack\nserver_binary: ./bin/tack-server\nworktree_dirty: true\nsha256: 7fbc8f3e65c91865c6f41132da4a218eed942a745d6b05e059074b5309925fb7\nserver_sha256: 606435b69c0f301908899be9fcc190687beca9a8e13e37aa4e33d470b4d54941\nabout_asset_sha256: d22641555380426ad6567153edca7b83548ad964acdc9c3fbdb70b59ac7759ee\njpeg_decoder_sha256: 4fcef9b973c80de96ecf2d5babe86ef87b1be2459f22559243c8e85da3ebe587\ncheckpoint: Phase 2A7 final acceptance build\n",
+  "windows": {
+    "commit": "ff35c8953d8db71f046d28535f74c51770a33b7e",
+    "built_utc": "2026-10-10T14:12:41.833994+00:00",
+    "target": "x86_64-pc-windows-gnu",
+    "working_tree": true,
+    "jpeg": "libjpeg-turbo 3.2.0 static SIMD SSE2/AVX2",
+    "native": {
+      "version": "3.2.0",
+      "target": "windows-gnu",
+      "source_url": "https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.2.0/libjpeg-turbo-3.2.0.tar.gz",
+      "source_sha256": "6f30092cef9fb839779646608f4ee14ae3cbac989c47fa05e841b0841f09878e",
+      "cmake_command": [
+        "cmake",
+        "-S",
+        "/home/gurp/softs/tack/target/native/source/libjpeg-turbo-3.2.0",
+        "-B",
+        "/home/gurp/softs/tack/target/native/turbojpeg-build-windows-gnu",
+        "-DCMAKE_INSTALL_PREFIX=/home/gurp/softs/tack/target/native/libjpeg-turbo-3.2.0-windows-gnu",
+        "-DCMAKE_INSTALL_LIBDIR=lib",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DENABLE_SHARED=OFF",
+        "-DENABLE_STATIC=ON",
+        "-DWITH_TURBOJPEG=ON",
+        "-DREQUIRE_SIMD=ON",
+        "-DWITH_JAVA=OFF",
+        "-DWITH_CRT_DLL=ON",
+        "-DCMAKE_TOOLCHAIN_FILE=/home/gurp/softs/tack/target/native/windows-gnu-toolchain.cmake",
+        "-DWITH_TESTS=OFF",
+        "-DWITH_SIMD=ON",
+        "-DCMAKE_ASM_NASM_COMPILER=/home/gurp/softs/tack/target/native/tools/nasm-root/usr/bin/nasm"
+      ],
+      "decoder_sha256": "622e230c5aadee33248723fff3fe05d6c5d498a9b5ffa1b710060c9b2e0f51cc",
+      "library_sha256": {
+        "libturbojpeg.a": "d07bddf151580f24058b224d490d33485d9e1e8a3bae25a5a06e27714868d4fc"
+      },
+      "compiler_cache": [],
+      "nasm": "NASM version 2.16.01"
+    },
+    "executable_imports": {
+      "tack-jpeg-decoder.exe": [
+        "KERNEL32.dll",
+        "msvcrt.dll"
+      ],
+      "tack-server.exe": [
+        "api-ms-win-core-synch-l1-2-0.dll",
+        "bcryptprimitives.dll",
+        "KERNEL32.dll",
+        "msvcrt.dll",
+        "ntdll.dll",
+        "USERENV.dll",
+        "WS2_32.dll"
+      ],
+      "tack.exe": [
+        "api-ms-win-core-winrt-error-l1-1-0.dll",
+        "dwmapi.dll",
+        "gdi32.dll",
+        "imm32.dll",
+        "kernel32.dll",
+        "ntdll.dll",
+        "ole32.dll",
+        "oleaut32.dll",
+        "propsys.dll",
+        "shell32.dll",
+        "user32.dll",
+        "userenv.dll",
+        "uxtheme.dll",
+        "ws2_32.dll",
+        "api-ms-win-core-synch-l1-2-0.dll",
+        "bcryptprimitives.dll",
+        "kernel32.dll",
+        "kernel32.dll",
+        "kernel32.dll",
+        "KERNEL32.dll",
+        "msvcrt.dll",
+        "ntdll.dll",
+        "OPENGL32.dll"
+      ]
+    },
+    "files": {
+      "tack-jpeg-decoder.exe": {
+        "bytes": 872960,
+        "sha256": "28fa9a86979b428466738d9886086076544fd7d3b050264d049c7be851859119"
+      },
+      "tack-server.exe": {
+        "bytes": 3095552,
+        "sha256": "57070a72b6e907576173b9ebfac604d77e702afc274bd79d3269474536b47f03"
+      },
+      "tack.exe": {
+        "bytes": 24398336,
+        "sha256": "dce18df96d42d95af85575d1aa9296c2d70b28dba5854073725c5e3a47501b74"
+      }
+    }
+  },
+  "note": "Built from implementation worktree; code commit stamped after commit without changing executables."
+}

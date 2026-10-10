@@ -260,6 +260,14 @@ impl InputState {
     pub fn modifiers(&self) -> Modifiers {
         self.modifiers
     }
+    pub fn pointer_tool_held(&self, tool: crate::actions::Tool) -> bool {
+        self.held.iter().any(|held| {
+            matches!(held.identity, PhysicalControl::Pointer(_))
+                && held
+                    .temporary
+                    .is_some_and(|(a, _)| a == Action::TemporaryTool(tool))
+        })
+    }
     pub fn held_len(&self) -> usize {
         self.held.len()
     }

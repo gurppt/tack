@@ -403,7 +403,7 @@ fn scaled_note_roundtrip_and_later_text_size_edits_remain_explicit_and_determini
             &mut reopened,
             &mut camera,
         )?;
-        assert_eq!(note(&reopened, id)?.0.font_size(), 45.);
+        assert_eq!(note(&reopened, id)?.0.font_size(), 48.);
         input.dispatch(
             ActionEvent {
                 action: Action::AnnotationStyle(StyleAction::SmallerText),
@@ -412,12 +412,46 @@ fn scaled_note_roundtrip_and_later_text_size_edits_remain_explicit_and_determini
             &mut reopened,
             &mut camera,
         )?;
-        assert_eq!(note(&reopened, id)?.0.font_size(), 36.);
+        assert_eq!(note(&reopened, id)?.0.font_size(), 32.);
     }
     assert_eq!(note(&reopened, id)?.1.width(), 4.5);
     assert_eq!(
         reopened.document().object(id).ok_or("note")?.transform(),
         e.document().object(id).ok_or("note")?.transform()
     );
+    Ok(())
+}
+
+#[test]
+fn shift_note_side_handles_resize_axis_without_toggling_selection_or_scaling_text() -> R {
+    for handle in [1, 3, 5, 7] {
+        let (mut e, id) = note_fixture()?;
+        let before = e.document().clone();
+        let mut input = ImageInput::new()?;
+        input.images.selection.select(Some(id), false);
+        let mut c = Camera::new([1280, 720]);
+        let t = e.document().object(id).ok_or("note")?.transform();
+        let p = c.world_to_screen(input.gizmo.handle(t, &c, handle));
+        input.cursor_moved(p, &e, &mut c)?;
+        input.physical(PhysicalEvent::Modifiers(Modifiers::SHIFT), &mut e, &mut c)?;
+        let button = |state| PhysicalEvent::Button {
+            control: PhysicalControl::Pointer(PointerButton::Mouse(MouseButton::Left)),
+            state,
+            repeat: false,
+        };
+        input.physical(button(ElementState::Pressed), &mut e, &mut c)?;
+        let axis = usize::from(handle == 1 || handle == 5);
+        let delta = geometry::rotate(if axis == 1 { [0., 32.] } else { [32., 0.] }, t.rotation());
+        input.cursor_moved([p[0] + delta[0], p[1] + delta[1]], &e, &mut c)?;
+        input.physical(button(ElementState::Released), &mut e, &mut c)?;
+        let next = e.document().object(id).ok_or("note")?.transform();
+        assert_ne!(next.size()[axis], t.size()[axis]);
+        assert_eq!(next.size()[1 - axis], t.size()[1 - axis]);
+        assert_eq!(note(&e, id)?.0.font_size(), 24.);
+        assert!(input.images.selection.contains(id));
+        assert_eq!(e.undo_len(), 1);
+        e.undo()?;
+        assert_eq!(e.document(), &before);
+    }
     Ok(())
 }

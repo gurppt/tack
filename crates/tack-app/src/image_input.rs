@@ -29,6 +29,8 @@ pub struct ImageInput {
     pub annotation: crate::annotation_tool::AnnotationInput,
     pub pending_source: Option<Action>,
     pub pending_local: Option<Action>,
+    pub status: String,
+    pub(crate) adjust_fill: Option<tack_core::ObjectId>,
     pub(crate) state: InputState,
     input_trace: bool,
     cursor: [f64; 2],
@@ -57,6 +59,8 @@ impl ImageInput {
             annotation: Default::default(),
             pending_source: None,
             pending_local: None,
+            status: String::new(),
+            adjust_fill: None,
             state: InputState::default(),
             input_trace: std::env::var_os("TACK_TRACE_INPUT").is_some(),
             cursor: [0.; 2],
@@ -266,6 +270,9 @@ impl ImageInput {
             );
         }
         let ActionEvent { action, phase } = event;
+        if phase == ActionPhase::Invoke {
+            self.status.clear();
+        }
         if matches!(action, Action::TemporaryTool(_)) {
             self.annotation_action(event, editor)?;
             return Ok(false);
@@ -345,6 +352,7 @@ impl ImageInput {
             return Ok(false);
         }
         if let ActionPhase::Begin(token) = phase {
+            self.adjust_fill = None;
             let pointer = camera.screen_to_world(self.cursor);
             let handle = self.hover(editor, camera);
             if matches!(action, Action::PanView | Action::CenterPointer) {
@@ -396,10 +404,16 @@ impl ImageInput {
                 && self.modifiers().contains(crate::input::Modifiers::SHIFT)
                 && self.images.selected_note(editor.document())
                 && let Some(GizmoHit::Resize(handle)) = handle
-                && handle % 2 == 0
             {
-                self.images
-                    .begin(GestureKind::NoteScale { handle }, pointer, editor)?;
+                let kind = if handle % 2 == 0 {
+                    GestureKind::NoteScale { handle }
+                } else {
+                    GestureKind::Resize {
+                        handle,
+                        center: false,
+                    }
+                };
+                self.images.begin(kind, pointer, editor)?;
                 return Ok(false);
             }
             if action == Action::ImagePointer
@@ -535,6 +549,7 @@ impl ImageInput {
                             })
                             && !self.images.crop_mode
                 }
+                Action::ResetAspectRatio => self.reset_aspect_ratio(editor)?,
                 Action::Save => return Ok(true),
                 _ => self.spatial_action(action, editor, camera)?,
             }
@@ -564,16 +579,51 @@ impl ImageInput {
                 count += 1;
             }
         })?;
+        if focus {
+            self.cancel();
+        }
         let mut save = false;
         for action in emitted.into_iter().flatten() {
-            save |= self.dispatch(action, editor, camera)?;
+            let pointer_begin = matches!(
+                event,
+                PhysicalEvent::Button {
+                    control: crate::input::PhysicalControl::Pointer(_),
+                    state: winit::event::ElementState::Pressed,
+                    ..
+                }
+            );
+            if matches!(action.action, Action::TemporaryTool(_)) {
+                if let ActionPhase::End(token) | ActionPhase::Cancel(token) = action.phase
+                    && self.active_token == Some(token)
+                {
+                    self.dispatch(
+                        ActionEvent {
+                            action: Action::ImagePointer,
+                            phase: action.phase,
+                        },
+                        editor,
+                        camera,
+                    )?;
+                }
+                save |= self.dispatch(action, editor, camera)?;
+                if pointer_begin && matches!(action.phase, ActionPhase::Begin(_)) {
+                    save |= self.dispatch(
+                        ActionEvent {
+                            action: Action::ImagePointer,
+                            phase: action.phase,
+                        },
+                        editor,
+                        camera,
+                    )?;
+                }
+            } else {
+                save |= self.dispatch(action, editor, camera)?;
+            }
         }
         if focus {
             self.cancel();
             self.last_click = None;
             self.name_edit = None;
-            let tool = self.annotation.tools.tool();
-            self.annotation.tools.complete_creation(tool);
         }
         Ok(save)
     }
@@ -598,7 +648,9 @@ impl ImageInput {
             || (self.annotation.tools.tool() == crate::actions::Tool::Pan
                 && self
                     .state
-                    .is_action_held(&self.keymap, Action::ImagePointer))
+                    .is_action_held(&self.keymap, Action::ImagePointer)
+                || self.annotation.tools.tool() == crate::actions::Tool::Pan
+                    && self.state.pointer_tool_held(crate::actions::Tool::Pan))
             || (self
                 .state
                 .is_action_held(&self.keymap, Action::CenterPointer)

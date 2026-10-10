@@ -109,10 +109,19 @@ mod linux {
     };
     /// Nonblocking pipe reads enforce cancellation even when a descendant holds stdout.
     pub(crate) fn capture(
+        command: Command,
+        cancel: &AtomicBool,
+        limit: u64,
+        timeout: Duration,
+    ) -> Result<Vec<u8>, AssetError> {
+        capture_with_cancel(command, cancel, limit, timeout, None)
+    }
+    pub(crate) fn capture_with_cancel(
         mut command: Command,
         cancel: &AtomicBool,
         limit: u64,
         timeout: Duration,
+        cancel_code: Option<i32>,
     ) -> Result<Vec<u8>, AssetError> {
         let mut child = command
             .process_group(0)
@@ -159,6 +168,9 @@ mod linux {
                     }
                 }
                 match child.try_wait()? {
+                    Some(status) if cancel_code.is_some() && status.code() == cancel_code => {
+                        return Ok(Vec::new());
+                    }
                     Some(status) if !status.success() => {
                         return Err("Native helper could not complete the operation; retry".into());
                     }
@@ -326,7 +338,7 @@ mod linux {
     }
 }
 #[cfg(target_os = "linux")]
-pub(crate) use linux::capture;
+pub(crate) use linux::{capture, capture_with_cancel};
 pub fn read(work: &Path, cancel: &AtomicBool, text_only: bool) -> Result<Clipboard, AssetError> {
     #[cfg(target_os = "linux")]
     {
@@ -387,5 +399,30 @@ mod capture_tests {
             .is_err()
         );
         assert!(started.elapsed() < Duration::from_secs(2));
+    }
+}
+#[cfg(all(test, target_os = "linux"))]
+mod picker_cancel_tests {
+    use super::*;
+    use std::time::Duration;
+    #[test]
+    fn picker_cancel_code_is_normal_but_failure_and_clipboard_nonzero_remain_errors()
+    -> Result<(), AssetError> {
+        let stop = AtomicBool::new(false);
+        let shell = |code| {
+            let mut c = std::process::Command::new("/bin/sh");
+            c.args(["-c", code]);
+            c
+        };
+        assert!(
+            capture_with_cancel(shell("exit 1"), &stop, 64, Duration::from_secs(1), Some(1))?
+                .is_empty()
+        );
+        assert!(
+            capture_with_cancel(shell("exit 2"), &stop, 64, Duration::from_secs(1), Some(1))
+                .is_err()
+        );
+        assert!(capture(shell("exit 1"), &stop, 64, Duration::from_secs(1)).is_err());
+        Ok(())
     }
 }

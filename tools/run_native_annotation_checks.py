@@ -12,7 +12,18 @@ from run_image_interaction import digest
 
 
 def saved_objects(path):
-    data=path.read_bytes();schema=struct.unpack_from('<I',data,12)[0]
+    return decoded_objects(path.read_bytes())
+
+
+def metadata_objects(record):
+    header=bytearray(80)
+    struct.pack_into('<I',header,12,record['schema'])
+    struct.pack_into('<III',header,48,*record['counts'])
+    return decoded_objects(header+bytes.fromhex(record['metadata']))
+
+
+def decoded_objects(data):
+    schema=struct.unpack_from('<I',data,12)[0]
     sources,assets,objects=struct.unpack_from('<III',data,48);p=96;records=[]
     for _ in range(sources):n=struct.unpack_from('<I',data,p)[0];p+=4+n
     p+=assets*42
@@ -21,13 +32,13 @@ def saved_objects(path):
         if version!=1:raise ValueError('version')
         if kind==1:
             center=struct.unpack_from('<dd',data,p+16);size=struct.unpack_from('<dd',data,p+32);p+=99
-            records.append({'id':identity,'kind':'image','center':center,'size':size})
+            records.append({'id':identity,'kind':'image','center':center,'size':size,'rotation':struct.unpack_from('<d',data,p-51)[0]})
         elif kind==2:
             center=struct.unpack_from('<dd',data,p);size=struct.unpack_from('<dd',data,p+16);n=struct.unpack_from('<H',data,p+32)[0];name=data[p+34:p+34+n].decode();p+=34+n
             records.append({'id':identity,'kind':'frame','center':center,'size':size,'name':name})
         elif 3<=kind<=8:
             n=struct.unpack_from('<I',data,p)[0];p+=4;payload=data[p:p+n];p+=n
-            r={'id':identity,'kind':kind,'center':struct.unpack_from('<dd',payload,0),'size':struct.unpack_from('<dd',payload,16),'rotation':struct.unpack_from('<d',payload,32)[0],'stroke':list(payload[42:46]),'filled':payload[46],'width':struct.unpack_from('<d',payload,51)[0],'opacity':struct.unpack_from('<d',payload,59)[0]}
+            r={'id':identity,'kind':kind,'center':struct.unpack_from('<dd',payload,0),'size':struct.unpack_from('<dd',payload,16),'rotation':struct.unpack_from('<d',payload,32)[0],'stroke':list(payload[42:46]),'filled':payload[46],'fill':list(payload[47:51]) if payload[46] else None,'width':struct.unpack_from('<d',payload,51)[0],'opacity':struct.unpack_from('<d',payload,59)[0]}
             if kind==3:r.update(font_size=struct.unpack_from('<d',payload,67)[0],alignment=payload[75],text=payload[80:].decode())
             if kind==8:r['points']=struct.unpack_from('<I',payload,67)[0]
             records.append(r)

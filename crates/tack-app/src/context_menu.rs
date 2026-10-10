@@ -156,6 +156,7 @@ impl Context {
                         _ => true,
                     }
             }
+            Action::ResetAspectRatio => self.all_images,
             Action::CropMode => self.selection_kind == ContextKind::Image,
             Action::FlipHorizontal
             | Action::FlipVertical
@@ -518,6 +519,7 @@ fn context_items(context: Context, submenu: Option<Group>, keymap: &Keymap) -> V
     let mut v = Vec::new();
     match context.kind {
         ContextKind::Image => v.extend([
+            a("Reset aspect ratio", ResetAspectRatio),
             a("Crop", CropMode),
             a("Flip horizontal", FlipHorizontal),
             a("Flip vertical", FlipVertical),
@@ -574,6 +576,8 @@ struct List {
     selected: Option<usize>,
     first: usize,
     rect: Rect,
+    scroll: crate::ui_scroll::Scrollbar,
+    reveal_row: bool,
 }
 impl List {
     fn new(items: Vec<Item>) -> Self {
@@ -582,6 +586,8 @@ impl List {
             selected: None,
             first: 0,
             rect: Rect::default(),
+            scroll: Default::default(),
+            reveal_row: false,
         }
     }
     fn visible(&self) -> usize {
@@ -607,13 +613,12 @@ impl List {
             width,
             height,
         };
-        if let Some(s) = self.selected {
-            if s < self.first {
-                self.first = s;
-            } else if s >= self.first + count {
-                self.first = s + 1 - count;
-            }
+        if self.reveal_row
+            && let Some(selected) = self.selected
+        {
+            self.first = crate::ui_scroll::reveal(self.first, selected, count, self.items.len());
         }
+        self.reveal_row = false;
         self.first = self.first.min(self.items.len().saturating_sub(count));
     }
     fn hit(&self, p: [i32; 2]) -> Option<usize> {
@@ -624,6 +629,7 @@ impl List {
         (row < self.visible() && self.first + row < self.items.len()).then_some(self.first + row)
     }
     fn step(&mut self, delta: i32) {
+        self.reveal_row = true;
         if self.items.is_empty() {
             return;
         }
@@ -645,7 +651,7 @@ impl List {
         }
     }
     fn draw(
-        &self,
+        &mut self,
         gizmo: &mut ImageGizmo,
         camera: &Camera,
         budget: &mut usize,
@@ -733,6 +739,11 @@ impl List {
             } else {
                 &item.shortcut
             };
+            let right_padding = if self.items.len() > self.visible() {
+                16
+            } else {
+                8
+            };
             let shortcut_width = (suffix.len() * 8) as i32;
             let show_shortcut =
                 shortcut_width > 0 && r.width - 28 - shortcut_width >= item.label.len() as i32 * 8;
@@ -755,7 +766,7 @@ impl List {
             if show_shortcut {
                 gizmo.ui_text(
                     camera,
-                    point(r.x + r.width - 8 - shortcut_width, y + 1),
+                    point(r.x + r.width - right_padding - shortcut_width, y + 1),
                     f64::from(shortcut_width),
                     suffix,
                     if item.enabled {
@@ -767,26 +778,19 @@ impl List {
                 );
             }
         }
-        if self.first > 0 {
-            gizmo.ui_text(
-                camera,
-                point(r.x + r.width - 16, r.y),
-                8.,
-                "^",
-                palette.accent_attention,
-                budget,
-            );
-        }
-        if self.first + self.visible() < self.items.len() {
-            gizmo.ui_text(
-                camera,
-                point(r.x + r.width - 16, r.y + r.height - 16),
-                8.,
-                "v",
-                palette.accent_attention,
-                budget,
-            );
-        }
+        let visible = self.visible();
+        self.scroll.draw(
+            gizmo,
+            camera,
+            palette,
+            [
+                f64::from(r.x + PAD),
+                f64::from(r.y + PAD),
+                f64::from(r.x + r.width - PAD),
+                f64::from(r.y + r.height - PAD),
+            ],
+            (self.first, visible, self.items.len()),
+        );
     }
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -946,6 +950,17 @@ impl ContextMenu {
     pub fn move_pointer(&mut self, p: [f64; 2], keymap: &Keymap, camera: &Camera) {
         self.cursor = p;
         let point = self.logical(p);
+        let logical = point.map(f64::from);
+        if let Some(c) = &mut self.child
+            && let Some(first) = c.scroll.motion(logical)
+        {
+            c.first = first;
+            return;
+        }
+        if let Some(first) = self.root.scroll.motion(logical) {
+            self.root.first = first;
+            return;
+        }
         if let Some(c) = &mut self.child
             && let Some(row) = c.hit(point)
         {
@@ -967,6 +982,20 @@ impl ContextMenu {
     }
     pub fn click(&mut self, keymap: &Keymap, camera: &Camera) -> Result {
         let p = self.logical(self.cursor);
+        if let Some(c) = &mut self.child
+            && c.scroll.press(p.map(f64::from))
+        {
+            if let Some(first) = c.scroll.motion(p.map(f64::from)) {
+                c.first = first;
+            }
+            return Result::None;
+        }
+        if self.root.scroll.press(p.map(f64::from)) {
+            if let Some(first) = self.root.scroll.motion(p.map(f64::from)) {
+                self.root.first = first;
+            }
+            return Result::None;
+        }
         if let Some(c) = &mut self.child
             && let Some(row) = c.hit(p)
         {
@@ -1052,19 +1081,26 @@ impl ContextMenu {
                 state: ElementState::Pressed,
                 ..
             } => Result::Dismiss,
+            WindowEvent::MouseInput {
+                state: ElementState::Released,
+                ..
+            } => {
+                self.root.scroll.release();
+                if let Some(c) = &mut self.child {
+                    c.scroll.release();
+                }
+                Result::None
+            }
             WindowEvent::MouseWheel { delta, .. } => {
+                let logical = self.logical(self.cursor).map(f64::from);
                 let dy = crate::input::wheel_steps(*delta)[1];
-                if dy != 0. {
-                    let l = if self.child_focus {
-                        self.child.as_mut().unwrap_or(&mut self.root)
-                    } else {
-                        &mut self.root
-                    };
-                    l.step(if dy > 0. { -1 } else { 1 });
-                    if !self.child_focus {
-                        self.close_child();
-                    }
-                    self.relayout(camera);
+                if let Some(c) = &mut self.child
+                    && let Some(first) = c.scroll.wheel(logical, dy)
+                {
+                    c.first = first;
+                } else if let Some(first) = self.root.scroll.wheel(logical, dy) {
+                    self.root.first = first;
+                    self.close_child();
                 }
                 Result::None
             }
@@ -1094,7 +1130,7 @@ impl ContextMenu {
         let mut budget = 900;
         self.root
             .draw(gizmo, camera, &mut budget, self.theme.palette());
-        if let Some(c) = &self.child {
+        if let Some(c) = &mut self.child {
             c.draw(gizmo, camera, &mut budget, self.theme.palette());
         }
     }

@@ -27,20 +27,6 @@ impl LocalUi {
             WindowEvent::CursorMoved { .. } => {
                 if let Some(hit) = hit {
                     self.focus = Some(hit.command);
-                } else {
-                    self.toolbar_pointer(point, keymap, p);
-                }
-            }
-            WindowEvent::MouseWheel { delta, .. } => {
-                let dy = crate::input::wheel_steps(*delta)[1];
-                if dy != 0. {
-                    let n = self.count(keymap, p);
-                    self.selected = if dy > 0. {
-                        self.selected.saturating_sub(1)
-                    } else {
-                        (self.selected + 1).min(n.saturating_sub(1))
-                    };
-                    self.focus = None;
                 }
             }
             WindowEvent::KeyboardInput { event, .. } if event.state == ElementState::Pressed => {

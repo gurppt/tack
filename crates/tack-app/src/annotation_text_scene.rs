@@ -31,6 +31,35 @@ impl AnnotationScene {
                 return false;
             }
         }
+        if let Some(paper) = style.fill() {
+            for line in 1..=6 {
+                let y = padding + f64::from(line) * size * 1.3;
+                if y >= box_size[1] - padding {
+                    break;
+                }
+                let points = [
+                    [padding, y],
+                    [padding, y + size / 24.],
+                    [box_size[0] - padding, y],
+                    [box_size[0] - padding, y + size / 24.],
+                ]
+                .map(|p| {
+                    image_geometry::world(t, [p[0] - box_size[0] / 2., p[1] - box_size[1] / 2.])
+                });
+                let mut p = primitive(points, box_size, 7, style);
+                p.stroke = tack_core::Color([
+                    paper.0[0].saturating_sub(24),
+                    paper.0[1].saturating_sub(24),
+                    paper.0[2].saturating_sub(24),
+                    paper.0[3],
+                ])
+                .rgba(style.opacity());
+                p.fill = p.stroke;
+                if !self.push(p) {
+                    return false;
+                }
+            }
+        }
         for (line, (text, line_width)) in NoteLines::new(&display, width, size).enumerate() {
             let y = padding + line as f64 * size * 1.3;
             if y >= box_size[1] - padding {
@@ -80,6 +109,17 @@ impl AnnotationScene {
                             (clipped_hi[1] - clipped_lo[1]) / extent[1] * uv[3],
                         ]
                         .map(|v| v as f32);
+                        if let Some(paper) = style.fill() {
+                            let light = u32::from(paper.0[0]) * 299
+                                + u32::from(paper.0[1]) * 587
+                                + u32::from(paper.0[2]) * 114;
+                            let ink = if light >= 128_000 {
+                                tack_core::Color([18, 22, 28, 255])
+                            } else {
+                                tack_core::Color([240, 240, 240, 255])
+                            };
+                            p.stroke = ink.rgba(style.opacity());
+                        }
                         p.bitmap = pixel_font::glyph(c).0;
                         if !self.push(p) {
                             return false;

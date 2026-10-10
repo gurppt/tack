@@ -106,16 +106,6 @@ pub fn product_keymap() -> Result<Keymap, BindingError> {
             Action::AnnotationStyle(StyleAction::Fill),
         ),
         (
-            KeyCode::BracketRight,
-            Modifiers::NONE,
-            Action::AnnotationStyle(StyleAction::Wider),
-        ),
-        (
-            KeyCode::BracketLeft,
-            Modifiers::NONE,
-            Action::AnnotationStyle(StyleAction::Narrower),
-        ),
-        (
             KeyCode::Period,
             ctrl.union(shift),
             Action::AnnotationStyle(StyleAction::LargerText),
@@ -289,5 +279,16 @@ pub fn product_keymap() -> Result<Keymap, BindingError> {
         trigger: Trigger::Hold,
         action: Action::SnapDisable,
     })?;
+    for (code, action) in [
+        (KeyCode::NumpadAdd, Action::ContextIncrease),
+        (KeyCode::NumpadSubtract, Action::ContextDecrease),
+    ] {
+        map.bind(Binding {
+            control: PhysicalControl::Key(winit::keyboard::PhysicalKey::Code(code)),
+            modifiers: ModifierMatch::Exact(Modifiers::NONE),
+            trigger: Trigger::Press,
+            action,
+        })?;
+    }
     Ok(map)
 }

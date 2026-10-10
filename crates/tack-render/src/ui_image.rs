@@ -1,4 +1,4 @@
-//! One lazy UI texture, reusing the image pipeline in the existing canvas pass.
+//! Two bounded lazy About textures, reusing the image pipeline in the existing canvas pass.
 use super::{Gpu, Texture, Vertex};
 use tack_assets::{AssetError, Decoded};
 use tack_core::Camera;
@@ -30,7 +30,7 @@ impl UiImage {
     }
 }
 impl Gpu {
-    pub fn set_ui_image(&mut self, image: &Decoded) -> Result<(), AssetError> {
+    fn make_ui_image(&self, image: &Decoded) -> Result<Box<UiImage>, AssetError> {
         if image.width == 0
             || image.height == 0
             || image.width > 256
@@ -39,7 +39,7 @@ impl Gpu {
         {
             return Err("Invalid compact UI image dimensions/payload".into());
         }
-        self.ui_image = Some(Box::new(UiImage {
+        Ok(Box::new(UiImage {
             texture: Self::texture(
                 &self.device,
                 &self.queue,
@@ -57,8 +57,20 @@ impl Gpu {
                 }),
             rect: [0.; 4],
             bytes: image.rgba.len() + 6 * std::mem::size_of::<Vertex>(),
-        }));
+        }))
+    }
+    pub fn set_ui_image(&mut self, image: &Decoded) -> Result<(), AssetError> {
+        self.ui_image = Some(self.make_ui_image(image)?);
         Ok(())
+    }
+    pub fn set_ui_logo(&mut self, image: &Decoded) -> Result<(), AssetError> {
+        self.ui_logo = Some(self.make_ui_image(image)?);
+        Ok(())
+    }
+    pub fn set_ui_logo_rect(&mut self, rect: [f64; 4]) {
+        if let Some(logo) = &mut self.ui_logo {
+            logo.rect = rect;
+        }
     }
     pub fn set_ui_image_rect(&mut self, rect: [f64; 4]) {
         if let Some(image) = &mut self.ui_image {
@@ -67,8 +79,10 @@ impl Gpu {
     }
     pub fn clear_ui_image(&mut self) {
         self.ui_image = None;
+        self.ui_logo = None;
     }
     pub fn ui_image_bytes(&self) -> usize {
         self.ui_image.as_ref().map_or(0, |image| image.bytes)
+            + self.ui_logo.as_ref().map_or(0, |image| image.bytes)
     }
 }

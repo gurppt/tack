@@ -1,0 +1,211 @@
+{
+  "date": "2026-10-10T13:48:34.308585+02:00",
+  "commit": "ff35c8953d8db71f046d28535f74c51770a33b7e",
+  "baseline_implementation": "80f7014fefc6420491f5ee65891280ee384eb84e",
+  "binary_bytes": 19968512,
+  "binary_sha256": "1312983951762b2b41d7a094630d61b11ca9f1463474355ebea4305fb6fc702a",
+  "dependencies": 278,
+  "status": "?? director_handoff/\n?? docs/CODEX_PHASE_1L_FIX_HUGE_JPEG.md\n?? docs/CURRENT_DIRECTOR_STATE.md\n?? docs/TACK_DIRECTOR_AUTONOMOUS_LOOP.md\n?? docs/reviews/director_phase1l_resume.md\n?? gfx/1000_F_381628239_G79AWeIe3TxteOmo1LN6XFqSZzG98p6F.jpg\n?? gfx/273-3-deluxe-paint-4.jpg\n?? gfx/273-4-deluxe-paint-4.jpg\n?? gfx/273-5-deluxe-paint-4.jpg\n?? gfx/273-6-deluxe-paint-4.jpg\n?? gfx/273-7-deluxe-paint-4.jpg\n?? gfx/273-8-deluxe-paint-4.jpg\n?? \"gfx/Deluxe Paint IV v4_002.png\"\n?? gfx/Espy_Sans_9.yaff\n?? gfx/Espy_Sans_Bold_10.yaff\n?? gfx/Full-Screen-Maximize--Streamline-Fluent-Ui-Filled.svg\n?? gfx/Maximize--Streamline-Fluent-Ui-Filled.svg\n?? gfx/Untitled.png\n?? gfx/VT12.fon\n?? gfx/VT12.otb\n?? gfx/VT12.yaff\n?? gfx/VT20.fon\n?? gfx/VT20.otb\n?? gfx/VT20.yaff\n?? gfx/tack_about_dither.png\n?? gfx/test-logo.png\n?? gfx/test-logo2.png\n?? test_file/\n",
+  "icons": {
+    "gfx/icons/undo.png": {
+      "sha256": "32faaae115cb2a08bed6ec54f347ce6ba76c77b94d5e5041c00d97a632475cd3",
+      "mtime": 1791572082.9719732
+    },
+    "gfx/icons/duplicate.png": {
+      "sha256": "b6cbba35f652762a5168bff8cbb720b6093fc4eb9f69164f09d5eeb1f5d9db95",
+      "mtime": 1791572082.9717445
+    },
+    "gfx/icons/line.png": {
+      "sha256": "6c6b8245421c5c015990e017def8bf07c69b22d594419debf141bfcfd79df013",
+      "mtime": 1791572082.9709451
+    },
+    "gfx/icons/share.png": {
+      "sha256": "047dfd05231d6308a114c2d49f0642edd1ae7f0201ecba7997d18918f3b9f5dc",
+      "mtime": 1791572082.9724102
+    },
+    "gfx/icons/redo.png": {
+      "sha256": "d9833b0cc98aeeee37fd67c01de69b7ef78fd028f02991cdfb327188fdfd4b70",
+      "mtime": 1791572082.9721832
+    },
+    "gfx/icons/rectangle.png": {
+      "sha256": "47684bacfcf91f23ebb34d670f79522af9a5c411a4cf1d4236f66e4a7f9b7311",
+      "mtime": 1791572082.9707413
+    },
+    "gfx/icons/pointer.png": {
+      "sha256": "30e4a8b93ebf7cddcba6152b7aae97255dbb739884cf1922019cc24ae9050c67",
+      "mtime": 1791572082.9700572
+    },
+    "gfx/icons/scribble.png": {
+      "sha256": "2f03eeb92695e5cab8906e74233da0b475d0a183f8a7a74d7989587d310d45e3",
+      "mtime": 1791572082.9713447
+    },
+    "gfx/icons/placeholder.png": {
+      "sha256": "582155302e96e19f93b09f6d27fbe1f95bb0d49c6b50f49561f308a254d69359",
+      "mtime": 1791572082.9732575
+    },
+    "gfx/icons/text.png": {
+      "sha256": "ef1c184d3fc9ff9b0f71418027b9c06792a954b4f7ae39613e850209070c2cb0",
+      "mtime": 1791572082.9705403
+    },
+    "gfx/icons/grid.png": {
+      "sha256": "37f731367ffe2f8e6e90a99a880435fa13cfe15df813d1496887dc816fef9a64",
+      "mtime": 1791572082.9730403
+    },
+    "gfx/icons/join.png": {
+      "sha256": "d2e124a4013618e6975c5a88bcf78b517953c4337451e0e27336406a63e8aaaa",
+      "mtime": 1791572082.9726355
+    },
+    "gfx/icons/save.png": {
+      "sha256": "9f4500412d1d8c1adfe855e46248493c9a33f830324c04532613f766508d1a22",
+      "mtime": 1791572082.972849
+    },
+    "gfx/icons/pan.png": {
+      "sha256": "4299d430eaf2516a6b9c68385694753ee590fb43fb6c81b716f105f9610e086c",
+      "mtime": 1791572082.9703355
+    },
+    "gfx/icons/arrow.png": {
+      "sha256": "66ed9b59da53aebfb5d4a90d5bdb9201a09b9c853fc64311af7eb46c37d696b1",
+      "mtime": 1791572082.9711401
+    },
+    "gfx/icons/frame.png": {
+      "sha256": "0a22ed7718d1d1ec66830ee6320a5654eaaf64dedf6562a64504848aab9e4727",
+      "mtime": 1791572082.9715447
+    },
+    "bin/gfx/icons/undo.png": {
+      "sha256": "4866c350d3e6fd7172d5c876d3aa3057e34b930d7e66a506acd1fc97acb92731",
+      "mtime": 1791627933.4578812
+    },
+    "bin/gfx/icons/minimulot.png": {
+      "sha256": "0cbdb0fbe46dde7ddd5dcb30008cc9c77aa4aca1c169e0a5c8d5d37a2b6bdcef",
+      "mtime": 1791627558.0242372
+    },
+    "bin/gfx/icons/duplicate.png": {
+      "sha256": "df912031fa555b48190b8082914a3872215d975148988ffafd97e51bc6bad076",
+      "mtime": 1791627947.226087
+    },
+    "bin/gfx/icons/line.png": {
+      "sha256": "ee840ba27963c70b1d161559f0f01653c52312c7f49776da3787d8ffee431f25",
+      "mtime": 1791627907.0658677
+    },
+    "bin/gfx/icons/share.png": {
+      "sha256": "3c643214092b058e2e0aec8a442834712b58b501a107462bf5623119cf3d84d5",
+      "mtime": 1791627967.0422513
+    },
+    "bin/gfx/icons/redo.png": {
+      "sha256": "522649aafdc78c1ef9ecd3dea2057868134d9281371c74a7c4bc53c7ea4169b3",
+      "mtime": 1791627957.6579847
+    },
+    "bin/gfx/icons/rectangle.png": {
+      "sha256": "7608062043655dd149e79bb0eedf26c4fac80a9d0a3b8da0de4bf10f92c750dc",
+      "mtime": 1791627866.9138167
+    },
+    "bin/gfx/icons/pointer.png": {
+      "sha256": "d6c1560fb444de2925c3a00728d0f03861e321c3e8427a8891d0552f40be6c2a",
+      "mtime": 1791627886.3811882
+    },
+    "bin/gfx/icons/scribble.png": {
+      "sha256": "32de5385cff8badd126fcc8003777c4c8aa4b78baafa9c38ee7973e23995da28",
+      "mtime": 1791627842.6821933
+    },
+    "bin/gfx/icons/placeholder.png": {
+      "sha256": "5db392394bc775ed34a5f2ce241acada62dbea28c28989617bc08847b3321801",
+      "mtime": 1791627988.226026
+    },
+    "bin/gfx/icons/mulot.png": {
+      "sha256": "614cdc3928b4df51091a049e47451e799ab1f43ff39e9bf7723acfbf52cc5ddc",
+      "mtime": 1791590159.417455
+    },
+    "bin/gfx/icons/text.png": {
+      "sha256": "9df0175f4cd86fc0060e04d4d62d1ddd9bd677a603e411f2ccc8d970c028723d",
+      "mtime": 1791627830.5540524
+    },
+    "bin/gfx/icons/grid.png": {
+      "sha256": "c8876e66f85086bcda9633eb064104a72e0f35222be87d27ff232c988f3c8940",
+      "mtime": 1791627920.6577947
+    },
+    "bin/gfx/icons/join.png": {
+      "sha256": "cc70904c2ee8befcb8b3f4db92800f89a1ed1947217dc78ac1bd8399bc9dd529",
+      "mtime": 1791627978.3383646
+    },
+    "bin/gfx/icons/save.png": {
+      "sha256": "48db718003f35cdf66d28d53e833aae23276a3f688d12be7f22cbf92f7c0b4d4",
+      "mtime": 1791627851.8336377
+    },
+    "bin/gfx/icons/pan.png": {
+      "sha256": "62e21f834b2ba946d084a72222e37adb91aa7ccfd69be549ea7bef2c7b142644",
+      "mtime": 1791627503.4571261
+    },
+    "bin/gfx/icons/arrow.png": {
+      "sha256": "4bbc9806817752a3d11a9f166d29d51e88c40d221fafc2bdea957f722873978c",
+      "mtime": 1791628004.7941306
+    },
+    "bin/gfx/icons/frame.png": {
+      "sha256": "38e212791d48df5cc05ef6f2e4dbf8e0c03bc8c18eb1068b6d3fcfefd6b06e7e",
+      "mtime": 1791627590.7717383
+    },
+    "bin/tack-windows-x86_64/gfx/icons/undo.png": {
+      "sha256": "32faaae115cb2a08bed6ec54f347ce6ba76c77b94d5e5041c00d97a632475cd3",
+      "mtime": 1791572082.9719732
+    },
+    "bin/tack-windows-x86_64/gfx/icons/duplicate.png": {
+      "sha256": "b6cbba35f652762a5168bff8cbb720b6093fc4eb9f69164f09d5eeb1f5d9db95",
+      "mtime": 1791572082.9717445
+    },
+    "bin/tack-windows-x86_64/gfx/icons/line.png": {
+      "sha256": "6c6b8245421c5c015990e017def8bf07c69b22d594419debf141bfcfd79df013",
+      "mtime": 1791572082.9709451
+    },
+    "bin/tack-windows-x86_64/gfx/icons/share.png": {
+      "sha256": "047dfd05231d6308a114c2d49f0642edd1ae7f0201ecba7997d18918f3b9f5dc",
+      "mtime": 1791572082.9724102
+    },
+    "bin/tack-windows-x86_64/gfx/icons/redo.png": {
+      "sha256": "d9833b0cc98aeeee37fd67c01de69b7ef78fd028f02991cdfb327188fdfd4b70",
+      "mtime": 1791572082.9721832
+    },
+    "bin/tack-windows-x86_64/gfx/icons/rectangle.png": {
+      "sha256": "47684bacfcf91f23ebb34d670f79522af9a5c411a4cf1d4236f66e4a7f9b7311",
+      "mtime": 1791572082.9707413
+    },
+    "bin/tack-windows-x86_64/gfx/icons/pointer.png": {
+      "sha256": "30e4a8b93ebf7cddcba6152b7aae97255dbb739884cf1922019cc24ae9050c67",
+      "mtime": 1791572082.9700572
+    },
+    "bin/tack-windows-x86_64/gfx/icons/scribble.png": {
+      "sha256": "2f03eeb92695e5cab8906e74233da0b475d0a183f8a7a74d7989587d310d45e3",
+      "mtime": 1791572082.9713447
+    },
+    "bin/tack-windows-x86_64/gfx/icons/placeholder.png": {
+      "sha256": "582155302e96e19f93b09f6d27fbe1f95bb0d49c6b50f49561f308a254d69359",
+      "mtime": 1791572082.9732575
+    },
+    "bin/tack-windows-x86_64/gfx/icons/text.png": {
+      "sha256": "ef1c184d3fc9ff9b0f71418027b9c06792a954b4f7ae39613e850209070c2cb0",
+      "mtime": 1791572082.9705403
+    },
+    "bin/tack-windows-x86_64/gfx/icons/grid.png": {
+      "sha256": "37f731367ffe2f8e6e90a99a880435fa13cfe15df813d1496887dc816fef9a64",
+      "mtime": 1791572082.9730403
+    },
+    "bin/tack-windows-x86_64/gfx/icons/join.png": {
+      "sha256": "d2e124a4013618e6975c5a88bcf78b517953c4337451e0e27336406a63e8aaaa",
+      "mtime": 1791572082.9726355
+    },
+    "bin/tack-windows-x86_64/gfx/icons/save.png": {
+      "sha256": "9f4500412d1d8c1adfe855e46248493c9a33f830324c04532613f766508d1a22",
+      "mtime": 1791572082.972849
+    },
+    "bin/tack-windows-x86_64/gfx/icons/pan.png": {
+      "sha256": "4299d430eaf2516a6b9c68385694753ee590fb43fb6c81b716f105f9610e086c",
+      "mtime": 1791572082.9703355
+    },
+    "bin/tack-windows-x86_64/gfx/icons/arrow.png": {
+      "sha256": "66ed9b59da53aebfb5d4a90d5bdb9201a09b9c853fc64311af7eb46c37d696b1",
+      "mtime": 1791572082.9711401
+    },
+    "bin/tack-windows-x86_64/gfx/icons/frame.png": {
+      "sha256": "0a22ed7718d1d1ec66830ee6320a5654eaaf64dedf6562a64504848aab9e4727",
+      "mtime": 1791572082.9715447
+    }
+  }
+}

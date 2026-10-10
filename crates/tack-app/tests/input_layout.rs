@@ -582,7 +582,7 @@ fn nested_temporary_tools_never_outlive_modal_note_state() -> R {
             )?;
         }
         assert!(input.annotation.edit.is_some());
-        assert_eq!(input.annotation.tools.tool(), Tool::Pointer);
+        assert_eq!(input.annotation.tools.tool(), Tool::Pan);
         if mode == 0 {
             input.annotation.edit.as_mut().ok_or("draft")?.value = "nested".into();
             input.commit_drafts(&mut e)?;
@@ -606,7 +606,10 @@ fn nested_temporary_tools_never_outlive_modal_note_state() -> R {
                 false,
             )?;
         }
-        assert_eq!(input.annotation.tools.tool(), Tool::Pointer);
+        assert_eq!(
+            input.annotation.tools.tool(),
+            if mode == 0 { Tool::Pan } else { Tool::Pointer }
+        );
     }
     Ok(())
 }

@@ -13,6 +13,9 @@ pub(super) struct Chrome {
     pub(super) last_hover: Option<Action>,
     pub(super) disabled: u32,
     pub(super) last_state: &'static str,
+    pub(super) last_tool: tack_app::actions::Tool,
+    pub(super) last_edit: bool,
+    pub(super) transient: bool,
 }
 impl App {
     pub(super) fn chrome_layout(&mut self) {
@@ -20,11 +23,53 @@ impl App {
             &self.local.profile.toolbar,
             self.camera.screen_size(),
             self.camera.ui_scale(),
-            self.local.profile.status_bar || self.shared.is_some() || self.offline.is_some(),
+            self.local.profile.status_bar
+                || self.shared.is_some()
+                || self.offline.is_some()
+                || self.chrome.transient,
         );
+        // Convert legacy pixel offsets once, against the first resident layout.
+        let config = &mut self.local.profile.toolbar;
+        if config.edge_position.is_none()
+            && (config.offset_set || config.offset > 0)
+            && !matches!(config.placement, Placement::Floating | Placement::Hidden)
+        {
+            let axis = usize::from(matches!(
+                config.placement,
+                Placement::Left | Placement::Right
+            ));
+            let b = self.chrome.toolbar.bounds;
+            let available = f64::from(self.camera.screen_size()[axis])
+                - if axis == 1 && self.local.profile.status_bar {
+                    20. * self.camera.ui_scale()
+                } else {
+                    0.
+                };
+            let travel = (available - (b[axis + 2] - b[axis])).max(0.);
+            config.edge_position = Some(if travel > 0. {
+                (b[axis] / travel * 10_000.).round().clamp(0., 10_000.) as u16
+            } else {
+                5000
+            });
+            self.local.profile_pending = true;
+            self.local.profile_changed = true;
+        }
         self.dirty = true;
     }
     pub(super) fn refresh_chrome(&mut self) {
+        let was_transient = self.chrome.transient;
+        self.chrome.transient = !self.input.status.is_empty()
+            || self.interaction_error.is_some()
+            || self.save.last_error.is_some()
+            || !self.local.import_status.is_empty()
+            || self
+                .local
+                .ui
+                .as_ref()
+                .is_some_and(|u| !u.message.is_empty());
+        if self.chrome.transient != was_transient {
+            self.chrome_layout();
+        }
         let context = self.menu_context();
         self.chrome.disabled = self.chrome.toolbar.buttons[..self.chrome.toolbar.count]
             .iter()
@@ -44,6 +89,28 @@ impl App {
             .as_ref()
             .and_then(|m| m.hovered_action())
             .or(self.chrome.toolbar.hover);
+        if let Some(ui) = &self.local.ui
+            && !ui.message.is_empty()
+        {
+            self.chrome.status = ui.message.clone();
+            self.chrome.last_state = "";
+            return;
+        }
+        let message = self
+            .save
+            .last_error
+            .as_ref()
+            .or(self.interaction_error.as_ref())
+            .map(String::as_str)
+            .or_else(|| {
+                (!self.local.import_status.is_empty()).then_some(self.local.import_status.as_str())
+            })
+            .or_else(|| (!self.input.status.is_empty()).then_some(self.input.status.as_str()));
+        if let Some(message) = message {
+            self.chrome.status = message.into();
+            self.chrome.last_state = "";
+            return;
+        }
         if self.local.feedback.active() {
             self.chrome.status = "COPIED".into();
             return;
@@ -66,7 +133,14 @@ impl App {
         } else {
             "Saved"
         };
-        if hovered != self.chrome.last_hover || state != self.chrome.last_state {
+        let edit = self.input.annotation.edit.is_some() || self.input.name_edit.is_some();
+        if hovered != self.chrome.last_hover
+            || state != self.chrome.last_state
+            || self.chrome.last_tool != self.input.active_tool()
+            || self.chrome.last_edit != edit
+        {
+            self.chrome.last_tool = self.input.active_tool();
+            self.chrome.last_edit = edit;
             self.chrome.last_hover = hovered;
             self.chrome.last_state = state;
             self.chrome.status = if let Some(a) = hovered {
@@ -81,7 +155,13 @@ impl App {
                     tack_app::context_menu::shortcut(&self.input.keymap, a)
                 )
             } else {
-                state.into()
+                if self.input.annotation.edit.is_some() {
+                    "Note: Enter finishes; Shift+Enter newline".into()
+                } else if self.input.name_edit.is_some() {
+                    "Frame: Enter confirms; Escape cancels".into()
+                } else {
+                    format!("{state}  {}", self.input.active_tool().label())
+                }
             };
         }
     }
@@ -112,7 +192,7 @@ impl App {
         if let WindowEvent::CursorMoved { position, .. } = event {
             self.pointer = [position.x, position.y];
             if let Some(delta) = self.chrome.toolbar.drag {
-                let scale = self.camera.ui_scale().round().clamp(1., 4.);
+                let scale = f64::from(self.local.profile.toolbar.scale);
                 match self.local.profile.toolbar.placement {
                     Placement::Top | Placement::Bottom => {
                         self.local.profile.toolbar.offset = ((self.pointer[0] - delta[0]) / scale)
@@ -138,6 +218,34 @@ impl App {
                                 .clamp(0., 8192.) as u16,
                         ]
                     }
+                }
+                if matches!(
+                    self.local.profile.toolbar.placement,
+                    Placement::Top | Placement::Bottom | Placement::Left | Placement::Right
+                ) {
+                    let axis = usize::from(matches!(
+                        self.local.profile.toolbar.placement,
+                        Placement::Left | Placement::Right
+                    ));
+                    let b = self.chrome.toolbar.bounds;
+                    let available = f64::from(self.camera.screen_size()[axis])
+                        - if axis == 1
+                            && (self.local.profile.status_bar
+                                || self.shared.is_some()
+                                || self.offline.is_some())
+                        {
+                            20. * self.camera.ui_scale()
+                        } else {
+                            0.
+                        };
+                    let travel = (available - (b[axis + 2] - b[axis])).max(0.);
+                    self.local.profile.toolbar.edge_position = Some(if travel > 0. {
+                        ((self.pointer[axis] - delta[axis]) / travel * 10_000.)
+                            .round()
+                            .clamp(0., 10_000.) as u16
+                    } else {
+                        5000
+                    });
                 }
                 self.chrome_layout();
                 return Ok(true);
@@ -230,8 +338,9 @@ pub(super) fn draw(
     state: (bool, Option<tack_shared::client::ConnectionState>),
 ) -> Result<(), AssetError> {
     let (popup, shared) = state;
+    let status_camera = *c;
     let mut pixel_camera = *c;
-    pixel_camera.set_ui_scale(c.ui_scale().round().clamp(1., 4.));
+    pixel_camera.set_ui_scale(f64::from(p.toolbar.scale));
     let c = &pixel_camera;
     let palette = p.theme.palette();
     let scale = c.ui_scale().round().clamp(1., 4.);
@@ -295,8 +404,10 @@ pub(super) fn draw(
         }
     }
     gpu.set_ui_icons(&icons[..count])?;
+    let c = &status_camera;
+    let scale = c.ui_scale();
     let [w, h] = c.screen_size().map(f64::from);
-    if p.status_bar || shared.is_some() {
+    if p.status_bar || shared.is_some() || chrome.transient {
         g.pixel_rect(c, [0., h - 20. * scale], [w, h], palette.menu_bg, None);
         let mut budget = 180;
         g.ui_text(

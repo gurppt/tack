@@ -16,6 +16,39 @@ pub struct Metadata {
 include!(concat!(env!("OUT_DIR"), "/about_metadata.rs"));
 pub const PACKAGE_NAME: &str = "tack-about.png";
 
+pub struct Artwork {
+    pub portrait: tack_assets::Decoded,
+    pub logo: tack_assets::Decoded,
+}
+/// Both uploads exist only while About is open; no startup asset read.
+pub fn load_artwork() -> Result<Artwork, tack_assets::AssetError> {
+    use std::io::Read;
+    let executable = std::env::current_exe()?;
+    let directory = executable
+        .parent()
+        .ok_or("About package directory unavailable")?;
+    let editable = directory.join("gfx/icons/work_icons/logo_tack_about.png");
+    let path = if editable.is_file() {
+        editable
+    } else {
+        directory.join("tack-about-logo.png")
+    };
+    let mut bytes = Vec::new();
+    std::fs::File::open(path)?
+        .take(16 * 1024 + 1)
+        .read_to_end(&mut bytes)?;
+    if bytes.len() > 16 * 1024 {
+        return Err("About logo exceeds 16 KiB".into());
+    }
+    let logo = tack_assets::decode_ui_png(&bytes)?;
+    if [logo.width, logo.height] != [73, 33] {
+        return Err("About logo must remain 73 x 33 pixels".into());
+    }
+    Ok(Artwork {
+        portrait: load_image()?,
+        logo,
+    })
+}
 /// Invoked only by the explicit local About worker, never during startup.
 pub fn load_image() -> Result<tack_assets::Decoded, tack_assets::AssetError> {
     let executable = std::env::current_exe()?;
@@ -46,6 +79,7 @@ pub fn decode_image(bytes: &[u8]) -> Result<tack_assets::Decoded, tack_assets::A
 pub struct Layout {
     pub panel: [f64; 4],
     pub image: [f64; 4],
+    pub logo: [f64; 4],
     pub text: [f64; 4],
     pub close: [f64; 4],
     pub scale: f64,
@@ -53,19 +87,22 @@ pub struct Layout {
 impl Layout {
     pub fn new(camera: &Camera) -> Self {
         let scale = camera.ui_scale();
-        let screen = camera.screen_size().map(|v| f64::from(v) / scale);
-        let width = (screen[0] - 24.).clamp(32., 600.);
-        let height = (screen[1] - 24.).clamp(32., 288.);
-        let x = ((screen[0] - width) / 2.).floor().max(0.);
-        let y = ((screen[1] - height) / 2.).floor().max(0.);
-        let image_height = (height - 64.).clamp(1., 224.);
+        let shell = crate::modal_shell::ModalShell::short(camera, [600., 288.], true);
+        let [x, y, width, height] = shell.rect;
+        let image_height = (height - 2.).max(1.);
         let image_width =
             (image_height * f64::from(IMAGE_SIZE[0]) / f64::from(IMAGE_SIZE[1])).round();
-        let image_x = x + width - 12. - image_width;
+
         Self {
             panel: [x, y, width, height],
-            image: [image_x, y + 32., image_width, image_height],
-            text: [x + 12., y + 32., (image_x - x - 24.).max(1.), image_height],
+            image: [x + 1., y + 1., image_width, image_height],
+            logo: [x + image_width + 12., y + 8., 73., 33.],
+            text: [
+                x + image_width + 12.,
+                y + 68.,
+                (width - image_width - 24.).max(1.),
+                (height - 100.).max(1.),
+            ],
             close: [x + width - 76., y + height - 28., 64., 20.],
             scale,
         }
@@ -74,6 +111,9 @@ impl Layout {
         let [x, y, w, h] = self.close;
         let p = pointer.map(|v| v / self.scale);
         p[0] >= x && p[0] < x + w && p[1] >= y && p[1] < y + h
+    }
+    pub fn physical_logo(self) -> [f64; 4] {
+        self.logo.map(|v| v * self.scale)
     }
     pub fn physical_image(self) -> [f64; 4] {
         self.image.map(|v| v * self.scale)
@@ -118,23 +158,26 @@ pub fn text_rows(cells: usize, palette: Palette) -> Vec<(String, [f32; 4])> {
     let mut add = |text: String, color| {
         rows.extend(wrap(&text, cells).into_iter().map(|s| (s, color)));
     };
-    add(METADATA.name.into(), palette.accent_primary);
-    add(
-        format!("Version {}", METADATA.version),
-        palette.text_primary,
-    );
+
     if !METADATA.tagline.is_empty() {
         add(METADATA.tagline.into(), palette.text_secondary);
     }
+    let (author, label) = METADATA
+        .author
+        .split_once(" - ")
+        .unwrap_or((METADATA.author, ""));
+    add(author.into(), palette.accent_primary);
+    if !label.is_empty() {
+        add(label.into(), palette.accent_secondary);
+    }
     for (label, value, link) in [
-        ("Author", METADATA.author, false),
         ("Website", METADATA.website, true),
         ("Contact", METADATA.contact, true),
         ("License", METADATA.license, false),
         ("Copyright", METADATA.copyright, false),
         ("Source", METADATA.source, true),
     ] {
-        if value.is_empty() && matches!(label, "Copyright" | "Source") {
+        if value.is_empty() && matches!(label, "Copyright" | "Source" | "Contact") {
             continue;
         }
         add(
@@ -161,35 +204,21 @@ pub fn draw(
 ) -> Layout {
     let layout = Layout::new(camera);
     let scale = layout.scale;
-    let [x, y, w, h] = layout.panel;
+    let [_, y, _, _] = layout.panel;
     let mut budget = 900;
-    gizmo.pixel_rect(
-        camera,
-        [x * scale, y * scale],
-        [(x + w) * scale, (y + h) * scale],
-        palette.menu_border,
-        None,
-    );
-    gizmo.pixel_rect(
-        camera,
-        [(x + 1.) * scale, (y + 1.) * scale],
-        [(x + w - 1.) * scale, (y + h - 1.) * scale],
-        palette.menu_bg,
-        None,
-    );
+    crate::modal_shell::ModalShell {
+        rect: layout.panel,
+        outside_dismiss: true,
+    }
+    .paint(gizmo, camera, palette);
+    // The provided pixel logo owns the heading. Only the version sits below.
     gizmo.ui_text(
         camera,
-        [(x + 12.) * scale, (y + 8.) * scale],
-        w - 24.,
-        "About Tack",
-        palette.accent_primary,
+        [(layout.logo[0]) * scale, (y + 45.) * scale],
+        layout.text[2],
+        METADATA.version,
+        palette.text_secondary,
         &mut budget,
-    );
-    crate::icon::draw(
-        gizmo,
-        camera,
-        [(x + w - 36.) * scale, (y + 4.) * scale],
-        scale,
     );
     let [tx, ty, tw, th] = layout.text;
     for (i, (line, color)) in text_rows((tw / 8.).floor() as usize, palette)
