@@ -36,15 +36,42 @@ def decoded_objects(data):
         elif kind==2:
             center=struct.unpack_from('<dd',data,p);size=struct.unpack_from('<dd',data,p+16);n=struct.unpack_from('<H',data,p+32)[0];name=data[p+34:p+34+n].decode();p+=34+n
             records.append({'id':identity,'kind':'frame','center':center,'size':size,'name':name})
-        elif 3<=kind<=8:
+        elif 3<=kind<=9:
             n=struct.unpack_from('<I',data,p)[0];p+=4;payload=data[p:p+n];p+=n
             r={'id':identity,'kind':kind,'center':struct.unpack_from('<dd',payload,0),'size':struct.unpack_from('<dd',payload,16),'rotation':struct.unpack_from('<d',payload,32)[0],'stroke':list(payload[42:46]),'filled':payload[46],'fill':list(payload[47:51]) if payload[46] else None,'width':struct.unpack_from('<d',payload,51)[0],'opacity':struct.unpack_from('<d',payload,59)[0]}
             if kind==3:r.update(font_size=struct.unpack_from('<d',payload,67)[0],alignment=payload[75],text=payload[80:].decode())
             if kind==8:r['points']=struct.unpack_from('<I',payload,67)[0]
+            if kind==9:
+                count=struct.unpack_from('<I',payload,67)[0];q=71;strokes=[]
+                for _ in range(count):
+                    styled=payload[q];q+=1;style=None
+                    if styled:
+                        style={'stroke':list(payload[q:q+4]),'width':struct.unpack_from('<d',payload,q+9)[0],'opacity':struct.unpack_from('<d',payload,q+17)[0]};q+=25
+                    points=struct.unpack_from('<I',payload,q)[0];q+=4+16*points
+                    strokes.append({'points':points,'style':style})
+                if q!=len(payload):raise ValueError('compound stroke length')
+                r.update(strokes=strokes,points=sum(stroke['points'] for stroke in strokes))
             records.append(r)
         else:raise ValueError('kind')
     p+=objects*16;groups=struct.unpack_from('<I',data,p)[0] if schema>=2 else 0
-    return {'schema':schema,'objects':records,'groups':groups}
+    if schema>=2:
+        p+=4
+        for _ in range(groups):
+            count=struct.unpack_from('<I',data,p+18)[0];p+=22+16*count
+    if schema>=4:
+        count=struct.unpack_from('<I',data,p)[0];p+=4
+        for _ in range(count):
+            n=struct.unpack_from('<H',data,p+42)[0];p+=44+n
+    if schema>=5:
+        count=struct.unpack_from('<I',data,p)[0];p+=4+20*count
+    links=[]
+    if schema>=7:
+        count=struct.unpack_from('<I',data,p)[0];p+=4
+        for _ in range(count):
+            links.append([int.from_bytes(data[p:p+16],'little'),int.from_bytes(data[p+16:p+32],'little')]);p+=32
+    result={'schema':schema,'objects':records,'groups':groups}
+    if schema>=7:result['links']=links
+    return result
 
 
 def main():

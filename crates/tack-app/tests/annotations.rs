@@ -61,6 +61,13 @@ fn creation_capture_cancel_pan_priority_and_one_exact_inverse() -> Result {
         input.physical(button(Pressed), &mut e, &mut camera)?;
         input.cursor_moved([400., 300.], &e, &mut camera)?;
         input.physical(button(Released), &mut e, &mut camera)?;
+        if tool == Tool::Scribble {
+            input.dispatch(
+                event(Action::FinishScribble, ActionPhase::Invoke),
+                &mut e,
+                &mut camera,
+            )?;
+        }
         assert_eq!(e.undo_len(), 1);
         assert_eq!(e.document().annotation_count(), 1);
         e.undo()?;

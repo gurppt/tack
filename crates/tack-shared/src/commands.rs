@@ -1,7 +1,7 @@
 //! Explicit semantic DTOs, independent of Rust layout and private domain fields.
 mod object;
 use crate::{Error, Result, WireId, domain_error};
-pub use object::{AssetDto, ObjectDto, SourceDto, StyleDto, TextDto, TransformDto};
+pub use object::{AnnotationDto, AssetDto, ObjectDto, SourceDto, StyleDto, TextDto, TransformDto};
 use serde::{Deserialize, Serialize};
 use tack_core::*;
 
@@ -10,6 +10,9 @@ use tack_core::*;
 pub enum CommandDto {
     Batch {
         edits: Vec<CommandDto>,
+    },
+    SetFrameLinks {
+        links: Vec<(WireId, Option<WireId>)>,
     },
     AddSource {
         source: SourceDto,
@@ -67,6 +70,11 @@ pub enum CommandDto {
         object: WireId,
         name: String,
     },
+    SetAnnotation {
+        object: WireId,
+        annotation: AnnotationDto,
+        style: StyleDto,
+    },
     SetAnnotationStyle {
         object: WireId,
         style: StyleDto,
@@ -93,6 +101,22 @@ impl CommandDto {
     pub fn from_command(command: &Command) -> Result<Self> {
         use Command::*;
         Ok(match command {
+            SetFrameLinks(links) => {
+                if links.len() > 100_000 {
+                    return Err(Error::Invalid("Frame link count"));
+                }
+                Self::SetFrameLinks {
+                    links: links
+                        .iter()
+                        .map(|(child, parent)| {
+                            Ok((
+                                wire_id(child.value())?,
+                                parent.map(|p| wire_id(p.value())).transpose()?,
+                            ))
+                        })
+                        .collect::<Result<_>>()?,
+                }
+            }
             Command::SetCameraBookmarks(_) => {
                 return Err(Error::Invalid("camera bookmark edits are local-only"));
             }
@@ -167,6 +191,11 @@ impl CommandDto {
                 object: wire_id(object.value())?,
                 name: name.clone(),
             },
+            SetAnnotation { object, annotation } => Self::SetAnnotation {
+                object: wire_id(object.value())?,
+                annotation: AnnotationDto::from_kind(annotation.kind()),
+                style: StyleDto::from_style(annotation.style()),
+            },
             SetAnnotationStyle { object, style } => Self::SetAnnotationStyle {
                 object: wire_id(object.value())?,
                 style: StyleDto::from_style(*style),
@@ -184,6 +213,19 @@ impl CommandDto {
     pub fn to_command(&self) -> Result<Command> {
         use CommandDto::*;
         Ok(match self {
+            SetFrameLinks { links } => {
+                if links.len() > 100_000 {
+                    return Err(Error::Invalid("Frame link count"));
+                }
+                Command::SetFrameLinks(
+                    links
+                        .iter()
+                        .map(|(child, parent)| {
+                            Ok((object_id(*child)?, parent.map(object_id).transpose()?))
+                        })
+                        .collect::<Result<_>>()?,
+                )
+            }
             Batch { edits } => {
                 if edits.len() > 4096 || edits.iter().any(|e| matches!(e, Batch { .. })) {
                     return Err(Error::Invalid("flat LAN batch limit"));
@@ -250,6 +292,14 @@ impl CommandDto {
                     name: name.clone(),
                 }
             }
+            SetAnnotation {
+                object,
+                annotation,
+                style,
+            } => Command::SetAnnotation {
+                object: object_id(*object)?,
+                annotation: Annotation::new(annotation.to_kind()?, style.to_style()?),
+            },
             SetAnnotationStyle { object, style } => Command::SetAnnotationStyle {
                 object: object_id(*object)?,
                 style: style.to_style()?,

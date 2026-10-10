@@ -60,6 +60,37 @@ impl AnnotationStyle {
     pub fn opacity(self) -> Opacity {
         self.opacity
     }
+    /// Apply changed object-style fields while retaining per-stroke differences.
+    pub fn relative_to(self, old: Self, new: Self) -> Result<Self, ModelError> {
+        AnnotationStyle::new(
+            if old.stroke() != new.stroke() {
+                new.stroke()
+            } else {
+                self.stroke()
+            },
+            if old.fill() != new.fill() {
+                new.fill()
+            } else {
+                self.fill()
+            },
+            if old.width() != new.width() {
+                (self.width() * new.width() / old.width()).clamp(0.1, 256.)
+            } else {
+                self.width()
+            },
+            if old.opacity() != new.opacity() {
+                crate::Opacity::new(if old.opacity().value() == 0. {
+                    new.opacity().value()
+                } else {
+                    (self.opacity().value() * new.opacity().value() / old.opacity().value())
+                        .clamp(0., 1.)
+                })
+                .map_err(|_| ModelError::InvalidAnnotation)?
+            } else {
+                self.opacity()
+            },
+        )
+    }
     pub(crate) fn set_opacity(&mut self, value: Opacity) {
         self.opacity = value;
     }
@@ -131,25 +162,87 @@ impl LineObject {
         self.points
     }
 }
+pub const MAX_SCRIBBLE_STROKES: usize = 256;
 #[derive(Clone, Debug, PartialEq)]
-pub struct ScribbleObject {
+pub struct ScribbleStroke {
     points: Vec<[f64; 2]>,
+    style: Option<AnnotationStyle>,
 }
-impl ScribbleObject {
-    pub fn new(mut points: Vec<[f64; 2]>) -> Result<Self, ModelError> {
+impl ScribbleStroke {
+    pub fn new(
+        mut points: Vec<[f64; 2]>,
+        style: Option<AnnotationStyle>,
+    ) -> Result<Self, ModelError> {
         if !(2..=MAX_STROKE_POINTS).contains(&points.len())
             || !points.iter().copied().all(valid_point)
         {
             return Err(ModelError::InvalidAnnotation);
         }
         points.shrink_to_fit();
-        Ok(Self { points })
+        Ok(Self { points, style })
     }
     pub fn points(&self) -> &[[f64; 2]] {
         &self.points
     }
+    pub fn style(&self) -> Option<AnnotationStyle> {
+        self.style
+    }
+}
+#[derive(Clone, Debug, PartialEq)]
+pub struct ScribbleObject {
+    strokes: Vec<ScribbleStroke>,
+}
+impl ScribbleObject {
+    pub fn new(points: Vec<[f64; 2]>) -> Result<Self, ModelError> {
+        Self::from_strokes(vec![ScribbleStroke::new(points, None)?])
+    }
+    pub fn from_strokes(mut strokes: Vec<ScribbleStroke>) -> Result<Self, ModelError> {
+        if !(1..=MAX_SCRIBBLE_STROKES).contains(&strokes.len())
+            || strokes.iter().map(|s| s.points.len()).sum::<usize>() > MAX_STROKE_POINTS
+        {
+            return Err(ModelError::InvalidAnnotation);
+        }
+        strokes.shrink_to_fit();
+        Ok(Self { strokes })
+    }
+    /// Legacy first-stroke accessor. Compound consumers must use strokes().
+    pub fn points(&self) -> &[[f64; 2]] {
+        &self.strokes[0].points
+    }
+    pub fn strokes(&self) -> &[ScribbleStroke] {
+        &self.strokes
+    }
+    pub fn point_count(&self) -> usize {
+        self.strokes.iter().map(|s| s.points.len()).sum()
+    }
+    pub fn is_legacy(&self) -> bool {
+        self.strokes.len() == 1 && self.strokes[0].style.is_none()
+    }
     pub fn retained_bytes(&self) -> usize {
-        self.points.capacity() * std::mem::size_of::<[f64; 2]>()
+        self.strokes.capacity() * std::mem::size_of::<ScribbleStroke>()
+            + self
+                .strokes
+                .iter()
+                .map(|s| s.points.capacity() * std::mem::size_of::<[f64; 2]>())
+                .sum::<usize>()
+    }
+    pub(crate) fn restyled(
+        &self,
+        old: AnnotationStyle,
+        new: AnnotationStyle,
+    ) -> Result<Self, ModelError> {
+        Self::from_strokes(
+            self.strokes
+                .iter()
+                .map(|stroke| {
+                    let style = stroke
+                        .style
+                        .map(|style| style.relative_to(old, new))
+                        .transpose()?;
+                    ScribbleStroke::new(stroke.points.clone(), style)
+                })
+                .collect::<Result<Vec<_>, ModelError>>()?,
+        )
     }
 }
 /// Only five implemented annotation kinds; no paths, layers, connectors or widget state.
@@ -179,10 +272,18 @@ impl Annotation {
         style: AnnotationStyle,
     ) -> Result<crate::WorldRect, crate::GeometryError> {
         let b = transform.bounds();
+        let width = match &self.kind {
+            AnnotationKind::Scribble(s) => s
+                .strokes()
+                .iter()
+                .map(|s| s.style().unwrap_or(style).width())
+                .fold(style.width(), f64::max),
+            _ => style.width(),
+        };
         let margin = if matches!(self.kind, AnnotationKind::Arrow(_)) {
-            style.width().max(128.) / 2.
+            width.max(128.) / 2.
         } else {
-            style.width() / 2.
+            width / 2.
         };
         crate::WorldRect::new(
             b.x - margin,

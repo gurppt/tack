@@ -20,7 +20,7 @@ pub fn encode_metadata(document: &Document) -> Result<(u32, [u32; 3], Vec<u8>)> 
     ))
 }
 pub fn decode_metadata(schema: u32, counts: [u32; 3], bytes: &[u8]) -> Result<Document> {
-    if !(1..=5).contains(&schema) {
+    if !(1..=7).contains(&schema) {
         return Err(StorageError::Unsupported("metadata schema"));
     }
     if bytes.len() > crate::MAX_METADATA_BYTES

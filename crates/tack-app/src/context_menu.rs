@@ -54,6 +54,11 @@ pub struct Context {
     has_objects: bool,
     has_frames: bool,
     annotation_fill: bool,
+    all_scribbles: bool,
+    multiple_scribbles: bool,
+    frame_linkable: bool,
+    frame_linked: bool,
+    children: bool,
 }
 impl Context {
     pub fn selection(
@@ -105,6 +110,11 @@ impl Context {
             .windows(2)
             .any(|pair| !selection.contains(pair[0]) && selection.contains(pair[1]));
         Self {
+            all_scribbles: count > 0 && ids().all(|id| doc.object(id).is_some_and(|o| matches!(o.kind(), ObjectKind::Annotation(a) if matches!(a.kind(), AnnotationKind::Scribble(_))))),
+            multiple_scribbles: count > 1,
+            frame_linkable: ids().all(|id| doc.object(id).is_some_and(|o| !matches!(o.kind(), ObjectKind::Frame(_)))),
+            frame_linked: ids().any(|id| doc.frame_parent(id).is_some()),
+            children: first_id.is_some_and(|id| doc.linked_children(id).next().is_some()),
             kind,
             selection_kind: kind,
             all_flippable: ids().all(|id|doc.object(id).is_some_and(|o|o.can_flip())),
@@ -143,6 +153,13 @@ impl Context {
             return false;
         }
         match action {
+            Action::MergeScribbles => self.all_scribbles && self.multiple_scribbles,
+            Action::SelectTool(Tool::Eraser) => true,
+            Action::LinkToFrame => self.has_frames && self.frame_linkable,
+            Action::UnlinkFromFrame => self.frame_linked,
+            Action::SelectLinkedObjects => {
+                self.selection_kind == ContextKind::Frame && self.children
+            }
             Action::DuplicateSelection => self.any,
             Action::AddCameraBookmark => true,
             Action::CopySharedBoardAddress => self.shared,
@@ -502,8 +519,12 @@ fn context_items_all(context: Context, submenu: Option<Group>, keymap: &Keymap) 
                 a("Rectangle", SelectTool(Tool::Rectangle)),
                 a("Line", SelectTool(Tool::Line)),
                 a("Arrow", SelectTool(Tool::Arrow)),
-                a("Freehand", SelectTool(Tool::Scribble)),
+                a("Scribble", SelectTool(Tool::Scribble)),
+                a("Finish Scribble", FinishScribble),
+                a("Scribble eraser", SelectTool(Tool::Eraser)),
+                a("Merge Scribbles", MergeScribbles),
                 a("New frame", CreateFrame),
+                a("Link to Frame", LinkToFrame),
             ],
         };
     }
@@ -526,6 +547,7 @@ fn context_items_all(context: Context, submenu: Option<Group>, keymap: &Keymap) 
             a("Import images...", ImportImages),
             a("New note (click/drag)", SelectTool(Tool::Text)),
             a("New frame", CreateFrame),
+            a("Link to Frame", LinkToFrame),
             a("Select all", SelectAll),
         ];
     }
@@ -543,7 +565,11 @@ fn context_items_all(context: Context, submenu: Option<Group>, keymap: &Keymap) 
             a("Edit note", RenameFrame),
             group("Text style", Group::Style, true),
         ]),
-        ContextKind::Frame => v.extend([a("Rename", RenameFrame), a("Focus frame", FocusFrame)]),
+        ContextKind::Frame => v.extend([
+            a("Rename", RenameFrame),
+            a("Focus frame", FocusFrame),
+            a("Select Linked Objects", SelectLinkedObjects),
+        ]),
         ContextKind::Annotation => v.push(group("Style", Group::Style, true)),
         ContextKind::Multiple => v.push(group("Arrange", Group::Arrange, context.any)),
         _ => {}
@@ -559,6 +585,18 @@ fn context_items_all(context: Context, submenu: Option<Group>, keymap: &Keymap) 
         Group::Order,
         context.forward || context.backward,
     ));
+    if context.all_scribbles {
+        v.push(a("Scribble eraser", SelectTool(Tool::Eraser)));
+    }
+    if context.all_scribbles && context.multiple_scribbles {
+        v.push(a("Merge Scribbles", MergeScribbles));
+    }
+    if context.frame_linkable {
+        v.extend([
+            a("Link to Frame", LinkToFrame),
+            a("Unlink from Frame", UnlinkFromFrame),
+        ]);
+    }
     if context.all_images || context.kind == ContextKind::Multiple {
         v.extend([a("Group", GroupSelection), a("Ungroup", UngroupSelection)]);
     }

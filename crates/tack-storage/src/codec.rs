@@ -92,6 +92,8 @@ pub(crate) fn encode_document(doc: &Document) -> Result<Vec<u8>> {
         return Err(StorageError::Invalid("record count"));
     }
     let estimated = 4
+        + doc.frame_links().count() * 32
+        + 4
         + doc
             .bookmarks()
             .iter()
@@ -243,9 +245,20 @@ pub(crate) fn encode_document(doc: &Document) -> Result<Vec<u8>> {
             out.extend(frame.frame_color().0);
         }
     }
+    if spatial_schema(doc) >= 7 {
+        out.extend((doc.frame_links().count() as u32).to_le_bytes());
+        for (child, parent) in doc.frame_links() {
+            out.extend(child.value().to_le_bytes());
+            out.extend(parent.value().to_le_bytes());
+        }
+    }
     Ok(out)
 }
 pub(crate) fn spatial_schema(doc: &Document) -> u32 {
+    if doc.frame_links().next().is_some() {
+        return 7;
+    }
+    if doc.objects().any(|o| matches!(o.kind(), ObjectKind::Annotation(a) if matches!(a.kind(), AnnotationKind::Scribble(s) if !s.is_legacy()))) { return 6; }
     if doc
         .objects()
         .any(|o| matches!(o.kind(), ObjectKind::Frame(_)) && o.frame_color() != DEFAULT_FRAME_COLOR)
@@ -345,6 +358,7 @@ pub(crate) fn decode_document(
         if kind != 1
             && !(schema >= 2 && kind == 2)
             && !(schema >= 3 && matches!(kind, 3 | 4 | 6 | 7 | 8))
+            && !(schema >= 6 && kind == 9)
         {
             return Err(StorageError::Unsupported("object kind"));
         }
@@ -476,6 +490,21 @@ pub(crate) fn decode_document(
             doc.apply(Command::SetFrameColor { object, color })
                 .map_err(invalid)?;
         }
+    }
+    if schema >= 7 {
+        let count = d.u32()? as usize;
+        if count > counts[2] {
+            return Err(StorageError::Invalid("Frame link count"));
+        }
+        let mut records = Decoder::new(d.take(count * 32)?);
+        let mut links = Vec::with_capacity(count);
+        for _ in 0..count {
+            links.push((
+                ObjectId::new(records.id()?).map_err(invalid)?,
+                Some(ObjectId::new(records.id()?).map_err(invalid)?),
+            ));
+        }
+        doc.apply(Command::SetFrameLinks(links)).map_err(invalid)?;
     }
     Ok(doc)
 }

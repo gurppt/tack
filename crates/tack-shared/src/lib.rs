@@ -14,7 +14,7 @@ pub use protocol::{
 };
 pub use scope::CommandScope;
 
-pub const PROTOCOL_MAJOR: u16 = 2;
+pub const PROTOCOL_MAJOR: u16 = 3;
 pub const MAX_FRAME_BYTES: usize = 64 * 1024 * 1024;
 pub const MAX_OPERATION_BYTES: usize = 1024 * 1024;
 pub const MAX_CHUNK_BYTES: usize = 64 * 1024;

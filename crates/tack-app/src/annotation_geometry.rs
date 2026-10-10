@@ -61,10 +61,12 @@ pub fn hit(a: &Annotation, t: Transform, p: [f64; 2], tolerance: f64) -> bool {
                         || (0..3).any(|i| segment_distance(p, q[i], q[(i + 1) % 3]) <= tolerance)
                 })
         }
-        AnnotationKind::Scribble(s) => s
-            .points()
-            .windows(2)
-            .any(|q| segment_distance(p, point(t, q[0]), point(t, q[1])) <= width),
+        AnnotationKind::Scribble(s) => s.strokes().iter().any(|stroke| {
+            stroke.points().windows(2).any(|q| {
+                segment_distance(p, point(t, q[0]), point(t, q[1]))
+                    <= stroke.style().unwrap_or(a.style()).width() * 0.5 + tolerance
+            })
+        }),
     }
 }
 fn segment_rect(a: [f64; 2], b: [f64; 2], r: WorldRect, radius: f64) -> bool {
@@ -103,10 +105,16 @@ pub fn intersects(a: &Annotation, t: Transform, r: WorldRect) -> bool {
                         || triangle_hit([r.x, r.y], q)
                 })
         }
-        AnnotationKind::Scribble(s) => s
-            .points()
-            .windows(2)
-            .any(|q| segment_rect(point(t, q[0]), point(t, q[1]), r, radius)),
+        AnnotationKind::Scribble(s) => s.strokes().iter().any(|stroke| {
+            stroke.points().windows(2).any(|q| {
+                segment_rect(
+                    point(t, q[0]),
+                    point(t, q[1]),
+                    r,
+                    stroke.style().unwrap_or(a.style()).width() / 2.,
+                )
+            })
+        }),
         AnnotationKind::Rect => {
             if a.style().fill().is_some() {
                 return crate::image_geometry::intersects(t, r);

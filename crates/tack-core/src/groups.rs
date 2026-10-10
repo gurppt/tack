@@ -42,6 +42,14 @@ impl Document {
                 return Err(CommandError::InvalidGroup);
             }
         }
+        let parent = self.frame_parent(group.members[0]);
+        if group
+            .members
+            .iter()
+            .any(|id| self.frame_parent(*id) != parent)
+        {
+            return Err(CommandError::InvalidGroup);
+        }
         for id in &group.members {
             self.memberships.insert(*id, group.id);
         }

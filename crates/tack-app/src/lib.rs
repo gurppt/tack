@@ -91,3 +91,5 @@ pub mod updates;
 pub mod cursors;
 
 pub mod capabilities;
+
+pub mod scribble_edit;

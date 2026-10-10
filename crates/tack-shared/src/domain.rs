@@ -83,6 +83,14 @@ pub fn shared_document(document: &Document) -> Result<Document> {
             })
             .map_err(domain_error)?;
     }
+    result
+        .apply(Command::SetFrameLinks(
+            document
+                .frame_links()
+                .map(|(child, parent)| (child, Some(parent)))
+                .collect(),
+        ))
+        .map_err(domain_error)?;
     for group in document.groups() {
         result
             .apply(Command::AddGroup(group.clone()))

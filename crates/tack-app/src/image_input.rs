@@ -14,6 +14,8 @@ use winit::{
     keyboard::{KeyCode, PhysicalKey},
 };
 
+#[path = "frame_link_input.rs"]
+mod link;
 pub use crate::product_bindings::product_keymap;
 pub struct ImageInput {
     pub images: ImageInteraction,
@@ -38,6 +40,10 @@ pub struct ImageInput {
     center_handle: bool,
     marquee: Option<([f64; 2], [f64; 2], bool)>,
     click: Option<(tack_core::ObjectId, [f64; 2], Instant)>,
+    pub link_feedback: crate::feedback::Feedback,
+    link: Option<link::Stage>,
+    link_flash: Option<tack_core::ObjectId>,
+    link_pending: Option<(u64, tack_core::ObjectId, Vec<tack_core::ObjectId>)>,
     last_click: Option<(tack_core::ObjectId, [f64; 2], Instant)>,
 }
 impl ImageInput {
@@ -68,6 +74,10 @@ impl ImageInput {
             center_handle: false,
             marquee: None,
             click: None,
+            link_feedback: Default::default(),
+            link: None,
+            link_flash: None,
+            link_pending: None,
             last_click: None,
         })
     }
@@ -85,10 +95,13 @@ impl ImageInput {
             }
             self.images.selection.select(Some(id), false);
         }
+        self.complete_scribble_stroke(editor.generation())?;
+        self.finish_scribble(editor)?;
         self.finish_name_edit(editor, true)?;
         Ok(())
     }
     pub fn cancel(&mut self) {
+        self.link = None;
         self.gesture_waiting = false;
         if let Some(c) = &self.annotation.creation {
             self.annotation.tools.complete_creation(c.tool);
@@ -98,6 +111,8 @@ impl ImageInput {
                 .tools
                 .complete_creation(crate::actions::Tool::Text);
         }
+        self.annotation.scribble.clear();
+        self.annotation.eraser = None;
         self.annotation.creation = None;
         self.annotation.edit = None;
         self.images.cancel();
@@ -106,6 +121,11 @@ impl ImageInput {
         self.center_handle = false;
         self.marquee = None;
         self.click = None;
+    }
+    fn cancel_gesture(&mut self) {
+        let scribble = std::mem::take(&mut self.annotation.scribble);
+        self.cancel();
+        self.annotation.scribble = scribble;
     }
     pub fn cursor(&self) -> [f64; 2] {
         self.cursor
@@ -134,7 +154,9 @@ impl ImageInput {
         if self.annotation.edit.is_some() || self.name_edit.is_some() {
             return CursorIcon::Text;
         }
-        if self.annotation.tools.tool().is_annotation() {
+        if self.annotation.tools.tool().is_annotation()
+            || self.active_tool() == crate::actions::Tool::Eraser
+        {
             return CursorIcon::Crosshair;
         }
         if self.annotation.tools.tool() == crate::actions::Tool::Pan {
@@ -187,6 +209,8 @@ impl ImageInput {
             || self.marquee.is_some()
             || self.annotation.creation.is_some()
             || self.annotation.edit.is_some()
+            || !self.annotation.scribble.is_empty()
+            || self.annotation.eraser.is_some()
     }
     pub fn hover(&self, editor: &DocumentEditor, camera: &Camera) -> Option<GizmoHit> {
         let frame_selected = editor.document().frame_count() > 0
@@ -213,6 +237,7 @@ impl ImageInput {
         self.gizmo
             .build(&self.images, editor.document(), camera, hover);
         self.spatial_overlay(editor, camera);
+        self.link_overlay(editor, camera);
         if self.images.selection.annotations_locked {
             self.gizmo.label(
                 camera,
@@ -230,6 +255,8 @@ impl ImageInput {
         if self.annotation.tools.tool().is_annotation() || self.annotation.edit.is_some() {
             let label = if self.annotation.edit.is_some() {
                 "Enter: done  Shift+Enter: newline"
+            } else if self.active_tool() == crate::actions::Tool::Scribble {
+                "Scribble  Enter: finish  Esc: cancel"
             } else {
                 self.annotation.tools.tool().label()
             };
@@ -237,7 +264,7 @@ impl ImageInput {
                 camera,
                 [56. * self.gizmo.scale, 8. * self.gizmo.scale],
                 label,
-                &mut 32,
+                &mut 64,
             );
         }
         if let Some((start, end, _)) = self.marquee {
@@ -273,10 +300,35 @@ impl ImageInput {
         if !action.available() {
             return Ok(false);
         }
+        if phase == ActionPhase::Invoke && action != Action::CancelInteraction {
+            if self
+                .annotation
+                .creation
+                .as_ref()
+                .is_some_and(|c| c.tool == crate::actions::Tool::Scribble)
+            {
+                self.finish_annotation(editor, camera)?;
+            }
+            self.finish_scribble(editor)?;
+        }
         if phase == ActionPhase::Invoke {
             self.status.clear();
         }
+        if self.link_dispatch(event, editor, camera)? {
+            return Ok(false);
+        }
         if matches!(action, Action::TemporaryTool(_)) {
+            self.complete_scribble_stroke(editor.generation())?;
+            if matches!(phase, ActionPhase::End(_))
+                && self
+                    .annotation
+                    .creation
+                    .as_ref()
+                    .is_some_and(|c| c.tool == crate::actions::Tool::Scribble)
+            {
+                self.finish_annotation(editor, camera)?;
+            }
+            self.finish_scribble(editor)?;
             self.annotation_action(event, editor)?;
             return Ok(false);
         }
@@ -288,13 +340,14 @@ impl ImageInput {
         }
         if let ActionPhase::Cancel(token) = phase {
             if self.active_token == Some(token) {
-                self.cancel();
+                self.cancel_gesture();
             }
             return Ok(false);
         }
         if let ActionPhase::End(token) = phase {
             if self.active_token == Some(token) {
                 self.active_token = None;
+                self.finish_eraser(editor)?;
                 self.finish_annotation(editor, camera)?;
                 if self.gesture_waiting {
                     self.images.cancel();
@@ -349,7 +402,8 @@ impl ImageInput {
         }
         if let ActionPhase::Delta(steps) = phase {
             if action == Action::ZoomView {
-                self.cancel();
+                self.complete_scribble_stroke(editor.generation())?;
+                self.cancel_gesture();
                 camera.zoom_at(self.cursor, (steps.clamp(-20., 20.) * 0.15).exp())?;
             }
             return Ok(false);
@@ -359,7 +413,8 @@ impl ImageInput {
             let pointer = camera.screen_to_world(self.cursor);
             let handle = self.hover(editor, camera);
             if matches!(action, Action::PanView | Action::CenterPointer) {
-                self.cancel();
+                self.complete_scribble_stroke(editor.generation())?;
+                self.cancel_gesture();
                 if action == Action::CenterPointer
                     && !self.state.is_action_held(&self.keymap, Action::PanView)
                     && !self.images.crop_mode
@@ -389,17 +444,22 @@ impl ImageInput {
                 return Ok(false);
             }
             if self.state.is_action_held(&self.keymap, Action::PanView) {
-                self.cancel();
+                self.cancel_gesture();
                 return Ok(false);
             }
             if action == Action::ImagePointer
                 && self.annotation.tools.tool() == crate::actions::Tool::Pan
             {
-                self.cancel();
+                self.cancel_gesture();
                 return Ok(false);
             }
-            self.cancel();
+            let session = std::mem::take(&mut self.annotation.scribble);
+            self.cancel_gesture();
+            self.annotation.scribble = session;
             self.active_token = Some(token);
+            if action == Action::ImagePointer && self.begin_eraser(pointer, editor, camera)? {
+                return Ok(false);
+            }
             if action == Action::ImagePointer && self.begin_annotation(pointer, editor, camera) {
                 return Ok(false);
             }
@@ -583,7 +643,7 @@ impl ImageInput {
             }
         })?;
         if focus {
-            self.cancel();
+            self.cancel_gesture();
         }
         let mut save = false;
         for action in emitted.into_iter().flatten() {
@@ -624,7 +684,7 @@ impl ImageInput {
             }
         }
         if focus {
-            self.cancel();
+            self.cancel_gesture();
             self.last_click = None;
             self.name_edit = None;
         }
@@ -641,6 +701,9 @@ impl ImageInput {
         }
         let delta = [next[0] - self.cursor[0], next[1] - self.cursor[1]];
         self.cursor = next;
+        if self.link_motion(editor, camera) {
+            return Ok(());
+        }
         if self
             .click
             .is_some_and(|(_, p, _)| (p[0] - next[0]).hypot(p[1] - next[1]) > 4. * self.gizmo.scale)
@@ -659,10 +722,11 @@ impl ImageInput {
                 .is_action_held(&self.keymap, Action::CenterPointer)
                 && !self.center_handle)
         {
-            self.cancel();
+            self.cancel_gesture();
             camera.pan(delta)?;
         } else {
             let world = camera.screen_to_world(next);
+            self.update_eraser(world, editor)?;
             if let Some(c) = &mut self.annotation.creation {
                 c.update(world);
             }
@@ -790,9 +854,9 @@ impl ImageInput {
             }
             WindowEvent::CursorLeft { .. }
             | WindowEvent::Occluded(true)
-            | WindowEvent::Resized(_) => self.cancel(),
+            | WindowEvent::Resized(_) => self.cancel_gesture(),
             WindowEvent::ScaleFactorChanged { scale_factor, .. } => {
-                self.cancel();
+                self.cancel_gesture();
                 self.gizmo.set_scale(*scale_factor);
                 camera.set_ui_scale(*scale_factor);
             }

@@ -838,6 +838,12 @@ impl ApplicationHandler<Event> for App {
             shared.probe(self.started);
         }
         self.poll_local();
+        if self
+            .input
+            .settle_link_feedback(Instant::now(), self.editor.as_ref())
+        {
+            self.dirty = true;
+        }
         if self.local.feedback.settle(Instant::now()) {
             self.chrome.last_state = "";
             if let Some(ui) = &mut self.local.ui
@@ -1142,6 +1148,7 @@ impl ApplicationHandler<Event> for App {
                     .and_then(|shared| shared.probe_deadline(self.started)),
             )
             .chain(self.input.caret.deadline())
+            .chain(self.input.link_feedback.deadline())
             .chain(self.local.feedback.deadline())
             .chain(self.local.ui.as_ref().and_then(|ui| ui.feedback.deadline()))
             .chain(self.local.ui.as_ref().and_then(|ui| ui.caret.deadline()))

@@ -14,3 +14,9 @@ Known limitations: remaining compound Scribble and Frame-link implementation,
 packaging/performance/human acceptance still pending. Collaboration protocol is
 currently major 2; incompatible peers are refused. No finished timed media or
 background update service. Application license/contact remain to be defined.
+
+Phase 2A8 board editing: compound Scribbles with explicit finish, target-only vector
+Eraser, painter-order Merge, flat translation-only Frame links and exact Undo.
+Frame/group invariants, indexed drag children and shared scope/inverse budgets
+are enforced. Compound/link records use schemas 6/7; LAN major 3 requires peers
+to upgrade. Physical Windows/artist/two-computer LAN acceptance remains pending.

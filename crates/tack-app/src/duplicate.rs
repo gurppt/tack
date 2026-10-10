@@ -29,6 +29,16 @@ pub fn selection(
         });
         copies.push(id);
     }
+    let links: Vec<_> = ids
+        .iter()
+        .filter_map(|(old, new)| {
+            doc.frame_parent(*old)
+                .map(|parent| (*new, Some(ids.get(&parent).copied().unwrap_or(parent))))
+        })
+        .collect();
+    if !links.is_empty() {
+        edits.push(Command::SetFrameLinks(links));
+    }
     for group in doc.groups() {
         let members: Vec<_> = group
             .members()

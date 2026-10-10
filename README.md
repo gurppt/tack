@@ -21,8 +21,10 @@ Built in Rust, with a native GPU-rendered canvas. Boards are saved locally as
 - **Arrange your board.** Group images, align and distribute selections, pack
   rows or columns, and arrange references in a grid. Use snapping when needed.
 - **Mark up ideas.** Add text notes, rectangles, lines, arrows and freehand
-  strokes. Keep colored post-it backgrounds, adjust text size with Numpad +/−,
-  and cycle rectangle fill opacity. Label regions with frames and jump between them.
+  drawing sessions with several strokes in one Scribble. Erase individual segments
+  or merge selected Scribbles. Keep colored post-it backgrounds, adjust text size with Numpad +/−,
+  and cycle rectangle fill opacity. Link references and annotations to a Frame:
+  moving it moves the linked content; resizing it leaves that content in place.
 - **Save useful views.** Capture exact camera positions and zoom levels without
   adding canvas objects, then return using your chosen shortcut.
 - **Duplicate quickly.** Press Ctrl+D to duplicate a selection locally or on a
@@ -32,7 +34,7 @@ Built in Rust, with a native GPU-rendered canvas. Boards are saved locally as
 - **Choose how images are stored.** Embed originals for portable boards or link
   to external files. Relink missing sources when files move, and inspect dimensions, encoded size and source status from Image → Source → Image information.
 - **Make the workspace yours.** Flat Very Dark, Neutral Gray and Light themes,
-  crisp bitmap UI, direct integer scaling and editable shortcuts. Right-click keeps application and contextual commands together.
+  crisp bitmap UI, custom pixel cursors, toolbar scaling and editable shortcuts. Right-click keeps application and contextual commands together.
 - **Share a board on your LAN.** File → Share Board → Share from this computer
   creates a separate `-shared.tack` and manages the optional server while that
   window is open. Your current view becomes the shared copy; the original stays
@@ -58,7 +60,8 @@ The renderer loads image detail progressively and uses bounded caches. See the
 
 ## Get started
 
-Tack is an actively developed prototype, currently distributed as source.
+Tack is preparing a small portable alpha. The current integration version is
+**0.1.0-dev.1** on `dev`; no public alpha release has been published.
 Build requirements: **Rust 1.95.0** (pinned by the repository), **Python 3.12+**,
 **Pillow 10.2.0** (build only), **CMake**, **NASM**, a C compiler and a supported
 desktop graphics driver.
@@ -72,6 +75,9 @@ python3 -m pip install Pillow==10.2.0
 python3 tools/prepare_turbojpeg.py
 cargo run --release --locked -p tack-app
 ```
+
+Portable builds include a sibling updater for manual **Check for Updates**.
+There is no background update polling. The default channel is Dev.
 
 For the complete desktop sharing build, run `bash tools/build-test-bin.sh`, then
 launch `./bin/tack`. Keep the adjacent helper/server and assets when copying it.
@@ -111,7 +117,9 @@ platform setup and the optional X11 startup workaround.
 | Right-click / F10 | Context commands / fixed application menu access |
 | Ctrl+I / Ctrl+V | Import images / paste |
 | T / R / L / A / P | Text / rectangle / line / arrow / freehand |
-| Ctrl+D | Duplicate local selection |
+| Enter / E | Finish a multi-stroke Scribble / Scribble Eraser |
+| Ctrl+L / Ctrl+Shift+L | Link selected content to a Frame / unlink |
+| Ctrl+D | Duplicate selection |
 | Ctrl+Z / Ctrl+Shift+Z | Undo / redo |
 | Ctrl+S / Ctrl+Shift+S | Save / Save As |
 | Ctrl+O / Ctrl+N | Open / new board window |
@@ -155,6 +163,9 @@ See the [LAN report](docs/MISSION_2A_REPORT.md),
 
 - [Build, troubleshooting and developer checks](docs/DEVELOPMENT.md)
 - [Complete feature inventory](docs/FEATURE_INVENTORY.md)
+- [Alpha builds and manual portable updates](docs/ALPHA_FOUNDATION.md)
+- [Scribble and Frame links](docs/SCRIBBLE_FRAME_LINKS.md)
+- [Alpha acceptance checklist](docs/HUMAN_TEST_2A8_ALPHA.md)
 - [Architecture](docs/architecture.md)
 - [Board format and compatibility](docs/design/tack_document_compatibility.md)
 - [Design notes, reports and performance evidence](docs/README.md)

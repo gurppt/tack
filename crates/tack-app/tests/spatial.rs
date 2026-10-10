@@ -681,3 +681,209 @@ fn temporary_shift_snap_and_fifteen_degree_rotation_use_same_gesture() -> R {
     assert_eq!(e.document().object(id).ok_or("object")?.transform(), t);
     Ok(())
 }
+
+fn linked_fixture() -> Result<DocumentEditor, Box<dyn std::error::Error + Send + Sync>> {
+    let mut e = fixture()?;
+    e.execute(Command::AddObject {
+        object: DocumentObject::frame(
+            ObjectId::new(10)?,
+            "Parent".into(),
+            Transform::new([500., 0.], [160., 160.], 0., [false; 2])?,
+        )?,
+        index: 3,
+    })?;
+    e.clear_history();
+    Ok(e)
+}
+fn click_state(input: &mut ImageInput, e: &mut DocumentEditor, c: &mut Camera, pressed: bool) -> R {
+    input.physical(
+        PhysicalEvent::Button {
+            control: PhysicalControl::Pointer(PointerButton::Mouse(
+                winit::event::MouseButton::Left,
+            )),
+            state: if pressed {
+                winit::event::ElementState::Pressed
+            } else {
+                winit::event::ElementState::Released
+            },
+            repeat: false,
+        },
+        e,
+        c,
+    )?;
+    Ok(())
+}
+#[test]
+fn frame_link_selected_and_acquisition_paths_cancel_commit_restore_tool() -> R {
+    for acquire in [false, true] {
+        let mut e = linked_fixture()?;
+        let before = e.document().clone();
+        let mut i = ImageInput::new()?;
+        let mut c = Camera::new([1280, 720]);
+        invoke(&mut i, &mut e, &mut c, Action::SelectTool(Tool::Arrow))?;
+        if !acquire {
+            i.images.selection.select(Some(ObjectId::new(1)?), false);
+        }
+        invoke(&mut i, &mut e, &mut c, Action::LinkToFrame)?;
+        assert_eq!(i.link_cursor(), Some(tack_app::cursors::Kind::LinkOpen));
+        if acquire {
+            i.cursor_moved(c.world_to_screen([0., 0.]), &e, &mut c)?;
+            click_state(&mut i, &mut e, &mut c, true)?;
+            click_state(&mut i, &mut e, &mut c, false)?;
+        }
+        assert_eq!(e.document(), &before);
+        i.cursor_moved(c.world_to_screen([500., 0.]), &e, &mut c)?;
+        i.build_overlay(&e, &c);
+        assert!(i.gizmo.quads.len() > 5);
+        click_state(&mut i, &mut e, &mut c, true)?;
+        assert_eq!(e.document(), &before);
+        click_state(&mut i, &mut e, &mut c, false)?;
+        assert_eq!(
+            e.document().frame_parent(ObjectId::new(1)?),
+            Some(ObjectId::new(10)?)
+        );
+        assert_eq!(i.active_tool(), Tool::Arrow);
+        assert_eq!(i.link_cursor(), None);
+        assert!(i.link_feedback.active());
+        assert_eq!(e.undo_len(), 1);
+        e.undo()?;
+        assert_eq!(e.document(), &before);
+        invoke(&mut i, &mut e, &mut c, Action::LinkToFrame)?;
+        invoke(&mut i, &mut e, &mut c, Action::CancelInteraction)?;
+        assert_eq!(e.document(), &before);
+        assert_eq!(i.active_tool(), Tool::Arrow);
+    }
+    Ok(())
+}
+#[test]
+fn frame_drag_caches_children_previews_once_and_cancels_stale_links() -> R {
+    let mut e = linked_fixture()?;
+    let frame = ObjectId::new(10)?;
+    let child = ObjectId::new(1)?;
+    e.execute(Command::SetFrameLinks(vec![(child, Some(frame))]))?;
+    let initial = e.document().clone();
+    let mut i = ImageInput::new()?;
+    // Explicitly selecting both must still translate the child only once.
+    i.images.selection.select(Some(frame), false);
+    i.images.selection.select(Some(child), true);
+    i.images.begin(GestureKind::Move, [0., 0.], &e)?;
+    assert_eq!(i.images.gesture_targets().count(), 2);
+    i.images.update([20., 30.])?;
+    assert_eq!(
+        i.images
+            .preview_transform(e.document(), child)
+            .ok_or("preview")?
+            .center(),
+        [20., 30.]
+    );
+    assert_eq!(e.document(), &initial);
+    i.images.commit(&mut e)?;
+    assert_eq!(
+        e.document()
+            .object(child)
+            .ok_or("child")?
+            .transform()
+            .center(),
+        [20., 30.]
+    );
+    e.undo()?;
+    assert_eq!(e.document(), &initial);
+    i.images.begin(GestureKind::Move, [0., 0.], &e)?;
+    i.images.update([40., 0.])?;
+    e.execute(Command::SetFrameLinks(vec![(child, None)]))?;
+    let unlinked = e.document().clone();
+    assert!(i.images.commit(&mut e).is_err());
+    assert_eq!(e.document(), &unlinked);
+    Ok(())
+}
+
+#[test]
+fn linked_frame_layout_places_explicit_children_last_including_stationary_grid_targets() -> R {
+    for layout in [Layout::Left, Layout::SnapToGrid, Layout::Grid] {
+        let mut e = linked_fixture()?;
+        let frame = ObjectId::new(10)?;
+        let child = ObjectId::new(1)?;
+        e.execute(Command::SetTransform {
+            object: frame,
+            transform: Transform::new([397., 16.], [800., 800.], 0., [false; 2])?,
+        })?;
+        e.execute(Command::SetTransform {
+            object: child,
+            transform: Transform::new([178., 50.], [100., 100.], 0., [false; 2])?,
+        })?;
+        e.execute(Command::SetFrameLinks(vec![(child, Some(frame))]))?;
+        let before = e.document().clone();
+        let mut unlinked = before.clone();
+        unlinked.apply(Command::SetFrameLinks(vec![(child, None)]))?;
+        // Layout should have exactly the same explicit result as independent units.
+        let expected = spatial_layout::arrange(&unlinked, [child, frame].into_iter(), layout)?;
+        unlinked.apply(expected)?;
+        let command = spatial_layout::arrange(e.document(), [child, frame].into_iter(), layout)?;
+        e.execute(command)?;
+        for id in [child, frame] {
+            assert_eq!(
+                e.document().object(id).ok_or("actual")?.transform(),
+                unlinked.object(id).ok_or("expected")?.transform()
+            );
+        }
+        e.undo()?;
+        assert_eq!(e.document(), &before);
+        e.redo()?;
+        for id in [child, frame] {
+            assert_eq!(
+                e.document().object(id).ok_or("redo")?.transform(),
+                unlinked.object(id).ok_or("expected")?.transform()
+            );
+        }
+    }
+    Ok(())
+}
+#[test]
+fn linked_group_selection_invalid_cursor_and_duplicate_parent_are_coherent() -> R {
+    let mut e = linked_fixture()?;
+    let frame = ObjectId::new(10)?;
+    let members = vec![ObjectId::new(1)?, ObjectId::new(2)?];
+    e.execute(Command::AddGroup(Group::new(
+        GroupId::new(1)?,
+        members.clone(),
+    )?))?;
+    e.execute(Command::SetFrameLinks(
+        members.iter().map(|id| (*id, Some(frame))).collect(),
+    ))?;
+    let mut i = ImageInput::new()?;
+    let mut c = Camera::new([1280, 720]);
+    i.images.selection.select(Some(frame), false);
+    invoke(&mut i, &mut e, &mut c, Action::SelectLinkedObjects)?;
+    assert_eq!(i.images.selection.ids().collect::<Vec<_>>(), members);
+    invoke(&mut i, &mut e, &mut c, Action::LinkToFrame)?;
+    i.cursor_moved(c.world_to_screen([-300., -200.]), &e, &mut c)?;
+    click_state(&mut i, &mut e, &mut c, true)?;
+    click_state(&mut i, &mut e, &mut c, false)?;
+    assert_eq!(i.link_cursor(), Some(tack_app::cursors::Kind::Forbidden));
+    i.cursor_moved(c.world_to_screen([-301., -201.]), &e, &mut c)?;
+    assert_eq!(i.link_cursor(), Some(tack_app::cursors::Kind::Forbidden));
+    i.cursor_moved(c.world_to_screen([500., 0.]), &e, &mut c)?;
+    assert_eq!(i.link_cursor(), Some(tack_app::cursors::Kind::LinkOpen));
+    invoke(&mut i, &mut e, &mut c, Action::CancelInteraction)?;
+    let before = e.document().clone();
+    let (command, copies) = tack_app::duplicate::selection(
+        e.document(),
+        [frame, members[0], members[1]].into_iter(),
+        [10., 10.],
+    )?;
+    e.execute(command)?;
+    let newframe = copies
+        .iter()
+        .copied()
+        .find(|id| {
+            e.document()
+                .object(*id)
+                .is_some_and(|o| matches!(o.kind(), ObjectKind::Frame(_)))
+        })
+        .ok_or("copied Frame")?;
+    assert_eq!(e.document().linked_children(newframe).count(), 2);
+    assert_eq!(e.document().linked_children(frame).count(), 2);
+    e.undo()?;
+    assert_eq!(e.document(), &before);
+    Ok(())
+}

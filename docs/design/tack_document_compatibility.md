@@ -169,3 +169,25 @@ Container format 1 is unchanged. Schemas1–3 retain their exact record layout a
 Older Tack builds supporting only schemas 1–3 explicitly refuse schema 4; they must not drop bookmarks and rewrite a file. Removing the last bookmark allows the appropriate previous schema again. Bookmarks are invisible document metadata, separate from Frames and the transient current camera. Jump changes only the camera. Add/rename/delete use the existing reversible command history and preserve exact IEEE754 values through save/reopen.
 
 Shared schema 4 snapshots may contain bookmarks: clients can jump to them. Bookmark mutation and Duplicate are explicitly disabled in shared desktop windows for this slice; no special command DTO or replication protocol is added. The server acquires no UI/render/codec dependency.
+
+## Phase 2A8: compound Scribble and flat Frame links (schemas 6/7)
+
+Current readers accept schemas 1–7. Container format 1, image originals and
+checksums stay unchanged. Nondefault Frame colors use schema 5. Schema 6 adds
+annotation kind 9: the usual 67-byte annotation fields, a u32 stroke count
+(1–256), then for each stroke a Boolean override-style flag, an optional 25-byte
+style (RGBA, fill flag/RGBA, width/opacity f64), u32 point count and normalized
+f64 x/y pairs. Total points are limited to 4096, each stroke has at least two.
+Legacy single-stroke Scribbles without overrides keep kind 8. Counts, enclosing
+slices, styles and geometry are validated before publication/allocation.
+
+Schema 7 appends a u32 link count after groups, bookmarks and Frame colors, then
+u128 child/parent ObjectId pairs. Count is bounded by object count. Children must
+exist and cannot be Frames; parents must be Frames, children cannot be duplicated,
+and every image-group member must have the same parent. Links preserve world
+poses; only Frame translation propagates. The derived reverse index is rebuilt,
+never serialized separately. Older readers refuse newer schemas rather than
+silently discarding links/strokes. Removing new data permits older schemas again.
+
+LAN protocol major 3 carries these commands and snapshots. Major-2 peers must
+upgrade. See [Scribble/Frame behavior](../SCRIBBLE_FRAME_LINKS.md).

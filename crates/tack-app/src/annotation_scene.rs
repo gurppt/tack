@@ -197,14 +197,20 @@ impl AnnotationScene {
                 let [start, end] = l.points().map(|p| geometry::point(t, p));
                 self.arrow(start, end, style, camera)
             }
-            AnnotationKind::Scribble(s) => s.points().windows(2).enumerate().all(|(i, p)| {
-                self.joined_segment(
-                    geometry::point(t, p[0]),
-                    geometry::point(t, p[1]),
-                    i.checked_sub(1).map(|i| geometry::point(t, s.points()[i])),
-                    style,
-                    camera,
-                )
+            AnnotationKind::Scribble(s) => s.strokes().iter().all(|stroke| {
+                stroke.points().windows(2).enumerate().all(|(i, p)| {
+                    self.joined_segment(
+                        geometry::point(t, p[0]),
+                        geometry::point(t, p[1]),
+                        i.checked_sub(1)
+                            .map(|i| geometry::point(t, stroke.points()[i])),
+                        stroke
+                            .style()
+                            .map(|s| s.relative_to(a.style(), style).unwrap_or(style))
+                            .unwrap_or(style),
+                        camera,
+                    )
+                })
             }),
             AnnotationKind::Text(text) => {
                 let start = std::time::Instant::now();
@@ -251,6 +257,13 @@ impl AnnotationScene {
             height: viewport.height + 2. * padding,
         };
         let first = self.primitives.len();
+        for c in &input.scribble {
+            if !self.creation(c, camera) {
+                self.primitives.truncate(first);
+                self.omitted += 1;
+                break;
+            }
+        }
         if let Some(c) = &input.creation
             && !self.creation(c, camera)
         {
@@ -282,6 +295,14 @@ impl AnnotationScene {
                 };
                 let ObjectKind::Annotation(a) = o.kind() else {
                     continue;
+                };
+                let a = if let Some(draft) = input.eraser.as_ref().filter(|e| e.id == *id) {
+                    let Some(a) = &draft.annotation else {
+                        continue;
+                    };
+                    a
+                } else {
+                    a
                 };
                 let t = images.preview_transform(doc, *id).unwrap_or(o.transform());
                 if !a.bounds(t).is_ok_and(|b| b.intersects(view)) {

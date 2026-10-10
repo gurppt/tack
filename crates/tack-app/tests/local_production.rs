@@ -297,7 +297,12 @@ fn bounded_keymaps_unknown_conflicts_foreign_recent_profile_merge_and_protection
     let r = Root::new()?;
     let mut p = Preferences::defaults()?;
     let defaults = p.keymap()?;
-    assert_eq!(Action::ALL.len(), 123);
+    assert!(
+        Action::ALL
+            .iter()
+            .enumerate()
+            .all(|(i, action)| !Action::ALL[..i].contains(action))
+    );
     assert!(defaults.for_action(Action::NewBoard).next().is_some());
     let path = r.0.join("export.json");
     preferences::write(&path, &p)?;

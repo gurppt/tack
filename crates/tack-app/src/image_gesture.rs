@@ -1,7 +1,7 @@
 //! Captured initial data and atomic preview/commit for shared object gestures.
 use super::{GestureKind, ImageInteraction};
 use crate::image_geometry as geometry;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use tack_core::{
     AnnotationKind, AnnotationStyle, Command, CommandError, Document, DocumentEditor,
     DocumentQuery, GeometryError, ObjectId, ObjectKind, Opacity, TextObject, Transform, WorldRect,
@@ -55,6 +55,8 @@ pub(super) struct Gesture {
     pub(super) initial: Vec<EditData>,
     pub(super) preview: Vec<EditData>,
     pub(super) lookup: BTreeMap<ObjectId, usize>,
+    derived: BTreeSet<ObjectId>,
+    linked: Vec<(ObjectId, Vec<ObjectId>)>,
 }
 impl ImageInteraction {
     pub fn begin(
@@ -85,7 +87,7 @@ impl ImageInteraction {
         {
             return Ok(false);
         }
-        let initial: Vec<_> = self
+        let mut initial: Vec<_> = self
             .selection
             .ids()
             .filter_map(|id| EditData::get(editor.document(), id))
@@ -113,6 +115,31 @@ impl ImageInteraction {
         let Some(frame) = geometry::frame_transforms(initial.iter().map(|d| d.transform)) else {
             return Ok(false);
         };
+        let mut derived = BTreeSet::new();
+        let mut linked = Vec::new();
+        if kind == GestureKind::Move {
+            for id in self.selection.ids() {
+                if editor
+                    .document()
+                    .object(id)
+                    .is_some_and(|o| matches!(o.kind(), ObjectKind::Frame(_)))
+                {
+                    let children: Vec<_> = editor.document().linked_children(id).collect();
+                    derived.extend(&children);
+                    linked.push((id, children));
+                }
+            }
+            for child in &derived {
+                if self.blocked.contains(child) {
+                    return Ok(false);
+                }
+                if !self.selection.contains(*child)
+                    && let Some(data) = EditData::get(editor.document(), *child)
+                {
+                    initial.push(data);
+                }
+            }
+        }
         let lookup = initial
             .iter()
             .enumerate()
@@ -126,6 +153,8 @@ impl ImageInteraction {
             preview: initial.clone(),
             initial,
             lookup,
+            derived,
+            linked,
         });
         Ok(true)
     }
@@ -329,6 +358,16 @@ impl ImageInteraction {
         let Some(g) = self.gesture.take() else {
             return Ok(false);
         };
+        if g.linked.iter().any(|(frame, children)| {
+            !editor
+                .document()
+                .linked_children(*frame)
+                .eq(children.iter().copied())
+        }) {
+            return Err(CommandError::LimitReached(
+                "Frame links changed during gesture",
+            ));
+        }
         if g.initial
             .iter()
             .any(|before| EditData::get(editor.document(), before.object_id) != Some(*before))
@@ -337,7 +376,7 @@ impl ImageInteraction {
         }
         let mut edits = Vec::with_capacity(g.preview.len() * 2);
         for (before, after) in g.initial.iter().zip(g.preview) {
-            if before.transform != after.transform {
+            if before.transform != after.transform && !g.derived.contains(&after.object_id) {
                 edits.push(Command::SetTransform {
                     object: after.object_id,
                     transform: after.transform,

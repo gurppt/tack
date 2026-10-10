@@ -202,6 +202,8 @@ impl App {
             || self.chrome.toolbar.grip_hit(self.pointer);
         let icon = if ui {
             Kind::Pointer
+        } else if let Some(kind) = self.input.link_cursor() {
+            kind
         } else {
             let native = self.editor.as_ref().map_or(CursorIcon::Default, |e| {
                 self.input.cursor_icon(e, &self.camera)
@@ -222,6 +224,11 @@ impl App {
                     }) =>
                 {
                     Kind::Rotate
+                }
+                CursorIcon::Crosshair
+                    if self.input.active_tool() == tack_app::actions::Tool::Eraser =>
+                {
+                    Kind::Eraser
                 }
                 CursorIcon::Crosshair if self.input.images.crop_mode => Kind::Crop,
                 CursorIcon::Crosshair

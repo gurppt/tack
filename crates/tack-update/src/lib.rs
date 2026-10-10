@@ -7,7 +7,7 @@ pub const REPOSITORY: &str = "gurppt/tack";
 pub const MAX_MANIFEST: usize = 32 * 1024;
 pub const MAX_ARCHIVE: u64 = 128 * 1024 * 1024;
 pub const MAX_UNPACKED: u64 = 256 * 1024 * 1024;
-pub const PROTOCOL_MAJOR: u32 = 2;
+pub const PROTOCOL_MAJOR: u32 = 3;
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum Channel {

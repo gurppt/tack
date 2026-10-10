@@ -42,7 +42,7 @@ fn toolbar_add_scroll_remove_reorder_and_button_keyboard_are_one_focus() -> R {
         p.toolbar.actions.last().map(String::as_str),
         Some(crate::toolbar::SEPARATOR)
     );
-    assert_eq!(ui.selected, 12);
+    assert_eq!(ui.selected, crate::toolbar::DEFAULT_ACTIONS.len());
     assert!(ui.feedback.active());
     g.quads.clear();
     ui.draw(&mut g, &c, &map, &p);
@@ -50,16 +50,22 @@ fn toolbar_add_scroll_remove_reorder_and_button_keyboard_are_one_focus() -> R {
     assert_eq!(ui.first, ui.selected + 1 - ui.visible);
     ui.modifiers = Modifiers::CONTROL;
     ui.toolbar_key(KeyCode::ArrowUp, &mut map, &mut p);
-    assert_eq!(ui.selected, 11);
-    assert_eq!(p.toolbar.actions[11], crate::toolbar::SEPARATOR);
+    assert_eq!(ui.selected, crate::toolbar::DEFAULT_ACTIONS.len() - 1);
+    assert_eq!(
+        p.toolbar.actions[crate::toolbar::DEFAULT_ACTIONS.len() - 1],
+        crate::toolbar::SEPARATOR
+    );
     ui.modifiers = Modifiers::NONE;
     ui.toolbar_key(KeyCode::Tab, &mut map, &mut p);
     assert_eq!(ui.focus, Some(Command::ToolbarToggle));
     ui.toolbar_key(KeyCode::ArrowRight, &mut map, &mut p);
     assert_eq!(ui.focus, Some(Command::ToolbarRemove));
     ui.toolbar_key(KeyCode::Enter, &mut map, &mut p);
-    assert_eq!(p.toolbar.actions.len(), 12);
-    assert_eq!(ui.selected, 11);
+    assert_eq!(
+        p.toolbar.actions.len(),
+        crate::toolbar::DEFAULT_ACTIONS.len()
+    );
+    assert_eq!(ui.selected, crate::toolbar::DEFAULT_ACTIONS.len() - 1);
     assert!(ui.focus.is_none());
     assert!(matches!(
         ui.toolbar_key(KeyCode::Escape, &mut map, &mut p),
@@ -79,7 +85,7 @@ fn toolbar_editor_reuses_icons_and_controls_fit_small_sizes() -> R {
         ui.draw(&mut g, &c, &map, &p);
         assert!(ui.icons().len() <= 24);
         for icon in ui.icons() {
-            assert!(icon.index < 15);
+            assert!(icon.index < crate::toolbar_icons::NAMES.len() && icon.index != 15);
             assert_eq!(icon.rect[2], 16. * scale);
         }
         for h in &ui.hits {

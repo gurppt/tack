@@ -10,7 +10,7 @@ import package_release as release
 class ReleaseContracts(unittest.TestCase):
     def identity(self, **changes):
         value = dict(schema=1, version='0.1.0-dev.1', channel='dev',
-                     git_sha='a'*40, protocol_major=2)
+                     git_sha='a'*40, protocol_major=3)
         return dict(value, **changes)
 
     def fragments(self, root):
@@ -30,7 +30,7 @@ class ReleaseContracts(unittest.TestCase):
         release.validate_identity(self.identity(version='0.1.0', channel='stable'))
         for changes in [dict(channel='stable'), dict(version='0.1.0-alpha.1', channel='stable'),
                         dict(version='0.1.0-dev.01'), dict(schema=9),
-                        dict(protocol_major=3), dict(git_sha='not-a-commit')]:
+                        dict(protocol_major=4), dict(git_sha='not-a-commit')]:
             with self.subTest(changes=changes), self.assertRaises(ValueError):
                 release.validate_identity(self.identity(**changes))
 
@@ -56,7 +56,7 @@ class ReleaseContracts(unittest.TestCase):
                 if change == 'bytes':
                     (root/record['assets'][0]['name']).write_bytes(b'tampered')
                 elif change == 'commit': record['git_sha'] = 'b'*40
-                elif change == 'protocol': record['protocol_major'] = 3
+                elif change == 'protocol': record['protocol_major'] = 4
                 elif change == 'duplicate': record['assets'].append(record['assets'][0])
                 elif change == 'path': record['assets'][0]['name'] = '../outside.zip'
                 paths[1].write_text(json.dumps(record))

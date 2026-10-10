@@ -236,7 +236,16 @@ impl Authority {
                 .revision()
                 .checked_add(1)
                 .ok_or("authority revision exhausted")?,
-            command: CommandDto::from_command(&inverse).map_err(|e| e.to_string())?,
+            command: transmissible_inverse(
+                &inverse,
+                self.state.board,
+                client,
+                operation,
+                self.revision()
+                    .checked_add(1)
+                    .ok_or("authority revision exhausted")?,
+                &self.state.sources,
+            )?,
             sources: inverse_bindings(&inverse, &self.state.sources),
         });
         trim(history);
@@ -292,7 +301,16 @@ impl Authority {
         destination.push(HistoryEntry {
             before: self.revision(),
             after: next_revision,
-            command: CommandDto::from_command(&inverse).map_err(|e| e.to_string())?,
+            command: transmissible_inverse(
+                &inverse,
+                self.state.board,
+                client,
+                operation,
+                self.revision()
+                    .checked_add(1)
+                    .ok_or("authority revision exhausted")?,
+                &self.state.sources,
+            )?,
             sources: inverse_bindings(&inverse, &self.state.sources),
         });
         trim(history);
@@ -523,4 +541,27 @@ fn ensure_joinable(state: &State) -> Result<()> {
         return Err("authoritative snapshot exceeds reconnect frame budget".into());
     }
     Ok(())
+}
+
+// Admit generated history only if a later undo/redo can be broadcast within
+// the same wire budget as the original edit. This runs before publication.
+fn transmissible_inverse(
+    inverse: &tack_core::Command,
+    board: WireId,
+    client: WireId,
+    operation: WireId,
+    revision: u64,
+    bindings: &[SourceBinding],
+) -> Result<CommandDto> {
+    let command = CommandDto::from_command(inverse).map_err(|e| e.to_string())?;
+    tack_shared::encode_message(&tack_shared::Message::Accepted {
+        board,
+        revision,
+        client,
+        operation,
+        command: command.clone(),
+        sources: inverse_bindings(inverse, bindings),
+    })
+    .map_err(|e| format!("generated undo/redo exceeds protocol budget: {e}"))?;
+    Ok(command)
 }

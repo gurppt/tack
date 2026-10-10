@@ -1,6 +1,6 @@
-# Current feature inventory — Phase 2A4
+# Current feature inventory — Phase 2A8
 
-Code audit of the local prototype on 2026-10-09, based on `Action::ALL`,
+Code audit of the local prototype on 2026-10-10, based on `Action::ALL`,
 `product_bindings`, `ImageInput`, annotation/spatial input, local file workers,
 storage/recovery and tests. This inventories shipped and reachable code, not a roadmap.
 Historical Phase 1I evidence has 170 automated native assertions on US and French XKB layouts at
@@ -30,7 +30,7 @@ selection, tool choice, camera and text drafts. Menu paths are one submenu deep.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Add camera bookmark (`AddCameraBookmark`) | implemented | local camera slots | B | Tack → View → Add bookmark | shared Tack menu | No | Local profile | Centered shortcut capture, Enter confirms collision reassignment, Escape cancels; at most 64 local views, works on shared boards without a shared revision. |
 | Camera bookmarks (`CameraBookmarks`) | implemented | camera / bookmark metadata | — | Tack → View → Camera bookmarks | shared Tack menu | jump No; rename/delete Yes | Board metadata, camera session | Enter/click jumps; F2/visible Rename and Delete buttons. Shared snapshots allow jump, not editing. |
-| Duplicate selection (`DuplicateSelection`) | implemented | images, notes, all supported annotations, frames | Ctrl+D | Tack → Edit | shared Tack menu | Yes, one transaction | Board | Fresh object/group IDs, same image assets/sources/originals; one adaptive grid-step offset. Explicitly local-only. |
+| Duplicate selection (`DuplicateSelection`) | implemented | images, notes, all supported annotations, frames | Ctrl+D | Tack → Edit | shared Tack menu | Yes, one transaction | Board | Fresh object/group IDs, same image assets/sources/originals; one adaptive grid-step offset. Shared metadata-only through authority, with conflict/lease checks. |
 | Image information (`SourceInfo`) | implemented | one selected image | — | Image → Source | Image information | No | temporary panel | Existing metadata and observed status only; no filesystem access, codec probing or decode requests. |
 | Join shared board (`JoinSharedBoard`) | implemented | connection descriptor | — | Tack → File | shared Tack menu | No | another native window | Primary Paste invite; canonical tack://IP:PORT/ID or compatible numeric IP:PORT + Board ID; IPv6 brackets; explicit cancellable launch reuses CLI join. Current local board retained. |
 | Copy Invite (`CopySharedBoardAddress`) | implemented | joined board | — | Tack → File | shared Tack menu | No | clipboard | Canonical URI; off-thread existing native clipboard helper. Disabled for local boards. |
@@ -59,8 +59,8 @@ selection, tool choice, camera and text drafts. Menu paths are one submenu deep.
 | Crop gizmo (`CropMode`) | implemented | one image | Ctrl+Shift+Alt+C | crop handles | image | Yes after crop drag | Board crop; mode session | Toggles crop gizmo; the crop drag, not the mode toggle, is undoable. |
 | Select all (`SelectAll`) | implemented | all object kinds | Ctrl+A | Tack → Edit | canvas | No | session | Selection only; no document mutation. |
 | Delete selection (`DeleteSelection`) | implemented | all object kinds | Del | Tack → Edit | all object menus | Yes | Board | Atomic batch; removes corresponding group membership. |
-| Flip horizontal (`FlipHorizontal`) | implemented | images | Shift+Alt+H | keyboard / keymap | image | Yes | Board | Works on image selections through the shared dispatcher. |
-| Flip vertical (`FlipVertical`) | implemented | images | Shift+Alt+V | keyboard / keymap | image | Yes | Board | Works on image selections through the shared dispatcher. |
+| Flip horizontal (`FlipHorizontal`) | implemented | images / Rectangle / Line / Arrow / Scribble | Shift+Alt+H | keyboard / keymap | image | Yes | Board | Works through the shared dispatcher; Frame, Note and Text are excluded. |
+| Flip vertical (`FlipVertical`) | implemented | images / Rectangle / Line / Arrow / Scribble | Shift+Alt+V | keyboard / keymap | image | Yes | Board | Works through the shared dispatcher; Frame, Note and Text are excluded. |
 | Bring forward (`Order(Forward)`) | implemented | all object kinds | — | keyboard / keymap | all object menus → Order | Yes | Board | New UI adapter over existing SetZOrder; selected relative order retained. Frame chrome stacks above image content. |
 | Bring to front (`Order(Front)`) | implemented | all object kinds | — | keyboard / keymap | all object menus → Order | Yes | Board | New UI adapter over existing SetZOrder; selected relative order retained. Frame chrome stacks above image content. |
 | Send backward (`Order(Backward)`) | implemented | all object kinds | — | keyboard / keymap | all object menus → Order | Yes | Board | New UI adapter over existing SetZOrder; selected relative order retained. Frame chrome stacks above image content. |
@@ -91,7 +91,7 @@ selection, tool choice, camera and text drafts. Menu paths are one submenu deep.
 | Pack vertically (`Layout(PackVertical)`) | implemented | independent selection units | Ctrl+Shift+P | keyboard / keymap | multiple → Arrange | Yes | Board | Image groups act as units; frames and annotations participate. Ctrl+Shift+D/V also alias the two distribute actions. |
 | Group selection (`GroupSelection`) | implemented | image groups | Ctrl+G | keyboard / keymap | image / multiple | Yes | Board | Groups are images only; mixed selections cannot group. Ungroup removes touched image groups. |
 | Ungroup selection (`UngroupSelection`) | implemented | image groups | Ctrl+Shift+G | keyboard / keymap | image / multiple | Yes | Board | Groups are images only; mixed selections cannot group. Ungroup removes touched image groups. |
-| Create frame (`CreateFrame`) | implemented | frame | Ctrl+Shift+F | Tack → Tools | canvas | Yes | Board | Returns Pointer after creation. Selection bounds +32 or 60% viewport; frame is a labelled spatial region, not membership/container. |
+| Create frame (`CreateFrame`) | implemented | frame | Ctrl+Shift+F | Tack → Tools | canvas | Yes | Board | Returns Pointer after creation. Selection bounds +32 or 60% viewport; frame is a labelled region; optional flat translation-only children are managed by Link/Unlink. |
 | Rename frame (`RenameFrame`) | implemented | frame / note | F2 | inline text editor | frame → Rename / note → Edit | Yes after commit | Board | F2 and double click edit existing text; frame Enter / note Ctrl+Enter commit; Escape discards. |
 | Focus selected frame (`FocusFrame`) | implemented | frame / camera | Space | Tack → View | frame → Focus | No | session | Camera/selection navigation; unavailable if no applicable frame. |
 | Focus next frame (`NextFrame`) | implemented | frame / camera | PgDn | Tack → View | No | No | session | Camera/selection navigation; unavailable if no applicable frame. |
@@ -100,7 +100,7 @@ selection, tool choice, camera and text drafts. Menu paths are one submenu deep.
 | Rectangle (`SelectTool(Rectangle)`) | implemented | annotation | R | Tack → Tools | No | No | session | Click/drag with selected tool; release commits once and returns Pointer. Escape/focus cancellation adds no history. |
 | Line (`SelectTool(Line)`) | implemented | annotation | L | Tack → Tools | No | No | session | Click/drag with selected tool; release commits once and returns Pointer. Escape/focus cancellation adds no history. |
 | Arrow (`SelectTool(Arrow)`) | implemented | annotation | A | Tack → Tools | No | No | session | Click/drag with selected tool; release commits once and returns Pointer. Escape/focus cancellation adds no history. |
-| Scribble (`SelectTool(Scribble)`) | implemented | annotation | P | Tack → Tools | No | No | session | Click/drag with selected tool; release commits once; remains active for repeated strokes. Escape/V restores Pointer. |
+| Scribble (`SelectTool(Scribble)`) | implemented | annotation | P | Tack → Tools | No | No | session | Click/drag with selected tool; release finishes a stroke; Enter/tool change/save/menu finishes the compound object. No idle timeout. Escape cancels; navigation retains the draft. |
 | Text (`TemporaryTool(Text)`) | experimental | tool state | — | keymap hold binding only | No | No | session | Generic held-tool restoration tested; no default binding or menu; complete native tool combinations not validated. |
 | Rectangle (`TemporaryTool(Rectangle)`) | experimental | tool state | — | keymap hold binding only | No | No | session | Generic held-tool restoration tested; no default binding or menu; complete native tool combinations not validated. |
 | Line (`TemporaryTool(Line)`) | experimental | tool state | — | keymap hold binding only | No | No | session | Generic held-tool restoration tested; no default binding or menu; complete native tool combinations not validated. |
@@ -256,7 +256,7 @@ tool mode, separate keymap/preferences exports and local B → 0–9 camera slot
 Existing custom keymaps retain their bindings; Reset adopts changed defaults.
 
 Frame palette colors require schema 5 only when nondefault colors exist. LAN peers
-must use protocol major 2. Test evidence and remaining physical acceptance are
+used protocol major 2 in that phase; Phase 2A8 now requires major 3. Test evidence and remaining physical acceptance are
 recorded in [the 2A5 report](MISSION_2A5_CONCURRENT_EDITING_INTERACTION_REPORT.md).
 Quadratic curves and Plain Text remain deferred.
 
@@ -273,3 +273,26 @@ B, one movable control point and stroke/color, followed by confirmation. A later
 curved arrow uses the endpoint tangent. No multisegment path, node editor, fills
 or boolean geometry. Future Plain Text follows Note geometry: normal corners
 and sides change box/wrap only; Shift+corner scales box and text together.
+
+
+## Phase 2A8 current additions
+
+| Action/capability | Current behavior | Default | Persistence / authority |
+| --- | --- | --- | --- |
+| Check for Updates | Manual bounded GitHub published-Release check; no polling | Dev channel | Profile; separate non-resident verified portable updater |
+| Link to Frame | Existing selection or normal acquisition; pixel dots, target hover and bounded confirmation | Ctrl+L; default toolbar | Flat links, schema 7; local Undo/shared authority |
+| Unlink from Frame | Removes selected unit/group relations, retains exact positions | Ctrl+Shift+L | One semantic command |
+| Select Linked Objects | Selection only, respects annotation selection lock | Frame context menu | Transient |
+| Finish Scribble | Several independent strokes become one local object | Enter | Compound/per-stroke schema 6; protocol major 3 |
+| Scribble Eraser | One target, swept segment splits; release commits once | E; Scribble context | SetAnnotation/remove with Undo/shared authority |
+| Merge Scribbles | Painter-order strokes and per-stroke styles; common Frame parent required | Multiple-Scribble context | One batch, originals restored by Undo |
+| Cursor ownership | 17 cached hard-alpha PNG16 cursors; UI pointer restores canvas tool | Native | Seed only missing personal files |
+| Annotation-lock icon | One action, distinct ON/OFF artwork | F8 | Existing action/profile rules |
+| Image/group highlight | Per-visible-image outlines, one transformation handle frame | Native | Derived and bounded |
+| Local-minimal | Same local document/renderer/storage; network/updater admission and UI omitted | `--no-default-features` | Protocol remains linked: documented architecture exception |
+| Timed-media seam | Codec-independent bounded API only; no live player/backend | No codec | No resident worker/process |
+
+The older phase sections above record evolution. [2A8 semantics](SCRIBBLE_FRAME_LINKS.md)
+and [alpha checklist](HUMAN_TEST_2A8_ALPHA.md) describe the current compound/link behavior.
+Release artifacts identify Cargo version, exact source commit/channel and protocol;
+`dev` is integration and `main` holds promoted snapshots. Testers do not need git.

@@ -366,7 +366,7 @@ mod tests {
             version: "0.1.0-dev.2".into(),
             channel: tack_update::Channel::Dev,
             git_sha: "a".repeat(40),
-            protocol_major: 2,
+            protocol_major: tack_update::PROTOCOL_MAJOR,
             assets: vec![tack_update::Asset {
                 platform: "linux-x86_64".into(),
                 name: "tack-linux-x86_64.zip".into(),

@@ -336,3 +336,190 @@ fn undo_does_not_rearm_across_another_clients_same_object_edit() -> R {
     );
     Ok(())
 }
+
+#[test]
+fn frame_batch_scope_conflicts_with_child_edit_and_undo_converges() -> R {
+    let work = Work::new()?;
+    let mut document = fixture()?;
+    let frame = ObjectId::new(4)?;
+    document.apply(Command::AddObject {
+        object: DocumentObject::frame(
+            frame,
+            "Parent".into(),
+            Transform::new([0., 0.], [100., 100.], 0., [false; 2])?,
+        )?,
+        index: 1,
+    })?;
+    document.apply(Command::SetFrameLinks(vec![(
+        ObjectId::new(3)?,
+        Some(frame),
+    )]))?;
+    let mut authority = Authority::publish(&work.0, document, vec![])?;
+    authority.edit(WireId::new(20)?, WireId::new(30)?, 0, edit(15.)?, vec![])?;
+    let batch = CommandDto::from_command(&Command::Batch(vec![
+        Command::SetTransform {
+            object: frame,
+            transform: Transform::new([0., 0.], [120., 100.], 0., [false; 2])?,
+        },
+        Command::SetTransform {
+            object: frame,
+            transform: Transform::new([25., 0.], [120., 100.], 0., [false; 2])?,
+        },
+    ]))?;
+    assert!(
+        batch
+            .scope(authority.document())
+            .objects
+            .contains(&WireId::new(3)?)
+    );
+    let before = authority.document().clone();
+    assert!(
+        authority
+            .edit(WireId::new(21)?, WireId::new(31)?, 0, batch.clone(), vec![])
+            .is_err()
+    );
+    assert_eq!(authority.document(), &before);
+    authority.edit(WireId::new(21)?, WireId::new(32)?, 1, batch, vec![])?;
+    assert_eq!(
+        authority
+            .document()
+            .object(ObjectId::new(3)?)
+            .ok_or("child")?
+            .transform()
+            .center(),
+        [40., 20.]
+    );
+    authority.history(WireId::new(21)?, WireId::new(33)?, 2, false)?;
+    assert_eq!(authority.document(), &before);
+    // Another client touched the same child: prior history remains conflicted
+    // even after that client restores its pose. Do not silently rearm it.
+    assert!(
+        authority
+            .history(WireId::new(20)?, WireId::new(34)?, 3, false)
+            .is_err()
+    );
+    authority = Authority::open(&work.0, authority.board())?;
+    assert_eq!(authority.document(), &before);
+    Ok(())
+}
+#[test]
+fn oversized_frame_delete_inverse_is_refused_before_publication() -> R {
+    let work = Work::new()?;
+    let mut document = fixture()?;
+    let frame = ObjectId::new(4)?;
+    document.apply(Command::AddObject {
+        object: DocumentObject::frame(
+            frame,
+            "Parent".into(),
+            Transform::new([0., 0.], [100., 100.], 0., [false; 2])?,
+        )?,
+        index: 1,
+    })?;
+    let mut links = Vec::new();
+    for n in 100..=20100 {
+        let id = ObjectId::new(n)?;
+        document.apply(Command::AddObject {
+            object: DocumentObject::image(
+                id,
+                AssetId::new(2)?,
+                Transform::new([0., 0.], [10., 10.], 0., [false; 2])?,
+            ),
+            index: document.object_order().len(),
+        })?;
+        links.push((id, Some(frame)));
+    }
+    document.apply(Command::SetFrameLinks(links))?;
+    let original = document.clone();
+    let mut authority = Authority::publish(&work.0, document, vec![])?;
+    let bytes = fs::read(work.0.join(format!("{}.board", authority.board())))?;
+    let error = authority
+        .edit(
+            WireId::new(20)?,
+            WireId::new(30)?,
+            0,
+            CommandDto::from_command(&Command::RemoveObject(frame))?,
+            vec![],
+        )
+        .err()
+        .ok_or("oversized inverse was accepted")?;
+    assert!(error.to_string().contains("generated undo/redo"), "{error}");
+    assert_eq!(authority.revision(), 0);
+    assert_eq!(authority.document(), &original);
+    assert_eq!(
+        fs::read(work.0.join(format!("{}.board", authority.board())))?,
+        bytes
+    );
+    Ok(())
+}
+
+#[test]
+fn compound_scribble_eraser_merge_authority_replay_history_and_restart() -> R {
+    let work = Work::new()?;
+    let mut doc = fixture()?;
+    let t = Transform::new([0., 0.], [100., 100.], 0., [false; 2])?;
+    let style = AnnotationStyle::default();
+    let stroke = |y| ScribbleStroke::new(vec![[0., y], [1., y]], Some(style));
+    let compound = |ys: &[f64]| -> Result<Annotation, Box<dyn std::error::Error>> {
+        Ok(Annotation::new(
+            AnnotationKind::Scribble(ScribbleObject::from_strokes(
+                ys.iter()
+                    .map(|y| stroke(*y))
+                    .collect::<Result<Vec<_>, _>>()?,
+            )?),
+            style,
+        ))
+    };
+    let first = ObjectId::new(4)?;
+    let second = ObjectId::new(5)?;
+    for (id, ys) in [(first, vec![0.25, 0.75]), (second, vec![0.5])] {
+        doc.apply(Command::AddObject {
+            object: DocumentObject::annotation(id, compound(&ys)?, t)?,
+            index: doc.object_order().len(),
+        })?;
+    }
+    let mut peer = tack_shared::DocumentRecord::from_document(&doc)?.to_document()?;
+    let original = doc.clone();
+    let mut a = Authority::publish(&work.0, doc, vec![])?;
+    let client = WireId::new(20)?;
+    let eraser = CommandDto::from_command(&Command::SetAnnotation {
+        object: first,
+        annotation: compound(&[0.75])?,
+    })?;
+    let change = a.edit(client, WireId::new(30)?, 0, eraser, vec![])?;
+    peer.apply(change.command.to_command()?)?;
+    assert_eq!(&peer, a.document());
+    let erased = peer.clone();
+    let undo = a.history(client, WireId::new(31)?, 1, false)?;
+    peer.apply(undo.command.to_command()?)?;
+    assert_eq!(peer, original);
+    let redo = a.history(client, WireId::new(32)?, 2, true)?;
+    peer.apply(redo.command.to_command()?)?;
+    assert_eq!(peer, erased);
+    let merged = ObjectId::new(6)?;
+    let command = Command::Batch(vec![
+        Command::RemoveObject(first),
+        Command::RemoveObject(second),
+        Command::AddObject {
+            object: DocumentObject::annotation(merged, compound(&[0.75, 0.5])?, t)?,
+            index: 1,
+        },
+    ]);
+    let change = a.edit(
+        client,
+        WireId::new(33)?,
+        3,
+        CommandDto::from_command(&command)?,
+        vec![],
+    )?;
+    peer.apply(change.command.to_command()?)?;
+    assert_eq!(&peer, a.document());
+    a = Authority::open(&work.0, a.board())?;
+    assert_eq!(&peer, a.document());
+    let undo = a.history(client, WireId::new(34)?, 4, false)?;
+    peer.apply(undo.command.to_command()?)?;
+    assert_eq!(peer, erased);
+    let redo = a.history(client, WireId::new(35)?, 5, true)?;
+    peer.apply(redo.command.to_command()?)?;
+    assert_eq!(&peer, a.document());
+    Ok(())
+}

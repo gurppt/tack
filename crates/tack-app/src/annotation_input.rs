@@ -116,6 +116,14 @@ impl ImageInput {
             return Ok(true);
         }
         match event.action {
+            Action::FinishScribble if event.phase == ActionPhase::Invoke => {
+                self.finish_scribble(editor)?;
+                Ok(true)
+            }
+            Action::MergeScribbles if event.phase == ActionPhase::Invoke => {
+                self.merge_scribbles(editor)?;
+                Ok(true)
+            }
             Action::SelectTool(_) | Action::TemporaryTool(_) => {
                 self.annotation.tools.apply(event)?;
                 if !self.annotation.tools.tool().is_annotation() {
@@ -261,6 +269,20 @@ impl ImageInput {
         if !tool.is_annotation() {
             return false;
         }
+        if tool == Tool::Scribble
+            && (self.annotation.scribble.len() >= MAX_SCRIBBLE_STROKES
+                || self
+                    .annotation
+                    .scribble
+                    .iter()
+                    .map(|s| s.points.len())
+                    .sum::<usize>()
+                    + 2
+                    > MAX_STROKE_POINTS)
+        {
+            self.status = "Scribble limit — Enter to finish".into();
+            return true;
+        }
         self.images.selection.clear();
         self.images.crop_mode = false;
         self.annotation.creation = Some(Box::new(Creation::new(
@@ -270,6 +292,15 @@ impl ImageInput {
             editor.generation(),
             self.gizmo.scale * 0.75 / camera.zoom(),
         )));
+        if let Some(c) = &mut self.annotation.creation {
+            c.point_limit = MAX_STROKE_POINTS
+                - self
+                    .annotation
+                    .scribble
+                    .iter()
+                    .map(|s| s.points.len())
+                    .sum::<usize>();
+        }
         true
     }
     pub(crate) fn finish_annotation(
@@ -290,6 +321,13 @@ impl ImageInput {
                 || c.tool == Tool::Scribble && c.points.len() < 2)
         {
             self.annotation.tools.complete_creation(c.tool);
+            return Ok(());
+        }
+        if c.tool == Tool::Scribble {
+            let mut c = *c;
+            c.points = simplify_stroke(&c.points, c.tolerance)?;
+            self.annotation.scribble.push(c);
+            self.status = "Scribble — Enter to finish, Escape to cancel".into();
             return Ok(());
         }
         let id = tack_storage::new_object_id()?;

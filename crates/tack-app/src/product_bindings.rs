@@ -56,6 +56,12 @@ pub fn product_keymap() -> Result<Keymap, BindingError> {
             ctrl.union(shift),
             Action::Order(crate::selection_commands::Order::Back),
         ),
+        (KeyCode::Enter, Modifiers::NONE, Action::FinishScribble),
+        (
+            KeyCode::KeyE,
+            Modifiers::NONE,
+            Action::SelectTool(Tool::Eraser),
+        ),
         (KeyCode::F10, Modifiers::NONE, Action::ApplicationMenu),
         (KeyCode::KeyN, ctrl, Action::NewBoard),
         (KeyCode::KeyO, ctrl, Action::OpenBoard),
@@ -205,6 +211,8 @@ pub fn product_keymap() -> Result<Keymap, BindingError> {
     for (code, mods, action) in [
         (KeyCode::KeyG, Modifiers::NONE, Action::ToggleGrid),
         (KeyCode::KeyG, shift, Action::ToggleSnapping),
+        (KeyCode::KeyL, ctrl, Action::LinkToFrame),
+        (KeyCode::KeyL, ctrl.union(shift), Action::UnlinkFromFrame),
         (KeyCode::KeyG, ctrl, Action::GroupSelection),
         (KeyCode::KeyG, ctrl.union(shift), Action::UngroupSelection),
         (KeyCode::KeyF, ctrl.union(shift), Action::CreateFrame),

@@ -14,7 +14,7 @@ fn fixture(install: &Path) -> Result<(std::path::PathBuf, Manifest), Error> {
     let archive = stage.join("package.zip");
     let f = std::fs::File::create(&archive)?;
     let mut zip = zip::ZipWriter::new(f);
-    let record = serde_json::json!({"commit":"a".repeat(40),"version":"0.1.0-dev.2","channel":"dev","protocol_major":2});
+    let record = serde_json::json!({"commit":"a".repeat(40),"version":"0.1.0-dev.2","channel":"dev","protocol_major":tack_update::PROTOCOL_MAJOR});
     for (name, bytes) in [
         (
             "tack",
@@ -41,7 +41,7 @@ fn fixture(install: &Path) -> Result<(std::path::PathBuf, Manifest), Error> {
         version: "0.1.0-dev.2".into(),
         channel: Channel::Dev,
         git_sha: "a".repeat(40),
-        protocol_major: 2,
+        protocol_major: tack_update::PROTOCOL_MAJOR,
         assets: vec![Asset {
             platform: "linux-x86_64".into(),
             name: "tack-linux-x86_64.zip".into(),

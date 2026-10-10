@@ -12,6 +12,7 @@ pub enum Tool {
     Line,
     Arrow,
     Scribble,
+    Eraser,
 }
 impl Tool {
     pub fn is_one_shot(self) -> bool {
@@ -36,6 +37,7 @@ impl Tool {
             Self::Line => "Line",
             Self::Arrow => "Arrow",
             Self::Scribble => "Scribble",
+            Self::Eraser => "Scribble eraser",
         }
     }
 }
@@ -76,6 +78,11 @@ pub enum Action {
     Layout(crate::spatial_layout::Layout),
     GroupSelection,
     UngroupSelection,
+    FinishScribble,
+    MergeScribbles,
+    LinkToFrame,
+    UnlinkFromFrame,
+    SelectLinkedObjects,
     CreateFrame,
     RenameFrame,
     FocusFrame,
@@ -120,7 +127,7 @@ pub enum Action {
 }
 impl Action {
     /// Enumerable action catalog, including currently unassigned actions.
-    pub const ALL: [Self; 123] = [
+    pub const ALL: [Self; 130] = [
         Self::SelectTool(Tool::Pointer),
         Self::SelectTool(Tool::Pan),
         Self::SelectTool(Tool::RotateView),
@@ -176,6 +183,13 @@ impl Action {
         Self::Layout(crate::spatial_layout::Layout::PackVertical),
         Self::GroupSelection,
         Self::UngroupSelection,
+        Self::FinishScribble,
+        Self::MergeScribbles,
+        Self::SelectTool(Tool::Eraser),
+        Self::TemporaryTool(Tool::Eraser),
+        Self::LinkToFrame,
+        Self::UnlinkFromFrame,
+        Self::SelectLinkedObjects,
         Self::CreateFrame,
         Self::RenameFrame,
         Self::FocusFrame,
@@ -414,6 +428,11 @@ impl Action {
             },
             Self::GroupSelection => "Group selection",
             Self::UngroupSelection => "Ungroup selection",
+            Self::FinishScribble => "Finish Scribble",
+            Self::MergeScribbles => "Merge Scribbles",
+            Self::LinkToFrame => "Link to Frame",
+            Self::UnlinkFromFrame => "Unlink from Frame",
+            Self::SelectLinkedObjects => "Select Linked Objects",
             Self::CreateFrame => "Create frame",
             Self::RenameFrame => "Rename frame",
             Self::FocusFrame => "Fit Frame in View",

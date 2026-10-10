@@ -86,7 +86,7 @@ hosting, leases, offline transitions, import and local-worker DTO paths cross
 many composition modules. Making the entire dependency optional now would need
 invasive churn; the brief permits an assessment and a small seam instead. Chrome
 now consumes generic `UiConnection`, not a transport/client state type. Document,
-renderer and local storage are identical in both builds. Measurements are pending.
+renderer and local storage are identical in both builds. The admission-gate cost is measured in the final phase report.
 
 `TimedAssetBackend` defines probe/poster/frame/seek/scrub/play/pause/close only.
 No codec/player is implemented or instantiated. Contextual frame stepping is
@@ -100,11 +100,12 @@ seed script is never a build hook. Annotation lock ON/OFF has one action identit
 Visible selected images, including group members, derive individual outlines;
 handles remain one selection frame. Flip includes images and non-text annotations.
 
-## Remaining phase work
+## Board editing and acceptance
 
-Compound Scribble, Mini Eraser, Merge Scribbles and Frame linkage are still to be
-implemented. Native/package validation, comparative performance evidence and the
-final human checklist/report are pending. This document is a development record,
+Compound Scribble, Mini Eraser, Merge Scribbles and flat Frame linkage are implemented.
+See [semantics and limits](SCRIBBLE_FRAME_LINKS.md) and [human checklist](HUMAN_TEST_2A8_ALPHA.md).
+These require LAN protocol major 3 (older peers must upgrade); old board schemas remain readable.
+Native/package validation and comparative performance receipts are recorded in the final phase report. This document is a development record,
 not an alpha acceptance claim. Physical artist feel, Windows desktop and two
 physical computers on LAN remain human gates. The earlier system freeze is still
 undetermined; automated UI checks use an owned software-Vulkan display.

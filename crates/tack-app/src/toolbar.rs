@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 pub const MAX_ENTRIES: usize = 32;
 /// Persisted layout token, deliberately outside the semantic Action catalog.
 pub const SEPARATOR: &str = "Separator";
-pub const DEFAULT_ACTIONS: [Action; 12] = [
+pub const DEFAULT_ACTIONS: [Action; 13] = [
     Action::SelectTool(Tool::Pointer),
     Action::SelectTool(Tool::Pan),
     Action::SelectTool(Tool::Text),
@@ -16,6 +16,7 @@ pub const DEFAULT_ACTIONS: [Action; 12] = [
     Action::SelectTool(Tool::Arrow),
     Action::SelectTool(Tool::Scribble),
     Action::CreateFrame,
+    Action::LinkToFrame,
     Action::DuplicateSelection,
     Action::Undo,
     Action::Redo,

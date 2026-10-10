@@ -25,6 +25,30 @@ impl CommandDto {
                     edit.collect_scope(document, scope);
                 }
             }
+            SetFrameLinks { links } => {
+                scope.reads_dependencies = true;
+                scope.writes_dependencies = true;
+                for (child, parent) in links {
+                    scope.objects.insert(*child);
+                    scope.objects.extend(parent);
+                    if let Ok(id) = tack_core::ObjectId::new(child.value()) {
+                        if let Some(previous) = document
+                            .frame_parent(id)
+                            .and_then(|p| WireId::new(p.value()).ok())
+                        {
+                            scope.objects.insert(previous);
+                        }
+                        if let Some(group) = document.group_for(id) {
+                            scope.objects.extend(
+                                group
+                                    .members()
+                                    .iter()
+                                    .filter_map(|m| WireId::new(m.value()).ok()),
+                            );
+                        }
+                    }
+                }
+            }
             AddObject { object, .. } => {
                 // The DTO's validated core object supplies its stable ID.
                 if let Ok(object) = object.to_object() {
@@ -38,13 +62,20 @@ impl CommandDto {
             RemoveObject { object } => {
                 scope.objects.insert(*object);
                 scope.writes_order = true;
+                scope.frame_relation(document, *object, true);
             }
-            SetTransform { object, .. }
-            | SetCrop { object, .. }
+            SetTransform { object, .. } => {
+                scope.objects.insert(*object);
+                // A flat batch can resize then translate a Frame. Scope all children
+                // conservatively so later edits cannot escape clocks or leases.
+                scope.frame_relation(document, *object, false);
+            }
+            SetCrop { object, .. }
             | SetOpacity { object, .. }
             | SetImageFiltering { object, .. }
             | SetFrameName { object, .. }
             | SetFrameColor { object, .. }
+            | SetAnnotation { object, .. }
             | SetAnnotationStyle { object, .. }
             | SetText { object, .. } => {
                 scope.objects.insert(*object);
@@ -92,6 +123,35 @@ impl CommandDto {
     }
 }
 impl CommandScope {
+    fn frame_relation(&mut self, document: &Document, object: WireId, delete: bool) {
+        if let Ok(id) = tack_core::ObjectId::new(object.value()) {
+            if document
+                .object(id)
+                .is_some_and(|o| matches!(o.kind(), ObjectKind::Frame(_)))
+            {
+                self.reads_dependencies = true;
+                self.writes_dependencies |= delete;
+            }
+            let children: Vec<_> = document
+                .linked_children(id)
+                .filter_map(|c| WireId::new(c.value()).ok())
+                .collect();
+            if !children.is_empty() {
+                self.objects.extend(children);
+                self.reads_dependencies = true;
+                self.writes_dependencies |= delete;
+            }
+            if delete
+                && let Some(parent) = document
+                    .frame_parent(id)
+                    .and_then(|p| WireId::new(p.value()).ok())
+            {
+                self.objects.insert(parent);
+                self.reads_dependencies = true;
+                self.writes_dependencies = true;
+            }
+        }
+    }
     fn descriptor(&mut self, document: &Document, source: Option<WireId>, asset: Option<WireId>) {
         self.reads_dependencies = true;
         self.writes_dependencies = true;

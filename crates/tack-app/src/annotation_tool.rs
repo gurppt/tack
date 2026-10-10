@@ -11,6 +11,7 @@ pub struct Creation {
     pub capped: bool,
     pub generation: u64,
     pub tolerance: f64,
+    pub point_limit: usize,
 }
 impl Creation {
     pub fn new(
@@ -33,6 +34,7 @@ impl Creation {
             capped: false,
             generation,
             tolerance,
+            point_limit: MAX_STROKE_POINTS,
         }
     }
     pub fn update(&mut self, p: [f64; 2]) {
@@ -49,7 +51,7 @@ impl Creation {
                 .last()
                 .is_none_or(|last| (p[0] - last[0]).hypot(p[1] - last[1]) >= self.tolerance * 0.5)
         {
-            if self.points.len() < MAX_STROKE_POINTS {
+            if self.points.len() < self.point_limit {
                 self.points.push(p);
             } else {
                 self.capped = true;
@@ -184,5 +186,7 @@ pub struct AnnotationInput {
     pub tools: crate::actions::Interaction,
     pub creation: Option<Box<Creation>>,
     pub edit: Option<Box<NoteEdit>>,
+    pub scribble: Vec<Creation>,
+    pub eraser: Option<Box<crate::scribble_edit::EraserDraft>>,
     pub style: AnnotationStyle,
 }

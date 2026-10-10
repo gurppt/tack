@@ -35,6 +35,8 @@ pub struct Document {
     pub(crate) bookmarks: Vec<crate::CameraBookmark>,
     pub(crate) frame_count: usize,
     pub(crate) annotation_count: usize,
+    pub(crate) frame_links: BTreeMap<ObjectId, ObjectId>,
+    pub(crate) frame_children: BTreeMap<ObjectId, std::collections::BTreeSet<ObjectId>>,
     pub(crate) memberships: BTreeMap<ObjectId, crate::GroupId>,
 }
 impl Document {
@@ -55,6 +57,8 @@ impl Document {
             order: Vec::new(),
             groups: BTreeMap::new(),
             memberships: BTreeMap::new(),
+            frame_links: BTreeMap::new(),
+            frame_children: BTreeMap::new(),
             bookmarks: Vec::new(),
             frame_count: 0,
             annotation_count: 0,

@@ -102,3 +102,51 @@ fn old_schema_and_all_spatial_records_roundtrip_exact_with_missing_sources() -> 
     fs::remove_dir_all(&dir)?;
     Ok(())
 }
+
+#[test]
+fn frame_links_schema_seven_roundtrip_and_old_boards_remain_readable() -> R {
+    let dir = std::env::temp_dir().join(format!(
+        "tack-frame-link-roundtrip-{}",
+        new_document_id()?.value()
+    ));
+    fs::create_dir(&dir)?;
+    let path = dir.join("links.tack");
+    let mut d = Document::new(DocumentId::new(1)?, DocumentLimits::default());
+    d.apply(Command::AddObject {
+        object: DocumentObject::frame(
+            ObjectId::new(2)?,
+            "Parent".into(),
+            Transform::new([0., 0.], [100., 100.], 0., [false; 2])?,
+        )?,
+        index: 0,
+    })?;
+    d.apply(Command::AddObject {
+        object: DocumentObject::annotation(
+            ObjectId::new(3)?,
+            Annotation::new(AnnotationKind::Rect, AnnotationStyle::default()),
+            Transform::new([2., 3.], [10., 20.], 0.3, [true, false])?,
+        )?,
+        index: 1,
+    })?;
+    save(&path, &d, vec![])?;
+    let old = fs::read(&path)?;
+    assert_eq!(TackFile::open(&path)?.document, d);
+    d.apply(Command::SetFrameLinks(vec![(
+        ObjectId::new(3)?,
+        Some(ObjectId::new(2)?),
+    )]))?;
+    save(&path, &d, vec![])?;
+    assert_eq!(&fs::read(&path)?[12..16], &7u32.to_le_bytes());
+    let opened = TackFile::open(&path)?.document;
+    assert_eq!(opened, d);
+    assert_eq!(
+        opened
+            .linked_children(ObjectId::new(2)?)
+            .collect::<Vec<_>>(),
+        vec![ObjectId::new(3)?]
+    );
+    fs::write(&path, old)?;
+    assert_eq!(TackFile::open(&path)?.document.frame_links().count(), 0);
+    fs::remove_dir_all(dir)?;
+    Ok(())
+}

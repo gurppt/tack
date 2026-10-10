@@ -131,6 +131,12 @@ impl TextDto {
     }
 }
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct StrokeDto {
+    pub points: Vec<[f64; 2]>,
+    pub style: Option<StyleDto>,
+}
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum AnnotationDto {
     Rect,
@@ -138,9 +144,10 @@ pub enum AnnotationDto {
     Line { points: [[f64; 2]; 2] },
     Arrow { points: [[f64; 2]; 2] },
     Scribble { points: Vec<[f64; 2]> },
+    CompoundScribble { strokes: Vec<StrokeDto> },
 }
 impl AnnotationDto {
-    fn from_kind(kind: &AnnotationKind) -> Self {
+    pub fn from_kind(kind: &AnnotationKind) -> Self {
         match kind {
             AnnotationKind::Rect => Self::Rect,
             AnnotationKind::Text(text) => Self::Text {
@@ -152,12 +159,22 @@ impl AnnotationDto {
             AnnotationKind::Arrow(line) => Self::Arrow {
                 points: line.points(),
             },
+            AnnotationKind::Scribble(s) if !s.is_legacy() => Self::CompoundScribble {
+                strokes: s
+                    .strokes()
+                    .iter()
+                    .map(|s| StrokeDto {
+                        points: s.points().to_vec(),
+                        style: s.style().map(StyleDto::from_style),
+                    })
+                    .collect(),
+            },
             AnnotationKind::Scribble(stroke) => Self::Scribble {
                 points: stroke.points().to_vec(),
             },
         }
     }
-    fn to_kind(&self) -> Result<AnnotationKind> {
+    pub fn to_kind(&self) -> Result<AnnotationKind> {
         Ok(match self {
             Self::Rect => AnnotationKind::Rect,
             Self::Text { text } => AnnotationKind::Text(text.to_text()?),
@@ -166,6 +183,28 @@ impl AnnotationDto {
             }
             Self::Arrow { points } => {
                 AnnotationKind::Arrow(LineObject::new(*points).map_err(domain_error)?)
+            }
+            Self::CompoundScribble { strokes } => {
+                if strokes.len() > MAX_SCRIBBLE_STROKES
+                    || strokes.iter().map(|s| s.points.len()).sum::<usize>() > MAX_STROKE_POINTS
+                {
+                    return Err(Error::Invalid("compound scribble budget"));
+                }
+                AnnotationKind::Scribble(
+                    ScribbleObject::from_strokes(
+                        strokes
+                            .iter()
+                            .map(|s| {
+                                ScribbleStroke::new(
+                                    s.points.clone(),
+                                    s.style.as_ref().map(StyleDto::to_style).transpose()?,
+                                )
+                                .map_err(domain_error)
+                            })
+                            .collect::<Result<Vec<_>>>()?,
+                    )
+                    .map_err(domain_error)?,
+                )
             }
             Self::Scribble { points } => {
                 if points.len() > MAX_STROKE_POINTS {

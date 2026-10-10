@@ -10,6 +10,8 @@ pub enum Command {
     /// Flat bounded object edits; one atomic operation and one inverse.
     Batch(Vec<Command>),
     SetCameraBookmarks(Vec<crate::CameraBookmark>),
+    /// Atomically change flat child-to-Frame relations; groups must stay uniform.
+    SetFrameLinks(Vec<(ObjectId, Option<ObjectId>)>),
     AddSource(Source),
     RemoveSource(SourceId),
     /// Explicit revision/binding replacement; inverse retains the previous source.
@@ -49,6 +51,10 @@ pub enum Command {
         object: ObjectId,
         name: String,
     },
+    SetAnnotation {
+        object: ObjectId,
+        annotation: crate::Annotation,
+    },
     SetAnnotationStyle {
         object: ObjectId,
         style: crate::AnnotationStyle,
@@ -66,6 +72,7 @@ pub enum Command {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum CommandError {
     InvalidGroup,
+    InvalidFrameLink,
     ObjectInGroup(ObjectId),
     WrongObjectKind(ObjectId),
     InvalidFrame,
@@ -118,6 +125,10 @@ impl Command {
                         .sum::<usize>()
             }
             Self::AddGroup(g) => g.retained_bytes(),
+            Self::SetAnnotation { annotation, .. } => annotation.retained_bytes(),
+            Self::SetFrameLinks(links) => {
+                links.capacity() * std::mem::size_of::<(ObjectId, Option<ObjectId>)>()
+            }
             Self::SetFrameName { name, .. } => name.capacity(),
             Self::SetText { text, .. } => text.retained_bytes(),
             Self::AddObject { object, .. } => match object.kind() {
@@ -148,6 +159,7 @@ impl Command {
         matches!(
             self,
             Self::SetCameraBookmarks(_)
+                | Self::SetFrameLinks(_)
                 | Self::AddSource(_)
                 | Self::RemoveSource(_)
                 | Self::SetSource(_)
@@ -166,6 +178,7 @@ impl Command {
                 | Self::SetFrameName { .. }
                 | Self::SetFrameColor { .. }
                 | Self::SetText { .. }
+                | Self::SetAnnotation { .. }
                 | Self::SetAnnotationStyle { .. }
         )
     }
@@ -206,6 +219,7 @@ impl Document {
     ) -> Result<Option<Command>, CommandError> {
         use Command::*;
         let inverse = match command {
+            SetFrameLinks(changes) => return self.set_frame_links(changes),
             SetCameraBookmarks(views) => {
                 let ids: std::collections::BTreeSet<_> = views.iter().map(|b| b.id()).collect();
                 if views.len() > crate::MAX_CAMERA_BOOKMARKS || ids.len() != views.len() {
@@ -225,9 +239,23 @@ impl Document {
                     return Err(CommandError::LimitReached("flat metadata batch"));
                 }
                 let mut inverses = Vec::with_capacity(edits.len());
+                let mut inverse_count = 0usize;
                 for edit in edits {
                     match self.apply_reversible(edit) {
-                        Ok(Some(inverse)) => inverses.push(inverse),
+                        Ok(Some(inverse)) => {
+                            inverse_count += match &inverse {
+                                Batch(edits) => edits.len(),
+                                _ => 1,
+                            };
+                            if inverse_count > 200_000 {
+                                self.apply_reversible(inverse)?;
+                                for inverse in inverses.into_iter().rev() {
+                                    self.apply_reversible(inverse)?;
+                                }
+                                return Err(CommandError::LimitReached("generated inverse batch"));
+                            }
+                            inverses.push(inverse);
+                        }
                         Ok(None) => {}
                         Err(error) => {
                             // Reverse edits restore both records and ordered indices.
@@ -241,8 +269,16 @@ impl Document {
                 if inverses.is_empty() {
                     None
                 } else {
-                    inverses.reverse();
-                    inverses.shrink_to_fit();
+                    // Generated inverses may be compound (Frame delete/translation).
+                    // Flatten in undo order; caller-provided nested batches stay forbidden.
+                    let inverses: Vec<_> = inverses
+                        .into_iter()
+                        .rev()
+                        .flat_map(|inverse| match inverse {
+                            Batch(edits) => edits,
+                            other => vec![other],
+                        })
+                        .collect();
                     Some(Batch(inverses))
                 }
             }
@@ -353,6 +389,14 @@ impl Document {
                 if self.memberships.contains_key(&id) {
                     return Err(CommandError::ObjectInGroup(id));
                 }
+                let mut links: Vec<_> = self
+                    .linked_children(id)
+                    .map(|child| (child, None))
+                    .collect();
+                if self.frame_parent(id).is_some() {
+                    links.push((id, None));
+                }
+                let restore_links = self.set_frame_links(links)?;
                 let index = self.position(id)?;
                 let object = self
                     .objects
@@ -365,24 +409,14 @@ impl Document {
                 if matches!(object.kind(), ObjectKind::Annotation(_)) {
                     self.annotation_count -= 1;
                 }
-                Some(AddObject { object, index })
+                let restore = AddObject { object, index };
+                Some(match restore_links {
+                    Some(links) => Batch(vec![restore, links]),
+                    None => restore,
+                })
             }
             SetTransform { object, transform } => {
-                let target = self
-                    .objects
-                    .get_mut(&object)
-                    .ok_or(CommandError::MissingObject(object))?;
-                if let ObjectKind::Annotation(a) = target.kind() {
-                    a.bounds(transform)
-                        .map_err(|_| CommandError::LimitReached("annotation bounds"))?;
-                }
-                if matches!(target.kind(), ObjectKind::Frame(_))
-                    && (transform.rotation() != 0. || transform.flips() != [false; 2])
-                {
-                    return Err(CommandError::InvalidFrame);
-                }
-                replace(&mut target.transform, transform)
-                    .map(|transform| SetTransform { object, transform })
+                return self.set_linked_transform(object, transform);
             }
             SetCrop { object, crop } => {
                 let target = self
@@ -394,6 +428,17 @@ impl Document {
                 replace(&mut target.crop, crop).map(|crop| SetCrop { object, crop })
             }
             SetOpacity { object, opacity } => {
+                if let Some(target) = self.object(object)
+                    && let ObjectKind::Annotation(a) = target.kind()
+                    && let crate::AnnotationKind::Scribble(s) = a.kind()
+                    && s.strokes().iter().any(|s| s.style().is_some())
+                {
+                    let old = a.style();
+                    let style =
+                        crate::AnnotationStyle::new(old.stroke(), old.fill(), old.width(), opacity)
+                            .map_err(|_| CommandError::LimitReached("annotation style"))?;
+                    return self.apply_reversible(SetAnnotationStyle { object, style });
+                }
                 let target = self
                     .objects
                     .get_mut(&object)
@@ -428,6 +473,26 @@ impl Document {
             }
             AddGroup(group) => return self.add_group(group),
             RemoveGroup(id) => return self.remove_group(id),
+            SetAnnotation { object, annotation } => {
+                let target = self
+                    .objects
+                    .get_mut(&object)
+                    .ok_or(CommandError::MissingObject(object))?;
+                let ObjectKind::Annotation(a) = &mut target.kind else {
+                    return Err(CommandError::WrongObjectKind(object));
+                };
+                annotation
+                    .bounds(target.transform)
+                    .map_err(|_| CommandError::LimitReached("annotation bounds"))?;
+                if a.as_ref() == &annotation {
+                    None
+                } else {
+                    Some(SetAnnotation {
+                        object,
+                        annotation: std::mem::replace(a.as_mut(), annotation),
+                    })
+                }
+            }
             SetAnnotationStyle { object, style } => {
                 let target = self
                     .objects
@@ -438,7 +503,29 @@ impl Document {
                 };
                 a.bounds_with_style(target.transform, style)
                     .map_err(|_| CommandError::LimitReached("annotation bounds"))?;
-                replace(&mut a.style, style).map(|style| SetAnnotationStyle { object, style })
+                if let crate::AnnotationKind::Scribble(s) = &a.kind
+                    && s.strokes().iter().any(|s| s.style().is_some())
+                {
+                    let next = crate::Annotation::new(
+                        crate::AnnotationKind::Scribble(
+                            s.restyled(a.style, style)
+                                .map_err(|_| CommandError::LimitReached("scribble style"))?,
+                        ),
+                        style,
+                    );
+                    next.bounds(target.transform)
+                        .map_err(|_| CommandError::LimitReached("annotation bounds"))?;
+                    if a.as_ref() == &next {
+                        None
+                    } else {
+                        Some(SetAnnotation {
+                            object,
+                            annotation: std::mem::replace(a.as_mut(), next),
+                        })
+                    }
+                } else {
+                    replace(&mut a.style, style).map(|style| SetAnnotationStyle { object, style })
+                }
             }
             SetText { object, text } => {
                 let target = self

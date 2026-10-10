@@ -108,7 +108,12 @@ pub fn arrange(
                 next
             };
             let delta = [next[0] - unit.bounds.x, next[1] - unit.bounds.y];
-            if delta == [0.; 2] {
+            if delta == [0.; 2]
+                && !unit.ids.iter().any(|id| {
+                    doc.frame_parent(*id)
+                        .is_some_and(|parent| seen.contains(&parent))
+                })
+            {
                 continue;
             }
             for id in unit.ids {
@@ -124,6 +129,7 @@ pub fn arrange(
                 });
             }
         }
+        frames_first(doc, &mut edits);
         return Ok(Command::Batch(edits));
     }
     let axis = usize::from(matches!(
@@ -191,6 +197,7 @@ pub fn arrange(
             });
         }
     }
+    frames_first(doc, &mut edits);
     Ok(Command::Batch(edits))
 }
 
@@ -237,4 +244,18 @@ fn grid_columns(units: &[Unit], selection: WorldRect) -> usize {
         }
     }
     best.1
+}
+
+// Frame translations implicitly move children; place explicit child targets last.
+fn frames_first(doc: &Document, edits: &mut [Command]) {
+    edits.sort_by_key(|edit| match edit {
+        Command::SetTransform { object, .. }
+            if doc
+                .object(*object)
+                .is_some_and(|o| matches!(o.kind(), tack_core::ObjectKind::Frame(_))) =>
+        {
+            0
+        }
+        _ => 1,
+    });
 }

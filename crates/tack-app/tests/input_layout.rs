@@ -391,6 +391,9 @@ fn creation_completion_cancel_focus_and_freehand_policy() -> R {
         input.physical(button(ElementState::Pressed), &mut e, &mut c)?;
         input.cursor_moved([180., 160.], &e, &mut c)?;
         input.physical(button(ElementState::Released), &mut e, &mut c)?;
+        if tool == Tool::Scribble {
+            invoke(&mut input, &mut e, &mut c, Action::FinishScribble)?;
+        }
         assert_eq!(e.undo_len(), 1);
         assert_eq!(
             input.annotation.tools.tool(),

@@ -5,7 +5,7 @@ use std::{
     path::{Path, PathBuf},
 };
 use tack_assets::{AssetError, Decoded};
-pub const NAMES: [&str; 18] = [
+pub const NAMES: [&str; 20] = [
     "pointer",
     "pan",
     "text",
@@ -24,6 +24,8 @@ pub const NAMES: [&str; 18] = [
     "placeholder",
     "annotation_lock_on",
     "annotation_lock_off",
+    "link",
+    "eraser",
 ];
 pub fn index(a: Action) -> usize {
     match a {
@@ -35,6 +37,8 @@ pub fn index(a: Action) -> usize {
         Action::SelectTool(Tool::Arrow) => 5,
         Action::SelectTool(Tool::Scribble) => 6,
         Action::CreateFrame => 7,
+        Action::LinkToFrame => 18,
+        Action::SelectTool(Tool::Eraser) => 19,
         Action::DuplicateSelection => 8,
         Action::Undo => 9,
         Action::Redo => 10,

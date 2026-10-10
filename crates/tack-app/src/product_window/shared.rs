@@ -327,6 +327,13 @@ impl App {
                         self.input.images.selection.select(Some(id), true);
                     }
                 }
+                self.input
+                    .rebase_scribble_drafts(editor.generation(), |id| {
+                        scope
+                            .objects
+                            .iter()
+                            .any(|target| target.value() == id.value())
+                    });
                 // New annotation drafts and unrelated text are local state.
                 if let Some(c) = &mut self.input.annotation.creation {
                     c.generation = editor.generation();

@@ -15,8 +15,8 @@ mod residency;
 mod stroke;
 mod transform;
 pub use annotations::{
-    Annotation, AnnotationKind, AnnotationStyle, Color, LineObject, MAX_STROKE_POINTS,
-    MAX_TEXT_BYTES, ScribbleObject, TextAlignment, TextObject,
+    Annotation, AnnotationKind, AnnotationStyle, Color, LineObject, MAX_SCRIBBLE_STROKES,
+    MAX_STROKE_POINTS, MAX_TEXT_BYTES, ScribbleObject, ScribbleStroke, TextAlignment, TextObject,
 };
 pub use stroke::{segment_distance, simplify_stroke};
 
@@ -40,3 +40,5 @@ pub use groups::Group;
 pub use model::{MAX_FRAME_NAME_BYTES, validate_frame_name};
 
 pub use model::DEFAULT_FRAME_COLOR;
+
+mod frame_links;

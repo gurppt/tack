@@ -67,7 +67,7 @@ impl TackFile {
         }
         let container = h.u32()?;
         let schema = h.u32()?;
-        if container != 1 || ![1, 2, 3, 4, 5].contains(&schema) {
+        if container != 1 || ![1, 2, 3, 4, 5, 6, 7].contains(&schema) {
             return Err(StorageError::Unsupported("container/schema version"));
         }
         let auth_len = h.u64()?;
