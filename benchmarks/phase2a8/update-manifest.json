@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "version": "0.1.0-dev.1",
+  "channel": "dev",
+  "git_sha": "25abd866d7c5761a518662fa6d932e84e2de70f2",
+  "protocol_major": 3,
+  "assets": [
+    {
+      "platform": "linux-x86_64",
+      "name": "tack-linux-x86_64.zip",
+      "size": 11120535,
+      "sha256": "69fb3f3f15198516c4b7a912a3baa114e8ecd097048f5db7e7ebdc1b1dafe7ec"
+    },
+    {
+      "platform": "windows-x86_64",
+      "name": "tack-windows-x86_64.zip",
+      "size": 13852631,
+      "sha256": "38129c085e456f4765942f7d09f27cc9644e975035222fd9cc7acac791f15533"
+    }
+  ]
+}

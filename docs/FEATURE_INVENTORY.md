@@ -7,7 +7,7 @@ Historical Phase 1I evidence has 170 automated native assertions on US and Frenc
 800×600 and 1024×768. Owner comfort/discovery review and real Windows desktop
 validation remain pending; “implemented” does not imply human acceptance.
 
-Every semantic catalog entry is listed below (104 actions). Shortcuts are the
+The semantic actions and current foundation additions are listed below. Shortcuts are the
 **default logical, layout-aware keyboard bindings** exported by `context_ui`; the actual menu
 reads the active user keymap. An em dash means no default press shortcut.
 All actions can be inspected/remapped in Tack → Edit → Keymap. This exposure
@@ -92,11 +92,11 @@ selection, tool choice, camera and text drafts. Menu paths are one submenu deep.
 | Group selection (`GroupSelection`) | implemented | image groups | Ctrl+G | keyboard / keymap | image / multiple | Yes | Board | Groups are images only; mixed selections cannot group. Ungroup removes touched image groups. |
 | Ungroup selection (`UngroupSelection`) | implemented | image groups | Ctrl+Shift+G | keyboard / keymap | image / multiple | Yes | Board | Groups are images only; mixed selections cannot group. Ungroup removes touched image groups. |
 | Create frame (`CreateFrame`) | implemented | frame | Ctrl+Shift+F | Tack → Tools | canvas | Yes | Board | Returns Pointer after creation. Selection bounds +32 or 60% viewport; frame is a labelled region; optional flat translation-only children are managed by Link/Unlink. |
-| Rename frame (`RenameFrame`) | implemented | frame / note | F2 | inline text editor | frame → Rename / note → Edit | Yes after commit | Board | F2 and double click edit existing text; frame Enter / note Ctrl+Enter commit; Escape discards. |
+| Rename frame (`RenameFrame`) | implemented | frame / note | F2 | inline text editor | frame → Rename / note → Edit | Yes after commit | Board | F2 and double click edit existing text; frame Enter / note Enter commit, Shift+Enter inserts a newline; Escape discards. |
 | Focus selected frame (`FocusFrame`) | implemented | frame / camera | Space | Tack → View | frame → Focus | No | session | Camera/selection navigation; unavailable if no applicable frame. |
 | Focus next frame (`NextFrame`) | implemented | frame / camera | PgDn | Tack → View | No | No | session | Camera/selection navigation; unavailable if no applicable frame. |
 | Focus previous frame (`PreviousFrame`) | implemented | frame / camera | PgUp | Tack → View | No | No | session | Camera/selection navigation; unavailable if no applicable frame. |
-| Text (`SelectTool(Text)`) | implemented | note | T | Tack → Tools | canvas → New note | No | session | Click/drag, release, then type and Ctrl+Enter. One-shot: Pointer base restored on draft entry and after commit/cancel; no local text Undo. |
+| Text (`SelectTool(Text)`) | implemented | note | T | Tack → Tools | canvas → New note | No | session | Click/drag, release, then type and Enter (Shift+Enter for a newline). One-shot: Pointer base restored on draft entry and after commit/cancel; no local text Undo. |
 | Rectangle (`SelectTool(Rectangle)`) | implemented | annotation | R | Tack → Tools | No | No | session | Click/drag with selected tool; release commits once and returns Pointer. Escape/focus cancellation adds no history. |
 | Line (`SelectTool(Line)`) | implemented | annotation | L | Tack → Tools | No | No | session | Click/drag with selected tool; release commits once and returns Pointer. Escape/focus cancellation adds no history. |
 | Arrow (`SelectTool(Arrow)`) | implemented | annotation | A | Tack → Tools | No | No | session | Click/drag with selected tool; release commits once and returns Pointer. Escape/focus cancellation adds no history. |
@@ -105,7 +105,7 @@ selection, tool choice, camera and text drafts. Menu paths are one submenu deep.
 | Rectangle (`TemporaryTool(Rectangle)`) | experimental | tool state | — | keymap hold binding only | No | No | session | Generic held-tool restoration tested; no default binding or menu; complete native tool combinations not validated. |
 | Line (`TemporaryTool(Line)`) | experimental | tool state | — | keymap hold binding only | No | No | session | Generic held-tool restoration tested; no default binding or menu; complete native tool combinations not validated. |
 | Arrow (`TemporaryTool(Arrow)`) | experimental | tool state | — | keymap hold binding only | No | No | session | Generic held-tool restoration tested; no default binding or menu; complete native tool combinations not validated. |
-| Scribble (`TemporaryTool(Scribble)`) | experimental | tool state | — | keymap hold binding only | No | No | session | Generic held-tool restoration tested; no default binding or menu; complete native tool combinations not validated. |
+| Scribble (`TemporaryTool(Scribble)`) | implemented | tool state | — | keymap hold binding only | No | No | session | Release commits one compound session and restores the prior tool; cancellation discards it. |
 | Cycle annotation color (`AnnotationStyle(Color)`) | implemented | notes / annotations | C | keyboard / keymap | note or annotation → Text / Style | Yes when applied to committed objects | Board result; creation default session | Bounded palette/style cycles; defaults also affect later creation. |
 | Toggle annotation fill (`AnnotationStyle(Fill)`) | implemented | rectangle | F | keyboard / keymap | annotation → Style | Yes when applied to committed objects | Board result; creation default session | Fill disabled for line/arrow/freehand; those render strokes only. |
 | Increase stroke width (`AnnotationStyle(Wider)`) | implemented | notes / annotations | ] | keyboard / keymap | note or annotation → Text / Style | Yes when applied to committed objects | Board result; creation default session | Bounded palette/style cycles; defaults also affect later creation. |
@@ -296,3 +296,7 @@ The older phase sections above record evolution. [2A8 semantics](SCRIBBLE_FRAME_
 and [alpha checklist](HUMAN_TEST_2A8_ALPHA.md) describe the current compound/link behavior.
 Release artifacts identify Cargo version, exact source commit/channel and protocol;
 `dev` is integration and `main` holds promoted snapshots. Testers do not need git.
+
+The October 10 authored icon set supplies 36 symbols, including alignment,
+arrangement/distribution, flips, stacking, color/sampling, snapping, rotate view
+and unlink. Common previews use these exact pixels. See [asset mapping](ICON_ASSETS.md).

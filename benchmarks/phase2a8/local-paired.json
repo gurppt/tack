@@ -1,0 +1,846 @@
+{
+  "alpha-default": {
+    "harness_sha256": "7f6c15839fe51cfa9d49bf2a15fb725e1fd542f6e1afaa608caa2bb71bd9383b",
+    "runs": [
+      {
+        "name": "0-fixture-phase2a7",
+        "mode": "phase2a7",
+        "binary_sha256": "168b2dab1b5ce4b155eebd90837cfce1a7e3edff6e848dbd09bb314646a9e793",
+        "board_sha256": "88d7258695eb5af02bee9199f48bd7b4fd91e4ccc108e4089dbec896b7838237",
+        "quiet_detected": true,
+        "settle_seconds": 2.3759296999996877,
+        "idle": {
+          "seconds": 3.0114671570045175,
+          "rss_before": 111996928,
+          "rss_after": 111996928,
+          "threads": 11,
+          "tasks": [
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-1",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack:disk$0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain q",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain e",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            }
+          ],
+          "ticks": 0,
+          "cpu_percent_one_core": 0.0,
+          "socket_records": [
+            {
+              "kind": "unix",
+              "record": "0000000000000000: 00000003 00000000 00000000 0001 03 284765"
+            }
+          ],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          }
+        },
+        "report": "0-fixture-phase2a7/0-fixture-phase2a7.json",
+        "report_sha256": "adb50dfc8b39a62d2206a2454fad372a4bc81b3f018d0d5dc68fb37660c2c1f3",
+        "native_startup_ms": 63.192103,
+        "first_frame_ms": 66.616941,
+        "first_recognizable_ms": 92.23733800000001,
+        "useful_ms": 92.23733800000001,
+        "gpu_bytes_peak": 104960,
+        "callbacks": {
+          "samples": 3,
+          "p50_ms": 7.603798,
+          "p99_ms": 7.603798,
+          "max_ms": 21.707529
+        },
+        "wait_count": 12,
+        "redraw_count": 3,
+        "idle_redraws": 0
+      },
+      {
+        "name": "0-fixture-alpha-default",
+        "mode": "alpha-default",
+        "binary_sha256": "cd045fa2d1f7d5c3ff8c616352004d9ef66b7e07db636d1bc6ef3d6c6f6c0adf",
+        "board_sha256": "88d7258695eb5af02bee9199f48bd7b4fd91e4ccc108e4089dbec896b7838237",
+        "quiet_detected": true,
+        "settle_seconds": 2.3695231469973805,
+        "idle": {
+          "seconds": 3.0118659060026403,
+          "rss_before": 112455680,
+          "rss_after": 112455680,
+          "threads": 11,
+          "tasks": [
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-1",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack:disk$0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain q",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain e",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            }
+          ],
+          "ticks": 0,
+          "cpu_percent_one_core": 0.0,
+          "socket_records": [
+            {
+              "kind": "unix",
+              "record": "0000000000000000: 00000003 00000000 00000000 0001 03 272360"
+            }
+          ],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          }
+        },
+        "report": "0-fixture-alpha-default/0-fixture-alpha-default.json",
+        "report_sha256": "f5c05c7ea8568c8a288295871df9922581583f232e853aa30e832d2158327964",
+        "native_startup_ms": 64.38429599999999,
+        "first_frame_ms": 67.384873,
+        "first_recognizable_ms": 91.11285600000001,
+        "useful_ms": 91.11285600000001,
+        "gpu_bytes_peak": 104960,
+        "callbacks": {
+          "samples": 3,
+          "p50_ms": 10.064282,
+          "p99_ms": 10.064282,
+          "max_ms": 22.47211
+        },
+        "wait_count": 11,
+        "redraw_count": 3,
+        "idle_redraws": 0
+      },
+      {
+        "name": "0-scribble-100-phase2a7",
+        "mode": "phase2a7",
+        "binary_sha256": "168b2dab1b5ce4b155eebd90837cfce1a7e3edff6e848dbd09bb314646a9e793",
+        "board_sha256": "ecd95666b73399afa3ead939057049f1d19fc7cdfe7368bec482f5545ba3f2b5",
+        "quiet_detected": true,
+        "settle_seconds": 2.366765979997581,
+        "idle": {
+          "seconds": 3.0125320790029946,
+          "rss_before": 113434624,
+          "rss_after": 113434624,
+          "threads": 11,
+          "tasks": [
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-1",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack:disk$0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain q",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain e",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            }
+          ],
+          "ticks": 0,
+          "cpu_percent_one_core": 0.0,
+          "socket_records": [
+            {
+              "kind": "unix",
+              "record": "0000000000000000: 00000003 00000000 00000000 0001 03 275394"
+            }
+          ],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          }
+        },
+        "report": "0-scribble-100-phase2a7/0-scribble-100-phase2a7.json",
+        "report_sha256": "1795d399be75f11ee7c286997db6fc5dff41ec5123a4d585a619ce0f8b22d831",
+        "native_startup_ms": 63.260563000000005,
+        "first_frame_ms": 70.502989,
+        "first_recognizable_ms": null,
+        "useful_ms": null,
+        "gpu_bytes_peak": 0,
+        "callbacks": {
+          "samples": 3,
+          "p50_ms": 5.853353,
+          "p99_ms": 5.853353,
+          "max_ms": 33.973366999999996
+        },
+        "wait_count": 14,
+        "redraw_count": 3,
+        "idle_redraws": 0
+      },
+      {
+        "name": "0-scribble-100-alpha-default",
+        "mode": "alpha-default",
+        "binary_sha256": "cd045fa2d1f7d5c3ff8c616352004d9ef66b7e07db636d1bc6ef3d6c6f6c0adf",
+        "board_sha256": "ecd95666b73399afa3ead939057049f1d19fc7cdfe7368bec482f5545ba3f2b5",
+        "quiet_detected": true,
+        "settle_seconds": 2.3542903709967504,
+        "idle": {
+          "seconds": 3.01214115699986,
+          "rss_before": 113623040,
+          "rss_after": 113623040,
+          "threads": 11,
+          "tasks": [
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-1",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack:disk$0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain q",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain e",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            }
+          ],
+          "ticks": 0,
+          "cpu_percent_one_core": 0.0,
+          "socket_records": [
+            {
+              "kind": "unix",
+              "record": "0000000000000000: 00000003 00000000 00000000 0001 03 272372"
+            }
+          ],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          }
+        },
+        "report": "0-scribble-100-alpha-default/0-scribble-100-alpha-default.json",
+        "report_sha256": "055d6283dcf7008ee57f7665a13312b2d9397310f44c8542fa626d37d5afd04d",
+        "native_startup_ms": 62.739051,
+        "first_frame_ms": 69.90763799999999,
+        "first_recognizable_ms": null,
+        "useful_ms": null,
+        "gpu_bytes_peak": 0,
+        "callbacks": {
+          "samples": 3,
+          "p50_ms": 6.135014,
+          "p99_ms": 6.135014,
+          "max_ms": 34.454408
+        },
+        "wait_count": 15,
+        "redraw_count": 3,
+        "idle_redraws": 0
+      }
+    ],
+    "scope": "Warm/unspecified OS page cache; serial native800x600 samehost/display. Socket records distinguish OS X11 Unix sockets from Tack-created TCP/UDP. CPU /proc ticks, no perprocess VRAM attribution."
+  },
+  "local-minimal": {
+    "harness_sha256": "7f6c15839fe51cfa9d49bf2a15fb725e1fd542f6e1afaa608caa2bb71bd9383b",
+    "runs": [
+      {
+        "name": "0-fixture-phase2a7",
+        "mode": "phase2a7",
+        "binary_sha256": "168b2dab1b5ce4b155eebd90837cfce1a7e3edff6e848dbd09bb314646a9e793",
+        "board_sha256": "88d7258695eb5af02bee9199f48bd7b4fd91e4ccc108e4089dbec896b7838237",
+        "quiet_detected": true,
+        "settle_seconds": 2.3723343429956003,
+        "idle": {
+          "seconds": 3.0111838360026013,
+          "rss_before": 111828992,
+          "rss_after": 111828992,
+          "threads": 11,
+          "tasks": [
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-1",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack:disk$0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain q",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain e",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            }
+          ],
+          "ticks": 0,
+          "cpu_percent_one_core": 0.0,
+          "socket_records": [
+            {
+              "kind": "unix",
+              "record": "0000000000000000: 00000003 00000000 00000000 0001 03 278142"
+            }
+          ],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          }
+        },
+        "report": "0-fixture-phase2a7/0-fixture-phase2a7.json",
+        "report_sha256": "3015b15bc7a15d31866bf0fbb44968dec549f93af8486a0973cf577b9d27a214",
+        "native_startup_ms": 60.114957,
+        "first_frame_ms": 62.79164299999999,
+        "first_recognizable_ms": 86.957187,
+        "useful_ms": 86.957187,
+        "gpu_bytes_peak": 104960,
+        "callbacks": {
+          "samples": 3,
+          "p50_ms": 7.553287,
+          "p99_ms": 7.553287,
+          "max_ms": 23.104262000000002
+        },
+        "wait_count": 14,
+        "redraw_count": 3,
+        "idle_redraws": 0
+      },
+      {
+        "name": "0-fixture-local-minimal",
+        "mode": "local-minimal",
+        "binary_sha256": "1707982b438eaf9e386ef2aa859dfe37d2e31a13beae9fb00a8ac9a93f336bdc",
+        "board_sha256": "88d7258695eb5af02bee9199f48bd7b4fd91e4ccc108e4089dbec896b7838237",
+        "quiet_detected": true,
+        "settle_seconds": 2.372382933004701,
+        "idle": {
+          "seconds": 3.0113987469958374,
+          "rss_before": 112267264,
+          "rss_after": 112267264,
+          "threads": 11,
+          "tasks": [
+            {
+              "name": "tack-local-mini",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-local-mini",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-1",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-local-mini",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-local-mini",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-lo:disk$0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain q",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain e",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            }
+          ],
+          "ticks": 0,
+          "cpu_percent_one_core": 0.0,
+          "socket_records": [
+            {
+              "kind": "unix",
+              "record": "0000000000000000: 00000003 00000000 00000000 0001 03 277093"
+            }
+          ],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          }
+        },
+        "report": "0-fixture-local-minimal/0-fixture-local-minimal.json",
+        "report_sha256": "b8a952cfdb8246e6acb2f8c320e6957bd8ead2111c296f436c9a67573f4460c9",
+        "native_startup_ms": 60.313448,
+        "first_frame_ms": 62.973896,
+        "first_recognizable_ms": 87.606383,
+        "useful_ms": 87.606383,
+        "gpu_bytes_peak": 104960,
+        "callbacks": {
+          "samples": 3,
+          "p50_ms": 9.682466000000002,
+          "p99_ms": 9.682466000000002,
+          "max_ms": 22.089739
+        },
+        "wait_count": 14,
+        "redraw_count": 3,
+        "idle_redraws": 0
+      },
+      {
+        "name": "0-scribble-100-phase2a7",
+        "mode": "phase2a7",
+        "binary_sha256": "168b2dab1b5ce4b155eebd90837cfce1a7e3edff6e848dbd09bb314646a9e793",
+        "board_sha256": "ecd95666b73399afa3ead939057049f1d19fc7cdfe7368bec482f5545ba3f2b5",
+        "quiet_detected": true,
+        "settle_seconds": 2.3663671050017,
+        "idle": {
+          "seconds": 3.011368740000762,
+          "rss_before": 113356800,
+          "rss_after": 113356800,
+          "threads": 11,
+          "tasks": [
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-1",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack:disk$0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain q",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain e",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            }
+          ],
+          "ticks": 0,
+          "cpu_percent_one_core": 0.0,
+          "socket_records": [
+            {
+              "kind": "unix",
+              "record": "0000000000000000: 00000003 00000000 00000000 0001 03 283777"
+            }
+          ],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          }
+        },
+        "report": "0-scribble-100-phase2a7/0-scribble-100-phase2a7.json",
+        "report_sha256": "fa11d6e0def764ddf1606da455ff9c98d71de7fbd17089550693e9d3aa059339",
+        "native_startup_ms": 63.66073999999999,
+        "first_frame_ms": 71.282502,
+        "first_recognizable_ms": null,
+        "useful_ms": null,
+        "gpu_bytes_peak": 0,
+        "callbacks": {
+          "samples": 3,
+          "p50_ms": 6.307322,
+          "p99_ms": 6.307322,
+          "max_ms": 36.569147
+        },
+        "wait_count": 16,
+        "redraw_count": 3,
+        "idle_redraws": 0
+      },
+      {
+        "name": "0-scribble-100-local-minimal",
+        "mode": "local-minimal",
+        "binary_sha256": "1707982b438eaf9e386ef2aa859dfe37d2e31a13beae9fb00a8ac9a93f336bdc",
+        "board_sha256": "ecd95666b73399afa3ead939057049f1d19fc7cdfe7368bec482f5545ba3f2b5",
+        "quiet_detected": true,
+        "settle_seconds": 2.3552772370021557,
+        "idle": {
+          "seconds": 3.0125004000001354,
+          "rss_before": 113786880,
+          "rss_after": 113786880,
+          "threads": 11,
+          "tasks": [
+            {
+              "name": "tack-local-mini",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-local-mini",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-1",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-local-mini",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-local-mini",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-lo:disk$0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain q",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain e",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            }
+          ],
+          "ticks": 0,
+          "cpu_percent_one_core": 0.0,
+          "socket_records": [
+            {
+              "kind": "unix",
+              "record": "0000000000000000: 00000003 00000000 00000000 0001 03 278151"
+            }
+          ],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          }
+        },
+        "report": "0-scribble-100-local-minimal/0-scribble-100-local-minimal.json",
+        "report_sha256": "2c429ce7bd28032a9b1470d48dec902ab96f4376c17fbd40a114b4a107179c4c",
+        "native_startup_ms": 60.758741,
+        "first_frame_ms": 68.70309400000001,
+        "first_recognizable_ms": null,
+        "useful_ms": null,
+        "gpu_bytes_peak": 0,
+        "callbacks": {
+          "samples": 3,
+          "p50_ms": 6.521234,
+          "p99_ms": 6.521234,
+          "max_ms": 30.479957
+        },
+        "wait_count": 15,
+        "redraw_count": 3,
+        "idle_redraws": 0
+      }
+    ],
+    "scope": "Warm/unspecified OS page cache; serial native800x600 samehost/display. Socket records distinguish OS X11 Unix sockets from Tack-created TCP/UDP. CPU /proc ticks, no perprocess VRAM attribution."
+  }
+}

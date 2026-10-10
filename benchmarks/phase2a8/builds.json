@@ -1,0 +1,93 @@
+{
+  "source_commit": "25abd866d7c5761a518662fa6d932e84e2de70f2",
+  "app_identity": {
+    "channel": "dev",
+    "git_sha": "25abd866d7c5761a518662fa6d932e84e2de70f2",
+    "network": true,
+    "protocol_major": 3,
+    "updater": true,
+    "version": "0.1.0-dev.1"
+  },
+  "minimal_identity": {
+    "channel": "dev",
+    "git_sha": "25abd866d7c5761a518662fa6d932e84e2de70f2",
+    "network": false,
+    "protocol_major": 3,
+    "updater": false,
+    "version": "0.1.0-dev.1"
+  },
+  "files": {
+    "bin/tack": {
+      "bytes": 20461088,
+      "sha256": "edf204e34f17fab24c9cf9c9162006c7de8b0699cd41aaac7646f04518921b6d"
+    },
+    "bin/tack-local-minimal": {
+      "bytes": 20142104,
+      "sha256": "e106803602cd6c3a49576c8ea08bf11bb433efd3e03c43b607fc7eb84ffb673d"
+    },
+    "bin/tack-server": {
+      "bytes": 2208424,
+      "sha256": "ed4c87a5bb7a430bccb682ece17663ae2f3fd72b9ddbb3e3228554f21e5a091e"
+    },
+    "bin/tack-updater": {
+      "bytes": 3125928,
+      "sha256": "6322e822074124007b0636391754a58541e7a47b0b1a6298ceb25eeb7b496bdc"
+    },
+    "bin/tack-windows-x86_64/tack.exe": {
+      "bytes": 24882176,
+      "sha256": "afef372d016158ae5d5e12d0072429d5c39c0264714b2240848d98aa1d5a1386"
+    },
+    "bin/tack-windows-x86_64/tack-server.exe": {
+      "bytes": 3288064,
+      "sha256": "80029261b13433a9e8546e785263f636fba331271533bc376fe39d0a4768c6b8"
+    },
+    "bin/tack-windows-x86_64/tack-updater.exe": {
+      "bytes": 4357632,
+      "sha256": "a7e63ee8eb46174e54104fadd6ce207aee0c651c83caccd48a1608cb3bd44937"
+    },
+    "bin/tack-windows-x86_64/tack-jpeg-decoder.exe": {
+      "bytes": 872960,
+      "sha256": "caab60f930f87db5d1bbbcc562bece1b0019819ddcfa3cab957bc5bfd5954ab4"
+    },
+    "bin/tack-windows-x86_64.zip": {
+      "bytes": 13693156,
+      "sha256": "6cfe86bd049c8b26a095ba49975d95830d485faf802a4ea11da4e51a97d308a5"
+    },
+    "benchmark-results/phase2a8/baseline/tack": {
+      "bytes": 20034176,
+      "sha256": "168b2dab1b5ce4b155eebd90837cfce1a7e3edff6e848dbd09bb314646a9e793"
+    }
+  },
+  "native_windows": {
+    "version": "3.2.0",
+    "target": "windows-gnu",
+    "source_url": "https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.2.0/libjpeg-turbo-3.2.0.tar.gz",
+    "source_sha256": "6f30092cef9fb839779646608f4ee14ae3cbac989c47fa05e841b0841f09878e",
+    "cmake_command": [
+      "cmake",
+      "-S",
+      "/home/gurp/softs/tack/target/native/source/libjpeg-turbo-3.2.0",
+      "-B",
+      "/home/gurp/softs/tack/target/native/turbojpeg-build-windows-gnu",
+      "-DCMAKE_INSTALL_PREFIX=/home/gurp/softs/tack/target/native/libjpeg-turbo-3.2.0-windows-gnu",
+      "-DCMAKE_INSTALL_LIBDIR=lib",
+      "-DCMAKE_BUILD_TYPE=Release",
+      "-DENABLE_SHARED=OFF",
+      "-DENABLE_STATIC=ON",
+      "-DWITH_TURBOJPEG=ON",
+      "-DREQUIRE_SIMD=ON",
+      "-DWITH_JAVA=OFF",
+      "-DWITH_CRT_DLL=ON",
+      "-DCMAKE_TOOLCHAIN_FILE=/home/gurp/softs/tack/target/native/windows-gnu-toolchain.cmake",
+      "-DWITH_TESTS=OFF",
+      "-DWITH_SIMD=ON",
+      "-DCMAKE_ASM_NASM_COMPILER=/home/gurp/softs/tack/target/native/tools/nasm-root/usr/bin/nasm"
+    ],
+    "decoder_sha256": "622e230c5aadee33248723fff3fe05d6c5d498a9b5ffa1b710060c9b2e0f51cc",
+    "library_sha256": {
+      "libturbojpeg.a": "d07bddf151580f24058b224d490d33485d9e1e8a3bae25a5a06e27714868d4fc"
+    },
+    "compiler_cache": [],
+    "nasm": "NASM version 2.16.01"
+  }
+}

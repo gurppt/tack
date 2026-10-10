@@ -112,14 +112,17 @@ not an alpha acceptance claim. Physical artist feel, Windows desktop and two
 physical computers on LAN remain human gates. The earlier system freeze is still
 undetermined; automated UI checks use an owned software-Vulkan display.
 
-## Foundation checkpoint verification
+## Verification
 
-Local quality gate: 399 Rust tests passed (15 explicit GPU/long tests ignored),
-31 Python tests passed, fmt/check/Clippy/docs and cargo-deny passed.
-The minimal configuration compiles all app targets. Updater includes 11 tests,
-with controlled re-extraction/apply/relaunch, exact rollback, wrong hash and
-identity, partial-stage retry, interrupted journal, backup retention and
-personal-data protection. Native integration and release dry-run are next.
+The final local gate passed 419 Rust tests (15 explicit GPU/long tests ignored),
+31 Python tests, fmt/check/Clippy/docs and cargo-deny. Minimal all-targets check,
+86 final native checks, paired idle measurements and Linux/Windows portable
+packaging are recorded in the [phase report](MISSION_2A8_ALPHA_FOUNDATION_REPORT.md).
+Updater includes 11 controlled tests for re-extraction/apply/relaunch, exact
+rollback, wrong hash/identity, partial retry, interrupted journal, backup retention
+and personal-data protection. The final Windows path correction passed 11 Linux
+updater tests, seven Windows tests under Wine, and exact-source Linux/Windows/
+dependency CI. Physical acceptance remains a separate gate.
 
 The October 10 artist icon update is included without regeneration; see
 [asset mappings and preservation](ICON_ASSETS.md). The shared toolbar atlas is

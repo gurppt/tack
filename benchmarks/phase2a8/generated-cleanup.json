@@ -1,0 +1,25 @@
+{
+  "removed_expanded_candidates": [
+    {
+      "path": "benchmark-results/phase2a8/release-dry-run/tack-windows-x86_64",
+      "bytes": 188014815
+    },
+    {
+      "path": "benchmark-results/phase2a8/release-dry-run/tack-linux-x86_64",
+      "bytes": 28002399
+    },
+    {
+      "path": "benchmark-results/phase2a8/candidate-3b90e28/tack-linux-x86_64",
+      "bytes": 28370957
+    },
+    {
+      "path": "benchmark-results/phase2a8/candidate-8f1e027/tack-linux-x86_64",
+      "bytes": 28378222
+    },
+    {
+      "path": "benchmark-results/phase2a8/candidate-8f1e027/tack-windows-x86_64",
+      "bytes": 33984656
+    }
+  ],
+  "retained": "Original candidate ZIPs/manifests/receipts; current candidate expansion; baseline and user artwork."
+}

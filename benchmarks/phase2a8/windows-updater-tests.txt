@@ -1,0 +1,12 @@
+
+running 7 tests
+test package::tests::only_portable_files_can_be_extracted ... ok
+test package::tests::traversal_and_user_data_are_refused ... ok
+test package::tests::unknown_partial_stage_is_retained ... ok
+test transaction::tests::committed_temporary_journal_can_be_replaced ... ok
+test transaction::tests::interrupted_apply_is_recovered_before_next_update ... ok
+test transaction::tests::refused_update_retains_previous_backup_before_any_cleanup ... ok
+test transaction::tests::rollback_is_exact_and_preserves_board_and_icons ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
+

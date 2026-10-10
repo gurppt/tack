@@ -1,0 +1,41 @@
+{
+  "identity": {
+    "tack": {
+      "channel": "dev",
+      "git_sha": "25abd866d7c5761a518662fa6d932e84e2de70f2",
+      "network": true,
+      "protocol_major": 3,
+      "updater": true,
+      "version": "0.1.0-dev.1"
+    },
+    "tack-server": {
+      "channel": "dev",
+      "git_sha": "25abd866d7c5761a518662fa6d932e84e2de70f2",
+      "protocol_major": 3,
+      "version": "0.1.0-dev.1"
+    },
+    "tack-updater": {
+      "channel": "dev",
+      "git_sha": "25abd866d7c5761a518662fa6d932e84e2de70f2",
+      "protocol_major": 3,
+      "version": "0.1.0-dev.1"
+    }
+  },
+  "board": {
+    "assets": 1,
+    "bookmarks": [],
+    "discarded_overviews": 0,
+    "document_id": "7eb1d02d29974ef3e500517b4261ebc0",
+    "embedded": 1,
+    "metadata_bytes": 453,
+    "metadata_ms": 0.8431,
+    "objects": 1,
+    "original_bytes_read": 0,
+    "overviews": 1,
+    "sources": 1
+  },
+  "native_decoder_bytes": 1343377,
+  "updater_tests_passed": 7,
+  "updater_test_binary_sha256": "4d4be2ad91606a3e579b4547562833a0fa30f15558ce391aa6a515691a8b0157",
+  "physical_windows_pending": true
+}

@@ -30,7 +30,12 @@ Start with the [public overview](../README.md) for features and everyday control
 - [Client workers, cache and streaming snapshots](design/lan_client.md)
 - [Headless server storage and authority](../crates/tack-server/README.md)
 
-Current phase: [2A4 shared UX and pixel toolbar](MISSION_2A4_SHARED_UX_PIXEL_TOOLBAR_REPORT.md).
+Current phase: [2A8 alpha foundation](MISSION_2A8_ALPHA_FOUNDATION_REPORT.md).
+
+- [Release, updates, capability boundaries](ALPHA_FOUNDATION.md)
+- [Compound Scribble and Frame links](SCRIBBLE_FRAME_LINKS.md)
+- [Editable pixel icons and cursor manifest](ICON_ASSETS.md)
+- [Small-alpha acceptance checklist](HUMAN_TEST_2A8_ALPHA.md)
 
 ## Development reports
 
@@ -39,6 +44,7 @@ reports supersede earlier feature status, limitations and stop conditions.
 
 | Checkpoint | Focus |
 | --- | --- |
+| [2A8](MISSION_2A8_ALPHA_FOUNDATION_REPORT.md) | Alpha release/updater foundation, compound Scribble, Frame links and authored artwork |
 | [2A](MISSION_2A_REPORT.md) | Optional native LAN collaboration, authoritative server, bounded CAS and local-first regression |
 | [1L](MISSION_1L_REPORT.md) | Progressive ordinary image supply and guarded huge sources |
 | [1K About](MISSION_1K_ABOUT_REPORT.md) | Editable metadata, compact on-demand modal and package |

@@ -1,0 +1,28 @@
+{
+  "rust_passed": 419,
+  "rust_ignored": 15,
+  "python_passed": 31,
+  "fmt": true,
+  "check_all_targets_all_features": true,
+  "clippy": true,
+  "docs": true,
+  "deny": "advisories ok, bans ok, licenses ok, sources ok",
+  "minimal_all_targets": true,
+  "gpu_new_atlas_passed": 1,
+  "full_local_gate_source": "8f1e0276f841d0126247b2e2cdded9e1b3e127c8",
+  "subsequent_updater_path_fix": {
+    "source": "25abd866d7c5761a518662fa6d932e84e2de70f2",
+    "linux_tests_passed": 11,
+    "clippy": true,
+    "windows_tests_pending": false,
+    "windows_tests_passed": 7,
+    "native_foundation_checks_passed": 14,
+    "independent_review": "No blocker; normalize native components only; raw ZIP backslashes remain refused.",
+    "remote_ci": {
+      "linux": "success",
+      "windows": "success",
+      "dependencies": "success",
+      "run_id": 38085769917
+    }
+  }
+}

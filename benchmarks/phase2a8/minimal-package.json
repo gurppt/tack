@@ -1,0 +1,6 @@
+{
+  "path": "benchmark-results/phase2a8/candidate-8f1e027/tack-local-minimal-comparison.zip",
+  "bytes": 8589503,
+  "sha256": "fd663d5410019a108ad810527395d345896f7e5cb54510892ebb62679b231f44",
+  "scope": "Comparative Linux ZIP: local-minimal application, JPEG decoder, UI artwork, libXi and notices; excludes server/updater; not an update asset."
+}

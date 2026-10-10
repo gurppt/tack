@@ -81,7 +81,8 @@ There is no background update polling. The default channel is Dev.
 
 For the complete desktop sharing build, run `bash tools/build-test-bin.sh`, then
 launch `./bin/tack`. Keep the adjacent helper/server and assets when copying it.
-See the [two-computer checklist](docs/HUMAN_TEST_2A4_LAN.md).
+See the [alpha acceptance checklist](docs/HUMAN_TEST_2A8_ALPHA.md) for Windows
+and two-computer LAN validation.
 
 The preparation step downloads and builds the pinned image decoder locally.
 No generated test corpus is needed to use the application.

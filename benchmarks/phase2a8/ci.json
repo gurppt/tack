@@ -1,0 +1,41 @@
+{
+  "verified_utc": "2026-10-10T21:04:19.812239+00:00",
+  "run": {
+    "id": 38085769917,
+    "name": "Quality",
+    "head_sha": "25abd866d7c5761a518662fa6d932e84e2de70f2",
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/gurppt/tack/actions/runs/38085769917",
+    "created_at": "2026-10-10T20:57:31Z",
+    "updated_at": "2026-10-10T21:03:05Z"
+  },
+  "jobs": [
+    {
+      "id": 114311815873,
+      "name": "dependencies",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/gurppt/tack/actions/runs/38085769917/job/114311815873"
+    },
+    {
+      "id": 114311816044,
+      "name": "rust (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/gurppt/tack/actions/runs/38085769917/job/114311816044"
+    },
+    {
+      "id": 114311816080,
+      "name": "rust (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/gurppt/tack/actions/runs/38085769917/job/114311816080"
+    }
+  ],
+  "prior_failed_run": {
+    "id": 38085106120,
+    "source": "8f1e027",
+    "cause": "Native Windows separators rejected as unsafe ZIP names; fixed in25abd86."
+  }
+}

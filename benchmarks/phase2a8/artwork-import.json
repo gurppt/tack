@@ -1,0 +1,890 @@
+{
+  "authorization": "User requested copying updated named artwork from bin/gfx/icons/work_icons; files copied byte for byte, no generated artwork.",
+  "toolbar_symbols": 36,
+  "cursor_symbols": 13,
+  "copies": [
+    {
+      "source": "bin/gfx/icons/work_icons/pointer.png",
+      "destination": "gfx/icons/pointer.png",
+      "previous_sha256": "30e4a8b93ebf7cddcba6152b7aae97255dbb739884cf1922019cc24ae9050c67",
+      "sha256": "64c86f64c3d1107339a0360ef7ab098cee4642bd6c82f7b23df4b7b407bb9bdb"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/pointer.png",
+      "destination": "bin/gfx/icons/pointer.png",
+      "previous_sha256": "64c86f64c3d1107339a0360ef7ab098cee4642bd6c82f7b23df4b7b407bb9bdb",
+      "sha256": "64c86f64c3d1107339a0360ef7ab098cee4642bd6c82f7b23df4b7b407bb9bdb"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/pointer.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/pointer.png",
+      "previous_sha256": "30e4a8b93ebf7cddcba6152b7aae97255dbb739884cf1922019cc24ae9050c67",
+      "sha256": "64c86f64c3d1107339a0360ef7ab098cee4642bd6c82f7b23df4b7b407bb9bdb"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/pan.png",
+      "destination": "gfx/icons/pan.png",
+      "previous_sha256": "4299d430eaf2516a6b9c68385694753ee590fb43fb6c81b716f105f9610e086c",
+      "sha256": "5f7504464749c9bb4b13c87492d4da32eb16603ac409f2ba21a23c97b1786e9b"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/pan.png",
+      "destination": "bin/gfx/icons/pan.png",
+      "previous_sha256": "5f7504464749c9bb4b13c87492d4da32eb16603ac409f2ba21a23c97b1786e9b",
+      "sha256": "5f7504464749c9bb4b13c87492d4da32eb16603ac409f2ba21a23c97b1786e9b"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/pan.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/pan.png",
+      "previous_sha256": "4299d430eaf2516a6b9c68385694753ee590fb43fb6c81b716f105f9610e086c",
+      "sha256": "5f7504464749c9bb4b13c87492d4da32eb16603ac409f2ba21a23c97b1786e9b"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/text.png",
+      "destination": "gfx/icons/text.png",
+      "previous_sha256": "ef1c184d3fc9ff9b0f71418027b9c06792a954b4f7ae39613e850209070c2cb0",
+      "sha256": "0863b55820395cc6cb50c35892489b3a8e29460795530bd32cdd6fe20f42f672"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/text.png",
+      "destination": "bin/gfx/icons/text.png",
+      "previous_sha256": "0863b55820395cc6cb50c35892489b3a8e29460795530bd32cdd6fe20f42f672",
+      "sha256": "0863b55820395cc6cb50c35892489b3a8e29460795530bd32cdd6fe20f42f672"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/text.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/text.png",
+      "previous_sha256": "ef1c184d3fc9ff9b0f71418027b9c06792a954b4f7ae39613e850209070c2cb0",
+      "sha256": "0863b55820395cc6cb50c35892489b3a8e29460795530bd32cdd6fe20f42f672"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/rectangle.png",
+      "destination": "gfx/icons/rectangle.png",
+      "previous_sha256": "47684bacfcf91f23ebb34d670f79522af9a5c411a4cf1d4236f66e4a7f9b7311",
+      "sha256": "a10f63784734951fcb83f439e3bbddbb8713e05d403388562a5a8b0f5e382ee8"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/rectangle.png",
+      "destination": "bin/gfx/icons/rectangle.png",
+      "previous_sha256": "a10f63784734951fcb83f439e3bbddbb8713e05d403388562a5a8b0f5e382ee8",
+      "sha256": "a10f63784734951fcb83f439e3bbddbb8713e05d403388562a5a8b0f5e382ee8"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/rectangle.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/rectangle.png",
+      "previous_sha256": "47684bacfcf91f23ebb34d670f79522af9a5c411a4cf1d4236f66e4a7f9b7311",
+      "sha256": "a10f63784734951fcb83f439e3bbddbb8713e05d403388562a5a8b0f5e382ee8"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/line.png",
+      "destination": "gfx/icons/line.png",
+      "previous_sha256": "6c6b8245421c5c015990e017def8bf07c69b22d594419debf141bfcfd79df013",
+      "sha256": "1b688f53ac6ddfac3ce3e9e28cbfd40621eae1d10a40b8d518596a7c94d7cffd"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/line.png",
+      "destination": "bin/gfx/icons/line.png",
+      "previous_sha256": "1b688f53ac6ddfac3ce3e9e28cbfd40621eae1d10a40b8d518596a7c94d7cffd",
+      "sha256": "1b688f53ac6ddfac3ce3e9e28cbfd40621eae1d10a40b8d518596a7c94d7cffd"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/line.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/line.png",
+      "previous_sha256": "6c6b8245421c5c015990e017def8bf07c69b22d594419debf141bfcfd79df013",
+      "sha256": "1b688f53ac6ddfac3ce3e9e28cbfd40621eae1d10a40b8d518596a7c94d7cffd"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/arrow.png",
+      "destination": "gfx/icons/arrow.png",
+      "previous_sha256": "66ed9b59da53aebfb5d4a90d5bdb9201a09b9c853fc64311af7eb46c37d696b1",
+      "sha256": "6f01ff2cc59bbb69c9d35d7543e9916add043b459fc33ace8513ab4d6bbda333"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/arrow.png",
+      "destination": "bin/gfx/icons/arrow.png",
+      "previous_sha256": "6f01ff2cc59bbb69c9d35d7543e9916add043b459fc33ace8513ab4d6bbda333",
+      "sha256": "6f01ff2cc59bbb69c9d35d7543e9916add043b459fc33ace8513ab4d6bbda333"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/arrow.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/arrow.png",
+      "previous_sha256": "66ed9b59da53aebfb5d4a90d5bdb9201a09b9c853fc64311af7eb46c37d696b1",
+      "sha256": "6f01ff2cc59bbb69c9d35d7543e9916add043b459fc33ace8513ab4d6bbda333"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/scribble.png",
+      "destination": "gfx/icons/scribble.png",
+      "previous_sha256": "2f03eeb92695e5cab8906e74233da0b475d0a183f8a7a74d7989587d310d45e3",
+      "sha256": "5a9eef4ff8a9baa52086b30e5fff15e52d58f26b9c05e1454e6725589da2adc9"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/scribble.png",
+      "destination": "bin/gfx/icons/scribble.png",
+      "previous_sha256": "5a9eef4ff8a9baa52086b30e5fff15e52d58f26b9c05e1454e6725589da2adc9",
+      "sha256": "5a9eef4ff8a9baa52086b30e5fff15e52d58f26b9c05e1454e6725589da2adc9"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/scribble.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/scribble.png",
+      "previous_sha256": "2f03eeb92695e5cab8906e74233da0b475d0a183f8a7a74d7989587d310d45e3",
+      "sha256": "5a9eef4ff8a9baa52086b30e5fff15e52d58f26b9c05e1454e6725589da2adc9"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/frame.png",
+      "destination": "gfx/icons/frame.png",
+      "previous_sha256": "0a22ed7718d1d1ec66830ee6320a5654eaaf64dedf6562a64504848aab9e4727",
+      "sha256": "c2c3162d8c84212e2bd780d12d9c22e08ca6c042292be4949ce8eede63b85be4"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/frame.png",
+      "destination": "bin/gfx/icons/frame.png",
+      "previous_sha256": "c2c3162d8c84212e2bd780d12d9c22e08ca6c042292be4949ce8eede63b85be4",
+      "sha256": "c2c3162d8c84212e2bd780d12d9c22e08ca6c042292be4949ce8eede63b85be4"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/frame.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/frame.png",
+      "previous_sha256": "0a22ed7718d1d1ec66830ee6320a5654eaaf64dedf6562a64504848aab9e4727",
+      "sha256": "c2c3162d8c84212e2bd780d12d9c22e08ca6c042292be4949ce8eede63b85be4"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/duplicate.png",
+      "destination": "gfx/icons/duplicate.png",
+      "previous_sha256": "b6cbba35f652762a5168bff8cbb720b6093fc4eb9f69164f09d5eeb1f5d9db95",
+      "sha256": "af6def0de1f17cb00b4001927990be54401bb831dd3f894d85987cce6ae21c44"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/duplicate.png",
+      "destination": "bin/gfx/icons/duplicate.png",
+      "previous_sha256": "af6def0de1f17cb00b4001927990be54401bb831dd3f894d85987cce6ae21c44",
+      "sha256": "af6def0de1f17cb00b4001927990be54401bb831dd3f894d85987cce6ae21c44"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/duplicate.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/duplicate.png",
+      "previous_sha256": "b6cbba35f652762a5168bff8cbb720b6093fc4eb9f69164f09d5eeb1f5d9db95",
+      "sha256": "af6def0de1f17cb00b4001927990be54401bb831dd3f894d85987cce6ae21c44"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/undo.png",
+      "destination": "gfx/icons/undo.png",
+      "previous_sha256": "32faaae115cb2a08bed6ec54f347ce6ba76c77b94d5e5041c00d97a632475cd3",
+      "sha256": "a1097730fd8aad4dbf5ae6a28e24942b8a79248c8c7bf0894139182fa0418d1c"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/undo.png",
+      "destination": "bin/gfx/icons/undo.png",
+      "previous_sha256": "a1097730fd8aad4dbf5ae6a28e24942b8a79248c8c7bf0894139182fa0418d1c",
+      "sha256": "a1097730fd8aad4dbf5ae6a28e24942b8a79248c8c7bf0894139182fa0418d1c"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/undo.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/undo.png",
+      "previous_sha256": "32faaae115cb2a08bed6ec54f347ce6ba76c77b94d5e5041c00d97a632475cd3",
+      "sha256": "a1097730fd8aad4dbf5ae6a28e24942b8a79248c8c7bf0894139182fa0418d1c"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/redo.png",
+      "destination": "gfx/icons/redo.png",
+      "previous_sha256": "d9833b0cc98aeeee37fd67c01de69b7ef78fd028f02991cdfb327188fdfd4b70",
+      "sha256": "751dccd1a741e8ddc12545c9d584b44f5126dff7286471a843b9c8d466def321"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/redo.png",
+      "destination": "bin/gfx/icons/redo.png",
+      "previous_sha256": "751dccd1a741e8ddc12545c9d584b44f5126dff7286471a843b9c8d466def321",
+      "sha256": "751dccd1a741e8ddc12545c9d584b44f5126dff7286471a843b9c8d466def321"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/redo.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/redo.png",
+      "previous_sha256": "d9833b0cc98aeeee37fd67c01de69b7ef78fd028f02991cdfb327188fdfd4b70",
+      "sha256": "751dccd1a741e8ddc12545c9d584b44f5126dff7286471a843b9c8d466def321"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/share.png",
+      "destination": "gfx/icons/share.png",
+      "previous_sha256": "047dfd05231d6308a114c2d49f0642edd1ae7f0201ecba7997d18918f3b9f5dc",
+      "sha256": "936a2f814e2f16287989c28610d5fce0608493560a25a026fda3f37772cb01ac"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/share.png",
+      "destination": "bin/gfx/icons/share.png",
+      "previous_sha256": "936a2f814e2f16287989c28610d5fce0608493560a25a026fda3f37772cb01ac",
+      "sha256": "936a2f814e2f16287989c28610d5fce0608493560a25a026fda3f37772cb01ac"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/share.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/share.png",
+      "previous_sha256": "047dfd05231d6308a114c2d49f0642edd1ae7f0201ecba7997d18918f3b9f5dc",
+      "sha256": "936a2f814e2f16287989c28610d5fce0608493560a25a026fda3f37772cb01ac"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/join.png",
+      "destination": "gfx/icons/join.png",
+      "previous_sha256": "d2e124a4013618e6975c5a88bcf78b517953c4337451e0e27336406a63e8aaaa",
+      "sha256": "9c6b6524b2f1855547d313e1451b651cc6c7f92442d2e20f92944db54b6751e2"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/join.png",
+      "destination": "bin/gfx/icons/join.png",
+      "previous_sha256": "9c6b6524b2f1855547d313e1451b651cc6c7f92442d2e20f92944db54b6751e2",
+      "sha256": "9c6b6524b2f1855547d313e1451b651cc6c7f92442d2e20f92944db54b6751e2"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/join.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/join.png",
+      "previous_sha256": "d2e124a4013618e6975c5a88bcf78b517953c4337451e0e27336406a63e8aaaa",
+      "sha256": "9c6b6524b2f1855547d313e1451b651cc6c7f92442d2e20f92944db54b6751e2"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/save.png",
+      "destination": "gfx/icons/save.png",
+      "previous_sha256": "9f4500412d1d8c1adfe855e46248493c9a33f830324c04532613f766508d1a22",
+      "sha256": "a214a930b93dcd9728839218059760b3e9ce631d17e8a6a6bded99e549805359"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/save.png",
+      "destination": "bin/gfx/icons/save.png",
+      "previous_sha256": "a214a930b93dcd9728839218059760b3e9ce631d17e8a6a6bded99e549805359",
+      "sha256": "a214a930b93dcd9728839218059760b3e9ce631d17e8a6a6bded99e549805359"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/save.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/save.png",
+      "previous_sha256": "9f4500412d1d8c1adfe855e46248493c9a33f830324c04532613f766508d1a22",
+      "sha256": "a214a930b93dcd9728839218059760b3e9ce631d17e8a6a6bded99e549805359"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/grid.png",
+      "destination": "gfx/icons/grid.png",
+      "previous_sha256": "37f731367ffe2f8e6e90a99a880435fa13cfe15df813d1496887dc816fef9a64",
+      "sha256": "6cac0d2cadb532af8d21fc6c65a6477b8a9b782c07fb6f1052de82a5c5623489"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/grid.png",
+      "destination": "bin/gfx/icons/grid.png",
+      "previous_sha256": "6cac0d2cadb532af8d21fc6c65a6477b8a9b782c07fb6f1052de82a5c5623489",
+      "sha256": "6cac0d2cadb532af8d21fc6c65a6477b8a9b782c07fb6f1052de82a5c5623489"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/grid.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/grid.png",
+      "previous_sha256": "37f731367ffe2f8e6e90a99a880435fa13cfe15df813d1496887dc816fef9a64",
+      "sha256": "6cac0d2cadb532af8d21fc6c65a6477b8a9b782c07fb6f1052de82a5c5623489"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/placeholder.png",
+      "destination": "gfx/icons/placeholder.png",
+      "previous_sha256": "582155302e96e19f93b09f6d27fbe1f95bb0d49c6b50f49561f308a254d69359",
+      "sha256": "7d3d871efe4cf0dcf5cb3278f2b13029cf5fe542783140ab699c2eb3dea0aab5"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/placeholder.png",
+      "destination": "bin/gfx/icons/placeholder.png",
+      "previous_sha256": "7d3d871efe4cf0dcf5cb3278f2b13029cf5fe542783140ab699c2eb3dea0aab5",
+      "sha256": "7d3d871efe4cf0dcf5cb3278f2b13029cf5fe542783140ab699c2eb3dea0aab5"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/placeholder.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/placeholder.png",
+      "previous_sha256": "582155302e96e19f93b09f6d27fbe1f95bb0d49c6b50f49561f308a254d69359",
+      "sha256": "7d3d871efe4cf0dcf5cb3278f2b13029cf5fe542783140ab699c2eb3dea0aab5"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/annotation_lock_on.png",
+      "destination": "gfx/icons/annotation_lock_on.png",
+      "previous_sha256": "ed091705d30b47a85549b820379c5559e97b40ca7c34afa9ffe39d7c9ebf17d5",
+      "sha256": "933084d39f48ac5fcecf0f104da804c38881b528347fd0affcece7999368b16d"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/annotation_lock_on.png",
+      "destination": "bin/gfx/icons/annotation_lock_on.png",
+      "previous_sha256": "933084d39f48ac5fcecf0f104da804c38881b528347fd0affcece7999368b16d",
+      "sha256": "933084d39f48ac5fcecf0f104da804c38881b528347fd0affcece7999368b16d"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/annotation_lock_on.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/annotation_lock_on.png",
+      "previous_sha256": "ed091705d30b47a85549b820379c5559e97b40ca7c34afa9ffe39d7c9ebf17d5",
+      "sha256": "933084d39f48ac5fcecf0f104da804c38881b528347fd0affcece7999368b16d"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/annotation_lock_off.png",
+      "destination": "gfx/icons/annotation_lock_off.png",
+      "previous_sha256": "55c9cd50b21e0ffbda7636c13ba2cc452f15844b9219bf975eb250d84d8adcf7",
+      "sha256": "fb529ed1d0e93285b5201755bdad928a166110dfa416dc397665332d6a85737f"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/annotation_lock_off.png",
+      "destination": "bin/gfx/icons/annotation_lock_off.png",
+      "previous_sha256": "fb529ed1d0e93285b5201755bdad928a166110dfa416dc397665332d6a85737f",
+      "sha256": "fb529ed1d0e93285b5201755bdad928a166110dfa416dc397665332d6a85737f"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/annotation_lock_off.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/annotation_lock_off.png",
+      "previous_sha256": "55c9cd50b21e0ffbda7636c13ba2cc452f15844b9219bf975eb250d84d8adcf7",
+      "sha256": "fb529ed1d0e93285b5201755bdad928a166110dfa416dc397665332d6a85737f"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/link.png",
+      "destination": "gfx/icons/link.png",
+      "previous_sha256": "f4991cd53340cbaf46ae6072c0c50cf868e844fa55258e4f35bd9acd067436d1",
+      "sha256": "71ef9c1686ee794b2e33f18310e0bb39905119f51181b3254dce2bc3042afbad"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/link.png",
+      "destination": "bin/gfx/icons/link.png",
+      "previous_sha256": "4e1d0a1bc919e2ff991ac1862378d858e2fa2b6ab2221c4b8fdeb6a99beea2f5",
+      "sha256": "71ef9c1686ee794b2e33f18310e0bb39905119f51181b3254dce2bc3042afbad"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/link.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/link.png",
+      "previous_sha256": "f4991cd53340cbaf46ae6072c0c50cf868e844fa55258e4f35bd9acd067436d1",
+      "sha256": "71ef9c1686ee794b2e33f18310e0bb39905119f51181b3254dce2bc3042afbad"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/eraser.png",
+      "destination": "gfx/icons/eraser.png",
+      "previous_sha256": "e5c670908078fa5f3130662108da737a346744ed9311b4e60efff651b3ce5c2b",
+      "sha256": "1e2e5d71990973a7f2722c3daf2ba1119cb3417919d69ce9ab8898ba8da67f89"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/eraser.png",
+      "destination": "bin/gfx/icons/eraser.png",
+      "previous_sha256": "7fe5581971e1a786dbceb9eca6f5eca6ee4dbd6b9d0a40f04db431fc4abdbda5",
+      "sha256": "1e2e5d71990973a7f2722c3daf2ba1119cb3417919d69ce9ab8898ba8da67f89"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/eraser.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/eraser.png",
+      "previous_sha256": "e5c670908078fa5f3130662108da737a346744ed9311b4e60efff651b3ce5c2b",
+      "sha256": "1e2e5d71990973a7f2722c3daf2ba1119cb3417919d69ce9ab8898ba8da67f89"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/align_left.png",
+      "destination": "gfx/icons/align_left.png",
+      "previous_sha256": null,
+      "sha256": "3634d168a7e8e9da7ddb12f999fd9f818328e30b1df6b456b6b181e0260ee121"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/align_left.png",
+      "destination": "bin/gfx/icons/align_left.png",
+      "previous_sha256": null,
+      "sha256": "3634d168a7e8e9da7ddb12f999fd9f818328e30b1df6b456b6b181e0260ee121"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/align_left.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/align_left.png",
+      "previous_sha256": null,
+      "sha256": "3634d168a7e8e9da7ddb12f999fd9f818328e30b1df6b456b6b181e0260ee121"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/align_right.png",
+      "destination": "gfx/icons/align_right.png",
+      "previous_sha256": null,
+      "sha256": "79b85f93c06322298d001de6c35770eeb20278268671cb7e8bc80671f5a33cae"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/align_right.png",
+      "destination": "bin/gfx/icons/align_right.png",
+      "previous_sha256": null,
+      "sha256": "79b85f93c06322298d001de6c35770eeb20278268671cb7e8bc80671f5a33cae"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/align_right.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/align_right.png",
+      "previous_sha256": null,
+      "sha256": "79b85f93c06322298d001de6c35770eeb20278268671cb7e8bc80671f5a33cae"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/align_top.png",
+      "destination": "gfx/icons/align_top.png",
+      "previous_sha256": null,
+      "sha256": "b20e0a65397f632dacf3f04a275bbeddd6bbabdc01a1b1d608cc60b45a8375c9"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/align_top.png",
+      "destination": "bin/gfx/icons/align_top.png",
+      "previous_sha256": null,
+      "sha256": "b20e0a65397f632dacf3f04a275bbeddd6bbabdc01a1b1d608cc60b45a8375c9"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/align_top.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/align_top.png",
+      "previous_sha256": null,
+      "sha256": "b20e0a65397f632dacf3f04a275bbeddd6bbabdc01a1b1d608cc60b45a8375c9"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/align_bottom.png",
+      "destination": "gfx/icons/align_bottom.png",
+      "previous_sha256": null,
+      "sha256": "3483f9db5c7a0ba281e515a59e6e458fcdaa51f17ad7d1a75883008fe789750f"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/align_bottom.png",
+      "destination": "bin/gfx/icons/align_bottom.png",
+      "previous_sha256": null,
+      "sha256": "3483f9db5c7a0ba281e515a59e6e458fcdaa51f17ad7d1a75883008fe789750f"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/align_bottom.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/align_bottom.png",
+      "previous_sha256": null,
+      "sha256": "3483f9db5c7a0ba281e515a59e6e458fcdaa51f17ad7d1a75883008fe789750f"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/arrange_in_grid.png",
+      "destination": "gfx/icons/arrange_in_grid.png",
+      "previous_sha256": null,
+      "sha256": "a6372f633660b2a6460820ec137f19e49e816b6f4a7e4df7ef124f6d2889aef9"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/arrange_in_grid.png",
+      "destination": "bin/gfx/icons/arrange_in_grid.png",
+      "previous_sha256": null,
+      "sha256": "a6372f633660b2a6460820ec137f19e49e816b6f4a7e4df7ef124f6d2889aef9"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/arrange_in_grid.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/arrange_in_grid.png",
+      "previous_sha256": null,
+      "sha256": "a6372f633660b2a6460820ec137f19e49e816b6f4a7e4df7ef124f6d2889aef9"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/distribute_horizontal.png",
+      "destination": "gfx/icons/distribute_horizontal.png",
+      "previous_sha256": null,
+      "sha256": "82750e546cee069fc49f83c843f39e25d31d63f90b51e90be4a920e6da8773c9"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/distribute_horizontal.png",
+      "destination": "bin/gfx/icons/distribute_horizontal.png",
+      "previous_sha256": null,
+      "sha256": "82750e546cee069fc49f83c843f39e25d31d63f90b51e90be4a920e6da8773c9"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/distribute_horizontal.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/distribute_horizontal.png",
+      "previous_sha256": null,
+      "sha256": "82750e546cee069fc49f83c843f39e25d31d63f90b51e90be4a920e6da8773c9"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/distribute_vertical.png",
+      "destination": "gfx/icons/distribute_vertical.png",
+      "previous_sha256": null,
+      "sha256": "0043aef89124c40573a6a4e4b944f82e6d122398b4f5b7b5a8326006d4210bf5"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/distribute_vertical.png",
+      "destination": "bin/gfx/icons/distribute_vertical.png",
+      "previous_sha256": null,
+      "sha256": "0043aef89124c40573a6a4e4b944f82e6d122398b4f5b7b5a8326006d4210bf5"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/distribute_vertical.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/distribute_vertical.png",
+      "previous_sha256": null,
+      "sha256": "0043aef89124c40573a6a4e4b944f82e6d122398b4f5b7b5a8326006d4210bf5"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/flip_horizontal.png",
+      "destination": "gfx/icons/flip_horizontal.png",
+      "previous_sha256": null,
+      "sha256": "2376f61df2e32986d1b6fdb393b3adf03aba4f5d42657b1e71fe1188af5c3e2a"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/flip_horizontal.png",
+      "destination": "bin/gfx/icons/flip_horizontal.png",
+      "previous_sha256": "2376f61df2e32986d1b6fdb393b3adf03aba4f5d42657b1e71fe1188af5c3e2a",
+      "sha256": "2376f61df2e32986d1b6fdb393b3adf03aba4f5d42657b1e71fe1188af5c3e2a"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/flip_horizontal.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/flip_horizontal.png",
+      "previous_sha256": null,
+      "sha256": "2376f61df2e32986d1b6fdb393b3adf03aba4f5d42657b1e71fe1188af5c3e2a"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/flip_vertical.png",
+      "destination": "gfx/icons/flip_vertical.png",
+      "previous_sha256": null,
+      "sha256": "8d3b0f4230f9dc4da6d461e2cf01ba16badf4d3ddd5cb61032e83fc6ded53f4e"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/flip_vertical.png",
+      "destination": "bin/gfx/icons/flip_vertical.png",
+      "previous_sha256": "8d3b0f4230f9dc4da6d461e2cf01ba16badf4d3ddd5cb61032e83fc6ded53f4e",
+      "sha256": "8d3b0f4230f9dc4da6d461e2cf01ba16badf4d3ddd5cb61032e83fc6ded53f4e"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/flip_vertical.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/flip_vertical.png",
+      "previous_sha256": null,
+      "sha256": "8d3b0f4230f9dc4da6d461e2cf01ba16badf4d3ddd5cb61032e83fc6ded53f4e"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/bring_forward.png",
+      "destination": "gfx/icons/bring_forward.png",
+      "previous_sha256": null,
+      "sha256": "85c4f43e70fb763a55aa97695a00ce480e773d5b8f08f62242a33258239a8235"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/bring_forward.png",
+      "destination": "bin/gfx/icons/bring_forward.png",
+      "previous_sha256": null,
+      "sha256": "85c4f43e70fb763a55aa97695a00ce480e773d5b8f08f62242a33258239a8235"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/bring_forward.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/bring_forward.png",
+      "previous_sha256": null,
+      "sha256": "85c4f43e70fb763a55aa97695a00ce480e773d5b8f08f62242a33258239a8235"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/send_backward.png",
+      "destination": "gfx/icons/send_backward.png",
+      "previous_sha256": null,
+      "sha256": "3d53ac813e2d639deab6b4d5026aedcab1abfceec89fd10d540ce8ed573f4dee"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/send_backward.png",
+      "destination": "bin/gfx/icons/send_backward.png",
+      "previous_sha256": null,
+      "sha256": "3d53ac813e2d639deab6b4d5026aedcab1abfceec89fd10d540ce8ed573f4dee"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/send_backward.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/send_backward.png",
+      "previous_sha256": null,
+      "sha256": "3d53ac813e2d639deab6b4d5026aedcab1abfceec89fd10d540ce8ed573f4dee"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/cycle_color.png",
+      "destination": "gfx/icons/cycle_color.png",
+      "previous_sha256": null,
+      "sha256": "94da249578a43611511ca8dac504c1073b328c6a3931535d0d91effac8a3d928"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/cycle_color.png",
+      "destination": "bin/gfx/icons/cycle_color.png",
+      "previous_sha256": null,
+      "sha256": "94da249578a43611511ca8dac504c1073b328c6a3931535d0d91effac8a3d928"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/cycle_color.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/cycle_color.png",
+      "previous_sha256": null,
+      "sha256": "94da249578a43611511ca8dac504c1073b328c6a3931535d0d91effac8a3d928"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/cycle_image_sampling.png",
+      "destination": "gfx/icons/cycle_image_sampling.png",
+      "previous_sha256": null,
+      "sha256": "1604cba9f58a28e582274177a78bcc8638803d776c7c7ada9c685676ed0e4b81"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/cycle_image_sampling.png",
+      "destination": "bin/gfx/icons/cycle_image_sampling.png",
+      "previous_sha256": null,
+      "sha256": "1604cba9f58a28e582274177a78bcc8638803d776c7c7ada9c685676ed0e4b81"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/cycle_image_sampling.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/cycle_image_sampling.png",
+      "previous_sha256": null,
+      "sha256": "1604cba9f58a28e582274177a78bcc8638803d776c7c7ada9c685676ed0e4b81"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/rotate_view_tool.png",
+      "destination": "gfx/icons/rotate_view_tool.png",
+      "previous_sha256": null,
+      "sha256": "d41ca03a6257d189b9eac8b97664edf11adccd404dae123607860cc175f9ad8f"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/rotate_view_tool.png",
+      "destination": "bin/gfx/icons/rotate_view_tool.png",
+      "previous_sha256": null,
+      "sha256": "d41ca03a6257d189b9eac8b97664edf11adccd404dae123607860cc175f9ad8f"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/rotate_view_tool.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/rotate_view_tool.png",
+      "previous_sha256": null,
+      "sha256": "d41ca03a6257d189b9eac8b97664edf11adccd404dae123607860cc175f9ad8f"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/toggle_snap.png",
+      "destination": "gfx/icons/toggle_snap.png",
+      "previous_sha256": null,
+      "sha256": "d786225f4400cc8c02d0270e5b9c8a82db1db990ac301cac04e9a948b292cb43"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/toggle_snap.png",
+      "destination": "bin/gfx/icons/toggle_snap.png",
+      "previous_sha256": null,
+      "sha256": "d786225f4400cc8c02d0270e5b9c8a82db1db990ac301cac04e9a948b292cb43"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/toggle_snap.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/toggle_snap.png",
+      "previous_sha256": null,
+      "sha256": "d786225f4400cc8c02d0270e5b9c8a82db1db990ac301cac04e9a948b292cb43"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/unlink.png",
+      "destination": "gfx/icons/unlink.png",
+      "previous_sha256": null,
+      "sha256": "3d63862db92723e1e98a200209cf39489acd623c432df4d9e3cf1691083ec5d4"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/unlink.png",
+      "destination": "bin/gfx/icons/unlink.png",
+      "previous_sha256": null,
+      "sha256": "3d63862db92723e1e98a200209cf39489acd623c432df4d9e3cf1691083ec5d4"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/unlink.png",
+      "destination": "bin/tack-windows-x86_64/gfx/icons/unlink.png",
+      "previous_sha256": null,
+      "sha256": "3d63862db92723e1e98a200209cf39489acd623c432df4d9e3cf1691083ec5d4"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/arrow_cursor.png",
+      "destination": "gfx/cursors/cursor_pointer.png",
+      "previous_sha256": "4c1c23a16d88d385b9de45c35dcedcc5421b5920eba30ea6acb27d307a9226c1",
+      "sha256": "b6ffa87944cef14745e63992cc3815d3689701deba0ba2a171a617548a31f618"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/arrow_cursor.png",
+      "destination": "bin/gfx/cursors/cursor_pointer.png",
+      "previous_sha256": "4c1c23a16d88d385b9de45c35dcedcc5421b5920eba30ea6acb27d307a9226c1",
+      "sha256": "b6ffa87944cef14745e63992cc3815d3689701deba0ba2a171a617548a31f618"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/arrow_cursor.png",
+      "destination": "bin/tack-windows-x86_64/gfx/cursors/cursor_pointer.png",
+      "previous_sha256": "4c1c23a16d88d385b9de45c35dcedcc5421b5920eba30ea6acb27d307a9226c1",
+      "sha256": "b6ffa87944cef14745e63992cc3815d3689701deba0ba2a171a617548a31f618"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/hand_open_cursor.png",
+      "destination": "gfx/cursors/cursor_hand_open.png",
+      "previous_sha256": "989f6f7e1f1c749d0da9459a69920435908ea6491fb6ae67fb412df758f7797d",
+      "sha256": "5f7504464749c9bb4b13c87492d4da32eb16603ac409f2ba21a23c97b1786e9b"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/hand_open_cursor.png",
+      "destination": "bin/gfx/cursors/cursor_hand_open.png",
+      "previous_sha256": "989f6f7e1f1c749d0da9459a69920435908ea6491fb6ae67fb412df758f7797d",
+      "sha256": "5f7504464749c9bb4b13c87492d4da32eb16603ac409f2ba21a23c97b1786e9b"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/hand_open_cursor.png",
+      "destination": "bin/tack-windows-x86_64/gfx/cursors/cursor_hand_open.png",
+      "previous_sha256": "989f6f7e1f1c749d0da9459a69920435908ea6491fb6ae67fb412df758f7797d",
+      "sha256": "5f7504464749c9bb4b13c87492d4da32eb16603ac409f2ba21a23c97b1786e9b"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/hand_cursor_closed.png",
+      "destination": "gfx/cursors/cursor_hand_closed.png",
+      "previous_sha256": "68b771a780ccbc5d1e636bdeee0329f15f60090344d64115126165a397a10aac",
+      "sha256": "039d943b6c5d48abf5aa9e59776e824c64a22c3fddfa10cc2a1bc4ac7b0c896d"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/hand_cursor_closed.png",
+      "destination": "bin/gfx/cursors/cursor_hand_closed.png",
+      "previous_sha256": "68b771a780ccbc5d1e636bdeee0329f15f60090344d64115126165a397a10aac",
+      "sha256": "039d943b6c5d48abf5aa9e59776e824c64a22c3fddfa10cc2a1bc4ac7b0c896d"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/hand_cursor_closed.png",
+      "destination": "bin/tack-windows-x86_64/gfx/cursors/cursor_hand_closed.png",
+      "previous_sha256": "68b771a780ccbc5d1e636bdeee0329f15f60090344d64115126165a397a10aac",
+      "sha256": "039d943b6c5d48abf5aa9e59776e824c64a22c3fddfa10cc2a1bc4ac7b0c896d"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/crosshair_cursor.png",
+      "destination": "gfx/cursors/cursor_crosshair.png",
+      "previous_sha256": "b7252fc11664c6ad9f930c0009975c26c8e9cf0ad3d5f6b8e2b3183da3b761e5",
+      "sha256": "676331e4fc678d188fb6a4f184da2868f069421c70bd443d5e6939384fb8b957"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/crosshair_cursor.png",
+      "destination": "bin/gfx/cursors/cursor_crosshair.png",
+      "previous_sha256": "b7252fc11664c6ad9f930c0009975c26c8e9cf0ad3d5f6b8e2b3183da3b761e5",
+      "sha256": "676331e4fc678d188fb6a4f184da2868f069421c70bd443d5e6939384fb8b957"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/crosshair_cursor.png",
+      "destination": "bin/tack-windows-x86_64/gfx/cursors/cursor_crosshair.png",
+      "previous_sha256": "b7252fc11664c6ad9f930c0009975c26c8e9cf0ad3d5f6b8e2b3183da3b761e5",
+      "sha256": "676331e4fc678d188fb6a4f184da2868f069421c70bd443d5e6939384fb8b957"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/draw_cursor.png",
+      "destination": "gfx/cursors/cursor_draw.png",
+      "previous_sha256": "21192cf9f6db3f43671944c7b9f1d525b492f92d43e51f478d5c78a26ddbba2a",
+      "sha256": "3f213368fca8e7f7430ca6f2bd96b258ae71973bf186026bfedd6994fec3f0e9"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/draw_cursor.png",
+      "destination": "bin/gfx/cursors/cursor_draw.png",
+      "previous_sha256": "21192cf9f6db3f43671944c7b9f1d525b492f92d43e51f478d5c78a26ddbba2a",
+      "sha256": "3f213368fca8e7f7430ca6f2bd96b258ae71973bf186026bfedd6994fec3f0e9"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/draw_cursor.png",
+      "destination": "bin/tack-windows-x86_64/gfx/cursors/cursor_draw.png",
+      "previous_sha256": "21192cf9f6db3f43671944c7b9f1d525b492f92d43e51f478d5c78a26ddbba2a",
+      "sha256": "3f213368fca8e7f7430ca6f2bd96b258ae71973bf186026bfedd6994fec3f0e9"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/eraser.png",
+      "destination": "gfx/cursors/cursor_eraser.png",
+      "previous_sha256": "e5c670908078fa5f3130662108da737a346744ed9311b4e60efff651b3ce5c2b",
+      "sha256": "1e2e5d71990973a7f2722c3daf2ba1119cb3417919d69ce9ab8898ba8da67f89"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/eraser.png",
+      "destination": "bin/gfx/cursors/cursor_eraser.png",
+      "previous_sha256": "e5c670908078fa5f3130662108da737a346744ed9311b4e60efff651b3ce5c2b",
+      "sha256": "1e2e5d71990973a7f2722c3daf2ba1119cb3417919d69ce9ab8898ba8da67f89"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/eraser.png",
+      "destination": "bin/tack-windows-x86_64/gfx/cursors/cursor_eraser.png",
+      "previous_sha256": "e5c670908078fa5f3130662108da737a346744ed9311b4e60efff651b3ce5c2b",
+      "sha256": "1e2e5d71990973a7f2722c3daf2ba1119cb3417919d69ce9ab8898ba8da67f89"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/text_cursor.png",
+      "destination": "gfx/cursors/cursor_text.png",
+      "previous_sha256": "ca9556e13ba40c7fcc26c41bcedc1d2aa5c130642d8c0d672bdd70345b7e8bbb",
+      "sha256": "91d03199ab1324900c5041fce40b6ec137686f2dfcd593d7381f41903382f770"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/text_cursor.png",
+      "destination": "bin/gfx/cursors/cursor_text.png",
+      "previous_sha256": "ca9556e13ba40c7fcc26c41bcedc1d2aa5c130642d8c0d672bdd70345b7e8bbb",
+      "sha256": "91d03199ab1324900c5041fce40b6ec137686f2dfcd593d7381f41903382f770"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/text_cursor.png",
+      "destination": "bin/tack-windows-x86_64/gfx/cursors/cursor_text.png",
+      "previous_sha256": "ca9556e13ba40c7fcc26c41bcedc1d2aa5c130642d8c0d672bdd70345b7e8bbb",
+      "sha256": "91d03199ab1324900c5041fce40b6ec137686f2dfcd593d7381f41903382f770"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/move_cursor.png",
+      "destination": "gfx/cursors/cursor_move.png",
+      "previous_sha256": "33b5720d2311cba10116f6aeca8ab091847f27cd5fc6f9e7543ffe7b3a0493a5",
+      "sha256": "45279313e85824c4fb13dc774f17427d458afe6c7b968c2a35ca0f8a4eba8575"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/move_cursor.png",
+      "destination": "bin/gfx/cursors/cursor_move.png",
+      "previous_sha256": "33b5720d2311cba10116f6aeca8ab091847f27cd5fc6f9e7543ffe7b3a0493a5",
+      "sha256": "45279313e85824c4fb13dc774f17427d458afe6c7b968c2a35ca0f8a4eba8575"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/move_cursor.png",
+      "destination": "bin/tack-windows-x86_64/gfx/cursors/cursor_move.png",
+      "previous_sha256": "33b5720d2311cba10116f6aeca8ab091847f27cd5fc6f9e7543ffe7b3a0493a5",
+      "sha256": "45279313e85824c4fb13dc774f17427d458afe6c7b968c2a35ca0f8a4eba8575"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/resize_nwse_cursor.png",
+      "destination": "gfx/cursors/cursor_resize_nwse.png",
+      "previous_sha256": "dde29e96e412abf6c0c67f85c279a9ad40024a90c1d477e5cb13a102285b7b68",
+      "sha256": "74202903d2611846b8b834ebdeff86aa5e48b561cdc786efd6b37c84337cac1d"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/resize_nwse_cursor.png",
+      "destination": "bin/gfx/cursors/cursor_resize_nwse.png",
+      "previous_sha256": "dde29e96e412abf6c0c67f85c279a9ad40024a90c1d477e5cb13a102285b7b68",
+      "sha256": "74202903d2611846b8b834ebdeff86aa5e48b561cdc786efd6b37c84337cac1d"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/resize_nwse_cursor.png",
+      "destination": "bin/tack-windows-x86_64/gfx/cursors/cursor_resize_nwse.png",
+      "previous_sha256": "dde29e96e412abf6c0c67f85c279a9ad40024a90c1d477e5cb13a102285b7b68",
+      "sha256": "74202903d2611846b8b834ebdeff86aa5e48b561cdc786efd6b37c84337cac1d"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/resize_nesw_cursor.png",
+      "destination": "gfx/cursors/cursor_resize_nesw.png",
+      "previous_sha256": "8fe302873c22b5e5eaac7d2d46ea2b4cd3f66298ad8dabccc505f25d8bd0e31e",
+      "sha256": "b518603dcc6fd2ab87863d18f80ccc2fdd2998d5c472beb0e4342d99fd8b30fb"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/resize_nesw_cursor.png",
+      "destination": "bin/gfx/cursors/cursor_resize_nesw.png",
+      "previous_sha256": "8fe302873c22b5e5eaac7d2d46ea2b4cd3f66298ad8dabccc505f25d8bd0e31e",
+      "sha256": "b518603dcc6fd2ab87863d18f80ccc2fdd2998d5c472beb0e4342d99fd8b30fb"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/resize_nesw_cursor.png",
+      "destination": "bin/tack-windows-x86_64/gfx/cursors/cursor_resize_nesw.png",
+      "previous_sha256": "8fe302873c22b5e5eaac7d2d46ea2b4cd3f66298ad8dabccc505f25d8bd0e31e",
+      "sha256": "b518603dcc6fd2ab87863d18f80ccc2fdd2998d5c472beb0e4342d99fd8b30fb"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/resize_ns_cursor.png",
+      "destination": "gfx/cursors/cursor_resize_ns.png",
+      "previous_sha256": "dfca06d7e719ea24242563026b07fd5e44055f3b029bd32804b402d85211c1de",
+      "sha256": "b82c3d36a7dc230c7172bd7241dd9e3f1ad782d0f81a53a796341496268efd76"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/resize_ns_cursor.png",
+      "destination": "bin/gfx/cursors/cursor_resize_ns.png",
+      "previous_sha256": "dfca06d7e719ea24242563026b07fd5e44055f3b029bd32804b402d85211c1de",
+      "sha256": "b82c3d36a7dc230c7172bd7241dd9e3f1ad782d0f81a53a796341496268efd76"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/resize_ns_cursor.png",
+      "destination": "bin/tack-windows-x86_64/gfx/cursors/cursor_resize_ns.png",
+      "previous_sha256": "dfca06d7e719ea24242563026b07fd5e44055f3b029bd32804b402d85211c1de",
+      "sha256": "b82c3d36a7dc230c7172bd7241dd9e3f1ad782d0f81a53a796341496268efd76"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/resize_ew_cursor.png",
+      "destination": "gfx/cursors/cursor_resize_ew.png",
+      "previous_sha256": "f80b48bd031a383fc41bb7237acc8d939ab75950ca5d7cab5dd17938947bc717",
+      "sha256": "902441f05820789e5f36354b0945059a10adf57f0e7d5b4fd94441ab67ff3744"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/resize_ew_cursor.png",
+      "destination": "bin/gfx/cursors/cursor_resize_ew.png",
+      "previous_sha256": "f80b48bd031a383fc41bb7237acc8d939ab75950ca5d7cab5dd17938947bc717",
+      "sha256": "902441f05820789e5f36354b0945059a10adf57f0e7d5b4fd94441ab67ff3744"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/resize_ew_cursor.png",
+      "destination": "bin/tack-windows-x86_64/gfx/cursors/cursor_resize_ew.png",
+      "previous_sha256": "f80b48bd031a383fc41bb7237acc8d939ab75950ca5d7cab5dd17938947bc717",
+      "sha256": "902441f05820789e5f36354b0945059a10adf57f0e7d5b4fd94441ab67ff3744"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/rotate_cursor.png",
+      "destination": "gfx/cursors/cursor_rotate.png",
+      "previous_sha256": "257f779a7b784a17191d98c610b887bd7ff240569e9cabd8e00dd5dbd13bfee9",
+      "sha256": "c28ab5600c97a66bb199a56872429bcd68213f105f287d1abed99d93eaf8b763"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/rotate_cursor.png",
+      "destination": "bin/gfx/cursors/cursor_rotate.png",
+      "previous_sha256": "257f779a7b784a17191d98c610b887bd7ff240569e9cabd8e00dd5dbd13bfee9",
+      "sha256": "c28ab5600c97a66bb199a56872429bcd68213f105f287d1abed99d93eaf8b763"
+    },
+    {
+      "source": "bin/gfx/icons/work_icons/rotate_cursor.png",
+      "destination": "bin/tack-windows-x86_64/gfx/cursors/cursor_rotate.png",
+      "previous_sha256": "257f779a7b784a17191d98c610b887bd7ff240569e9cabd8e00dd5dbd13bfee9",
+      "sha256": "c28ab5600c97a66bb199a56872429bcd68213f105f287d1abed99d93eaf8b763"
+    }
+  ],
+  "about_logo_sha256": "9c8946df25b117e7f5fc3490bbac706f06d6656e4f288ff5ea547f3f52214d5e"
+}

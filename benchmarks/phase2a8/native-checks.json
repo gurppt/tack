@@ -1,0 +1,907 @@
+{
+  "source_commit": "8f1e0276f841d0126247b2e2cdded9e1b3e127c8",
+  "scope": "Owned Xvfb, software Vulkan, loopback; physical desktop/real LAN pending.",
+  "runs": [
+    {
+      "harness": "foundation-artist-icons",
+      "checks": [
+        {
+          "name": "idle has no TCP/UDP network socket",
+          "observed": true,
+          "detail": {
+            "seconds": 2,
+            "rss_before": 112832512,
+            "rss_after": 112832512,
+            "threads": 11,
+            "tasks": [
+              {
+                "name": "tack",
+                "ticks": 0,
+                "voluntary_switches": 0
+              },
+              {
+                "name": "tack",
+                "ticks": 0,
+                "voluntary_switches": 0
+              },
+              {
+                "name": "llvmpipe-0",
+                "ticks": 0,
+                "voluntary_switches": 0
+              },
+              {
+                "name": "llvmpipe-1",
+                "ticks": 0,
+                "voluntary_switches": 0
+              },
+              {
+                "name": "tack",
+                "ticks": 0,
+                "voluntary_switches": 0
+              },
+              {
+                "name": "tack",
+                "ticks": 0,
+                "voluntary_switches": 0
+              },
+              {
+                "name": "tack:disk$0",
+                "ticks": 0,
+                "voluntary_switches": 0
+              },
+              {
+                "name": "WSI swapchain q",
+                "ticks": 0,
+                "voluntary_switches": 0
+              },
+              {
+                "name": "WSI swapchain e",
+                "ticks": 0,
+                "voluntary_switches": 0
+              },
+              {
+                "name": "tack-product-di",
+                "ticks": 0,
+                "voluntary_switches": 0
+              },
+              {
+                "name": "tack-product-di",
+                "ticks": 0,
+                "voluntary_switches": 0
+              }
+            ],
+            "ticks": 0,
+            "cpu_percent_one_core": 0.0,
+            "socket_records": [
+              {
+                "kind": "unix",
+                "record": "0000000000000000: 00000003 00000000 00000000 0001 03 270889"
+              }
+            ],
+            "io_delta": {
+              "rchar": 0,
+              "wchar": 0,
+              "syscr": 0,
+              "syscw": 0,
+              "read_bytes": 0,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          }
+        },
+        {
+          "name": "idle has no updater child",
+          "observed": true,
+          "detail": []
+        },
+        {
+          "name": "initial native cursor exactly matches installed pixel pointer",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "Rectangle canvas uses cached custom crosshair",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "toolbar uses normal custom pointer",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "canvas restores original tool cursor",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "About uses pointer without changing tool",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "About dismissal restores active tool cursor",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "fixed F10 opens menu from active tool",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "Preferences uses normal pointer",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "explicit update action retains app and board",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "fixed F10 interrupts update modal safely",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "cancelled update preserves tool cursor",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "update cancellation has no board mutation",
+          "observed": true,
+          "detail": null
+        }
+      ],
+      "passed": true,
+      "receipt_sha256": "c827b104ca7f550df79fb7e6639baa1858805b6048c1f788d88e747e16c1fe88"
+    },
+    {
+      "harness": "ui-artist-icons",
+      "checks": [
+        {
+          "name": "800x600 bar1 provided logo exact nearest pixels",
+          "observed": true,
+          "detail": {
+            "logo_rect": [
+              376,
+              164,
+              75,
+              35
+            ]
+          }
+        },
+        {
+          "name": "800x600 bar1 centered About and border",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "800x600 bar1 About outside dismissal",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "800x600 bar1 native toolbar stays at quarter edge after resize",
+          "observed": true,
+          "detail": [
+            204.0,
+            0.0,
+            414.0,
+            16.0
+          ]
+        },
+        {
+          "name": "800x600 bar1 independent toolbar cells and released artwork",
+          "observed": true,
+          "detail": [
+            204.0,
+            0.0,
+            414.0,
+            16.0
+          ]
+        },
+        {
+          "name": "800x600 bar2 provided logo exact nearest pixels",
+          "observed": true,
+          "detail": {
+            "logo_rect": [
+              376,
+              164,
+              75,
+              35
+            ]
+          }
+        },
+        {
+          "name": "800x600 bar2 centered About and border",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "800x600 bar2 About outside dismissal",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "800x600 bar2 native toolbar stays at quarter edge after resize",
+          "observed": true,
+          "detail": [
+            152.0,
+            0.0,
+            572.0,
+            32.0
+          ]
+        },
+        {
+          "name": "800x600 bar2 independent toolbar cells and released artwork",
+          "observed": true,
+          "detail": [
+            152.0,
+            0.0,
+            572.0,
+            32.0
+          ]
+        },
+        {
+          "name": "800x600 bar3 provided logo exact nearest pixels",
+          "observed": true,
+          "detail": {
+            "logo_rect": [
+              376,
+              164,
+              75,
+              35
+            ]
+          }
+        },
+        {
+          "name": "800x600 bar3 centered About and border",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "800x600 bar3 About outside dismissal",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "800x600 bar3 native toolbar stays at quarter edge after resize",
+          "observed": true,
+          "detail": [
+            99.0,
+            0.0,
+            729.0,
+            48.0
+          ]
+        },
+        {
+          "name": "800x600 bar3 independent toolbar cells and released artwork",
+          "observed": true,
+          "detail": [
+            99.0,
+            0.0,
+            729.0,
+            48.0
+          ]
+        },
+        {
+          "name": "1024x768 bar1 provided logo exact nearest pixels",
+          "observed": true,
+          "detail": {
+            "logo_rect": [
+              488,
+              248,
+              75,
+              35
+            ]
+          }
+        },
+        {
+          "name": "1024x768 bar1 centered About and border",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "1024x768 bar1 About outside dismissal",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "1024x768 bar1 native toolbar stays at quarter edge after resize",
+          "observed": true,
+          "detail": [
+            260.0,
+            0.0,
+            470.0,
+            16.0
+          ]
+        },
+        {
+          "name": "1024x768 bar1 independent toolbar cells and released artwork",
+          "observed": true,
+          "detail": [
+            260.0,
+            0.0,
+            470.0,
+            16.0
+          ]
+        },
+        {
+          "name": "immutable Default Save redirects to Save As without changing profile",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "Edit Toolbar wheel scrolls Available independently of Order",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "Keymap pointer resting at edge does not scroll",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "Keymap wheel scrolls bounded list",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "Keymap direct thumb drag changes viewport",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "grid Behavior Enter changes Undo to Release",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "shortcut collision Escape keeps previous binding",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "shortcut collision Enter commits reassignment and dirty marker",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "Save As names keyset and clears dirty marker",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "Save overwrites loaded user keyset without picker",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "Load restores saved keyset identity and bindings",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "B captures arbitrary Right Mouse shortcut and stays local",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "Middle Hold Pan begins same press and Right Mouse recalls view",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "Note Enter keeps paper and Shift Enter newline",
+          "observed": true,
+          "detail": {
+            "id": 338556396010810039686498281088913650138,
+            "kind": 3,
+            "center": [
+              580.0,
+              387.5
+            ],
+            "size": [
+              320.0,
+              160.0
+            ],
+            "rotation": 0.0,
+            "stroke": [
+              255,
+              198,
+              82,
+              255
+            ],
+            "filled": 1,
+            "fill": [
+              255,
+              198,
+              82,
+              255
+            ],
+            "width": 3.0,
+            "opacity": 1.0,
+            "font_size": 32.0,
+            "alignment": 0,
+            "text": "Native note\nSecond line"
+          }
+        },
+        {
+          "name": "Rectangle fill Color Cycle persists both hues and opacity",
+          "observed": true,
+          "detail": {
+            "id": 316987759559203621153473748251418597480,
+            "kind": 4,
+            "center": [
+              160.0,
+              325.0
+            ],
+            "size": [
+              120.0,
+              75.0
+            ],
+            "rotation": 0.0,
+            "stroke": [
+              240,
+              92,
+              104,
+              255
+            ],
+            "filled": 1,
+            "fill": [
+              240,
+              92,
+              104,
+              191
+            ],
+            "width": 3.0,
+            "opacity": 1.0
+          }
+        },
+        {
+          "name": "native ctrl+shift+s cancel retains document and opens no Error",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "native ctrl+o cancel retains document and opens no Error",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "native F12 cancel retains document and opens no Error",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "native F11 cancel retains document and opens no Error",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "native F13 cancel retains document and opens no Error",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "settled local idle has zero redraw I/O TCP/UDP and no caret timer",
+          "observed": true,
+          "detail": {
+            "redraws": 0,
+            "threads": 11,
+            "rss": 119255040,
+            "io": {
+              "rchar": 0,
+              "wchar": 0,
+              "syscr": 0,
+              "syscw": 0,
+              "read_bytes": 0,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          }
+        },
+        {
+          "name": "public title contains only Tack file identity and dirty marker",
+          "observed": true,
+          "detail": {
+            "initial": "Tack \u2014 Untitled",
+            "dirty": "Tack \u2014 Untitled *"
+          }
+        },
+        {
+          "name": "outside click cannot dismiss unsaved-data confirmation",
+          "observed": true,
+          "detail": null
+        }
+      ],
+      "passed": true,
+      "receipt_sha256": "1481b463392cb50e05b602484f3250d17b3b4ca848fc9ae6361c2c99375f2c8b"
+    },
+    {
+      "harness": "board-edit-artist-icons",
+      "checks": [
+        {
+          "name": "Frame created for native interaction",
+          "observed": true,
+          "detail": null,
+          "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Frame \u00b7 Pointer"
+        },
+        {
+          "name": "completed draft strokes stay visible between pointer releases",
+          "observed": true,
+          "detail": null,
+          "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Scribble"
+        },
+        {
+          "name": "two pointer strokes become one compound Scribble",
+          "observed": true,
+          "detail": {
+            "id": 263245817905070738179482723700362509189,
+            "kind": 9,
+            "center": [
+              200.0,
+              117.5
+            ],
+            "size": [
+              200.0,
+              60.0
+            ],
+            "rotation": 0.0,
+            "stroke": [
+              255,
+              198,
+              82,
+              255
+            ],
+            "filled": 0,
+            "fill": null,
+            "width": 3.0,
+            "opacity": 1.0,
+            "strokes": [
+              {
+                "points": 2,
+                "style": null
+              },
+              {
+                "points": 2,
+                "style": null
+              }
+            ],
+            "points": 4
+          },
+          "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Scribble"
+        },
+        {
+          "name": "selected-object Link commits parent relation",
+          "observed": true,
+          "detail": [
+            [
+              263245817905070738179482723700362509189,
+              39415215733862084670154204725298593524
+            ]
+          ],
+          "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Scribble"
+        },
+        {
+          "name": "Link undo removes only relation",
+          "observed": true,
+          "detail": null,
+          "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Scribble"
+        },
+        {
+          "name": "Link redo exact",
+          "observed": true,
+          "detail": null,
+          "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Scribble"
+        },
+        {
+          "name": "native Frame move translates linked Scribble exactly",
+          "observed": true,
+          "detail": {
+            "frame": [
+              30.0,
+              20.0
+            ],
+            "child": [
+              30.0,
+              20.0
+            ]
+          },
+          "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Frame \u00b7 Pointer"
+        },
+        {
+          "name": "native Frame resize leaves child unchanged",
+          "observed": true,
+          "detail": null,
+          "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Frame \u00b7 Pointer"
+        },
+        {
+          "name": "delete Frame preserves child and clears links",
+          "observed": true,
+          "detail": null,
+          "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+        },
+        {
+          "name": "delete Frame undo restores relation and pose exactly",
+          "observed": true,
+          "detail": null,
+          "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+        },
+        {
+          "name": "Unlink preserves child position",
+          "observed": true,
+          "detail": null,
+          "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+        },
+        {
+          "name": "Unlink undo exact",
+          "observed": true,
+          "detail": null,
+          "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+        },
+        {
+          "name": "second Scribble links independently",
+          "observed": true,
+          "detail": null,
+          "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Scribble"
+        },
+        {
+          "name": "Merge creates one Scribble with three independent strokes",
+          "observed": true,
+          "detail": null,
+          "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+        },
+        {
+          "name": "Merge undo exact",
+          "observed": true,
+          "detail": null,
+          "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+        },
+        {
+          "name": "Merge redo exact",
+          "observed": true,
+          "detail": null,
+          "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+        },
+        {
+          "name": "target-only swept Eraser splits Scribble segments",
+          "observed": true,
+          "detail": null,
+          "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Scribble eraser"
+        },
+        {
+          "name": "Eraser undo exact",
+          "observed": true,
+          "detail": null,
+          "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Scribble eraser"
+        },
+        {
+          "name": "Eraser redo exact",
+          "observed": true,
+          "detail": null,
+          "title": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 1 selected \u00b7 0 missing / 0 changed sources \u00b7 Scribble eraser"
+        },
+        {
+          "name": "schema7 save/reopen retains authoring exactly",
+          "observed": true,
+          "detail": null,
+          "title": "closed"
+        }
+      ],
+      "passed": true,
+      "receipt_sha256": "ec17c26ccf9474210c0a5a2c5ea50915110d3b73411ca1c23babef6194c70094"
+    },
+    {
+      "harness": "shared-artist-icons",
+      "checks": [
+        {
+          "name": "protocol3 snapshot contains schema7 compound Scribble and link",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "Unlink converges without moving child",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "Relink converges exactly",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "Frame translation converges to linked child in both clients",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "Frame translation Undo converges exactly",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "Frame translation Redo converges exactly",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "compound replacement and per-stroke style converge",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "compound replacement Undo converges exactly",
+          "observed": true,
+          "detail": null
+        },
+        {
+          "name": "compound replacement Redo converges exactly",
+          "observed": true,
+          "detail": null
+        }
+      ],
+      "passed": true,
+      "receipt_sha256": "6fbd1117b90de20a834cac1e1f6e08bd29698775e549900764f64445de8960b5"
+    }
+  ],
+  "postfix_source_commit": "25abd866d7c5761a518662fa6d932e84e2de70f2",
+  "postfix_run": {
+    "harness": "foundation-final-helper",
+    "checks": [
+      {
+        "name": "idle has no TCP/UDP network socket",
+        "observed": true,
+        "detail": {
+          "seconds": 2,
+          "rss_before": 112734208,
+          "rss_after": 112734208,
+          "threads": 11,
+          "tasks": [
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-1",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack:disk$0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain q",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain e",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            }
+          ],
+          "ticks": 0,
+          "cpu_percent_one_core": 0.0,
+          "socket_records": [
+            {
+              "kind": "unix",
+              "record": "0000000000000000: 00000003 00000000 00000000 0001 03 290893"
+            }
+          ],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          }
+        }
+      },
+      {
+        "name": "idle has no updater child",
+        "observed": true,
+        "detail": []
+      },
+      {
+        "name": "initial native cursor exactly matches installed pixel pointer",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "Rectangle canvas uses cached custom crosshair",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "toolbar uses normal custom pointer",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "canvas restores original tool cursor",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "About uses pointer without changing tool",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "About dismissal restores active tool cursor",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "fixed F10 opens menu from active tool",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "Preferences uses normal pointer",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "explicit update action retains app and board",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "fixed F10 interrupts update modal safely",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "cancelled update preserves tool cursor",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "update cancellation has no board mutation",
+        "observed": true,
+        "detail": null
+      }
+    ],
+    "receipt_sha256": "0f342eccb6afb53a34b3c288c90db194b4a2af0cb7bdd4f13b7096fc307eefa6"
+  }
+}
