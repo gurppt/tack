@@ -43,18 +43,26 @@ pub fn index(a: Action) -> usize {
         _ => 15,
     }
 }
+/// Only authored symbols; the fallback placeholder is not an action preview.
+pub fn actual_index(a: Action) -> Option<usize> {
+    let i = index(a);
+    (i < 15).then_some(i)
+}
 pub fn root() -> PathBuf {
     if let Some(p) = std::env::var_os("TACK_ICON_DIR") {
         return p.into();
     }
+    if let Ok(p) = std::env::current_exe()
+        && let Some(parent) = p.parent()
+    {
+        let installed = parent.join("gfx/icons");
+        if installed.is_dir() {
+            return installed;
+        }
+    }
     let development = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../gfx/icons");
     if development.is_dir() {
         return development;
-    }
-    if let Ok(p) = std::env::current_exe()
-        && let Some(root) = p.parent()
-    {
-        return root.join("gfx/icons");
     }
     PathBuf::from("gfx/icons")
 }

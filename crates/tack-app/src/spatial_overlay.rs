@@ -58,46 +58,40 @@ impl ImageGizmo {
     fn frame_label(
         &mut self,
         camera: &Camera,
-        at: [f64; 2],
-        width: f64,
+        layout: &crate::frame_ui::Label,
         text: &str,
+        color: tack_core::Color,
+        editing: bool,
         budget: &mut usize,
     ) {
-        let scale = self.scale * f64::from(self.frame_title_scale.clamp(1, 3));
-        let available = (width - 4. * self.scale).max(0.);
-        let line_width = available / scale;
-        let rows = crate::note_layout::NoteLines::new(text, line_width, 16.).count();
-        let height = rows as f64 * 18. * scale;
-        let top = (at[1] / self.scale).round() * self.scale - height;
-        let left = (at[0] / self.scale).round() * self.scale;
-        self.pixel_rect(
-            camera,
-            [left, top],
-            [left + width, at[1]],
-            self.palette.menu_bg,
-            None,
-        );
+        let [left, top, right, bottom] = layout.rect;
+        let (background, foreground) = crate::frame_ui::label_style(color);
+        self.pixel_rect(camera, [left, top], [right, bottom], background, None);
+        let display = crate::feedback::edit_text(text, editing);
         for (row, (line, _)) in
-            crate::note_layout::NoteLines::new(text, line_width, 16.).enumerate()
+            crate::note_layout::NoteLines::new(&display, layout.line_width, 16.).enumerate()
         {
             let mut x = left + 2. * self.scale;
+            let y = top + row as f64 * 18. * layout.glyph_scale;
+            if y >= bottom {
+                break;
+            }
             for c in line.chars() {
                 let (bits, advance) = pixel_font::glyph(c);
                 if *budget == 0
-                    || x + advance as f64 * scale > left + width - 2. * self.scale
+                    || x + advance as f64 * layout.glyph_scale > right - 2. * self.scale
                     || self.quads.len() == MAX_OVERLAY_QUADS
                 {
                     break;
                 }
-                let y = top + row as f64 * 18. * scale;
                 self.pixel_rect(
                     camera,
                     [x, y],
-                    [x + 16. * scale, y + 16. * scale],
-                    self.palette.text_primary,
+                    [x + 16. * layout.glyph_scale, y + 16. * layout.glyph_scale],
+                    foreground,
                     Some(bits),
                 );
-                x += advance as f64 * scale;
+                x += advance as f64 * layout.glyph_scale;
                 *budget -= 1;
             }
         }
@@ -138,6 +132,7 @@ impl ImageInput {
         let doc = editor.document();
         let viewport = camera.viewport();
         let mut labels = 512;
+        let hovered_frame = self.frame_hit(editor, camera);
         // Selection was built first and retains priority over crowded frame labels.
         for o in doc
             .object_order()
@@ -161,8 +156,16 @@ impl ImageInput {
             if self.gizmo.quads.len() + 4 >= MAX_OVERLAY_QUADS {
                 break;
             }
-            self.gizmo
-                .outline(t, camera, o.frame_color().rgba(tack_core::Opacity::OPAQUE));
+            let hovering = hovered_frame == Some(o.id()) && !self.images.selection.contains(o.id());
+            self.gizmo.outline(
+                t,
+                camera,
+                if hovering {
+                    self.gizmo.palette.accent_primary
+                } else {
+                    o.frame_color().rgba(tack_core::Opacity::OPAQUE)
+                },
+            );
             let b = t.bounds();
             let p = camera.world_to_screen([b.x, b.y]);
             if p[0] >= -160. * self.gizmo.scale
@@ -176,8 +179,33 @@ impl ImageInput {
                     .as_ref()
                     .filter(|e| e.id == o.id())
                     .map_or(name.as_str(), |e| e.value.as_str());
-                self.gizmo
-                    .frame_label(camera, p, t.size()[0] * camera.zoom(), text, &mut labels);
+                let display = crate::feedback::edit_text(
+                    text,
+                    self.caret.visible && self.name_edit.as_ref().is_some_and(|e| e.id == o.id()),
+                );
+                let reserved = crate::feedback::edit_text(
+                    text,
+                    self.name_edit.as_ref().is_some_and(|e| e.id == o.id()),
+                );
+                let layout =
+                    crate::frame_ui::Label::new(t, camera, self.gizmo.frame_title_scale, &reserved);
+                self.gizmo.frame_label(
+                    camera,
+                    &layout,
+                    &display,
+                    o.frame_color(),
+                    false,
+                    &mut labels,
+                );
+                if hovering {
+                    self.gizmo.pixel_rect(
+                        camera,
+                        [layout.rect[0], layout.rect[1]],
+                        [layout.rect[2], layout.rect[1] + self.gizmo.scale],
+                        self.gizmo.palette.accent_primary,
+                        None,
+                    );
+                }
             }
         }
         self.gizmo.quads.truncate(MAX_OVERLAY_QUADS - 2);

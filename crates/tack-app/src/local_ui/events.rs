@@ -17,7 +17,31 @@ impl LocalUi {
         }
         if let WindowEvent::CursorMoved { position, .. } = event {
             self.cursor = [position.x, position.y];
-            return None;
+            if self.panel != Panel::Toolbar && !self.capture {
+                let p = std::array::from_fn::<_, 2, _>(|i| {
+                    self.cursor[i] / self.layout[0] - self.panel_offset[i]
+                });
+                if let Some(hit) = self.hits.iter().find(|h| h.enabled && h.contains(p)) {
+                    self.focus = Some(hit.command);
+                } else {
+                    let [_, width, _, top] = self.layout;
+                    if p[0] >= 20.
+                        && p[0] < width + 4.
+                        && p[1] >= top
+                        && p[1] < top + self.visible as f64 * 22.
+                    {
+                        let selected = self.first + ((p[1] - top) / 22.).floor() as usize;
+                        if selected < self.count(keymap, profile) {
+                            self.selected = selected;
+                            self.focus = None;
+                        }
+                    }
+                }
+                return None;
+            }
+        }
+        if self.panel == Panel::Toolbar {
+            return self.toolbar_event(event, keymap, profile);
         }
         if self.panel == Panel::About {
             return match event {

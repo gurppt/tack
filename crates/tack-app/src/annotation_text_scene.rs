@@ -11,10 +11,12 @@ impl AnnotationScene {
         &mut self,
         style: AnnotationStyle,
         t: Transform,
-        text: &str,
+        text: (&str, Option<bool>),
         size: f64,
         alignment: TextAlignment,
     ) -> bool {
+        let (text, caret) = text;
+        let display = crate::feedback::edit_text(text, caret.is_some());
         let box_size = t.size();
         let padding = (size * 0.2).min(box_size[0].min(box_size[1]) * 0.1);
         let width = (box_size[0] - padding * 2.).max(1e-6);
@@ -29,7 +31,7 @@ impl AnnotationScene {
                 return false;
             }
         }
-        for (line, (text, line_width)) in NoteLines::new(text, width, size).enumerate() {
+        for (line, (text, line_width)) in NoteLines::new(&display, width, size).enumerate() {
             let y = padding + line as f64 * size * 1.3;
             if y >= box_size[1] - padding {
                 break;
@@ -40,9 +42,13 @@ impl AnnotationScene {
                     TextAlignment::Center => (width - line_width).max(0.) / 2.,
                     TextAlignment::Right => (width - line_width).max(0.),
                 };
-            for c in text.chars() {
+            let last_line =
+                text.as_ptr() as usize + text.len() == display.as_ptr() as usize + display.len();
+            for (offset, c) in text.char_indices() {
                 let step = advance(c, size);
-                if !c.is_whitespace() {
+                let hidden_caret =
+                    caret == Some(false) && last_line && offset + c.len_utf8() == text.len();
+                if !c.is_whitespace() && !hidden_caret {
                     let lo = [x, y];
                     let extent = [size, size];
                     let clipped_lo = [lo[0].max(0.), lo[1].max(0.)];
@@ -85,5 +91,43 @@ impl AnnotationScene {
             }
         }
         true
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn caret_blink_never_reflows_centered_or_right_aligned_note()
+    -> Result<(), tack_assets::AssetError> {
+        let transform = Transform::new([0., 0.], [85., 120.], 0., [false, false])?;
+        for alignment in [
+            TextAlignment::Left,
+            TextAlignment::Center,
+            TextAlignment::Right,
+        ] {
+            let mut visible = AnnotationScene::default();
+            let mut hidden = AnnotationScene::default();
+            assert!(visible.note(
+                AnnotationStyle::default(),
+                transform,
+                ("ABCD EFGH", Some(true)),
+                16.,
+                alignment
+            ));
+            assert!(hidden.note(
+                AnnotationStyle::default(),
+                transform,
+                ("ABCD EFGH", Some(false)),
+                16.,
+                alignment
+            ));
+            assert_eq!(visible.primitives.len(), hidden.primitives.len() + 1);
+            for (a, b) in visible.primitives.iter().zip(&hidden.primitives) {
+                assert_eq!(a.points, b.points);
+                assert_eq!(a.bitmap, b.bitmap);
+            }
+        }
+        Ok(())
     }
 }

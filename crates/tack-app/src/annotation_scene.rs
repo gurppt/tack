@@ -10,6 +10,7 @@ use tack_render::{AnnotationPrimitive, CanvasDraw, DrawProductImage, MAX_ANNOTAT
 
 #[derive(Default)]
 pub struct AnnotationScene {
+    pub caret_visible: bool,
     pub primitives: Vec<AnnotationPrimitive>,
     pub palette: crate::ui_theme::Palette,
     pub order: Vec<CanvasDraw>,
@@ -221,7 +222,10 @@ impl AnnotationScene {
                         self.presentation_style(style)
                     },
                     t,
-                    edit.map_or(text.value(), |e| e.value.as_str()),
+                    (
+                        edit.map_or(text.value(), |e| e.value.as_str()),
+                        edit.map(|_| self.caret_visible),
+                    ),
                     edit.map_or(note_size.unwrap_or(text.font_size()), |e| e.size),
                     edit.map_or(text.alignment(), |e| e.alignment),
                 );
@@ -265,7 +269,7 @@ impl AnnotationScene {
             && !self.note(
                 self.editor_style(e.style),
                 e.transform,
-                &e.value,
+                (&e.value, Some(self.caret_visible)),
                 e.size,
                 e.alignment,
             )

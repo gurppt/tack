@@ -288,6 +288,29 @@ impl ImageInput {
         }
         Ok(())
     }
+    pub(crate) fn frame_title_hit(
+        &self,
+        editor: &DocumentEditor,
+        camera: &Camera,
+        id: ObjectId,
+    ) -> bool {
+        let Some(o) = editor.document().object(id) else {
+            return false;
+        };
+        let ObjectKind::Frame(name) = o.kind() else {
+            return false;
+        };
+        let Some(t) = self.images.preview_transform(editor.document(), id) else {
+            return false;
+        };
+        let editing = self.name_edit.as_ref().filter(|e| e.id == id);
+        let text = crate::feedback::edit_text(
+            editing.map_or(name.as_str(), |e| e.value.as_str()),
+            editing.is_some(),
+        );
+        crate::frame_ui::Label::new(t, camera, self.gizmo.frame_title_scale, &text)
+            .contains(self.cursor())
+    }
     pub(crate) fn frame_hit(&self, editor: &DocumentEditor, camera: &Camera) -> Option<ObjectId> {
         if editor.document().frame_count() == 0 {
             return None;
@@ -316,10 +339,22 @@ impl ImageInput {
                         || (p[0] - hi[0]).abs() < r
                         || (p[1] - lo[1]).abs() < r
                         || (p[1] - hi[1]).abs() < r);
-                let label = p[0] >= lo[0]
-                    && p[0] <= lo[0] + 160. * self.gizmo.scale
-                    && p[1] >= lo[1] - 20. * self.gizmo.scale
-                    && p[1] <= lo[1];
+                let text = self
+                    .name_edit
+                    .as_ref()
+                    .filter(|e| e.id == *id)
+                    .map(|e| e.value.as_str())
+                    .unwrap_or_else(|| match o.kind() {
+                        ObjectKind::Frame(name) => name.as_str(),
+                        _ => "",
+                    });
+                let text = crate::feedback::edit_text(
+                    text,
+                    self.name_edit.as_ref().is_some_and(|e| e.id == *id),
+                );
+                let label =
+                    crate::frame_ui::Label::new(t, camera, self.gizmo.frame_title_scale, &text)
+                        .contains(p);
                 (border || label).then_some(*id)
             })
     }

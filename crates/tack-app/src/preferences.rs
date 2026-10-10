@@ -113,6 +113,9 @@ pub struct Preferences {
     pub theme: crate::ui_theme::Theme,
     #[serde(default = "frame_title_default")]
     pub frame_title_scale: u8,
+    /// Distinguishes the former 2x default from deliberate post-2A6 overrides.
+    #[serde(default)]
+    pub frame_title_default_version: u8,
     pub handle_size: u8,
     pub hit_radius: u8,
     pub keymap: Vec<BindingRecord>,
@@ -132,7 +135,8 @@ impl Preferences {
             embedded_import: true,
             ui_scale: 0,
             theme: crate::ui_theme::Theme::default(),
-            frame_title_scale: 2,
+            frame_title_scale: 1,
+            frame_title_default_version: 1,
             handle_size: 7,
             hit_radius: 9,
             keymap: crate::image_input::product_keymap()?
@@ -222,6 +226,12 @@ pub fn read(path: &Path) -> Result<Preferences, AssetError> {
     }
     let mut profile: Preferences = serde_json::from_slice(&bytes)?;
     profile.toolbar.normalize()?;
+    if profile.frame_title_default_version == 0 {
+        if profile.frame_title_scale == 2 {
+            profile.frame_title_scale = 1;
+        }
+        profile.frame_title_default_version = 1;
+    }
     let keymap = profile.keymap()?;
     if profile.version == 1 {
         profile.version = 2;
@@ -417,7 +427,7 @@ pub fn export_preferences(path: &Path, profile: &Preferences) -> Result<(), Asse
 }
 
 fn frame_title_default() -> u8 {
-    2
+    1
 }
 
 /// Merge only settings changed by this window. Recent-board writes are not settings conflicts.

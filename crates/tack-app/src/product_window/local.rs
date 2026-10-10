@@ -26,7 +26,7 @@ pub(super) struct LoadedBoard {
 }
 pub(super) struct LocalState {
     pub about_ticket: u64,
-    pub feedback_deadline: Option<Instant>,
+    pub feedback: tack_app::feedback::Feedback,
     pub lease: Option<Arc<tack_storage::BoardLease>>,
     pub worker: LocalWorker,
     pub queued: Option<Operation>,
@@ -88,7 +88,7 @@ impl LocalState {
         });
         Ok(Self {
             about_ticket: 0,
-            feedback_deadline: None,
+            feedback: Default::default(),
             lease: None,
             worker: LocalWorker::default(),
             queued: None,

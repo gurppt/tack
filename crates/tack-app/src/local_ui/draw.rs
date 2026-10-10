@@ -8,6 +8,7 @@ impl LocalUi {
         profile: &Preferences,
     ) {
         self.hits.clear();
+        self.icon_count = 0;
         self.panel_offset = [0.; 2];
         let start_quad = gizmo.quads.len();
         if self.panel == Panel::Toolbar {

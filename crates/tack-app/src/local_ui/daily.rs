@@ -89,11 +89,26 @@ impl LocalUi {
             return None;
         }
         if key == PhysicalKey::Code(KeyCode::Enter) {
-            if self.focus == Some(Command::Close) {
+            if self.focus == Some(Command::Close) || self.selected == 2 {
                 return Some(Some(UiResult::Dismiss));
             }
             self.selected = 1;
             return Some(self.daily_activate());
+        }
+        if matches!(
+            key,
+            PhysicalKey::Code(
+                KeyCode::Tab
+                    | KeyCode::ArrowUp
+                    | KeyCode::ArrowDown
+                    | KeyCode::ArrowLeft
+                    | KeyCode::ArrowRight
+            )
+        ) {
+            return None;
+        }
+        if self.selected != 0 || self.focus.is_some() {
+            return Some(None);
         }
         if self.modifiers.contains(Modifiers::CONTROL) {
             match key {
@@ -139,7 +154,8 @@ impl LocalUi {
             Panel::Sharing => data.rows.clone(),
             Panel::Bookmarks => data.bookmarks.iter().map(|b| b.name().to_owned()).collect(),
             Panel::BookmarkName | Panel::Join | Panel::Server => vec![
-                data.text.clone(),
+                crate::feedback::edit_text(&data.text, self.text_editing() && self.caret.visible)
+                    .into_owned(),
                 "Confirm (Enter)".into(),
                 "Cancel (Escape)".into(),
             ],

@@ -17,10 +17,13 @@ pub use daily::DailyPanel;
 #[cfg(test)]
 mod daily_tests;
 mod events;
+#[cfg(test)]
+mod polish_tests;
 mod settings;
 #[cfg(test)]
 mod tests;
 mod toolbar;
+mod toolbar_events;
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Panel {
     Sharing,
@@ -109,6 +112,12 @@ pub struct LocalUi {
     parents: Vec<(Panel, usize)>,
     selected: usize,
     toolbar_order: bool,
+    toolbar_selected: [usize; 2],
+    toolbar_first: [usize; 2],
+    pub feedback: crate::feedback::Feedback,
+    pub caret: crate::feedback::Caret,
+    icons: [tack_render::UiIcon; 32],
+    icon_count: usize,
     search: String,
     capture: bool,
     shortcut_click: Option<(usize, std::time::Instant)>,
@@ -125,6 +134,20 @@ pub struct LocalUi {
     confirm_reset: Option<ResetScope>,
 }
 impl LocalUi {
+    pub fn text_editing(&self) -> bool {
+        (matches!(
+            self.panel,
+            Panel::BookmarkName | Panel::Join | Panel::Server
+        ) && self.selected == 0
+            && self.focus.is_none())
+            || (self.panel == Panel::Keymap
+                && !self.capture
+                && self.confirm_reset.is_none()
+                && (self.focus.is_none() || self.focus == Some(Command::Search)))
+    }
+    pub fn icons(&self) -> &[tack_render::UiIcon] {
+        &self.icons[..self.icon_count]
+    }
     pub fn set_pointer(&mut self, pointer: [f64; 2]) {
         self.cursor = pointer;
     }
@@ -137,6 +160,12 @@ impl LocalUi {
             parents: Vec::new(),
             selected: 0,
             toolbar_order: false,
+            toolbar_selected: [0; 2],
+            toolbar_first: [0; 2],
+            feedback: Default::default(),
+            caret: Default::default(),
+            icons: [tack_render::UiIcon::default(); 32],
+            icon_count: 0,
             search: String::new(),
             capture: false,
             shortcut_click: None,

@@ -81,23 +81,17 @@ fn note(e: &DocumentEditor, id: ObjectId) -> R<(&TextObject, AnnotationStyle)> {
 }
 fn assert_visible(g: &mut ImageGizmo, images: &ImageInteraction, e: &DocumentEditor, c: &Camera) {
     g.build(images, e.document(), c, None);
-    let expected: Vec<_> = images
-        .selection
-        .ids()
-        .filter_map(|id| images.preview_transform(e.document(), id))
-        .filter(|t| t.bounds().intersects(c.viewport()))
-        .collect();
-    assert_eq!(g.selection.len(), expected.len());
-    for (rect, t) in g.selection.iter().zip(expected) {
-        assert_eq!(rect.transform, t);
-    }
+    assert!(
+        g.selection.is_empty(),
+        "2A6 selection chrome has no member outlines"
+    );
     assert!(
         g.quads.len() < 32,
         "member borders do not consume the handle/menu budget"
     );
 }
 #[test]
-fn marquee_highlights_every_member_above_overlay_budget_and_clears_on_deselect() -> R {
+fn large_marquee_keeps_only_bounded_handles_and_clears_on_deselect() -> R {
     let e = fixture(3000)?;
     let before = e.document().clone();
     let mut c = Camera::new([1280, 720]);
@@ -111,10 +105,10 @@ fn marquee_highlights_every_member_above_overlay_budget_and_clears_on_deselect()
     assert_eq!(images.selection.len(), 3000);
     let mut g = ImageGizmo::default();
     assert_visible(&mut g, &images, &e, &c);
-    assert_eq!(g.selection.len(), 3000);
+    assert!(g.selection.is_empty());
     c.set_view([100., 100.], 2.)?;
     assert_visible(&mut g, &images, &e, &c);
-    assert!(g.selection.len() < 3000);
+    assert!(g.selection.is_empty());
     assert_eq!(e.document(), &before);
     images.selection.clear();
     g.build(&images, e.document(), &c, None);

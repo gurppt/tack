@@ -1,0 +1,1070 @@
+{
+  "harness_sha256": "7f6c15839fe51cfa9d49bf2a15fb725e1fd542f6e1afaa608caa2bb71bd9383b",
+  "runs": [
+    {
+      "name": "0-source-phase2a5",
+      "mode": "phase2a5",
+      "binary_sha256": "a44797c860d0ca2ca7a45a7fbe87bc3d61efdb77a338687c2936b16cfbce8a85",
+      "board_sha256": "943fc46d801bb147a438f2bc244313887073d1de004b8e0d2b17b6c5d37a8c18",
+      "quiet_detected": true,
+      "settle_seconds": 2.4674234241247177,
+      "idle": {
+        "seconds": 3.0217970279045403,
+        "rss_before": 351133696,
+        "rss_after": 351133696,
+        "threads": 41,
+        "tasks": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-1",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-2",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-3",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-4",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-5",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-6",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-7",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-8",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-9",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-10",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-11",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-12",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-13",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-14",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-15",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack:disk$0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 1
+          },
+          {
+            "name": "[vkcf] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "[vkrt] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 30
+          },
+          {
+            "name": "[vkps] Update",
+            "ticks": 0,
+            "voluntary_switches": 12
+          },
+          {
+            "name": "tack",
+            "ticks": 2,
+            "voluntary_switches": 300
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "ticks": 2,
+        "cpu_percent_one_core": 0.6618578221936026,
+        "socket_records": [
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 12168534"
+          },
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 12168546"
+          },
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 12168535"
+          },
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 12168531"
+          }
+        ],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        }
+      },
+      "report": "0-source-phase2a5/0-source-phase2a5.json",
+      "report_sha256": "39590abe6fd5993c1bb551950c83dcf5048cb2195c65901ffa85a22d5535aa25",
+      "native_startup_ms": 462.498492,
+      "first_frame_ms": 464.913348,
+      "first_recognizable_ms": 488.267494,
+      "useful_ms": 488.267494,
+      "gpu_bytes_peak": 104960,
+      "callbacks": {
+        "samples": 3,
+        "p50_ms": 22.927605,
+        "p99_ms": 22.927605,
+        "max_ms": 22.987904999999998
+      },
+      "wait_count": 12,
+      "redraw_count": 3,
+      "idle_redraws": 0
+    },
+    {
+      "name": "0-source-phase2a6",
+      "mode": "phase2a6",
+      "binary_sha256": "4a28e5ead9e4df7e5bcc90a7b0f9d32f214011c09655856bcb65a6a27b2cb756",
+      "board_sha256": "943fc46d801bb147a438f2bc244313887073d1de004b8e0d2b17b6c5d37a8c18",
+      "quiet_detected": true,
+      "settle_seconds": 2.434521486982703,
+      "idle": {
+        "seconds": 3.021663947030902,
+        "rss_before": 350846976,
+        "rss_after": 350846976,
+        "threads": 41,
+        "tasks": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-1",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-2",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-3",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-4",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-5",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-6",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-7",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-8",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-9",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-10",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-11",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-12",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-13",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-14",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-15",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack:disk$0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 1
+          },
+          {
+            "name": "[vkcf] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "[vkrt] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 30
+          },
+          {
+            "name": "[vkps] Update",
+            "ticks": 0,
+            "voluntary_switches": 12
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 301
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "ticks": 0,
+        "cpu_percent_one_core": 0.0,
+        "socket_records": [
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 12178463"
+          },
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 12169858"
+          },
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 12178475"
+          },
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 12178464"
+          }
+        ],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        }
+      },
+      "report": "0-source-phase2a6/0-source-phase2a6.json",
+      "report_sha256": "68074229ae66eadfeebc3fb317be1ef2a37bf073913466e7b9f64e9a2ea1028e",
+      "native_startup_ms": 477.047867,
+      "first_frame_ms": 479.53078300000004,
+      "first_recognizable_ms": 505.63404499999996,
+      "useful_ms": 505.63404499999996,
+      "gpu_bytes_peak": 104960,
+      "callbacks": {
+        "samples": 4,
+        "p50_ms": 21.271951,
+        "p99_ms": 22.591195000000003,
+        "max_ms": 24.7634
+      },
+      "wait_count": 15,
+      "redraw_count": 4,
+      "idle_redraws": 0
+    },
+    {
+      "name": "1-source-phase2a5",
+      "mode": "phase2a5",
+      "binary_sha256": "a44797c860d0ca2ca7a45a7fbe87bc3d61efdb77a338687c2936b16cfbce8a85",
+      "board_sha256": "943fc46d801bb147a438f2bc244313887073d1de004b8e0d2b17b6c5d37a8c18",
+      "quiet_detected": true,
+      "settle_seconds": 2.4324298400897533,
+      "idle": {
+        "seconds": 3.022703021997586,
+        "rss_before": 351264768,
+        "rss_after": 351264768,
+        "threads": 41,
+        "tasks": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-1",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-2",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-3",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-4",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-5",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-6",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-7",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-8",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-9",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-10",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-11",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-12",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-13",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-14",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-15",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack:disk$0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 1
+          },
+          {
+            "name": "[vkcf] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "[vkrt] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 30
+          },
+          {
+            "name": "[vkps] Update",
+            "ticks": 0,
+            "voluntary_switches": 12
+          },
+          {
+            "name": "tack",
+            "ticks": 1,
+            "voluntary_switches": 301
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "ticks": 1,
+        "cpu_percent_one_core": 0.3308297218491347,
+        "socket_records": [
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 12179795"
+          },
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 12179794"
+          },
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 12179806"
+          },
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 12177599"
+          }
+        ],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        }
+      },
+      "report": "1-source-phase2a5/1-source-phase2a5.json",
+      "report_sha256": "0d160e6ecd63d10f99f4a332f8c9c244368c709c3860322c495098d649982c3d",
+      "native_startup_ms": 449.32727,
+      "first_frame_ms": 452.242007,
+      "first_recognizable_ms": 476.919757,
+      "useful_ms": 476.919757,
+      "gpu_bytes_peak": 104960,
+      "callbacks": {
+        "samples": 4,
+        "p50_ms": 21.838231999999998,
+        "p99_ms": 24.209898,
+        "max_ms": 27.418786
+      },
+      "wait_count": 12,
+      "redraw_count": 4,
+      "idle_redraws": 0
+    },
+    {
+      "name": "1-source-phase2a6",
+      "mode": "phase2a6",
+      "binary_sha256": "4a28e5ead9e4df7e5bcc90a7b0f9d32f214011c09655856bcb65a6a27b2cb756",
+      "board_sha256": "943fc46d801bb147a438f2bc244313887073d1de004b8e0d2b17b6c5d37a8c18",
+      "quiet_detected": true,
+      "settle_seconds": 2.4115539009217173,
+      "idle": {
+        "seconds": 3.021694147028029,
+        "rss_before": 350826496,
+        "rss_after": 350826496,
+        "threads": 41,
+        "tasks": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-1",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-2",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-3",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-4",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-5",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-6",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-7",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-8",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-9",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-10",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-11",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-12",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-13",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-14",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-15",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack:disk$0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 1
+          },
+          {
+            "name": "[vkcf] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "[vkrt] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 30
+          },
+          {
+            "name": "[vkps] Update",
+            "ticks": 0,
+            "voluntary_switches": 12
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 301
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "ticks": 0,
+        "cpu_percent_one_core": 0.0,
+        "socket_records": [
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 12160862"
+          },
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 12160851"
+          },
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 12171120"
+          },
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 12171122"
+          }
+        ],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        }
+      },
+      "report": "1-source-phase2a6/1-source-phase2a6.json",
+      "report_sha256": "de0fc5f37513b5be9ad7cc6b29a595972b35b37125be8afb3f94b28bfbb47e87",
+      "native_startup_ms": 482.36856,
+      "first_frame_ms": 485.310027,
+      "first_recognizable_ms": 508.449533,
+      "useful_ms": 508.449533,
+      "gpu_bytes_peak": 104960,
+      "callbacks": {
+        "samples": 4,
+        "p50_ms": 22.191343,
+        "p99_ms": 22.967885,
+        "max_ms": 23.014355000000002
+      },
+      "wait_count": 14,
+      "redraw_count": 4,
+      "idle_redraws": 0
+    }
+  ],
+  "scope": "Warm/unspecified OS page cache; serial native800x600 samehost/display. Socket records distinguish OS X11 Unix sockets from Tack-created TCP/UDP. CPU /proc ticks, no perprocess VRAM attribution."
+}

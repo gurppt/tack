@@ -761,9 +761,17 @@ impl Gpu {
             if let Some(selection) = &self.selection {
                 selection.draw(&mut pass);
             }
-            self.overlay.draw(&mut pass);
+            let split = self.ui_icons.as_ref().and_then(|icons| icons.overlay_split);
+            if let Some(split) = split {
+                self.overlay.draw_range(&mut pass, 0, split);
+            } else {
+                self.overlay.draw(&mut pass);
+            }
             if let Some(icons) = &self.ui_icons {
                 icons.draw(&mut pass, &self.pipeline);
+            }
+            if let Some(split) = split {
+                self.overlay.draw_range(&mut pass, split, usize::MAX);
             }
             if let Some(image) = &self.ui_image {
                 image.draw(&mut pass, &self.pipeline);

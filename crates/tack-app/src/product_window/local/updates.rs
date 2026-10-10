@@ -41,7 +41,7 @@ impl App {
                 self.camera = camera;
             }
             LocalUpdate::AddressCopied => {
-                self.local.feedback_deadline = Some(Instant::now() + Duration::from_millis(1200));
+                self.local.feedback.acknowledge(Instant::now());
                 if let Some(ui) = &mut self.local.ui {
                     ui.message = "COPIED".into();
                 }

@@ -11,6 +11,7 @@ pub(super) struct Chrome {
     pub atlas: Option<tack_assets::Decoded>,
     pub(super) status: String,
     pub(super) last_hover: Option<Action>,
+    pub(super) disabled: u32,
     pub(super) last_state: &'static str,
 }
 impl App {
@@ -24,12 +25,26 @@ impl App {
         self.dirty = true;
     }
     pub(super) fn refresh_chrome(&mut self) {
+        let context = self.menu_context();
+        self.chrome.disabled = self.chrome.toolbar.buttons[..self.chrome.toolbar.count]
+            .iter()
+            .enumerate()
+            .fold(0, |bits, (i, button)| {
+                bits | if button
+                    .action
+                    .is_some_and(|a| context.is_none_or(|c| !c.enabled(a)))
+                {
+                    1 << i
+                } else {
+                    0
+                }
+            });
         let hovered = self
             .context
             .as_ref()
             .and_then(|m| m.hovered_action())
             .or(self.chrome.toolbar.hover);
-        if self.local.feedback_deadline.is_some() {
+        if self.local.feedback.active() {
             self.chrome.status = "COPIED".into();
             return;
         }
@@ -71,6 +86,21 @@ impl App {
         }
     }
     pub(super) fn chrome_event(&mut self, event: &WindowEvent) -> Result<bool, AssetError> {
+        // Release/focus cleanup must run even when the press opened a modal.
+        if matches!(
+            event,
+            WindowEvent::MouseInput {
+                state: ElementState::Released,
+                ..
+            } | WindowEvent::Focused(false)
+        ) && self.chrome.toolbar.pressed.take().is_some()
+        {
+            self.dirty = true;
+        }
+        if matches!(event, WindowEvent::Focused(false)) {
+            self.chrome.toolbar.hover = None;
+            self.chrome.toolbar.drag = None;
+        }
         if self.local.ui.is_some() || self.context.is_some() {
             self.chrome.toolbar.hover = None;
             return Ok(false);
@@ -121,6 +151,7 @@ impl App {
         if matches!(event, WindowEvent::Focused(false)) {
             self.chrome.toolbar.hover = None;
             self.chrome.toolbar.drag = None;
+            self.chrome.toolbar.pressed = None;
             self.dirty = true;
         }
         if matches!(
@@ -143,6 +174,9 @@ impl App {
                 ..
             }
         ) {
+            if self.chrome.toolbar.pressed.take().is_some() {
+                self.dirty = true;
+            }
             return Ok(false);
         }
         let within = self.chrome.toolbar.contains(self.pointer);
@@ -161,6 +195,9 @@ impl App {
                 self.chrome.toolbar.drag = Some([self.pointer[0] - b[0], self.pointer[1] - b[1]]);
             } else if let Some(a) = self.chrome.toolbar.hit(self.pointer) {
                 let enabled = self.menu_context().is_some_and(|c| c.enabled(a));
+                if enabled {
+                    self.chrome.toolbar.pressed = Some(a);
+                }
                 if enabled && let Some(e) = &mut self.editor {
                     self.input.suspend_for_menu(e, &mut self.camera)?;
                     self.local.manual |= self.input.dispatch(
@@ -201,26 +238,34 @@ pub(super) fn draw(
     let mut icons = [tack_render::UiIcon::default(); 32];
     let mut count = 0;
     if !popup {
-        let b = chrome.toolbar.bounds;
         if chrome.toolbar.count > 0 {
-            g.pixel_rect(c, [b[0], b[1]], [b[2], b[3]], palette.menu_border, None);
-            g.pixel_rect(
-                c,
-                [b[0] + scale, b[1] + scale],
-                [b[2] - scale, b[3] - scale],
-                palette.menu_bg,
-                None,
-            );
+            let r = chrome.toolbar.grip;
+            for offset in [5., 9.] {
+                g.pixel_rect(
+                    c,
+                    [r[0] + offset * scale, r[1] + 4. * scale],
+                    [r[0] + (offset + 1.) * scale, r[1] + 12. * scale],
+                    palette.menu_border,
+                    None,
+                );
+            }
         }
-        for button in &chrome.toolbar.buttons[..chrome.toolbar.count] {
+        for (position, button) in chrome.toolbar.buttons[..chrome.toolbar.count]
+            .iter()
+            .enumerate()
+        {
             if let Some(a) = button.action {
                 let r = button.rect;
-                if a == Action::SelectTool(tool) || chrome.toolbar.hover == Some(a) {
+                g.pixel_rect(c, [r[0], r[1]], [r[2], r[3]], palette.menu_bg, None);
+                if a == Action::SelectTool(tool)
+                    || chrome.toolbar.hover == Some(a)
+                    || chrome.toolbar.pressed == Some(a)
+                {
                     g.pixel_rect(
                         c,
                         [r[0], r[1]],
                         [r[2], r[3]],
-                        if a == Action::SelectTool(tool) {
+                        if a == Action::SelectTool(tool) || chrome.toolbar.pressed == Some(a) {
                             palette.accent_secondary
                         } else {
                             palette.selection
@@ -229,15 +274,23 @@ pub(super) fn draw(
                     );
                 }
                 icons[count] = tack_render::UiIcon {
-                    rect: [
-                        r[0] + 2. * scale,
-                        r[1] + 2. * scale,
-                        16. * scale,
-                        16. * scale,
-                    ],
+                    rect: [r[0], r[1], 16. * scale, 16. * scale],
                     index: tack_app::toolbar_icons::index(a),
+                    disabled: chrome.disabled & (1 << position) != 0,
                 };
                 count += 1;
+            } else {
+                let r = button.rect;
+                let vertical = matches!(p.toolbar.placement, Placement::Left | Placement::Right);
+                let lo = [
+                    r[0] + if vertical { 2. * scale } else { 0. },
+                    r[1] + if vertical { 0. } else { 2. * scale },
+                ];
+                let hi = [
+                    r[2] - if vertical { 2. * scale } else { 0. },
+                    r[3] - if vertical { 0. } else { 2. * scale },
+                ];
+                g.pixel_rect(c, lo, hi, palette.menu_border, None);
             }
         }
     }

@@ -470,11 +470,9 @@ fn context_items(context: Context, submenu: Option<Group>, keymap: &Keymap) -> V
                 a("Duplicate selection", DuplicateSelection),
                 a("Select all", SelectAll),
                 a("Delete", DeleteSelection),
-                a("Keymap...", KeymapEditor),
             ],
             Group::View => vec![
                 a("Show / hide toolbar", ToggleToolbar),
-                a("Edit Toolbar...", EditToolbar),
                 a("Show / hide status bar", ToggleStatusBar),
                 a("Grid", ToggleGrid),
                 a("Snapping", ToggleSnapping),
@@ -485,6 +483,7 @@ fn context_items(context: Context, submenu: Option<Group>, keymap: &Keymap) -> V
                 a("Camera bookmarks...", CameraBookmarks),
             ],
             Group::Tools => vec![
+                a("Edit Toolbar...", EditToolbar),
                 a("Pointer", SelectTool(Tool::Pointer)),
                 a("Note (click/drag)", SelectTool(Tool::Text)),
                 a("Rectangle", SelectTool(Tool::Rectangle)),
@@ -994,6 +993,7 @@ impl ContextMenu {
         camera: &Camera,
     ) -> Result {
         match key {
+            KeyCode::Escape if self.child.is_some() => self.close_child(),
             KeyCode::Escape => return Result::Dismiss,
             KeyCode::ArrowLeft if self.child.is_some() => self.close_child(),
             KeyCode::ArrowDown | KeyCode::ArrowUp => {

@@ -1,0 +1,455 @@
+{
+  "binary_sha256": "4a28e5ead9e4df7e5bcc90a7b0f9d32f214011c09655856bcb65a6a27b2cb756",
+  "harness_sha256": "59c32b1020fe51a693f98bc663cc00d98396b18fa0e9e6e99d0a356e393dc42a",
+  "checks": [
+    {
+      "name": "context leaves 800x600-1x-Top bar unchanged",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "800x600-1x-Top exact pixel cells and no gizmo rectangle",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "context leaves 800x600-1x-Bottom bar unchanged",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "800x600-1x-Bottom exact pixel cells and no gizmo rectangle",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "context leaves 800x600-1x-Left bar unchanged",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "800x600-1x-Left exact pixel cells and no gizmo rectangle",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "context leaves 800x600-1x-Right bar unchanged",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "800x600-1x-Right exact pixel cells and no gizmo rectangle",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "context leaves 800x600-1x-Floating bar unchanged",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "800x600-1x-Floating exact pixel cells and no gizmo rectangle",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "context leaves 800x600-2x-Top bar unchanged",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "800x600-2x-Top exact pixel cells and no gizmo rectangle",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "context leaves 800x600-2x-Bottom bar unchanged",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "800x600-2x-Bottom exact pixel cells and no gizmo rectangle",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "context leaves 800x600-2x-Left bar unchanged",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "800x600-2x-Left exact pixel cells and no gizmo rectangle",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "context leaves 800x600-2x-Right bar unchanged",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "800x600-2x-Right exact pixel cells and no gizmo rectangle",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "context leaves 800x600-2x-Floating bar unchanged",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "800x600-2x-Floating exact pixel cells and no gizmo rectangle",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "context leaves 1024x768-1x-Top bar unchanged",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "1024x768-1x-Top exact pixel cells and no gizmo rectangle",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "context leaves 1024x768-1x-Bottom bar unchanged",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "1024x768-1x-Bottom exact pixel cells and no gizmo rectangle",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "context leaves 1024x768-1x-Left bar unchanged",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "1024x768-1x-Left exact pixel cells and no gizmo rectangle",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "context leaves 1024x768-1x-Right bar unchanged",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "1024x768-1x-Right exact pixel cells and no gizmo rectangle",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "context leaves 1024x768-1x-Floating bar unchanged",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "1024x768-1x-Floating exact pixel cells and no gizmo rectangle",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "keyboard adds Separator and persists it",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "Ctrl+Up reorders selected Separator",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "keyboard Remove preserves nearest Order item",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "F2 Frame rename validates without Unicode caret in document",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "Frame colored label visible",
+      "observed": true,
+      "detail": [
+        94,
+        79
+      ]
+    },
+    {
+      "name": "double-click label shares semantic rename path",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "Escape cancels Frame draft",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "UI settles without caret timer/redraw/I/O/network",
+      "observed": true,
+      "detail": {
+        "redraws": 0,
+        "threads": 41,
+        "rss": 351821824,
+        "io": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        }
+      }
+    }
+  ],
+  "idle": {
+    "seconds": 3.024031530949287,
+    "rss_before": 351821824,
+    "rss_after": 351821824,
+    "threads": 41,
+    "tasks": [
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-0",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-1",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-2",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-3",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-4",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-5",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-6",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-7",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-8",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-9",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-10",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-11",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-12",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-13",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-14",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-15",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack:disk$0",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 1
+      },
+      {
+        "name": "[vkcf] Analysis",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "[vkrt] Analysis",
+        "ticks": 0,
+        "voluntary_switches": 30
+      },
+      {
+        "name": "[vkps] Update",
+        "ticks": 0,
+        "voluntary_switches": 12
+      },
+      {
+        "name": "tack",
+        "ticks": 1,
+        "voluntary_switches": 302
+      },
+      {
+        "name": "tack-product-di",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-product-di",
+        "ticks": 0,
+        "voluntary_switches": 0
+      }
+    ],
+    "ticks": 1,
+    "cpu_percent_one_core": 0.3306843826744378,
+    "socket_records": [
+      {
+        "kind": "unix",
+        "record": "0000000000000000: 00000003 00000000 00000000 0001 03 12158958"
+      },
+      {
+        "kind": "unix",
+        "record": "0000000000000000: 00000003 00000000 00000000 0001 03 12158947"
+      },
+      {
+        "kind": "unix",
+        "record": "0000000000000000: 00000003 00000000 00000000 0001 03 12161881"
+      },
+      {
+        "kind": "unix",
+        "record": "0000000000000000: 00000003 00000000 00000000 0001 03 12169498"
+      }
+    ],
+    "io_delta": {
+      "rchar": 0,
+      "wchar": 0,
+      "syscr": 0,
+      "syscw": 0,
+      "read_bytes": 0,
+      "write_bytes": 0,
+      "cancelled_write_bytes": 0
+    }
+  },
+  "scope": "Owned Linux Xvfb on one physical GPU; human and physical Windows acceptance pending"
+}

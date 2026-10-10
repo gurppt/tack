@@ -527,7 +527,7 @@ impl App {
             active_tool,
             gpu,
             (
-                self.context.is_some() || self.local.ui.is_some(),
+                self.local.ui.is_some(),
                 self.shared.as_ref().map(|s| s.state).or_else(|| {
                     self.offline
                         .as_ref()
@@ -542,6 +542,7 @@ impl App {
                 .quads
                 .truncate(tack_render::MAX_OVERLAY_QUADS - 1024);
         }
+        gpu.set_ui_icon_overlay_split(self.context.as_ref().map(|_| self.input.gizmo.quads.len()));
         if let Some(menu) = &mut self.context {
             menu.theme = self.local.profile.theme;
             menu.draw(&mut self.input.gizmo, &self.camera);
@@ -557,6 +558,9 @@ impl App {
                 &self.input.keymap,
                 &self.local.profile,
             );
+            if ui.panel == tack_app::local_ui::Panel::Toolbar {
+                gpu.set_ui_icons(ui.icons())?;
+            }
             if ui.about_image
                 && let Some(layout) = ui.about_layout
             {
@@ -587,6 +591,7 @@ impl App {
         if annotated {
             let scene = self.annotations.get_or_insert_with(Box::default);
             scene.palette = palette;
+            scene.caret_visible = self.input.caret.visible;
             if let Some(editor) = &self.editor {
                 scene.build(
                     editor.document(),
@@ -735,7 +740,7 @@ impl App {
             .and_then(|g| g.timing_samples())
             .map(|s| s.iter().map(|s| json!({"pass_ms":s.pass_ms})).collect())
             .unwrap_or_default();
-        let mut report = json!({"about":{"requests":self.local.about_ticket,"image_gpu_bytes":gpu.map_or(0, |g| g.ui_image_bytes()),"version":tack_app::about::METADATA.version},"window_size":self.camera.screen_size(),"load_failed":self.load_failed,"local":{"operations":self.local.worker.operations,"recoveries":self.save.recoveries,"recovery_generation":self.save.recovery_generation,"recovery_bytes":self.save.recovery_bytes,"last_storage_worker_ms":self.save.last_worker_ms,"ui_scale":self.camera.ui_scale(),"discarded_asset_results":stats.discarded},"first_frame_ms":self.first_frame_ms,"gpu_setup_ms":self.gpu_setup_ms,"annotation_resources":gpu.map(|g|g.annotation_bytes()),"annotations":self.editor.as_ref().map(|e|e.document().annotation_count()).unwrap_or(0),"spatial":{"grid":self.input.grid_visible,"snapping":self.input.snap.enabled,"frames":self.editor.as_ref().map(|e|e.document().objects().filter(|o|matches!(o.kind(),tack_core::ObjectKind::Frame(_))).count()).unwrap_or(0),"groups":self.editor.as_ref().map(|e|e.document().groups().count()).unwrap_or(0)},"redraw_count":self.redraws,"wait_count":self.wakeups,"operation":"open","editing":self.editor.as_ref().map(|e|json!({"dirty":e.is_dirty(),"generation":e.generation(),"undo_entries":e.undo_len(),"redo_entries":e.redo_len(),"selected":self.input.images.selection.len(),"save_completed":self.save.completed})),"interaction":self.benchmark.as_ref().map(|b|json!({"scenario":b.name(),"input_ms":b.samples,"snap_query_ms":b.snap_queries,"commits":b.commits,"cancels":b.cancels,"invariants":b.invariants})),"native_startup_ms":self.native_startup_ms,"camera_clamped":self.camera_clamped,"navigation_end_pending":self.navigation_end_pending,"drain_ms":self.drain_ms,"chrome":{"toolbar_entries":self.chrome.toolbar.count,"placement":format!("{:?}",self.local.profile.toolbar.placement),"config_bytes":serde_json::to_vec(&self.local.profile.toolbar)?.len(),"icon_atlas_gpu_bytes":gpu.map(|g|g.ui_icon_bytes()).unwrap_or(0),"status_bar":self.local.profile.status_bar},"state_counts_scope":"requested sources only","recognizable_clock":"CPU submission before present","metadata_load_ms":self.metadata_ms,"metadata_bytes":self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"first_recognizable_ms":self.first_content_ms,"ordinary_view_80_percent_ms":self.useful_ms,"source_bytes_before_detail":stats.source_bytes,"container_bytes":stats.container_bytes+self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"overview_reused":stats.reused,"overview_regenerated":stats.regenerated,"errors":stats.errors,"source_missing":counts(SourceState::Missing),"source_changed":counts(SourceState::Changed),"source_foreign":counts(SourceState::Foreign),"source_unavailable":counts(SourceState::Unavailable),"peak_pending":stats.peak_pending,"cpu_payload_bytes":stats.cpu_bytes,"adapter":gpu.map(|g|g.adapter_info.name.clone()),"backend":gpu.map(|g|format!("{:?}",g.adapter_info.backend)),"frames":self.frames,"gpu_samples":samples,"detail":"bounded projected 128/512/2048 display supply"});
+        let mut report = json!({"about":{"requests":self.local.about_ticket,"image_gpu_bytes":gpu.map_or(0, |g| g.ui_image_bytes()),"version":tack_app::about::METADATA.version},"window_size":self.camera.screen_size(),"load_failed":self.load_failed,"local":{"operations":self.local.worker.operations,"recoveries":self.save.recoveries,"recovery_generation":self.save.recovery_generation,"recovery_bytes":self.save.recovery_bytes,"last_storage_worker_ms":self.save.last_worker_ms,"ui_scale":self.camera.ui_scale(),"discarded_asset_results":stats.discarded},"first_frame_ms":self.first_frame_ms,"gpu_setup_ms":self.gpu_setup_ms,"annotation_resources":gpu.map(|g|g.annotation_bytes()),"annotations":self.editor.as_ref().map(|e|e.document().annotation_count()).unwrap_or(0),"spatial":{"grid":self.input.grid_visible,"snapping":self.input.snap.enabled,"frames":self.editor.as_ref().map(|e|e.document().objects().filter(|o|matches!(o.kind(),tack_core::ObjectKind::Frame(_))).count()).unwrap_or(0),"groups":self.editor.as_ref().map(|e|e.document().groups().count()).unwrap_or(0)},"redraw_count":self.redraws,"wait_count":self.wakeups,"operation":"open","editing":self.editor.as_ref().map(|e|json!({"dirty":e.is_dirty(),"generation":e.generation(),"undo_entries":e.undo_len(),"redo_entries":e.redo_len(),"selected":self.input.images.selection.len(),"save_completed":self.save.completed})),"interaction":self.benchmark.as_ref().map(|b|json!({"scenario":b.name(),"input_ms":b.samples,"snap_query_ms":b.snap_queries,"commits":b.commits,"cancels":b.cancels,"invariants":b.invariants})),"native_startup_ms":self.native_startup_ms,"camera_clamped":self.camera_clamped,"navigation_end_pending":self.navigation_end_pending,"drain_ms":self.drain_ms,"chrome":{"toolbar_cells":self.chrome.toolbar.buttons[..self.chrome.toolbar.count].iter().map(|b|json!({"rect":b.rect,"action":b.action.map(|a|a.id())})).collect::<Vec<_>>(),"toolbar_bounds":self.chrome.toolbar.bounds,"selection_outline_count":self.input.gizmo.selection.len(),"caret_deadline_active":self.input.caret.deadline().is_some(),"toolbar_entries":self.chrome.toolbar.count,"placement":format!("{:?}",self.local.profile.toolbar.placement),"config_bytes":serde_json::to_vec(&self.local.profile.toolbar)?.len(),"icon_atlas_gpu_bytes":gpu.map(|g|g.ui_icon_bytes()).unwrap_or(0),"status_bar":self.local.profile.status_bar},"state_counts_scope":"requested sources only","recognizable_clock":"CPU submission before present","metadata_load_ms":self.metadata_ms,"metadata_bytes":self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"first_recognizable_ms":self.first_content_ms,"ordinary_view_80_percent_ms":self.useful_ms,"source_bytes_before_detail":stats.source_bytes,"container_bytes":stats.container_bytes+self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"overview_reused":stats.reused,"overview_regenerated":stats.regenerated,"errors":stats.errors,"source_missing":counts(SourceState::Missing),"source_changed":counts(SourceState::Changed),"source_foreign":counts(SourceState::Foreign),"source_unavailable":counts(SourceState::Unavailable),"peak_pending":stats.peak_pending,"cpu_payload_bytes":stats.cpu_bytes,"adapter":gpu.map(|g|g.adapter_info.name.clone()),"backend":gpu.map(|g|format!("{:?}",g.adapter_info.backend)),"frames":self.frames,"gpu_samples":samples,"detail":"bounded projected 128/512/2048 display supply"});
         let supply_receipt = json!({"potato":self.options.potato,"present_mode":self.config.as_ref().map(|c|format!("{:?}",c.present_mode)),"event_samples_ms":self.event_samples,"wheel_samples_ms":self.wheel_samples,"codec_requests":stats.codec_requests,"region_jobs":stats.region_jobs,"tile_outputs":stats.tile_outputs,"tile_cache_hits":stats.tile_cache_hits,"tile_cache_read_bytes":stats.tile_cache_read_bytes,"tile_cache_write_bytes":stats.tile_cache_write_bytes,"tile_disk_bytes":stats.tile_disk_bytes,"decoded_bytes":stats.decoded_bytes,"cpu_payload_peak":stats.cpu_peak,"cpu_evictions":stats.evictions,"reprioritized":stats.reprioritized,"discarded":stats.discarded,"peak_queued":stats.peak_queued,"visibility_memo_bytes":self.visibility.bytes()});
         if let Some(shared) = &self.shared {
             let canonical = self
@@ -827,18 +832,34 @@ impl ApplicationHandler<Event> for App {
             shared.probe(self.started);
         }
         self.poll_local();
-        if self
-            .local
-            .feedback_deadline
-            .is_some_and(|at| Instant::now() >= at)
-        {
-            self.local.feedback_deadline = None;
+        if self.local.feedback.settle(Instant::now()) {
             self.chrome.last_state = "";
             if let Some(ui) = &mut self.local.ui
                 && ui.message == "COPIED"
             {
                 ui.message.clear();
             }
+            self.dirty = true;
+        }
+        if let Some(ui) = &mut self.local.ui
+            && ui.feedback.settle(Instant::now())
+        {
+            self.dirty = true;
+        }
+        if let Some(ui) = &mut self.local.ui {
+            let editing =
+                self.input.edit_focused && self.drawable && !self.occluded && ui.text_editing();
+            if ui.caret.update(editing, Instant::now()) {
+                self.dirty = true;
+            }
+        }
+        let editing = self.input.edit_focused
+            && self.drawable
+            && !self.occluded
+            && self.local.ui.is_none()
+            && self.context.is_none()
+            && (self.input.name_edit.is_some() || self.input.annotation.edit.is_some());
+        if self.input.caret.update(editing, Instant::now()) {
             self.dirty = true;
         }
         self.poll_storage();
@@ -1098,7 +1119,10 @@ impl ApplicationHandler<Event> for App {
                     .filter(|_| self.options.output.is_some())
                     .and_then(|shared| shared.probe_deadline(self.started)),
             )
-            .chain(self.local.feedback_deadline)
+            .chain(self.input.caret.deadline())
+            .chain(self.local.feedback.deadline())
+            .chain(self.local.ui.as_ref().and_then(|ui| ui.feedback.deadline()))
+            .chain(self.local.ui.as_ref().and_then(|ui| ui.caret.deadline()))
             .chain(self.shared.as_ref().and_then(|s| s.leases.deadline()))
             .min();
         e.set_control_flow(if periodic {
@@ -1115,6 +1139,9 @@ pub use launch::{run, run_new, run_shared};
 
 impl App {
     fn handle_window_event(&mut self, e: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
+        if let WindowEvent::Focused(focused) = &event {
+            self.input.edit_focused = *focused;
+        }
         if self.local.ui.is_none() && self.context.is_none() && self.camera_capture(&event) {
             return;
         }

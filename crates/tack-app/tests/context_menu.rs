@@ -180,6 +180,10 @@ fn menu_edges_submenus_scroll_dismiss_and_never_delete_on_right_arrow() -> R {
                             assert!((rect.x + rect.width) as f64 * scale <= screen[0] as f64);
                             assert!((rect.y + rect.height) as f64 * scale <= screen[1] as f64);
                         }
+                        if menu.rectangles().len() == 2 {
+                            assert_eq!(menu.key(KeyCode::Escape, &map, &camera), MenuResult::None);
+                            assert_eq!(menu.rectangles().len(), 1, "Escape returns to parent");
+                        }
                         assert_eq!(
                             menu.key(KeyCode::Escape, &map, &camera),
                             MenuResult::Dismiss

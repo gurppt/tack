@@ -6,12 +6,14 @@ use tack_core::Camera;
 pub struct UiIcon {
     pub rect: [f64; 4],
     pub index: usize,
+    pub disabled: bool,
 }
 pub(super) struct UiIcons {
     texture: Texture,
     buffer: wgpu::Buffer,
     icons: [UiIcon; 32],
     count: usize,
+    pub(super) overlay_split: Option<usize>,
 }
 impl UiIcons {
     pub(super) fn prepare(&self, queue: &wgpu::Queue, camera: &Camera) {
@@ -32,7 +34,7 @@ impl UiIcons {
                 vertices[j * 6 + k] = Vertex {
                     position: camera.world_to_clip(camera.screen_to_world(points[p])),
                     uv: uv[p],
-                    opacity: 1.,
+                    opacity: if icon.disabled { 0.35 } else { 1. },
                 };
             }
         }
@@ -76,6 +78,7 @@ impl Gpu {
             }),
             icons: [UiIcon::default(); 32],
             count: 0,
+            overlay_split: None,
         }));
         Ok(())
     }
@@ -92,6 +95,11 @@ impl Gpu {
             atlas.count = icons.len();
         }
         Ok(())
+    }
+    pub fn set_ui_icon_overlay_split(&mut self, split: Option<usize>) {
+        if let Some(atlas) = &mut self.ui_icons {
+            atlas.overlay_split = split;
+        }
     }
     pub fn clear_ui_icons(&mut self) {
         self.ui_icons = None;

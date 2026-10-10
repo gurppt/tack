@@ -5,6 +5,8 @@ use crate::{
 };
 use serde::{Deserialize, Serialize};
 pub const MAX_ENTRIES: usize = 32;
+/// Persisted layout token, deliberately outside the semantic Action catalog.
+pub const SEPARATOR: &str = "Separator";
 pub const DEFAULT_ACTIONS: [Action; 12] = [
     Action::SelectTool(Tool::Pointer),
     Action::SelectTool(Tool::Pan),
@@ -19,6 +21,39 @@ pub const DEFAULT_ACTIONS: [Action; 12] = [
     Action::Redo,
     Action::ShareBoard,
 ];
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Item {
+    Action(Action),
+    Separator,
+}
+impl Item {
+    pub fn from_id(id: &str) -> Option<Self> {
+        if id == SEPARATOR {
+            Some(Self::Separator)
+        } else {
+            Action::from_id(id).map(Self::Action)
+        }
+    }
+    pub fn id(self) -> String {
+        match self {
+            Self::Action(a) => a.id(),
+            Self::Separator => SEPARATOR.into(),
+        }
+    }
+    pub fn label(self) -> &'static str {
+        match self {
+            Self::Action(a) => a.label(),
+            Self::Separator => "Separator",
+        }
+    }
+    pub fn icon(self) -> Option<usize> {
+        if let Self::Action(a) = self {
+            crate::toolbar_icons::actual_index(a)
+        } else {
+            None
+        }
+    }
+}
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Placement {
     #[default]
@@ -83,7 +118,11 @@ impl Config {
         }
         let mut valid = Vec::with_capacity(self.actions.len());
         for id in &self.actions {
-            if let Some(a) = Action::from_id(id)
+            if id == SEPARATOR {
+                if valid.last().is_none_or(|v| v != SEPARATOR) {
+                    valid.push(id.clone());
+                }
+            } else if let Some(a) = Action::from_id(id)
                 && eligible(a)
                 && !valid.contains(id)
             {
@@ -123,6 +162,7 @@ pub struct Toolbar {
     pub bounds: [f64; 4],
     pub grip: [f64; 4],
     pub hover: Option<Action>,
+    pub pressed: Option<Action>,
     pub drag: Option<[f64; 2]>,
 }
 impl Toolbar {
@@ -137,14 +177,34 @@ impl Toolbar {
         let w = f64::from(size[0]) / scale;
         let h = f64::from(size[1]) / scale - if status { 20. } else { 0. };
         let vertical = matches!(config.placement, Placement::Left | Placement::Right);
-        let capacity = ((if vertical { h } else { w } - 12.) / 22.).floor().max(1.) as usize;
+        // A 16px grip is a real layout cell, not outer padding. Every action
+        // retains its complete 16px hit area. Separators occupy only one pixel.
+        let limit = if vertical { h } else { w }.max(16.);
         let count = config.actions.len().min(MAX_ENTRIES);
-        let across = count.min(capacity);
-        let rows = count.div_ceil(across);
+        let mut main = 16.;
+        let mut cross = 0.;
+        let mut extent: f64 = 16.;
+        for (i, id) in config.actions.iter().take(count).enumerate() {
+            let length = if id == SEPARATOR { 1. } else { 16. };
+            if main + length > limit {
+                main = 0.;
+                cross += 16.;
+            }
+            self.buttons[i] = Button {
+                rect: if vertical {
+                    [cross, main, cross + 16., main + length]
+                } else {
+                    [main, cross, main + length, cross + 16.]
+                },
+                action: Action::from_id(id),
+            };
+            main += length;
+            extent = extent.max(main);
+        }
         let dims = if vertical {
-            [rows as f64 * 22. + 4., across as f64 * 22. + 12.]
+            [cross + 16., extent]
         } else {
-            [across as f64 * 22. + 12., rows as f64 * 22. + 4.]
+            [extent, cross + 16.]
         };
         let offset = if config.offset_set || config.offset > 0 {
             f64::from(config.offset)
@@ -154,16 +214,16 @@ impl Toolbar {
             (w - dims[0]) / 2.
         };
         let origin = match config.placement {
-            Placement::Top => [offset, 2.],
-            Placement::Bottom => [offset, h - dims[1] - 2.],
-            Placement::Left => [2., offset],
-            Placement::Right => [w - dims[0] - 2., offset],
+            Placement::Top => [offset, 0.],
+            Placement::Bottom => [offset, h - dims[1]],
+            Placement::Left => [0., offset],
+            Placement::Right => [w - dims[0], offset],
             Placement::Floating => config.floating.map(f64::from),
             Placement::Hidden => [0.; 2],
         };
         let origin = [
-            origin[0].clamp(0., (w - dims[0]).max(0.)),
-            origin[1].clamp(0., (h - dims[1]).max(0.)),
+            origin[0].clamp(0., (w - dims[0]).max(0.)).round(),
+            origin[1].clamp(0., (h - dims[1]).max(0.)).round(),
         ];
         self.bounds = [
             origin[0] * scale,
@@ -171,42 +231,19 @@ impl Toolbar {
             (origin[0] + dims[0]) * scale,
             (origin[1] + dims[1]) * scale,
         ];
-        self.grip = if vertical {
-            [
-                origin[0] * scale,
-                origin[1] * scale,
-                (origin[0] + dims[0]) * scale,
-                (origin[1] + 10.) * scale,
-            ]
-        } else {
-            [
-                origin[0] * scale,
-                origin[1] * scale,
-                (origin[0] + 10.) * scale,
-                (origin[1] + dims[1]) * scale,
-            ]
-        };
-        for (i, id) in config.actions.iter().take(count).enumerate() {
-            let (x, y) = if vertical {
-                (
-                    (i / across) as f64 * 22. + 2.,
-                    (i % across) as f64 * 22. + 10.,
-                )
-            } else {
-                (
-                    (i % across) as f64 * 22. + 10.,
-                    (i / across) as f64 * 22. + 2.,
-                )
-            };
-            self.buttons[i] = Button {
-                rect: [
-                    (origin[0] + x) * scale,
-                    (origin[1] + y) * scale,
-                    (origin[0] + x + 20.) * scale,
-                    (origin[1] + y + 20.) * scale,
-                ],
-                action: Action::from_id(id),
-            };
+        self.grip = [
+            origin[0] * scale,
+            origin[1] * scale,
+            (origin[0] + 16.) * scale,
+            (origin[1] + 16.) * scale,
+        ];
+        for button in &mut self.buttons[..count] {
+            button.rect = [
+                (origin[0] + button.rect[0]) * scale,
+                (origin[1] + button.rect[1]) * scale,
+                (origin[0] + button.rect[2]) * scale,
+                (origin[1] + button.rect[3]) * scale,
+            ];
         }
         self.count = count;
     }

@@ -154,7 +154,10 @@ impl LocalUi {
         self.button(
             paint,
             [24., 42., width, 64.],
-            &format!("Search: {}_", self.search),
+            &format!(
+                "Search: {}",
+                crate::feedback::edit_text(&self.search, self.text_editing() && self.caret.visible)
+            ),
             Command::Search,
             !self.capture && self.confirm_reset.is_none(),
         );

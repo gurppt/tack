@@ -1,0 +1,392 @@
+[
+  {
+    "run": "1024x768-1x-Bottom",
+    "offset": 128,
+    "actual": [
+      1,
+      12
+    ],
+    "expected": [
+      1,
+      12
+    ],
+    "observed": true
+  },
+  {
+    "run": "1024x768-1x-Bottom",
+    "offset": 177,
+    "actual": [
+      1,
+      12
+    ],
+    "expected": [
+      1,
+      12
+    ],
+    "observed": true
+  },
+  {
+    "run": "1024x768-1x-Floating",
+    "offset": 128,
+    "actual": [
+      1,
+      12
+    ],
+    "expected": [
+      1,
+      12
+    ],
+    "observed": true
+  },
+  {
+    "run": "1024x768-1x-Floating",
+    "offset": 177,
+    "actual": [
+      1,
+      12
+    ],
+    "expected": [
+      1,
+      12
+    ],
+    "observed": true
+  },
+  {
+    "run": "1024x768-1x-Left",
+    "offset": 128,
+    "actual": [
+      12,
+      1
+    ],
+    "expected": [
+      12,
+      1
+    ],
+    "observed": true
+  },
+  {
+    "run": "1024x768-1x-Left",
+    "offset": 177,
+    "actual": [
+      12,
+      1
+    ],
+    "expected": [
+      12,
+      1
+    ],
+    "observed": true
+  },
+  {
+    "run": "1024x768-1x-Right",
+    "offset": 128,
+    "actual": [
+      12,
+      1
+    ],
+    "expected": [
+      12,
+      1
+    ],
+    "observed": true
+  },
+  {
+    "run": "1024x768-1x-Right",
+    "offset": 177,
+    "actual": [
+      12,
+      1
+    ],
+    "expected": [
+      12,
+      1
+    ],
+    "observed": true
+  },
+  {
+    "run": "1024x768-1x-Top",
+    "offset": 128,
+    "actual": [
+      1,
+      12
+    ],
+    "expected": [
+      1,
+      12
+    ],
+    "observed": true
+  },
+  {
+    "run": "1024x768-1x-Top",
+    "offset": 177,
+    "actual": [
+      1,
+      12
+    ],
+    "expected": [
+      1,
+      12
+    ],
+    "observed": true
+  },
+  {
+    "run": "800x600-1x-Bottom",
+    "offset": 128,
+    "actual": [
+      1,
+      12
+    ],
+    "expected": [
+      1,
+      12
+    ],
+    "observed": true
+  },
+  {
+    "run": "800x600-1x-Bottom",
+    "offset": 177,
+    "actual": [
+      1,
+      12
+    ],
+    "expected": [
+      1,
+      12
+    ],
+    "observed": true
+  },
+  {
+    "run": "800x600-1x-Floating",
+    "offset": 128,
+    "actual": [
+      1,
+      12
+    ],
+    "expected": [
+      1,
+      12
+    ],
+    "observed": true
+  },
+  {
+    "run": "800x600-1x-Floating",
+    "offset": 177,
+    "actual": [
+      1,
+      12
+    ],
+    "expected": [
+      1,
+      12
+    ],
+    "observed": true
+  },
+  {
+    "run": "800x600-1x-Left",
+    "offset": 128,
+    "actual": [
+      12,
+      1
+    ],
+    "expected": [
+      12,
+      1
+    ],
+    "observed": true
+  },
+  {
+    "run": "800x600-1x-Left",
+    "offset": 177,
+    "actual": [
+      12,
+      1
+    ],
+    "expected": [
+      12,
+      1
+    ],
+    "observed": true
+  },
+  {
+    "run": "800x600-1x-Right",
+    "offset": 128,
+    "actual": [
+      12,
+      1
+    ],
+    "expected": [
+      12,
+      1
+    ],
+    "observed": true
+  },
+  {
+    "run": "800x600-1x-Right",
+    "offset": 177,
+    "actual": [
+      12,
+      1
+    ],
+    "expected": [
+      12,
+      1
+    ],
+    "observed": true
+  },
+  {
+    "run": "800x600-1x-Top",
+    "offset": 128,
+    "actual": [
+      1,
+      12
+    ],
+    "expected": [
+      1,
+      12
+    ],
+    "observed": true
+  },
+  {
+    "run": "800x600-1x-Top",
+    "offset": 177,
+    "actual": [
+      1,
+      12
+    ],
+    "expected": [
+      1,
+      12
+    ],
+    "observed": true
+  },
+  {
+    "run": "800x600-2x-Bottom",
+    "offset": 128,
+    "actual": [
+      2,
+      24
+    ],
+    "expected": [
+      2,
+      24
+    ],
+    "observed": true
+  },
+  {
+    "run": "800x600-2x-Bottom",
+    "offset": 177,
+    "actual": [
+      2,
+      24
+    ],
+    "expected": [
+      2,
+      24
+    ],
+    "observed": true
+  },
+  {
+    "run": "800x600-2x-Floating",
+    "offset": 128,
+    "actual": [
+      2,
+      24
+    ],
+    "expected": [
+      2,
+      24
+    ],
+    "observed": true
+  },
+  {
+    "run": "800x600-2x-Floating",
+    "offset": 177,
+    "actual": [
+      2,
+      24
+    ],
+    "expected": [
+      2,
+      24
+    ],
+    "observed": true
+  },
+  {
+    "run": "800x600-2x-Left",
+    "offset": 128,
+    "actual": [
+      24,
+      2
+    ],
+    "expected": [
+      24,
+      2
+    ],
+    "observed": true
+  },
+  {
+    "run": "800x600-2x-Left",
+    "offset": 177,
+    "actual": [
+      24,
+      2
+    ],
+    "expected": [
+      24,
+      2
+    ],
+    "observed": true
+  },
+  {
+    "run": "800x600-2x-Right",
+    "offset": 128,
+    "actual": [
+      24,
+      2
+    ],
+    "expected": [
+      24,
+      2
+    ],
+    "observed": true
+  },
+  {
+    "run": "800x600-2x-Right",
+    "offset": 177,
+    "actual": [
+      24,
+      2
+    ],
+    "expected": [
+      24,
+      2
+    ],
+    "observed": true
+  },
+  {
+    "run": "800x600-2x-Top",
+    "offset": 128,
+    "actual": [
+      2,
+      24
+    ],
+    "expected": [
+      2,
+      24
+    ],
+    "observed": true
+  },
+  {
+    "run": "800x600-2x-Top",
+    "offset": 177,
+    "actual": [
+      2,
+      24
+    ],
+    "expected": [
+      2,
+      24
+    ],
+    "observed": true
+  }
+]

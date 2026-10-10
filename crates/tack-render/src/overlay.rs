@@ -149,11 +149,17 @@ impl Overlay {
         Ok(())
     }
     pub fn draw(&self, pass: &mut wgpu::RenderPass<'_>) {
-        if !self.vertices.is_empty() {
+        self.draw_range(pass, 0, usize::MAX);
+    }
+    /// Split the existing overlay around toolbar icons so popups occlude them.
+    pub fn draw_range(&self, pass: &mut wgpu::RenderPass<'_>, start: usize, end: usize) {
+        let start = start.saturating_mul(6).min(self.vertices.len()) as u32;
+        let end = end.saturating_mul(6).min(self.vertices.len()) as u32;
+        if start < end {
             pass.set_pipeline(&self.pipeline);
             pass.set_bind_group(0, &self.grid.bind_group, &[]);
             pass.set_vertex_buffer(0, self.buffer.slice(..));
-            pass.draw(0..self.vertices.len() as u32, 0..1);
+            pass.draw(start..end, 0..1);
         }
     }
 }

@@ -22,6 +22,8 @@ pub struct ImageInput {
     pub keymap: Keymap,
     pub grid_visible: bool,
     pub snap: crate::spatial_snap::SnapState,
+    pub caret: crate::feedback::Caret,
+    pub edit_focused: bool,
     pub name_edit: Option<crate::spatial_input::FrameNameEdit>,
     pub(crate) name_replace: bool,
     pub annotation: crate::annotation_tool::AnnotationInput,
@@ -48,6 +50,8 @@ impl ImageInput {
             keymap: product_keymap()?,
             grid_visible: false,
             snap: crate::spatial_snap::SnapState::default(),
+            caret: Default::default(),
+            edit_focused: true,
             name_edit: None,
             name_replace: true,
             annotation: Default::default(),
@@ -219,10 +223,6 @@ impl ImageInput {
         {
             self.gizmo.outline(t, camera, self.gizmo.style.selection);
         }
-        if let Some(e) = &self.annotation.edit {
-            self.gizmo
-                .outline(e.transform, camera, self.gizmo.style.selection);
-        }
         if self.annotation.tools.tool().is_annotation() || self.annotation.edit.is_some() {
             let label = if self.annotation.edit.is_some() {
                 "Enter: done  Shift+Enter: newline"
@@ -310,7 +310,16 @@ impl ImageInput {
                             && time.duration_since(last) < Duration::from_millis(400)
                             && (p[0] - point[0]).hypot(p[1] - point[1]) < self.gizmo.scale * 5.
                     }) {
-                        if !self.annotation_action(
+                        if self.frame_title_hit(editor, camera, id) {
+                            self.dispatch(
+                                ActionEvent {
+                                    action: Action::RenameFrame,
+                                    phase: ActionPhase::Invoke,
+                                },
+                                editor,
+                                camera,
+                            )?;
+                        } else if !self.annotation_action(
                             ActionEvent {
                                 action: Action::RenameFrame,
                                 phase: ActionPhase::Invoke,
@@ -660,6 +669,10 @@ impl ImageInput {
                 }
             }
             match event {
+                WindowEvent::CursorMoved { position, .. } => {
+                    self.cursor = [position.x, position.y];
+                }
+
                 WindowEvent::Focused(false) => {
                     let draft = self.name_edit.take();
                     self.physical(PhysicalEvent::FocusLost, editor, camera)?;
@@ -694,6 +707,17 @@ impl ImageInput {
                             }
                         }
                     }
+                }
+                WindowEvent::MouseInput {
+                    state: winit::event::ElementState::Pressed,
+                    button: winit::event::MouseButton::Left,
+                    ..
+                } if self
+                    .name_edit
+                    .as_ref()
+                    .is_some_and(|edit| !self.frame_title_hit(editor, camera, edit.id)) =>
+                {
+                    self.finish_name_edit(editor, true)?;
                 }
                 WindowEvent::Ime(winit::event::Ime::Commit(text)) => self.name_text(text),
                 _ => {}

@@ -1,7 +1,7 @@
 //! Logical UI preferences, shared drawing/hit geometry; never document state.
 use crate::{image_geometry as geometry, image_interaction::ImageInteraction};
 use tack_core::{Camera, Document, Transform};
-use tack_render::{MAX_OVERLAY_QUADS, MAX_SELECTION_RECTS, OverlayQuad, SelectionRect};
+use tack_render::{MAX_OVERLAY_QUADS, OverlayQuad, SelectionRect};
 #[derive(Clone, Copy)]
 pub struct GizmoStyle {
     pub handle_size: f64,
@@ -45,7 +45,7 @@ impl Default for ImageGizmo {
             style: GizmoStyle::default(),
             palette: crate::ui_theme::Theme::default().palette(),
             scale: 1.,
-            frame_title_scale: 2,
+            frame_title_scale: 1,
             hit_scale: 1.,
             quads: Vec::with_capacity(128),
             selection: Vec::new(),
@@ -157,60 +157,8 @@ impl ImageGizmo {
             self.selection = Vec::new();
             return;
         };
-        // One derived rectangle per visible authoritative member. This budget is
-        // independent of the small handles/menu overlay, and includes annotations.
-        let view = camera.viewport();
-        for id in images.selection.ids() {
-            if let Some(t) = images.preview_transform(doc, id)
-                && t.bounds().intersects(view)
-            {
-                if self.selection.len() == MAX_SELECTION_RECTS {
-                    break;
-                }
-                if self.selection.len() == self.selection.capacity() {
-                    let capacity = (self.selection.capacity().max(1) * 2).min(MAX_SELECTION_RECTS);
-                    self.selection
-                        .reserve_exact(capacity - self.selection.len());
-                }
-                let outer = doc.object(id).is_some_and(|o| match o.kind() {
-                    tack_core::ObjectKind::Frame(_) => true,
-                    tack_core::ObjectKind::Annotation(a) => {
-                        matches!(a.kind(), tack_core::AnnotationKind::Rect)
-                    }
-                    _ => false,
-                });
-                let margin = 3. * self.scale / camera.zoom();
-                let outline = if outer {
-                    Transform::new(
-                        t.center(),
-                        t.size().map(|s| s + margin * 2.),
-                        t.rotation(),
-                        t.flips(),
-                    )
-                    .unwrap_or(t)
-                } else {
-                    t
-                };
-                self.selection.push(SelectionRect {
-                    transform: outline,
-                    color,
-                    width: self.style.line_width * self.scale / camera.ui_scale(),
-                });
-            }
-        }
-        if self.selection.is_empty() {
-            self.selection = Vec::new();
-        } else if self.selection.len() < self.selection.capacity() / 4 {
-            self.selection.shrink_to(
-                self.selection
-                    .len()
-                    .next_power_of_two()
-                    .min(MAX_SELECTION_RECTS),
-            );
-        }
-        if images.selection.len() > 1 {
-            self.outline(frame, camera, color);
-        }
+        // Transform chrome is handles plus a rotation stem only. Foreign
+        // manipulation indication is supplied separately by shared leases.
         let crop = images.crop_mode && images.selection.len() == 1;
         let has_frame = doc.frame_count() > 0
             && images.selection.ids().any(|id| {

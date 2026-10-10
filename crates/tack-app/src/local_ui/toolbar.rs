@@ -1,121 +1,165 @@
-//! Simple catalog checkbox/reorder editor, reusing temporary panel primitives.
+//! Two bounded lists and ordinary buttons; the same icon atlas as the bar.
 use super::*;
+use crate::toolbar::Item;
 impl LocalUi {
-    fn toolbar_actions() -> Vec<Action> {
-        Action::ALL
-            .into_iter()
-            .filter(|a| crate::toolbar::eligible(*a))
+    fn toolbar_actions() -> Vec<Item> {
+        std::iter::once(Item::Separator)
+            .chain(
+                Action::ALL
+                    .into_iter()
+                    .filter(|a| crate::toolbar::eligible(*a))
+                    .map(Item::Action),
+            )
             .collect()
     }
+    pub(super) fn toolbar_column(&mut self, order: bool) {
+        self.toolbar_selected[usize::from(self.toolbar_order)] = self.selected;
+        self.toolbar_first[usize::from(self.toolbar_order)] = self.first;
+        self.toolbar_order = order;
+        self.selected = self.toolbar_selected[usize::from(order)];
+        self.first = self.toolbar_first[usize::from(order)];
+        self.focus = None;
+    }
     pub(super) fn draw_toolbar(&mut self, g: &mut ImageGizmo, c: &Camera, p: &Preferences) {
-        let s = c.ui_scale();
+        let s = c.ui_scale().round().clamp(1., 4.);
         let width = (f64::from(c.screen_size()[0]) / s - 24.).clamp(1., 600.);
         let height = (f64::from(c.screen_size()[1]) / s - 24.).clamp(1., 440.);
+        let palette = p.theme.palette();
         let mut budget = 900;
-        self.layout = [s, width, height, 70.];
-        self.visible = ((height - 160.) / 22.).floor().clamp(1., 12.) as usize;
+        self.layout = [s, width, height, 76.];
+        self.visible = ((height - 146.) / 22.).floor().clamp(1., 12.) as usize;
+        self.icon_count = 0;
         g.pixel_rect(
             c,
             [12. * s, 12. * s],
             [(width + 12.) * s, (height + 12.) * s],
-            p.theme.palette().menu_bg,
+            palette.menu_bg,
             None,
         );
         g.ui_text(
             c,
-            [24. * s, 22. * s],
+            [24. * s, 20. * s],
             width - 24.,
-            "Edit Toolbar - select action, Add/Remove",
-            p.theme.palette().accent_primary,
+            "Edit Toolbar",
+            palette.accent_primary,
             &mut budget,
         );
         let title = format!(
-            "Position: {}  /  {} of 32",
+            "{} / {} of 32",
             p.toolbar.placement.label(),
             p.toolbar.actions.len()
         );
         g.ui_text(
             c,
-            [24. * s, 44. * s],
+            [24. * s, 40. * s],
             width - 24.,
             &title,
-            p.theme.palette().text_primary,
+            palette.text_secondary,
             &mut budget,
         );
-        let actions = Self::toolbar_actions();
         let mid = (width + 24.) / 2.;
         g.ui_text(
             c,
-            [24. * s, 66. * s],
+            [24. * s, 58. * s],
             mid - 24.,
-            "AVAILABLE ACTIONS",
-            p.theme.palette().accent_secondary,
+            "Available",
+            palette.accent_secondary,
             &mut budget,
         );
         g.ui_text(
             c,
-            [(mid + 8.) * s, 66. * s],
-            width - mid,
-            "TOOLBAR ORDER",
-            p.theme.palette().accent_secondary,
+            [(mid + 8.) * s, 58. * s],
+            width - mid - 8.,
+            "Order",
+            palette.accent_secondary,
             &mut budget,
         );
-        self.layout[3] = 88.;
-        self.visible = ((height - 170.) / 22.).floor().clamp(1., 12.) as usize;
+        let actions = Self::toolbar_actions();
         let length = if self.toolbar_order {
             p.toolbar.actions.len()
         } else {
             actions.len()
         };
         self.selected = self.selected.min(length.saturating_sub(1));
-        self.first = self
-            .selected
-            .saturating_sub(self.visible / 2)
-            .min(length.saturating_sub(self.visible));
+        // Scroll the smallest amount needed, retaining each column's position.
+        self.first = self.first.min(length.saturating_sub(self.visible));
+        if self.selected < self.first {
+            self.first = self.selected;
+        }
+        if self.selected >= self.first + self.visible {
+            self.first = self.selected + 1 - self.visible;
+        }
+        self.toolbar_first[usize::from(self.toolbar_order)] = self.first;
         for right in [false, true] {
             let list: Vec<_> = if right {
                 p.toolbar
                     .actions
                     .iter()
-                    .filter_map(|id| Action::from_id(id))
+                    .filter_map(|id| Item::from_id(id))
                     .collect()
             } else {
                 actions.clone()
             };
-            let first = if self.toolbar_order == right {
-                self.first
-            } else {
-                0
-            };
+            let first = self.toolbar_first[usize::from(right)];
             let x = if right { mid + 8. } else { 24. };
             let available = if right { width - x } else { mid - x - 8. };
-            for (index, action) in list.iter().enumerate().skip(first).take(self.visible) {
-                let y = 88. + (index - first) as f64 * 22.;
-                if self.toolbar_order == right && index == self.selected {
+            for (index, item) in list.iter().enumerate().skip(first).take(self.visible) {
+                let y = 76. + (index - first) as f64 * 22.;
+                let selected = self.toolbar_order == right && index == self.selected;
+                if selected {
                     g.pixel_rect(
                         c,
                         [(x - 4.) * s, y * s],
                         [(x + available) * s, (y + 20.) * s],
-                        p.theme.palette().selection,
+                        if self.feedback.active() && right {
+                            [0., 0.5, 0.08, 1.]
+                        } else {
+                            palette.selection
+                        },
+                        None,
+                    );
+                    // Pixel focus mark remains legible on every palette.
+                    g.pixel_rect(
+                        c,
+                        [(x - 4.) * s, y * s],
+                        [(x - 3.) * s, (y + 20.) * s],
+                        palette.accent_secondary,
                         None,
                     );
                 }
+                let icon = item.icon();
+                if let Some(index) = icon
+                    && self.icon_count < self.icons.len()
+                {
+                    self.icons[self.icon_count] = tack_render::UiIcon {
+                        rect: [x * s, (y + 2.) * s, 16. * s, 16. * s],
+                        index,
+                        disabled: false,
+                    };
+                    self.icon_count += 1;
+                }
+                let inset = if icon.is_some() { 20. } else { 0. };
                 g.ui_text(
                     c,
-                    [x * s, (y + 2.) * s],
-                    available,
-                    action.label(),
-                    p.theme.palette().text_primary,
+                    [(x + inset) * s, (y + 2.) * s],
+                    available - inset,
+                    item.label(),
+                    palette.text_primary,
                     &mut budget,
                 );
             }
         }
+        let hint = if width < 420. {
+            "Ctrl+Up/Down: reorder"
+        } else {
+            "Tab: focus  Ctrl+Up/Down: reorder"
+        };
         g.ui_text(
             c,
-            [24. * s, (height - 78.) * s],
+            [24. * s, (height - 70.) * s],
             width - 24.,
-            "Tab: column  Ctrl+Up/Down: reorder",
-            p.theme.palette().accent_attention,
+            hint,
+            palette.accent_attention,
             &mut budget,
         );
         self.hits.clear();
@@ -129,28 +173,45 @@ impl LocalUi {
             ("Done", Command::Close),
         ];
         for (i, (label, command)) in labels.into_iter().enumerate() {
-            let row = i / 4;
             let x = 24. + (i % 4) as f64 * (width - 32.) / 4.;
-            let y = height - 54. + row as f64 * 26.;
+            let y = height - 48. + (i / 4) as f64 * 24.;
             let x2 = x + (width - 32.) / 4. - 4.;
+            let enabled = match command {
+                Command::ToolbarToggle => p.toolbar.actions.len() < 32,
+                Command::ToolbarRemove | Command::ToolbarUp | Command::ToolbarDown => {
+                    !p.toolbar.actions.is_empty()
+                }
+                _ => true,
+            };
             self.hits.push(Hit {
-                rect: [x, y, x2, y + 22.],
+                rect: [x, y, x2, y + 20.],
                 command,
-                enabled: true,
+                enabled,
             });
+            let focused = self.focus == Some(command);
             g.pixel_rect(
                 c,
                 [x * s, y * s],
-                [x2 * s, (y + 22.) * s],
-                p.theme.palette().selection,
+                [x2 * s, (y + 20.) * s],
+                if focused {
+                    palette.accent_primary
+                } else {
+                    palette.selection
+                },
                 None,
             );
             g.ui_text(
                 c,
-                [x * s, (y + 3.) * s],
-                x2 - x,
+                [(x + 2.) * s, (y + 2.) * s],
+                x2 - x - 4.,
                 label,
-                p.theme.palette().text_primary,
+                if !enabled {
+                    palette.text_disabled
+                } else if focused {
+                    palette.menu_bg
+                } else {
+                    palette.text_primary
+                },
                 &mut budget,
             );
         }
@@ -160,49 +221,58 @@ impl LocalUi {
         cmd: Command,
         p: &mut Preferences,
     ) -> Option<UiResult> {
-        let a = if self.toolbar_order {
+        let item = if self.toolbar_order {
             p.toolbar
                 .actions
                 .get(self.selected)
-                .and_then(|id| Action::from_id(id))
+                .and_then(|id| Item::from_id(id))
         } else {
             Self::toolbar_actions().get(self.selected).copied()
         };
-        let id = a.map(Action::id);
-        let position = id
-            .as_ref()
-            .and_then(|id| p.toolbar.actions.iter().position(|v| v == id));
+        let position = if self.toolbar_order {
+            (self.selected < p.toolbar.actions.len()).then_some(self.selected)
+        } else {
+            item.and_then(|item| p.toolbar.actions.iter().position(|id| *id == item.id()))
+        };
+        self.focus = None;
         match cmd {
             Command::ToolbarRemove => {
                 if let Some(i) = position {
                     p.toolbar.actions.remove(i);
+                    self.toolbar_column(true);
+                    self.selected = i.min(p.toolbar.actions.len().saturating_sub(1));
                 }
             }
             Command::ToolbarToggle => {
-                if position.is_none()
-                    && p.toolbar.actions.len() < 32
-                    && let Some(id) = id
+                if p.toolbar.actions.len() < 32
+                    && let Some(item) = item
+                    && (item == Item::Separator || position.is_none())
                 {
-                    p.toolbar.actions.push(id);
-                }
-            }
-            Command::ToolbarUp => {
-                if let Some(i) = position
-                    && i > 0
-                {
-                    p.toolbar.actions.swap(i, i - 1);
-                    if self.toolbar_order {
-                        self.selected = i - 1;
+                    if item == Item::Separator
+                        && p.toolbar
+                            .actions
+                            .last()
+                            .is_some_and(|id| id == crate::toolbar::SEPARATOR)
+                    {
+                        return None;
                     }
+                    p.toolbar.actions.push(item.id());
+                    self.toolbar_column(true);
+                    self.selected = p.toolbar.actions.len() - 1;
+                    self.feedback.acknowledge(std::time::Instant::now());
                 }
             }
-            Command::ToolbarDown => {
-                if let Some(i) = position
-                    && i + 1 < p.toolbar.actions.len()
-                {
-                    p.toolbar.actions.swap(i, i + 1);
-                    if self.toolbar_order {
-                        self.selected = i + 1;
+            Command::ToolbarUp | Command::ToolbarDown => {
+                if let Some(i) = position {
+                    let next = if cmd == Command::ToolbarUp {
+                        i.checked_sub(1)
+                    } else {
+                        (i + 1 < p.toolbar.actions.len()).then_some(i + 1)
+                    };
+                    if let Some(next) = next {
+                        p.toolbar.actions.swap(i, next);
+                        self.toolbar_column(true);
+                        self.selected = next;
                     }
                 }
             }
@@ -214,7 +284,12 @@ impl LocalUi {
                     .unwrap_or(0);
                 p.toolbar.placement = all[(i + 1) % all.len()];
             }
-            Command::ToolbarReset => p.toolbar = crate::toolbar::Config::default(),
+            Command::ToolbarReset => {
+                p.toolbar = crate::toolbar::Config::default();
+                self.toolbar_column(true);
+                self.selected = 0;
+                self.first = 0;
+            }
             _ => return None,
         }
         Some(UiResult::PreferencesChanged)

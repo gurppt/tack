@@ -74,3 +74,6 @@ pub mod owned_window;
 pub mod independent_copy;
 
 pub mod camera_slots;
+
+pub mod feedback;
+pub mod frame_ui;

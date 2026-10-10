@@ -771,3 +771,56 @@ fn flat_background_has_identical_top_and_bottom_pixels_in_all_three_fills() -> R
     }
     Ok(())
 }
+
+#[test]
+#[ignore = "explicit native GPU toolbar/context overlay readback"]
+fn context_overlays_icon_atlas_without_hiding_uncovered_toolbar() -> Result<(), AssetError> {
+    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::from_env_or_default());
+    let mut gpu = pollster::block_on(Gpu::new(
+        &instance,
+        None,
+        wgpu::TextureFormat::Rgba8UnormSrgb,
+        1024 * 1024,
+    ))?;
+    let mut d = data();
+    d.opacity = Opacity::new(0.)?;
+    let key = ProductKey {
+        asset: Some(d.asset_id),
+        source: SourceId::new(d.asset_id.value())?,
+        lod: Lod::Thumbnail,
+        edge: 128,
+        revision: 1,
+    };
+    gpu.set_ui_icon_atlas(&Decoded {
+        width: 128,
+        height: 32,
+        rgba: [0, 255, 0, 255].repeat(4096),
+    })?;
+    let atlas_bytes = gpu.ui_icon_bytes();
+    gpu.set_ui_icons(&[tack_render::UiIcon {
+        rect: [8., 8., 16., 16.],
+        index: 0,
+        disabled: false,
+    }])?;
+    let overlay = [
+        OverlayQuad {
+            points: [[0., 0.], [0., 32.], [32., 0.], [32., 32.]],
+            color: [0., 0., 1., 1.],
+            bitmap: None,
+        },
+        OverlayQuad {
+            points: [[16., 0.], [16., 32.], [32., 0.], [32., 32.]],
+            color: [1., 0., 0., 1.],
+            bitmap: None,
+        },
+    ];
+    gpu.set_ui_icon_overlay_split(Some(1));
+    let popup = pixels_overlay(&mut gpu, d, key, &overlay)?;
+    assert_eq!(pixel(&popup, 10, 10), [0, 255, 0, 255]);
+    assert_eq!(pixel(&popup, 20, 10), [255, 0, 0, 255]);
+    gpu.set_ui_icon_overlay_split(None);
+    let editor = pixels_overlay(&mut gpu, d, key, &overlay)?;
+    assert_eq!(pixel(&editor, 20, 10), [0, 255, 0, 255]);
+    assert_eq!(gpu.ui_icon_bytes(), atlas_bytes);
+    Ok(())
+}
