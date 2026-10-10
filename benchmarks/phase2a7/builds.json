@@ -13,14 +13,14 @@
       "sha256": "4fcef9b973c80de96ecf2d5babe86ef87b1be2459f22559243c8e85da3ebe587"
     },
     "bin/tack-windows-x86_64.zip": {
-      "bytes": 11344016,
-      "sha256": "0d5d1b27a840c2505282fac0d371a41d3c3d5a19ca6dd78b6d5cbeba2b62e3fa"
+      "bytes": 11344006,
+      "sha256": "eba5d3fcfdd77884f3697eb115a41a94902e74f8e7d065f69a10e723099387ce"
     }
   },
-  "linux_stamp": "STATUS: CURRENT\ncommit: ff35c8953d8db71f046d28535f74c51770a33b7e\nprofile: release\nbuilt_utc: 2026-10-10T14:10:55Z\nbinary: ./bin/tack\nserver_binary: ./bin/tack-server\nworktree_dirty: true\nsha256: 7fbc8f3e65c91865c6f41132da4a218eed942a745d6b05e059074b5309925fb7\nserver_sha256: 606435b69c0f301908899be9fcc190687beca9a8e13e37aa4e33d470b4d54941\nabout_asset_sha256: d22641555380426ad6567153edca7b83548ad964acdc9c3fbdb70b59ac7759ee\njpeg_decoder_sha256: 4fcef9b973c80de96ecf2d5babe86ef87b1be2459f22559243c8e85da3ebe587\ncheckpoint: Phase 2A7 final acceptance build\n",
+  "linux_stamp": "STATUS: CURRENT\ncommit: 6f6acb38bf5bd8694b7d0699462a09742a4e6842\nprofile: release\nbuilt_utc: 2026-10-10T14:10:55Z\nbinary: ./bin/tack\nserver_binary: ./bin/tack-server\nworktree_dirty: true\nsha256: 7fbc8f3e65c91865c6f41132da4a218eed942a745d6b05e059074b5309925fb7\nserver_sha256: 606435b69c0f301908899be9fcc190687beca9a8e13e37aa4e33d470b4d54941\nabout_asset_sha256: d22641555380426ad6567153edca7b83548ad964acdc9c3fbdb70b59ac7759ee\njpeg_decoder_sha256: 4fcef9b973c80de96ecf2d5babe86ef87b1be2459f22559243c8e85da3ebe587\ncheckpoint: Phase 2A7 final acceptance build\n",
   "windows": {
-    "commit": "ff35c8953d8db71f046d28535f74c51770a33b7e",
-    "built_utc": "2026-10-10T14:12:41.833994+00:00",
+    "commit": "6f6acb38bf5bd8694b7d0699462a09742a4e6842",
+    "built_utc": "2026-10-10T14:20:06.799962+00:00",
     "target": "x86_64-pc-windows-gnu",
     "working_tree": true,
     "jpeg": "libjpeg-turbo 3.2.0 static SIMD SSE2/AVX2",
@@ -99,17 +99,18 @@
     "files": {
       "tack-jpeg-decoder.exe": {
         "bytes": 872960,
-        "sha256": "28fa9a86979b428466738d9886086076544fd7d3b050264d049c7be851859119"
+        "sha256": "ed156e1429e5c2acd81d670611d659e3fc3bf18e35b10d2aa278a73d6b2ff02c"
       },
       "tack-server.exe": {
         "bytes": 3095552,
-        "sha256": "57070a72b6e907576173b9ebfac604d77e702afc274bd79d3269474536b47f03"
+        "sha256": "c071b0933864e758c55b6c6c7d5417206c90c3cb58f4ae14f0fdb95921dade91"
       },
       "tack.exe": {
         "bytes": 24398336,
-        "sha256": "dce18df96d42d95af85575d1aa9296c2d70b28dba5854073725c5e3a47501b74"
+        "sha256": "79b3dd5931583772f58dccbc9e802f417f96492d7ae7e916628d83117c63be51"
       }
     }
   },
-  "note": "Built from implementation worktree; code commit stamped after commit without changing executables."
+  "note": "Linux executable unchanged after acceptance. Final Windows packaging stamps PE metadata during MinGW strip; final packaged hash verified separately under Wine. Manifests identify implementation commit; dirty state includes preserved owner files.",
+  "implementation_commit": "6f6acb38bf5bd8694b7d0699462a09742a4e6842"
 }

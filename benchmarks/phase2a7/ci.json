@@ -1,0 +1,388 @@
+{
+  "recorded_utc": "2026-10-10T14:26:36.362947+00:00",
+  "run": {
+    "id": 38059177511,
+    "head_sha": "6f6acb38bf5bd8694b7d0699462a09742a4e6842",
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/gurppt/tack/actions/runs/38059177511",
+    "created_at": "2026-10-10T14:19:55Z",
+    "updated_at": "2026-10-10T14:25:54Z"
+  },
+  "jobs": [
+    {
+      "name": "dependencies",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/gurppt/tack/actions/runs/38059177511/job/114233746782",
+      "started_at": "2026-10-10T14:19:57Z",
+      "completed_at": "2026-10-10T14:22:16Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-10T14:19:58Z",
+          "completed_at": "2026-10-10T14:19:58Z"
+        },
+        {
+          "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-10T14:19:59Z",
+          "completed_at": "2026-10-10T14:19:59Z"
+        },
+        {
+          "name": "Run rustup toolchain install 1.95.0 --profile minimal",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T14:19:59Z",
+          "completed_at": "2026-10-10T14:20:07Z"
+        },
+        {
+          "name": "Run cargo install cargo-deny --version 0.20.2 --locked",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T14:20:07Z",
+          "completed_at": "2026-10-10T14:22:11Z"
+        },
+        {
+          "name": "Run cargo deny check",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-10T14:22:11Z",
+          "completed_at": "2026-10-10T14:22:15Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-10T14:22:15Z",
+          "completed_at": "2026-10-10T14:22:15Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-10T14:22:15Z",
+          "completed_at": "2026-10-10T14:22:15Z"
+        }
+      ]
+    },
+    {
+      "name": "rust (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/gurppt/tack/actions/runs/38059177511/job/114233746890",
+      "started_at": "2026-10-10T14:19:57Z",
+      "completed_at": "2026-10-10T14:25:53Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-10T14:19:58Z",
+          "completed_at": "2026-10-10T14:19:59Z"
+        },
+        {
+          "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-10T14:19:59Z",
+          "completed_at": "2026-10-10T14:20:04Z"
+        },
+        {
+          "name": "Install pinned Rust",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T14:20:04Z",
+          "completed_at": "2026-10-10T14:20:15Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T14:20:15Z",
+          "completed_at": "2026-10-10T14:20:15Z"
+        },
+        {
+          "name": "Native build prerequisites (Linux)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5,
+          "started_at": "2026-10-10T14:20:15Z",
+          "completed_at": "2026-10-10T14:20:15Z"
+        },
+        {
+          "name": "Native build prerequisites (Windows)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-10T14:20:15Z",
+          "completed_at": "2026-10-10T14:20:25Z"
+        },
+        {
+          "name": "Prepare pinned native decoder",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-10T14:20:25Z",
+          "completed_at": "2026-10-10T14:21:11Z"
+        },
+        {
+          "name": "Install About asset preparation dependency",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-10T14:21:11Z",
+          "completed_at": "2026-10-10T14:21:16Z"
+        },
+        {
+          "name": "Run cargo fmt --all -- --check",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-10T14:21:16Z",
+          "completed_at": "2026-10-10T14:21:19Z"
+        },
+        {
+          "name": "Run cargo check --workspace --all-targets --all-features --locked",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-10T14:21:19Z",
+          "completed_at": "2026-10-10T14:22:29Z"
+        },
+        {
+          "name": "Run cargo clippy --workspace --all-targets --all-features --locked -- -D warnings",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-10T14:22:29Z",
+          "completed_at": "2026-10-10T14:22:44Z"
+        },
+        {
+          "name": "Run cargo test --workspace --all-features --locked",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-10-10T14:22:44Z",
+          "completed_at": "2026-10-10T14:25:42Z"
+        },
+        {
+          "name": "Run cargo doc --workspace --no-deps --locked",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-10T14:25:42Z",
+          "completed_at": "2026-10-10T14:25:49Z"
+        },
+        {
+          "name": "Corpus correctness tests",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 14,
+          "started_at": "2026-10-10T14:25:49Z",
+          "completed_at": "2026-10-10T14:25:49Z"
+        },
+        {
+          "name": "GPU smoke on software Vulkan",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 15,
+          "started_at": "2026-10-10T14:25:49Z",
+          "completed_at": "2026-10-10T14:25:49Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29,
+          "started_at": "2026-10-10T14:25:49Z",
+          "completed_at": "2026-10-10T14:25:50Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 30,
+          "started_at": "2026-10-10T14:25:50Z",
+          "completed_at": "2026-10-10T14:25:51Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 31,
+          "started_at": "2026-10-10T14:25:51Z",
+          "completed_at": "2026-10-10T14:25:51Z"
+        }
+      ]
+    },
+    {
+      "name": "rust (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/gurppt/tack/actions/runs/38059177511/job/114233746921",
+      "started_at": "2026-10-10T14:19:57Z",
+      "completed_at": "2026-10-10T14:24:37Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-10T14:19:58Z",
+          "completed_at": "2026-10-10T14:19:59Z"
+        },
+        {
+          "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-10T14:19:59Z",
+          "completed_at": "2026-10-10T14:20:00Z"
+        },
+        {
+          "name": "Install pinned Rust",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T14:20:00Z",
+          "completed_at": "2026-10-10T14:20:08Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T14:20:08Z",
+          "completed_at": "2026-10-10T14:20:08Z"
+        },
+        {
+          "name": "Native build prerequisites (Linux)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-10T14:20:08Z",
+          "completed_at": "2026-10-10T14:20:18Z"
+        },
+        {
+          "name": "Native build prerequisites (Windows)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6,
+          "started_at": "2026-10-10T14:20:18Z",
+          "completed_at": "2026-10-10T14:20:18Z"
+        },
+        {
+          "name": "Prepare pinned native decoder",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-10T14:20:18Z",
+          "completed_at": "2026-10-10T14:20:50Z"
+        },
+        {
+          "name": "Install About asset preparation dependency",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-10T14:20:50Z",
+          "completed_at": "2026-10-10T14:20:51Z"
+        },
+        {
+          "name": "Run cargo fmt --all -- --check",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-10T14:20:51Z",
+          "completed_at": "2026-10-10T14:20:52Z"
+        },
+        {
+          "name": "Run cargo check --workspace --all-targets --all-features --locked",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-10T14:20:52Z",
+          "completed_at": "2026-10-10T14:21:35Z"
+        },
+        {
+          "name": "Run cargo clippy --workspace --all-targets --all-features --locked -- -D warnings",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-10T14:21:35Z",
+          "completed_at": "2026-10-10T14:21:45Z"
+        },
+        {
+          "name": "Run cargo test --workspace --all-features --locked",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-10-10T14:21:45Z",
+          "completed_at": "2026-10-10T14:23:47Z"
+        },
+        {
+          "name": "Run cargo doc --workspace --no-deps --locked",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-10T14:23:47Z",
+          "completed_at": "2026-10-10T14:23:51Z"
+        },
+        {
+          "name": "Corpus correctness tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-10T14:23:51Z",
+          "completed_at": "2026-10-10T14:23:52Z"
+        },
+        {
+          "name": "GPU smoke on software Vulkan",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-10T14:23:52Z",
+          "completed_at": "2026-10-10T14:24:36Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29,
+          "started_at": "2026-10-10T14:24:36Z",
+          "completed_at": "2026-10-10T14:24:36Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 30,
+          "started_at": "2026-10-10T14:24:36Z",
+          "completed_at": "2026-10-10T14:24:36Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 31,
+          "started_at": "2026-10-10T14:24:36Z",
+          "completed_at": "2026-10-10T14:24:36Z"
+        }
+      ]
+    }
+  ]
+}

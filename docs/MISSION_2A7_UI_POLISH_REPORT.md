@@ -1,6 +1,7 @@
 # Phase 2A7 — UI/input polish
 
-Implementation and automated local acceptance complete. Baseline implementation
+Implementation `6f6acb38bf5bd8694b7d0699462a09742a4e6842` and automated
+acceptance complete. Baseline implementation
 `80f7014fefc6420491f5ee65891280ee384eb84e`; source base `ff35c895` includes
 its separate incident record. Artist feel, physical Windows desktop and physical
 two-computer LAN acceptance remain pending.
@@ -81,7 +82,11 @@ Windows x64 package includes static libjpeg-turbo 3.2.0 SSE2/AVX2 decoder and
 checks imported DLLs. [Windows execution receipt](../benchmarks/phase2a7/windows.json)
 records CLI JPEG create/reopen, scalar/SSE2/automatic decoder execution and identical
 output under Wine. Physical Windows UI acceptance remains pending.
-Linux/Windows/dependency CI evidence will be recorded after implementation push.
+The exact implementation passes [Quality CI 38059177511](https://github.com/gurppt/tack/actions/runs/38059177511):
+Linux, Windows and dependencies all succeed. Linux also runs the software
+GPU/LOD convergence and long-churn checks. The [CI receipt](../benchmarks/phase2a7/ci.json)
+retains job/step conclusions. The Windows package has six passing Wine checks
+on the final packaged executable, separately from the native Windows CI gate.
 
 ## Measured cost against 2A6
 

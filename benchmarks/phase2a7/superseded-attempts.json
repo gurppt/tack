@@ -106,6 +106,13 @@
       "bytes": 473625,
       "checks": 19,
       "failed": []
+    },
+    {
+      "path": "benchmark-results/phase2a7/windows-delivered",
+      "bytes": 155267,
+      "checks": 6,
+      "failed": [],
+      "reason": "PE packaging timestamp changed during implementation commit provenance update; final packaged executable reverified."
     }
   ]
 }
