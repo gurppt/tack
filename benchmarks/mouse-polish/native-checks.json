@@ -1,0 +1,1014 @@
+{
+  "mouse": {
+    "checks": 20,
+    "passed": true,
+    "binary_sha256": "906dbf458bea8f2489f780cc5639beb2069d604dcad417076a315a6eee164feb",
+    "build_info": {
+      "channel": "dev",
+      "git_sha": "24440e1af2013c05c71be3d1b75af3a8f361615c",
+      "network": true,
+      "protocol_major": 3,
+      "updater": true,
+      "version": "0.1.0-dev.1"
+    },
+    "idle_windows": [
+      {
+        "name": "inactive settled",
+        "receipt": {
+          "seconds": 2,
+          "rss_before": 111575040,
+          "rss_after": 111575040,
+          "threads": 11,
+          "tasks": [
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-1",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack:disk$0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain q",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain e",
+              "ticks": 0,
+              "voluntary_switches": 0
+            }
+          ],
+          "ticks": 0,
+          "cpu_percent_one_core": 0.0,
+          "socket_records": [
+            {
+              "kind": "unix",
+              "record": "0000000000000000: 00000003 00000000 00000000 0001 03 311668"
+            }
+          ],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          }
+        }
+      },
+      {
+        "name": "active stationary before real ten-minute deadline",
+        "receipt": {
+          "seconds": 2,
+          "rss_before": 111575040,
+          "rss_after": 111575040,
+          "threads": 11,
+          "tasks": [
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-1",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack:disk$0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain q",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain e",
+              "ticks": 0,
+              "voluntary_switches": 0
+            }
+          ],
+          "ticks": 0,
+          "cpu_percent_one_core": 0.0,
+          "socket_records": [
+            {
+              "kind": "unix",
+              "record": "0000000000000000: 00000003 00000000 00000000 0001 03 311668"
+            }
+          ],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          }
+        }
+      },
+      {
+        "name": "deactivated settled",
+        "receipt": {
+          "seconds": 2,
+          "rss_before": 111575040,
+          "rss_after": 111575040,
+          "threads": 11,
+          "tasks": [
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "llvmpipe-1",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack:disk$0",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "tack-product-di",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain q",
+              "ticks": 0,
+              "voluntary_switches": 0
+            },
+            {
+              "name": "WSI swapchain e",
+              "ticks": 0,
+              "voluntary_switches": 0
+            }
+          ],
+          "ticks": 0,
+          "cpu_percent_one_core": 0.0,
+          "socket_records": [
+            {
+              "kind": "unix",
+              "record": "0000000000000000: 00000003 00000000 00000000 0001 03 311668"
+            }
+          ],
+          "io_delta": {
+            "rchar": 0,
+            "wchar": 0,
+            "syscr": 0,
+            "syscw": 0,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          }
+        }
+      }
+    ],
+    "manual_pending": [
+      "Real ten-minute human activation",
+      "Artist assessment of gait/directions",
+      "Physical Windows desktop"
+    ]
+  },
+  "mouse_checks": [
+    {
+      "name": "inline theme preview persisted: VeryDark",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "inline theme preview persisted: NeutralGray",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "inline theme preview persisted: Light",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "Mouse manually added in Edit Toolbar",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "canvas cursor exact authored minimulot",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "toolbar cursor exact normal pointer",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "return to canvas restores minimulot",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "early deactivation cancels egg and trail/ping make no object",
+      "observed": true,
+      "detail": {
+        "schema": 1,
+        "objects": [
+          {
+            "id": 80760507944900111630706253585964530819,
+            "kind": "image",
+            "center": [
+              300.0,
+              187.5
+            ],
+            "size": [
+              600.0,
+              375.0
+            ],
+            "rotation": 0.0
+          }
+        ],
+        "groups": 0
+      }
+    },
+    {
+      "name": "accelerated continuous activation inserts one normal image",
+      "observed": true,
+      "detail": {
+        "schema": 1,
+        "objects": [
+          {
+            "id": 80760507944900111630706253585964530819,
+            "kind": "image",
+            "center": [
+              300.0,
+              187.5
+            ],
+            "size": [
+              600.0,
+              375.0
+            ],
+            "rotation": 0.0
+          },
+          {
+            "id": 123419251051688032606546796820432426849,
+            "kind": "image",
+            "center": [
+              398.0,
+              259.5
+            ],
+            "size": [
+              36.0,
+              36.0
+            ],
+            "rotation": 0.0
+          }
+        ],
+        "groups": 0
+      }
+    },
+    {
+      "name": "same activation never repeats",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "one Undo removes insertion",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "Redo restores exact image",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "exact status on generated image",
+      "observed": true,
+      "detail": "Puzzo puzzo !"
+    },
+    {
+      "name": "save/reopen ordinary image data",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "inactive settled: no CPU ticks or main-loop wakeups",
+      "observed": true,
+      "detail": {
+        "seconds": 2,
+        "rss_before": 111575040,
+        "rss_after": 111575040,
+        "threads": 11,
+        "tasks": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-1",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack:disk$0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "WSI swapchain q",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "WSI swapchain e",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "ticks": 0,
+        "cpu_percent_one_core": 0.0,
+        "socket_records": [
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 311668"
+          }
+        ],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        }
+      }
+    },
+    {
+      "name": "inactive settled: no new disk writes or LAN sockets",
+      "observed": true,
+      "detail": {
+        "seconds": 2,
+        "rss_before": 111575040,
+        "rss_after": 111575040,
+        "threads": 11,
+        "tasks": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-1",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack:disk$0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "WSI swapchain q",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "WSI swapchain e",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "ticks": 0,
+        "cpu_percent_one_core": 0.0,
+        "socket_records": [
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 311668"
+          }
+        ],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        }
+      }
+    },
+    {
+      "name": "active stationary before real ten-minute deadline: no CPU ticks or main-loop wakeups",
+      "observed": true,
+      "detail": {
+        "seconds": 2,
+        "rss_before": 111575040,
+        "rss_after": 111575040,
+        "threads": 11,
+        "tasks": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-1",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack:disk$0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "WSI swapchain q",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "WSI swapchain e",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "ticks": 0,
+        "cpu_percent_one_core": 0.0,
+        "socket_records": [
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 311668"
+          }
+        ],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        }
+      }
+    },
+    {
+      "name": "active stationary before real ten-minute deadline: no new disk writes or LAN sockets",
+      "observed": true,
+      "detail": {
+        "seconds": 2,
+        "rss_before": 111575040,
+        "rss_after": 111575040,
+        "threads": 11,
+        "tasks": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-1",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack:disk$0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "WSI swapchain q",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "WSI swapchain e",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "ticks": 0,
+        "cpu_percent_one_core": 0.0,
+        "socket_records": [
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 311668"
+          }
+        ],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        }
+      }
+    },
+    {
+      "name": "deactivated settled: no CPU ticks or main-loop wakeups",
+      "observed": true,
+      "detail": {
+        "seconds": 2,
+        "rss_before": 111575040,
+        "rss_after": 111575040,
+        "threads": 11,
+        "tasks": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-1",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack:disk$0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "WSI swapchain q",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "WSI swapchain e",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "ticks": 0,
+        "cpu_percent_one_core": 0.0,
+        "socket_records": [
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 311668"
+          }
+        ],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        }
+      }
+    },
+    {
+      "name": "deactivated settled: no new disk writes or LAN sockets",
+      "observed": true,
+      "detail": {
+        "seconds": 2,
+        "rss_before": 111575040,
+        "rss_after": 111575040,
+        "threads": 11,
+        "tasks": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "llvmpipe-1",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack:disk$0",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "WSI swapchain q",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "WSI swapchain e",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "ticks": 0,
+        "cpu_percent_one_core": 0.0,
+        "socket_records": [
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 311668"
+          }
+        ],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        }
+      }
+    }
+  ],
+  "lifecycle": {
+    "passed": true,
+    "checks": 9,
+    "binary_sha256": "906dbf458bea8f2489f780cc5639beb2069d604dcad417076a315a6eee164feb",
+    "build_info": {
+      "channel": "dev",
+      "git_sha": "24440e1af2013c05c71be3d1b75af3a8f361615c",
+      "network": true,
+      "protocol_major": 3,
+      "updater": true,
+      "version": "0.1.0-dev.1"
+    },
+    "results": [
+      {
+        "name": "deadline waits during Save As chooser",
+        "observed": true,
+        "detail": "Tack \u2014 relative.tack \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Mouse (Mulot)"
+      },
+      {
+        "name": "relocated saved snapshot precedes deferred insertion",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "one egg admitted after Save As reset",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "deferred insertion is a fresh one-step Undo after reset",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "Save As rebases original relative source",
+        "observed": true,
+        "detail": [
+          {
+            "revision": 2,
+            "absolute": true,
+            "path": "/home/gurp/softs/tack/benchmark-results/mouse-polish/lifecycle-final/fixture.png"
+          }
+        ]
+      },
+      {
+        "name": "Close Board replaces with empty board without egg leak",
+        "observed": true,
+        "detail": "Tack \u2014 Untitled \u00b7 saved \u00b7 transform \u00b7 0 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer"
+      },
+      {
+        "name": "replacement cancels deadline and has no image insertion",
+        "observed": true,
+        "detail": {
+          "deadline_active": false,
+          "effects": 0,
+          "spawn_requests": 0
+        }
+      },
+      {
+        "name": "dirty Close Board cancellation allows future Mouse admission",
+        "observed": true,
+        "detail": {
+          "schema": 1,
+          "objects": [
+            {
+              "id": 144969061147677375071653346653232214639,
+              "kind": "image",
+              "center": [
+                0.0,
+                0.0
+              ],
+              "size": [
+                320.0,
+                200.0
+              ],
+              "rotation": 0.0
+            },
+            {
+              "id": 60119752862219400799174564512284173566,
+              "kind": "image",
+              "center": [
+                16.0,
+                16.0
+              ],
+              "size": [
+                320.0,
+                200.0
+              ],
+              "rotation": 0.0
+            },
+            {
+              "id": 334299397881198646660941975167002709276,
+              "kind": "image",
+              "center": [
+                185.6,
+                70.4
+              ],
+              "size": [
+                19.2,
+                19.2
+              ],
+              "rotation": 0.0
+            }
+          ],
+          "groups": 0
+        }
+      },
+      {
+        "name": "cancelled Close Board activation inserts only once",
+        "observed": true,
+        "detail": {
+          "deadline_active": false,
+          "effects": 0,
+          "spawn_requests": 1
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,3 @@
+tools/check.sh passed: fmt, all-target/all-feature check and Clippy, workspace tests, docs, Python tests, cargo-deny.
+430 Rust passed; 17 intentionally ignored. 31 Python passed.
+advisories ok, bans ok, licenses ok, sources ok

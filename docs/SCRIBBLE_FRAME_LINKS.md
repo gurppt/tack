@@ -27,8 +27,11 @@ relative stroke differences. There is no Explode operation.
 
 Ctrl+L / Link to Frame begins a transient Frame picker. With no selection it
 reuses normal picking/marquee and image-group expansion, then enters Frame picking.
-Otherwise it keeps the selected linkable units. Dotted lines are one physical
-pixel, limited to 4096 dots per draw; offscreen anchors are omitted. A valid Frame
+Otherwise it keeps the selected linkable units. Dotted lines are one logical UI
+pixel, static 4-on/4-off, clipped to the visible screen. Each line uses one thin
+quad in the existing overlay pass, with at most 256 lines; remaining capacity
+selects a deterministic subset or skips optional decoration. Simplification
+never changes the complete Link command or shuts down the app. A valid Frame
 highlights on hover; initiating press and matching release commit. Invalid targets
 show Forbidden after the attempt; Escape cancels without mutation. The prior tool
 is retained. Confirmation is one 1.2-second deadline; shared confirmation only

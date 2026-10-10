@@ -1,0 +1,9 @@
+{
+  "previous_pngs": 202,
+  "unchanged": 201,
+  "explicit_authorized_imports": [
+    "bin/gfx/icons/mulot_icone.png"
+  ],
+  "unexpected_changes": [],
+  "nine_requested_assets_exact_in_sources_and_linux_windows": true
+}

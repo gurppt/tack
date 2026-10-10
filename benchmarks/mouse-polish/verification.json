@@ -1,0 +1,167 @@
+{
+  "implementation_commit": "24440e1af2013c05c71be3d1b75af3a8f361615c",
+  "delivery_source_commit": "64f09f24a498cdd54cbbd1d6de0793d11f33c73e",
+  "build_info": {
+    "channel": "dev",
+    "git_sha": "64f09f24a498cdd54cbbd1d6de0793d11f33c73e",
+    "network": true,
+    "protocol_major": 3,
+    "updater": true,
+    "version": "0.1.0-dev.1"
+  },
+  "untracked_artist_files_remain": true,
+  "checks": {
+    "tools/check.sh": "pass",
+    "rust_passed": 430,
+    "rust_failed": 0,
+    "rust_ignored": 17,
+    "python_passed": 31,
+    "product_gpu_explicit_passed": 9,
+    "gpu_adapter": "llvmpipe Vulkan, LP_NUM_THREADS=2",
+    "minimal_no_default_features": "pass",
+    "native_mouse": 20,
+    "native_lifecycle": 9,
+    "native_link": 6
+  },
+  "files": {
+    "bin/tack": {
+      "bytes": 20494880,
+      "sha256": "08d55c9cb6583aecd776e334ffff1f9773da5356450da20c8f2f0e37add1d725"
+    },
+    "bin/tack-server": {
+      "bytes": 2208424,
+      "sha256": "854bfbaa708db0810a864c29fd03ea24d0ba960819a558793cc24f1e876eace8"
+    },
+    "bin/tack-updater": {
+      "bytes": 3125928,
+      "sha256": "860cd692e54e58d6f7c2d52b50fd2b67f3dd410810654e89780e008d4aa43520"
+    },
+    "bin/tack-jpeg-decoder": {
+      "bytes": 890896,
+      "sha256": "4fcef9b973c80de96ecf2d5babe86ef87b1be2459f22559243c8e85da3ebe587"
+    },
+    "bin/tack-windows-x86_64/tack.exe": {
+      "bytes": 24920576,
+      "sha256": "1d4bb1d1670f93b4a93b8810d82bd10fbeba113b2d24a0527ab76373bb54cda0"
+    },
+    "bin/tack-windows-x86_64/tack-server.exe": {
+      "bytes": 3288064,
+      "sha256": "a60814230d6e2d66df56c7d67c00494dfe3c00bc9884ed975a297b64c4bf35d5"
+    },
+    "bin/tack-windows-x86_64/tack-updater.exe": {
+      "bytes": 4357632,
+      "sha256": "0a6e6078a254963a71e76d4a0548375f44ec47484d2dfddcdb450d556e37c0a0"
+    },
+    "bin/tack-windows-x86_64/tack-jpeg-decoder.exe": {
+      "bytes": 872960,
+      "sha256": "65be35780912ceffa880497381cd29871569de0626a25cd10101a7a3dfa12396"
+    },
+    "bin/tack-windows-x86_64.zip": {
+      "bytes": 13716298,
+      "sha256": "cae0946f3092a4109b0cffb8247bf6b79721801a77484f9012da467e89eafe58"
+    }
+  },
+  "windows_jpeg": {
+    "decoder": "libjpeg-turbo 3.2.0 static SIMD SSE2/AVX2",
+    "native": {
+      "version": "3.2.0",
+      "target": "windows-gnu",
+      "source_url": "https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.2.0/libjpeg-turbo-3.2.0.tar.gz",
+      "source_sha256": "6f30092cef9fb839779646608f4ee14ae3cbac989c47fa05e841b0841f09878e",
+      "cmake_command": [
+        "cmake",
+        "-S",
+        "/home/gurp/softs/tack/target/native/source/libjpeg-turbo-3.2.0",
+        "-B",
+        "/home/gurp/softs/tack/target/native/turbojpeg-build-windows-gnu",
+        "-DCMAKE_INSTALL_PREFIX=/home/gurp/softs/tack/target/native/libjpeg-turbo-3.2.0-windows-gnu",
+        "-DCMAKE_INSTALL_LIBDIR=lib",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DENABLE_SHARED=OFF",
+        "-DENABLE_STATIC=ON",
+        "-DWITH_TURBOJPEG=ON",
+        "-DREQUIRE_SIMD=ON",
+        "-DWITH_JAVA=OFF",
+        "-DWITH_CRT_DLL=ON",
+        "-DCMAKE_TOOLCHAIN_FILE=/home/gurp/softs/tack/target/native/windows-gnu-toolchain.cmake",
+        "-DWITH_TESTS=OFF",
+        "-DWITH_SIMD=ON",
+        "-DCMAKE_ASM_NASM_COMPILER=/home/gurp/softs/tack/target/native/tools/nasm-root/usr/bin/nasm"
+      ],
+      "decoder_sha256": "622e230c5aadee33248723fff3fe05d6c5d498a9b5ffa1b710060c9b2e0f51cc",
+      "library_sha256": {
+        "libturbojpeg.a": "d07bddf151580f24058b224d490d33485d9e1e8a3bae25a5a06e27714868d4fc"
+      },
+      "compiler_cache": [],
+      "nasm": "NASM version 2.16.01"
+    },
+    "executable_imports": {
+      "tack-jpeg-decoder.exe": [
+        "KERNEL32.dll",
+        "msvcrt.dll"
+      ],
+      "tack-server.exe": [
+        "api-ms-win-core-synch-l1-2-0.dll",
+        "bcryptprimitives.dll",
+        "KERNEL32.dll",
+        "msvcrt.dll",
+        "ntdll.dll",
+        "USERENV.dll",
+        "WS2_32.dll"
+      ],
+      "tack-updater.exe": [
+        "api-ms-win-core-synch-l1-2-0.dll",
+        "bcryptprimitives.dll",
+        "ADVAPI32.dll",
+        "bcrypt.dll",
+        "KERNEL32.dll",
+        "msvcrt.dll",
+        "ntdll.dll",
+        "USERENV.dll",
+        "WS2_32.dll"
+      ],
+      "tack.exe": [
+        "api-ms-win-core-winrt-error-l1-1-0.dll",
+        "dwmapi.dll",
+        "gdi32.dll",
+        "imm32.dll",
+        "kernel32.dll",
+        "ntdll.dll",
+        "ole32.dll",
+        "oleaut32.dll",
+        "propsys.dll",
+        "shell32.dll",
+        "user32.dll",
+        "userenv.dll",
+        "uxtheme.dll",
+        "ws2_32.dll",
+        "api-ms-win-core-synch-l1-2-0.dll",
+        "bcryptprimitives.dll",
+        "kernel32.dll",
+        "kernel32.dll",
+        "kernel32.dll",
+        "KERNEL32.dll",
+        "msvcrt.dll",
+        "ntdll.dll",
+        "OPENGL32.dll"
+      ]
+    },
+    "physical_desktop_acceptance": "pending"
+  },
+  "artwork": {
+    "previous_pngs": 202,
+    "unchanged": 201,
+    "explicit_authorized_imports": [
+      "bin/gfx/icons/mulot_icone.png"
+    ],
+    "unexpected_changes": [],
+    "nine_requested_assets_exact_in_sources_and_linux_windows": true
+  },
+  "disk_free_bytes": 15267139584,
+  "manual_pending": [
+    "real continuous ten-minute activation",
+    "artist judgement of gait and dotted previews",
+    "physical Windows desktop"
+  ],
+  "generated_raw_evidence_bytes": 2341319
+}

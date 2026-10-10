@@ -1,0 +1,17 @@
+   Compiling tack-render v0.1.0-dev.1 (/home/gurp/softs/tack/crates/tack-render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.28s
+     Running tests/product_gpu.rs (target/debug/deps/product_gpu-82c2cee832699d1b)
+
+running 9 tests
+test annotations_preserve_order_and_bounded_bitmap_primitives ... ok
+test canvas_overlay_is_on_top_without_asset_or_document_changes ... ok
+test context_overlays_icon_atlas_without_hiding_uncovered_toolbar ... ok
+test dashed_line_keeps_hard_four_on_four_off_in_one_quad ... ok
+test flat_background_has_identical_top_and_bottom_pixels_in_all_three_fills ... ok
+test integer_logical_pixels_preserve_all_bitmap_rows_without_aa ... ok
+test lazy_ui_artwork_is_nearest_above_overlay_and_released_after_close ... ok
+test procedural_grid_hidden_path_and_bitmap_labels_are_crisp ... ok
+test product_gpu_honors_sampling_alpha_crop_flip_rotation_and_revision ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.75s
+

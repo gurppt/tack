@@ -1,0 +1,8 @@
+{
+  "explicit_authorized_import": {
+    "file": "bin/gfx/icons/mulot_icone.png",
+    "previous_sha256": "09fa926c0ecc5976ed488827f6b0838edbf1181474fea0ddcbc73e20667df6f8",
+    "sha256": "e1c440550a4170cee79f3b32becade387431d1992f57ca6c37200fd62884b622"
+  },
+  "reason": "Use the exact work_icons artwork requested by the Mouse brief; existing unrelated artwork remains unchanged."
+}

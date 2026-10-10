@@ -1,0 +1,257 @@
+{
+  "build_info": {
+    "channel": "dev",
+    "git_sha": "25abd866d7c5761a518662fa6d932e84e2de70f2",
+    "network": true,
+    "protocol_major": 3,
+    "updater": true,
+    "version": "0.1.0-dev.1"
+  },
+  "binary_sha256": "edf204e34f17fab24c9cf9c9162006c7de8b0699cd41aaac7646f04518921b6d",
+  "title_before": "Tack \u2014 board.tack \u00b7 saved \u00b7 transform \u00b7 32 selected \u00b7 0 missing / 0 changed sources \u00b7 Pointer",
+  "selected_count": 32,
+  "linkage_units": 32,
+  "visible_units": 32,
+  "lines_emitted_before_budget": 22,
+  "generated_link_primitives": 4096,
+  "overlay_limit": 2048,
+  "one_dot_is_one_quad": true,
+  "camera": [
+    300.0,
+    187.5
+  ],
+  "zoom": 0.011108996538242311,
+  "cursor": [
+    100,
+    100
+  ],
+  "window_size": [
+    1280,
+    1024
+  ],
+  "exit_code": 1,
+  "error": " generation=0 undo=0 redo=0\nTACK_INPUT physical=Code(F7) logical=Named(F7) modifiers=Modifiers(0) normalized=[Some(Keyboard { physical: Code(F7), logical: Some(Named(F7)), state: Released, repeat: false }), None] repeat=false\nTACK_INPUT physical=Code(F6) logical=Named(F6) modifiers=Modifiers(0) normalized=[Some(Keyboard { physical: Code(F6), logical: Some(Named(F6)), state: Pressed, repeat: false }), None] repeat=false\nTACK_INPUT dispatch=ActionEvent { action: ToggleAnnotationSelectionLock, phase: Invoke } generation=1 undo=1 redo=0\nTACK_INPUT physical=Code(F6) logical=Named(F6) modifiers=Modifiers(0) normalized=[Some(Keyboard { physical: Code(F6), logical: Some(Named(F6)), state: Released, repeat: false }), None] repeat=false\nTACK_INPUT physical=Code(ControlLeft) logical=Named(Control) modifiers=Modifiers(0) normalized=[Some(Keyboard { physical: Code(ControlLeft), logical: Some(Named(Control)), state: Pressed, repeat: false }), None] repeat=false\nTACK_INPUT physical=Code(KeyA) logical=Character(\"a\") modifiers=Modifiers(2) normalized=[Some(Keyboard { physical: Code(KeyA), logical: Some(Character('a')), state: Pressed, repeat: false }), None] repeat=false\nTACK_INPUT dispatch=ActionEvent { action: SelectAll, phase: Invoke } generation=1 undo=1 redo=0\nTACK_INPUT physical=Code(ControlLeft) logical=Named(Control) modifiers=Modifiers(2) normalized=[Some(Keyboard { physical: Code(ControlLeft), logical: Some(Named(Control)), state: Released, repeat: false }), None] repeat=false\nTACK_INPUT physical=Code(KeyA) logical=Character(\"a\") modifiers=Modifiers(0) normalized=[Some(Keyboard { physical: Code(KeyA), logical: Some(Character('a')), state: Released, repeat: false }), None] repeat=false\nTACK_INPUT physical=Code(ControlLeft) logical=Named(Control) modifiers=Modifiers(0) normalized=[Some(Keyboard { physical: Code(ControlLeft), logical: Some(Named(Control)), state: Pressed, repeat: false }), None] repeat=false\nTACK_INPUT physical=Code(KeyS) logical=Character(\"s\") modifiers=Modifiers(2) normalized=[Some(Keyboard { physical: Code(KeyS), logical: Some(Character('s')), state: Pressed, repeat: false }), None] repeat=false\nTACK_INPUT dispatch=ActionEvent { action: Save, phase: Invoke } generation=1 undo=1 redo=0\nTACK_INPUT physical=Code(ControlLeft) logical=Named(Control) modifiers=Modifiers(2) normalized=[Some(Keyboard { physical: Code(ControlLeft), logical: Some(Named(Control)), state: Released, repeat: false }), None] repeat=false\nTACK_INPUT physical=Code(KeyS) logical=Character(\"s\") modifiers=Modifiers(0) normalized=[Some(Keyboard { physical: Code(KeyS), logical: Some(Character('s')), state: Released, repeat: false }), None] repeat=false\nTACK_INPUT physical=Code(F1) logical=Named(F1) modifiers=Modifiers(0) normalized=[Some(Keyboard { physical: Code(F1), logical: Some(Named(F1)), state: Pressed, repeat: false }), None] repeat=false\nTACK_INPUT dispatch=ActionEvent { action: LinkToFrame, phase: Invoke } generation=1 undo=1 redo=0\nError: \"overlay primitive limit\"\n",
+  "scope": "Native isolated Xvfb :119 and software Vulkan; exact old loop replay from native-reported camera/zoom and saved owned fixture; primitive count is reconstruction, not instrumented renderer telemetry",
+  "lines": [
+    {
+      "anchor": [
+        640.0,
+        512.0
+      ],
+      "length_px": 679.2230855911774,
+      "requested_dots": 170,
+      "budgeted_dots": 170,
+      "generated_quads": 170
+    },
+    {
+      "anchor": [
+        647.5541176460048,
+        512.0
+      ],
+      "length_px": 685.2441256596768,
+      "requested_dots": 172,
+      "budgeted_dots": 172,
+      "generated_quads": 172
+    },
+    {
+      "anchor": [
+        655.1082352920096,
+        512.0
+      ],
+      "length_px": 691.2952718549499,
+      "requested_dots": 173,
+      "budgeted_dots": 173,
+      "generated_quads": 173
+    },
+    {
+      "anchor": [
+        662.6623529380144,
+        512.0
+      ],
+      "length_px": 697.3757404826631,
+      "requested_dots": 175,
+      "budgeted_dots": 175,
+      "generated_quads": 175
+    },
+    {
+      "anchor": [
+        670.2164705840191,
+        512.0
+      ],
+      "length_px": 703.4847712106464,
+      "requested_dots": 176,
+      "budgeted_dots": 176,
+      "generated_quads": 176
+    },
+    {
+      "anchor": [
+        677.7705882300238,
+        512.0
+      ],
+      "length_px": 709.6216263782184,
+      "requested_dots": 178,
+      "budgeted_dots": 178,
+      "generated_quads": 178
+    },
+    {
+      "anchor": [
+        685.3247058760286,
+        512.0
+      ],
+      "length_px": 715.7855903193772,
+      "requested_dots": 179,
+      "budgeted_dots": 179,
+      "generated_quads": 179
+    },
+    {
+      "anchor": [
+        692.8788235220334,
+        512.0
+      ],
+      "length_px": 721.9759687003926,
+      "requested_dots": 181,
+      "budgeted_dots": 181,
+      "generated_quads": 181
+    },
+    {
+      "anchor": [
+        700.4329411680382,
+        512.0
+      ],
+      "length_px": 728.1920878722185,
+      "requested_dots": 183,
+      "budgeted_dots": 183,
+      "generated_quads": 183
+    },
+    {
+      "anchor": [
+        707.9870588140429,
+        512.0
+      ],
+      "length_px": 734.4332942380476,
+      "requested_dots": 184,
+      "budgeted_dots": 184,
+      "generated_quads": 184
+    },
+    {
+      "anchor": [
+        715.5411764600477,
+        512.0
+      ],
+      "length_px": 740.6989536362391,
+      "requested_dots": 186,
+      "budgeted_dots": 186,
+      "generated_quads": 186
+    },
+    {
+      "anchor": [
+        723.0952941060525,
+        512.0
+      ],
+      "length_px": 746.9884507387702,
+      "requested_dots": 187,
+      "budgeted_dots": 187,
+      "generated_quads": 187
+    },
+    {
+      "anchor": [
+        730.6494117520573,
+        512.0
+      ],
+      "length_px": 753.3011884652883,
+      "requested_dots": 189,
+      "budgeted_dots": 189,
+      "generated_quads": 189
+    },
+    {
+      "anchor": [
+        738.2035293980621,
+        512.0
+      ],
+      "length_px": 759.6365874127858,
+      "requested_dots": 190,
+      "budgeted_dots": 190,
+      "generated_quads": 190
+    },
+    {
+      "anchor": [
+        745.7576470440667,
+        512.0
+      ],
+      "length_px": 765.9940853008524,
+      "requested_dots": 192,
+      "budgeted_dots": 192,
+      "generated_quads": 192
+    },
+    {
+      "anchor": [
+        753.3117646900715,
+        512.0
+      ],
+      "length_px": 772.3731364324211,
+      "requested_dots": 194,
+      "budgeted_dots": 194,
+      "generated_quads": 194
+    },
+    {
+      "anchor": [
+        760.8658823360763,
+        512.0
+      ],
+      "length_px": 778.7732111698763,
+      "requested_dots": 195,
+      "budgeted_dots": 195,
+      "generated_quads": 195
+    },
+    {
+      "anchor": [
+        768.4199999820811,
+        512.0
+      ],
+      "length_px": 785.1937954263555,
+      "requested_dots": 197,
+      "budgeted_dots": 197,
+      "generated_quads": 197
+    },
+    {
+      "anchor": [
+        775.9741176280859,
+        512.0
+      ],
+      "length_px": 791.6343901720473,
+      "requested_dots": 198,
+      "budgeted_dots": 198,
+      "generated_quads": 198
+    },
+    {
+      "anchor": [
+        783.5282352740907,
+        512.0
+      ],
+      "length_px": 798.0945109552581,
+      "requested_dots": 200,
+      "budgeted_dots": 200,
+      "generated_quads": 200
+    },
+    {
+      "anchor": [
+        791.0823529200954,
+        512.0
+      ],
+      "length_px": 804.5736874379968,
+      "requested_dots": 202,
+      "budgeted_dots": 202,
+      "generated_quads": 202
+    },
+    {
+      "anchor": [
+        798.6364705661002,
+        512.0
+      ],
+      "length_px": 811.0714629458106,
+      "requested_dots": 203,
+      "budgeted_dots": 195,
+      "generated_quads": 195
+    }
+  ]
+}

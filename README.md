@@ -166,6 +166,7 @@ See the [LAN report](docs/MISSION_2A_REPORT.md),
 - [Complete feature inventory](docs/FEATURE_INVENTORY.md)
 - [Alpha builds and manual portable updates](docs/ALPHA_FOUNDATION.md)
 - [Scribble and Frame links](docs/SCRIBBLE_FRAME_LINKS.md)
+- [Pre-alpha Mouse and Link validation](docs/MISSION_MOUSE_PRE_ALPHA_REPORT.md)
 - [Alpha acceptance checklist](docs/HUMAN_TEST_2A8_ALPHA.md)
 - [Architecture](docs/architecture.md)
 - [Board format and compatibility](docs/design/tack_document_compatibility.md)
