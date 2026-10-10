@@ -258,7 +258,7 @@ Existing custom keymaps retain their bindings; Reset adopts changed defaults.
 Frame palette colors require schema 5 only when nondefault colors exist. LAN peers
 must use protocol major 2. Test evidence and remaining physical acceptance are
 recorded in [the 2A5 report](MISSION_2A5_CONCURRENT_EDITING_INTERACTION_REPORT.md).
-Quadratic curves, Post-it redesign and Plain Text remain deferred.
+Quadratic curves and Plain Text remain deferred.
 
 Phase 2A7 adds Reset Aspect Ratio (crop-aware, area/center/rotation preserved,
 one undo), contextual Numpad +/− adjustments, Rectangle Fill opacity cycling,
@@ -267,3 +267,9 @@ center and ordinary ones dismiss outside; unsaved-data confirmations require an
 explicit choice. Keymap, Preferences and Edit Toolbar remain top-left work panels.
 Plain Text remains deferred; Note normal/side resize changes wrapping geometry,
 Shift+corner scales text and paper together.
+
+Deferred drawing semantics: a minimal quadratic curve uses endpoint A, endpoint
+B, one movable control point and stroke/color, followed by confirmation. A later
+curved arrow uses the endpoint tangent. No multisegment path, node editor, fills
+or boolean geometry. Future Plain Text follows Note geometry: normal corners
+and sides change box/wrap only; Shift+corner scales box and text together.
