@@ -214,7 +214,7 @@ fn startup_icons_are_bounded_repairable_and_edited_pixels_replace_previous_load(
     let first = toolbar_icons::load(&temp.0);
     assert_eq!(
         (first.width, first.height, first.rgba.len()),
-        (128, 64, 32768)
+        (128, 80, 40960)
     );
     fs::write(&arrow, png(16, 16, [90, 80, 70, 255]))?;
     let second = toolbar_icons::load(&temp.0);
@@ -232,11 +232,34 @@ fn startup_icons_are_bounded_repairable_and_edited_pixels_replace_previous_load(
         assert!(toolbar_icons::read(&arrow).is_err());
         let a = toolbar_icons::load(&temp.0);
         let b = toolbar_icons::load(&temp.0);
-        assert_eq!(a.rgba.len(), 32768);
+        assert_eq!(a.rgba.len(), 40960);
         assert_eq!(a.rgba, b.rgba);
     }
     fs::remove_file(&arrow)?;
     assert!(toolbar_icons::read(&arrow).is_err());
-    assert_eq!(toolbar_icons::load(&temp.0).rgba.len(), 32768);
+    assert_eq!(toolbar_icons::load(&temp.0).rgba.len(), 40960);
+    Ok(())
+}
+
+#[test]
+fn authored_symbols_survive_packing_including_last_atlas_row() -> R {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../gfx/icons");
+    let atlas = toolbar_icons::load(&root);
+    for (i, name) in toolbar_icons::NAMES.iter().enumerate() {
+        let original = toolbar_icons::read(&root.join(format!("{name}.png")))?;
+        for y in 0..16 {
+            let start = ((i / 8 * 16 + y) * atlas.width as usize + i % 8 * 16) * 4;
+            assert_eq!(
+                &atlas.rgba[start..start + 64],
+                &original[y * 64..y * 64 + 64],
+                "{name} row {y}"
+            );
+        }
+    }
+    assert_eq!(
+        toolbar_icons::actual_index(Action::UnlinkFromFrame),
+        Some(35)
+    );
+    assert_eq!(toolbar_icons::actual_index(Action::CheckForUpdates), None);
     Ok(())
 }

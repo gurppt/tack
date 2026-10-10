@@ -65,7 +65,7 @@ impl UiIcons {
 impl Gpu {
     pub fn set_ui_icon_atlas(&mut self, image: &Decoded) -> Result<(), AssetError> {
         if image.width != 128
-            || !matches!(image.height, 32 | 64)
+            || !matches!(image.height, 32 | 64 | 80)
             || image.rgba.len() != (128 * image.height * 4) as usize
         {
             return Err("UI icon atlas dimensions".into());

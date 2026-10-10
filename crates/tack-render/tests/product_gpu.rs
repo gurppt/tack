@@ -800,15 +800,22 @@ fn context_overlays_icon_atlas_without_hiding_uncovered_toolbar() -> Result<(), 
         edge: 128,
         revision: 1,
     };
+    // Only cell 35 is green: readback must use the new fifth atlas row.
+    let mut rgba = [0, 0, 0, 255].repeat(128 * 80);
+    for y in 64..80 {
+        for x in 48..64 {
+            rgba[(y * 128 + x) * 4..(y * 128 + x) * 4 + 4].copy_from_slice(&[0, 255, 0, 255]);
+        }
+    }
     gpu.set_ui_icon_atlas(&Decoded {
         width: 128,
-        height: 32,
-        rgba: [0, 255, 0, 255].repeat(4096),
+        height: 80,
+        rgba,
     })?;
     let atlas_bytes = gpu.ui_icon_bytes();
     gpu.set_ui_icons(&[tack_render::UiIcon {
         rect: [8., 8., 16., 16.],
-        index: 0,
+        index: 35,
         disabled: false,
     }])?;
     let overlay = [

@@ -14,7 +14,7 @@ fn compact_package_and_corrupt_artwork_have_bounded_results() -> Result<(), Asse
     assert_eq!([image.width, image.height], [207, 224]);
     assert_eq!(image.rgba.len(), 185472);
     let logo = about::decode_logo(include_bytes!("../../../gfx/logo_tack_about.png"))?;
-    assert_eq!([logo.width, logo.height], [73, 33]);
+    assert_eq!([logo.width, logo.height], [75, 35]);
     assert!(about::decode_logo(IMAGE).is_err());
     assert!(about::decode_logo(&vec![0; 16 * 1024 + 1]).is_err());
     assert_eq!(about::METADATA.version, env!("CARGO_PKG_VERSION"));

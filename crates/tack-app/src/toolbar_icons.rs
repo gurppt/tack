@@ -1,11 +1,16 @@
-//! Editable PNGs read once at startup, then packed into one 128x32 RGBA atlas.
-use crate::actions::{Action, Tool};
+//! Editable PNGs read once at startup, then packed into one bounded 128x80 RGBA atlas.
+use crate::{
+    actions::{Action, Tool},
+    annotation_tool::StyleAction,
+    selection_commands::Order,
+    spatial_layout::Layout,
+};
 use std::{
     io::Read,
     path::{Path, PathBuf},
 };
 use tack_assets::{AssetError, Decoded};
-pub const NAMES: [&str; 20] = [
+pub const NAMES: [&str; 36] = [
     "pointer",
     "pan",
     "text",
@@ -26,19 +31,37 @@ pub const NAMES: [&str; 20] = [
     "annotation_lock_off",
     "link",
     "eraser",
+    "align_left",
+    "align_right",
+    "align_top",
+    "align_bottom",
+    "arrange_in_grid",
+    "distribute_horizontal",
+    "distribute_vertical",
+    "flip_horizontal",
+    "flip_vertical",
+    "bring_forward",
+    "send_backward",
+    "cycle_color",
+    "cycle_image_sampling",
+    "rotate_view_tool",
+    "toggle_snap",
+    "unlink",
 ];
+pub const ATLAS_WIDTH: usize = 128;
+pub const ATLAS_HEIGHT: usize = NAMES.len().div_ceil(8) * 16;
 pub fn index(a: Action) -> usize {
     match a {
-        Action::SelectTool(Tool::Pointer) => 0,
-        Action::SelectTool(Tool::Pan) => 1,
-        Action::SelectTool(Tool::Text) => 2,
-        Action::SelectTool(Tool::Rectangle) => 3,
-        Action::SelectTool(Tool::Line) => 4,
-        Action::SelectTool(Tool::Arrow) => 5,
-        Action::SelectTool(Tool::Scribble) => 6,
+        Action::SelectTool(Tool::Pointer) | Action::TemporaryTool(Tool::Pointer) => 0,
+        Action::SelectTool(Tool::Pan) | Action::TemporaryTool(Tool::Pan) => 1,
+        Action::SelectTool(Tool::Text) | Action::TemporaryTool(Tool::Text) => 2,
+        Action::SelectTool(Tool::Rectangle) | Action::TemporaryTool(Tool::Rectangle) => 3,
+        Action::SelectTool(Tool::Line) | Action::TemporaryTool(Tool::Line) => 4,
+        Action::SelectTool(Tool::Arrow) | Action::TemporaryTool(Tool::Arrow) => 5,
+        Action::SelectTool(Tool::Scribble) | Action::TemporaryTool(Tool::Scribble) => 6,
         Action::CreateFrame => 7,
         Action::LinkToFrame => 18,
-        Action::SelectTool(Tool::Eraser) => 19,
+        Action::SelectTool(Tool::Eraser) | Action::TemporaryTool(Tool::Eraser) => 19,
         Action::DuplicateSelection => 8,
         Action::Undo => 9,
         Action::Redo => 10,
@@ -47,6 +70,22 @@ pub fn index(a: Action) -> usize {
         Action::Save => 13,
         Action::ToggleGrid => 14,
         Action::ToggleAnnotationSelectionLock => 17,
+        Action::Layout(Layout::Left) => 20,
+        Action::Layout(Layout::Right) => 21,
+        Action::Layout(Layout::Top) => 22,
+        Action::Layout(Layout::Bottom) => 23,
+        Action::Layout(Layout::Grid) => 24,
+        Action::Layout(Layout::DistributeHorizontal) => 25,
+        Action::Layout(Layout::DistributeVertical) => 26,
+        Action::FlipHorizontal => 27,
+        Action::FlipVertical => 28,
+        Action::Order(Order::Forward) => 29,
+        Action::Order(Order::Backward) => 30,
+        Action::AnnotationStyle(StyleAction::Color) => 31,
+        Action::CycleFiltering => 32,
+        Action::SelectTool(Tool::RotateView) | Action::TemporaryTool(Tool::RotateView) => 33,
+        Action::ToggleSnapping => 34,
+        Action::UnlinkFromFrame => 35,
         _ => 15,
     }
 }
@@ -74,7 +113,7 @@ pub fn root() -> PathBuf {
     PathBuf::from("gfx/icons")
 }
 pub fn load(path: &Path) -> Decoded {
-    let mut rgba = vec![0; 128 * 64 * 4];
+    let mut rgba = vec![0; ATLAS_WIDTH * ATLAS_HEIGHT * 4];
     for (i, name) in NAMES.iter().enumerate() {
         let pixels = match read(&path.join(format!("{name}.png"))) {
             Ok(p) => p,
@@ -89,8 +128,8 @@ pub fn load(path: &Path) -> Decoded {
         }
     }
     Decoded {
-        width: 128,
-        height: 64,
+        width: ATLAS_WIDTH as u32,
+        height: ATLAS_HEIGHT as u32,
         rgba,
     }
 }
