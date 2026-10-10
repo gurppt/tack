@@ -37,7 +37,8 @@ pub(crate) fn receive(stream: &mut impl MessageIo) -> Result<Message> {
     stream.message_received();
     Ok(message)
 }
-pub(crate) fn connect(address: &str, timed_reads: bool) -> Result<TcpStream> {
+/// Numeric endpoint connection with bounded connect and optional transfer read deadlines.
+pub fn connect(address: &str, timed_reads: bool) -> Result<TcpStream> {
     let address: SocketAddr = address
         .parse()
         .map_err(|_| Error::Invalid("server address must be numeric IP:port"))?;
@@ -432,7 +433,8 @@ pub(crate) fn prepare_command(
     }
     Ok((CommandDto::from_command(command)?, prepared))
 }
-pub(crate) fn download_chunk(
+/// Stream one validated bounded original range to an explicit worker-owned sink.
+pub fn download_chunk(
     stream: &mut impl MessageIo,
     binding: &SourceBinding,
     offset: u64,

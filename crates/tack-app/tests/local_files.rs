@@ -127,11 +127,11 @@ fn keymap_worker_exports_tackey_and_imports_legacy_json_without_mutating_on_fail
     );
     let exported = root.0.join("studio.v3.tackey");
     assert_eq!(
-        preferences::read(&exported)?.keymap()?.bindings(),
+        preferences::read_keymap(&exported)?.keymap()?.bindings(),
         profile.keymap()?.bindings()
     );
     let legacy = root.0.join("legacy.json");
-    fs::copy(exported, &legacy)?;
+    preferences::write(&legacy, &profile)?;
     worker.start(
         Operation::Keymap {
             action: Action::ImportKeymap,
@@ -285,6 +285,6 @@ fn keymap_suffix_added_target_requires_explicit_replacement_choice() -> R {
             .iter()
             .any(|update| matches!(update, LocalUpdate::Keymap(Action::ExportKeymap, Ok(None))))
     );
-    assert!(preferences::read(&target).is_ok());
+    assert!(preferences::read_keymap(&target).is_ok());
     Ok(())
 }

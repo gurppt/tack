@@ -7,7 +7,7 @@ use tack_core::{
     DocumentQuery, GeometryError, ObjectId, ObjectKind, Opacity, TextObject, Transform, WorldRect,
 };
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub(super) struct EditData {
     pub(super) object_id: ObjectId,
     pub(super) transform: Transform,
@@ -48,13 +48,13 @@ impl EditData {
     }
 }
 pub(super) struct Gesture {
+    base: Option<u64>,
     pub(super) kind: GestureKind,
     pub(super) start: [f64; 2],
     pub(super) frame: Transform,
     pub(super) initial: Vec<EditData>,
     pub(super) preview: Vec<EditData>,
     pub(super) lookup: BTreeMap<ObjectId, usize>,
-    pub(super) generation: u64,
 }
 impl ImageInteraction {
     pub fn begin(
@@ -64,6 +64,12 @@ impl ImageInteraction {
         editor: &DocumentEditor,
     ) -> Result<bool, GeometryError> {
         self.selection.expand_groups(editor.document());
+        if self.reservation_pending {
+            return Ok(false);
+        }
+        if self.selection.ids().any(|id| self.blocked.contains(&id)) {
+            return Ok(false);
+        }
         if !pointer.iter().all(|p| p.is_finite()) {
             return Err(GeometryError);
         }
@@ -113,18 +119,40 @@ impl ImageInteraction {
             .map(|(i, d)| (d.object_id, i))
             .collect();
         self.gesture = Some(Gesture {
+            base: editor.shared_revision(),
             kind,
             start: pointer,
             frame,
             preview: initial.clone(),
             initial,
             lookup,
-            generation: editor.generation(),
         });
         Ok(true)
     }
+    /// Compute move candidates from the captured pose without publishing an unsnapped preview.
+    pub fn raw_move_frame(&self, pointer: [f64; 2]) -> Result<Option<Transform>, GeometryError> {
+        let Some(g) = &self.gesture else {
+            return Ok(None);
+        };
+        if g.kind != GestureKind::Move {
+            return Ok(None);
+        }
+        Ok(Some(Transform::new(
+            std::array::from_fn(|i| g.frame.center()[i] + pointer[i] - g.start[i]),
+            g.frame.size(),
+            g.frame.rotation(),
+            g.frame.flips(),
+        )?))
+    }
     /// Reuses fixed preview storage. Validate a whole update before publishing it.
     pub fn update(&mut self, pointer: [f64; 2]) -> Result<bool, GeometryError> {
+        self.update_snapped_rotation(pointer, false)
+    }
+    pub fn update_snapped_rotation(
+        &mut self,
+        pointer: [f64; 2],
+        snapping: bool,
+    ) -> Result<bool, GeometryError> {
         if !pointer.iter().all(|p| p.is_finite()) {
             return Err(GeometryError);
         }
@@ -181,6 +209,12 @@ impl ImageInteraction {
         } else {
             (pointer[1] - g.frame.center()[1]).atan2(pointer[0] - g.frame.center()[0])
                 - (g.start[1] - g.frame.center()[1]).atan2(g.start[0] - g.frame.center()[0])
+        };
+        let angle = if snapping && g.kind == GestureKind::Rotate {
+            let step = std::f64::consts::PI / 12.;
+            ((g.frame.rotation() + angle) / step).round() * step - g.frame.rotation()
+        } else {
+            angle
         };
         let calculate = |data: EditData| -> Result<EditData, GeometryError> {
             let t = data.transform;
@@ -295,10 +329,11 @@ impl ImageInteraction {
         let Some(g) = self.gesture.take() else {
             return Ok(false);
         };
-        if editor.generation() != g.generation {
-            return Err(CommandError::LimitReached(
-                "document changed during gesture",
-            ));
+        if g.initial
+            .iter()
+            .any(|before| EditData::get(editor.document(), before.object_id) != Some(*before))
+        {
+            return Err(CommandError::LimitReached("target changed during gesture"));
         }
         let mut edits = Vec::with_capacity(g.preview.len() * 2);
         for (before, after) in g.initial.iter().zip(g.preview) {
@@ -342,6 +377,6 @@ impl ImageInteraction {
                 });
             }
         }
-        editor.execute(Command::Batch(edits))
+        editor.execute_at_revision(Command::Batch(edits), g.base)
     }
 }

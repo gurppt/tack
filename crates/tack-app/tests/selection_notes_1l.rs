@@ -305,9 +305,9 @@ fn physical_shift_corner_scales_note_and_normal_corner_leaves_font_size() -> R {
 fn arrow_default_shaft_and_head_are_stronger_with_bounded_user_width() -> R {
     let old = AnnotationStyle::default();
     let arrow = Creation::new(Tool::Arrow, [0.; 2], old, 0, 1.);
-    assert_eq!(arrow.style.width(), 4.);
+    assert_eq!(arrow.style.width(), 3.);
     let head = tack_app::annotation_geometry::arrow_head([0., 0.], [100., 0.], arrow.style.width());
-    assert_eq!(head[1][0], 76.);
+    assert_eq!(head[1][0], 80.);
     let edited = AnnotationStyle::new(old.stroke(), old.fill(), 10., old.opacity())?;
     assert_eq!(
         Creation::new(Tool::Arrow, [0.; 2], edited, 0, 1.).style,

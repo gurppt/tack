@@ -25,7 +25,7 @@ heartbeat or pretended offline merge.
 Completed manipulations become one durable semantic request. Local selection,
 hover, camera and active drag previews stay local. Shared undo/redo requests go
 to the server; private history is not replayed over another client's work. The
-server's strict base-revision and conservative inverse-operation policy is the
+server's per-object/dependency scope and conservative inverse-operation policy is the
 conflict authority. Native tools use `DocumentEditor`'s shared backend request
 queue and accept only server-authoritative durable operations.
 
@@ -180,3 +180,23 @@ Native three-client, reconnect/relink, asset import, congestion, idle and local
 regression receipts are owned by the integrator and reported separately. Unit
 green alone is not a native collaboration PASS, a Windows desktop PASS or a
 low-end-memory claim. Existing Phase 1L codec/tile limitations remain unchanged.
+
+## Phase 2A5 native behavior
+
+Accepted remote commands invalidate only intersecting pending document edits and
+target-specific gestures. Menus, camera, toolbar, key capture, selection and
+unrelated drafts remain local. Menu actions recheck their live target before
+execution. A reconnect snapshot intentionally resets transient document edits.
+
+Native transforms acquire small object reservations before publishing preview or
+commit, renew only during manipulation and release after the authority receipt.
+Foreign reservations render a red pixel outline outside the object's border.
+Disconnect/expiry cancels the affected gesture, not unrelated local UI. The
+existing control workers and bounded queues carry all reservation traffic.
+
+Explicit Save to Local now streams originals into a new owned asset folder,
+checks complete content, publishes a fresh local document identity and switches
+authority only after successful open. Missing originals refuse the copy; cached
+display pixels are never substituted for original source bytes. This native
+workflow uses linked owned originals to avoid a second full-payload embedding
+copy. The earlier embedded snapshot storage API remains available.

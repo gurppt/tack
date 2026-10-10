@@ -26,11 +26,14 @@ pub(super) struct LoadedBoard {
 }
 pub(super) struct LocalState {
     pub about_ticket: u64,
+    pub feedback_deadline: Option<Instant>,
     pub lease: Option<Arc<tack_storage::BoardLease>>,
     pub worker: LocalWorker,
     pub queued: Option<Operation>,
     pub ui: Option<Box<LocalUi>>,
     pub profile: Preferences,
+    pub profile_saved: Preferences,
+    pub pending_camera: Option<([f64; 2], f64)>,
     pub root: PathBuf,
     pub profile_base: Option<u32>,
     pub profile_protected: bool,
@@ -45,7 +48,7 @@ pub(super) struct LocalState {
     pub spool: Option<Arc<std::fs::File>>,
     cache_generation: Option<u64>,
     pub seed: Option<(Arc<tack_storage::BoardLease>, tack_core::DocumentId)>,
-    retire_seed: bool,
+    pub retire_seed: bool,
     pub seed_remembered: bool,
     pub importing: bool,
     pub import_status: String,
@@ -53,6 +56,7 @@ pub(super) struct LocalState {
     pub close_after_save: bool,
     pub close_after_discard: bool,
     pub close_ready: bool,
+    pub close_board: bool,
     pub drops: Vec<PathBuf>,
     pub drop_deadline: Option<Instant>,
     pub untitled: bool,
@@ -84,10 +88,13 @@ impl LocalState {
         });
         Ok(Self {
             about_ticket: 0,
+            feedback_deadline: None,
             lease: None,
             worker: LocalWorker::default(),
             queued: None,
             ui,
+            profile_saved: profile.clone(),
+            pending_camera: None,
             profile,
             root,
             profile_base,
@@ -111,6 +118,7 @@ impl LocalState {
             close_after_save: false,
             close_after_discard: false,
             close_ready: false,
+            close_board: false,
             drops: Vec::new(),
             drop_deadline: None,
             untitled: false,
@@ -270,12 +278,11 @@ impl App {
                     "Invalid/future preferences retained; export a new profile instead".into(),
                 );
             } else {
-                let changed = std::mem::take(&mut self.local.profile_changed);
+                self.local.profile_changed = false;
                 let op = Operation::Profile {
                     root: self.local.root.clone(),
                     profile: self.local.profile.clone(),
-                    base: self.local.profile_base,
-                    changed,
+                    baseline: self.local.profile_saved.clone(),
                     board: (!self.local.untitled).then(|| self.options.path.clone()),
                 };
                 if let Err(error) = self.operation(op) {

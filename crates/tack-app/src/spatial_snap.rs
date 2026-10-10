@@ -16,6 +16,7 @@ pub struct AxisSnap {
 #[derive(Default)]
 pub struct SnapState {
     pub enabled: bool,
+    pub temporary: bool,
     pub grid: bool,
     pub disabled: bool,
     pub measure: bool,
@@ -43,7 +44,7 @@ impl SnapState {
         dpi: f64,
         resize: Option<[usize; 2]>,
     ) -> [f64; 2] {
-        if self.disabled || (!self.enabled && !self.grid) {
+        if self.disabled || (!self.enabled && !self.grid && !self.temporary) {
             self.clear();
             return [0.; 2];
         }
@@ -77,7 +78,7 @@ impl SnapState {
             }
         };
         // Stable ID order. On an exact distance tie the first object/anchor wins.
-        if self.enabled {
+        if self.enabled || self.temporary {
             for object in doc.objects() {
                 if selection.contains(object.id()) {
                     continue;
@@ -90,7 +91,7 @@ impl SnapState {
                 }
             }
         }
-        if self.grid {
+        if self.grid || self.temporary {
             // Same adaptive world lattice as visible dots, independent of visibility.
             let spacing = grid_spacing(zoom, dpi);
             for axis in 0..2 {

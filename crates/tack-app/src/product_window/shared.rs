@@ -1,17 +1,22 @@
 //! Optional authoritative backend; local windows never construct a LAN client.
 use super::*;
+mod leases;
+pub(super) use leases::LeaseState;
 use std::collections::{HashMap, HashSet};
 use tack_core::{BackendRequest, SourceId};
 use tack_shared::client::{ClientConfig, ClientEvent, ConnectionState, SharedClient};
 use tack_shared::{CommandDto, SourceBinding, WireId};
 
 pub(super) struct SharedState {
+    pub leases: LeaseState,
+    pub duplicate_selection: Vec<tack_core::ObjectId>,
     pub client: SharedClient,
     pub address: String,
     pub board: WireId,
     client_id: WireId,
     pub state: ConnectionState,
-    snapshot_seen: bool,
+    pub snapshot_seen: bool,
+    pub transitioning: bool,
     pub revision: u64,
     pub bindings: HashMap<SourceId, SourceBinding>,
     requested: HashSet<(SourceId, u64)>,
@@ -22,6 +27,9 @@ pub(super) struct SharedState {
     pub probes: Vec<serde_json::Value>,
 }
 impl SharedState {
+    pub fn has_in_flight(&self) -> bool {
+        self.in_flight.is_some()
+    }
     pub fn start(
         address: String,
         board: WireId,
@@ -41,12 +49,15 @@ impl SharedState {
             },
         )?;
         Ok(Self {
+            leases: LeaseState::default(),
+            duplicate_selection: Vec::new(),
             client,
             address,
             board,
             client_id,
             state: ConnectionState::Connecting,
             snapshot_seen: false,
+            transitioning: false,
             revision: 0,
             bindings: HashMap::new(),
             requested: HashSet::new(),
@@ -83,7 +94,31 @@ impl App {
         };
         let events = shared.client.drain();
         for event in events {
+            if self
+                .shared
+                .as_ref()
+                .is_some_and(|s| s.transitioning && !s.snapshot_seen)
+                && matches!(
+                    &event,
+                    ClientEvent::Error(_)
+                        | ClientEvent::State(
+                            ConnectionState::Disconnected
+                                | ConnectionState::ServerUnavailable
+                                | ConnectionState::Refused
+                                | ConnectionState::BoardUnavailable
+                        )
+                )
+            {
+                self.abort_shared_transition();
+                self.local_error("Sharing connection failed; original local board retained");
+                break;
+            }
             if let Err(error) = self.shared_event(event) {
+                if self.shared.as_ref().is_some_and(|s| s.transitioning) {
+                    self.abort_shared_transition();
+                    self.local_error(format!("Sharing failed; original retained: {error}"));
+                    break;
+                }
                 self.interaction_error = Some(error.to_string());
                 if let Some(editor) = &mut self.editor {
                     editor.set_shared_writable(false);
@@ -108,10 +143,33 @@ impl App {
     }
     fn shared_event(&mut self, event: ClientEvent) -> Result<(), AssetError> {
         let mut show_host = false;
+        let mut show_offline = false;
         let shared = self.shared.as_mut().ok_or("shared backend unavailable")?;
         match event {
+            ClientEvent::LeaseSnapshot { leases } => shared.leases.snapshot(leases),
+            ClientEvent::LeaseChanged {
+                operation,
+                client,
+                objects,
+                ttl_ms,
+            } => shared.leases.changed(operation, client, objects, ttl_ms),
+            ClientEvent::LeaseDenied { operation, reason } => {
+                if shared.leases.owns(operation) {
+                    self.input.cancel();
+                    shared.leases.release(&shared.client);
+                }
+                self.interaction_error = Some(reason);
+            }
             ClientEvent::State(state) => {
+                show_offline = shared.snapshot_seen
+                    && shared.state == ConnectionState::Connected
+                    && state != ConnectionState::Connected;
                 shared.state = state;
+                if state != ConnectionState::Connected {
+                    shared.leases.clear();
+                    self.input.gesture_waiting = false;
+                    self.input.images.cancel();
+                }
                 if let Some(editor) = &mut self.editor {
                     editor.set_shared_writable(shared.state == ConnectionState::Connected);
                 }
@@ -125,12 +183,18 @@ impl App {
                 sources,
                 ..
             } => {
-                show_host = !shared.snapshot_seen && self.host.is_some();
+                shared.leases.clear();
+                show_host = !shared.snapshot_seen && (self.host.is_some() || shared.transitioning);
+                let bindings = sources
+                    .into_iter()
+                    .map(|binding| SourceId::new(binding.source.value()).map(|id| (id, binding)))
+                    .collect::<Result<_, _>>()?;
                 let first = self.editor.is_none();
                 self.input.cancel();
                 self.input.name_edit = None;
                 self.context = None;
                 let mut editor = DocumentEditor::shared(document);
+                editor.set_shared_revision(revision);
                 editor.set_shared_source_revision_floor(source_high_water);
                 editor.set_shared_writable(true);
                 self.input.images.selection.prune(editor.document());
@@ -163,16 +227,22 @@ impl App {
                         assets.defer_shared_source(source.id(), source.revision());
                     }
                 }
+                if shared.transitioning {
+                    self.local.lease = None;
+                    self.local.untitled = false;
+                    self.local.retire_seed = self.local.seed.is_some();
+                    self.options.untitled = false;
+                    self.options.new = false;
+                    self.local.recovery = tack_app::recovery_schedule::RecoverySchedule::default();
+                    shared.transitioning = false;
+                }
                 self.board = Some(board);
                 self.editor = Some(editor);
                 self.options.path = path;
                 shared.snapshot_seen = true;
                 shared.revision = revision;
                 shared.state = ConnectionState::Connected;
-                shared.bindings = sources
-                    .into_iter()
-                    .map(|binding| SourceId::new(binding.source.value()).map(|id| (id, binding)))
-                    .collect::<Result<_, _>>()?;
+                shared.bindings = bindings;
                 shared.requested.clear();
                 shared.evicted.clear();
                 shared.in_flight = None;
@@ -190,6 +260,7 @@ impl App {
             } => {
                 if shared.in_flight == Some(operation) && client == shared.client_id {
                     shared.in_flight = None;
+                    shared.leases.finish(operation, &shared.client);
                 }
                 if revision <= shared.revision {
                     return Ok(());
@@ -202,31 +273,59 @@ impl App {
                     return Err("shared revision gap; reconciling snapshot".into());
                 }
                 let editor = self.editor.as_mut().ok_or("shared snapshot pending")?;
+                let scope = command.scope(editor.document());
                 if client != shared.client_id {
-                    // Unsent operations were created against older authority.
-                    // Refuse them rather than silently rebasing over another writer.
-                    let cancelled = editor.pending_backend_requests();
-                    if cancelled > 0 {
-                        shared.refused += cancelled as u64;
-                        self.interaction_error = Some(format!(
-                            "Another client edited the board; {cancelled} queued edits cancelled"
-                        ));
+                    editor.discard_backend_requests(|request, document| match request {
+                        BackendRequest::Edit(edit) => CommandDto::from_command(edit)
+                            .is_ok_and(|c| !c.scope(document).objects.is_disjoint(&scope.objects)),
+                        _ => false,
+                    });
+                    let touches = |id: tack_core::ObjectId| {
+                        scope
+                            .objects
+                            .iter()
+                            .any(|target| target.value() == id.value())
+                    };
+                    if self.input.images.gesture_targets().any(touches) {
+                        self.input.images.cancel();
                     }
-                    editor.set_shared_writable(false);
-                    editor.set_shared_writable(shared.state == ConnectionState::Connected);
-                    self.local.originals.clear();
-                }
-                if client != shared.client_id
-                    && (self.input.active()
-                        || self.input.annotation.edit.is_some()
-                        || self.input.name_edit.is_some())
-                {
-                    self.input.cancel();
-                    self.input.name_edit = None;
-                    self.interaction_error =
-                        Some("Another client edited the board; active edit cancelled".into());
+                    if self
+                        .input
+                        .annotation
+                        .edit
+                        .as_ref()
+                        .is_some_and(|e| !e.is_new && touches(e.id))
+                    {
+                        self.input.annotation.edit = None;
+                    }
+                    if self.input.name_edit.as_ref().is_some_and(|e| touches(e.id)) {
+                        self.input.name_edit = None;
+                    }
                 }
                 editor.accept_authoritative(command.to_command()?)?;
+                editor.set_shared_revision(revision);
+                if client == shared.client_id
+                    && !shared.duplicate_selection.is_empty()
+                    && shared
+                        .duplicate_selection
+                        .iter()
+                        .all(|id| editor.document().object(*id).is_some())
+                {
+                    self.input.images.selection.clear();
+                    for id in shared.duplicate_selection.drain(..) {
+                        self.input.images.selection.select(Some(id), true);
+                    }
+                }
+                // New annotation drafts and unrelated text are local state.
+                if let Some(c) = &mut self.input.annotation.creation {
+                    c.generation = editor.generation();
+                }
+                if let Some(e) = &mut self.input.annotation.edit {
+                    e.generation = editor.generation();
+                }
+                if let Some(menu) = &mut self.context {
+                    menu.context.generation = editor.generation();
+                }
                 self.input.images.selection.prune(editor.document());
                 if let Some(assets) = &mut self.assets {
                     assets.sync_document(editor.document());
@@ -268,12 +367,12 @@ impl App {
                 if shared.in_flight == operation {
                     shared.in_flight = None;
                 }
-                shared.refused += 1;
-                self.local.originals.clear();
-                if let Some(editor) = &mut self.editor {
-                    editor.set_shared_writable(false);
-                    editor.set_shared_writable(shared.client.connected());
+                if let Some(operation) = operation {
+                    shared.leases.finish(operation, &shared.client);
                 }
+                shared.refused += 1;
+                shared.duplicate_selection.clear();
+
                 self.interaction_error =
                     Some(format!("Edit refused at revision {revision}: {reason}"));
             }
@@ -303,6 +402,9 @@ impl App {
                     }
                 }
             }
+        }
+        if show_offline {
+            self.share_panel()?;
         }
         if show_host {
             self.share_panel()?;
@@ -343,7 +445,8 @@ impl App {
         if shared.in_flight.is_some() {
             return;
         }
-        if let Some(request) = editor.take_backend_request() {
+        if let Some((base, request)) = editor.take_backend_request_at_revision() {
+            let lease_command = matches!(&request, BackendRequest::Edit(command) if CommandDto::from_command(command).is_ok_and(|c| shared.leases.touches(&c.scope(editor.document()).objects)));
             let result = match request {
                 BackendRequest::Edit(command) => {
                     let command = normalize_queued_import(command, editor.document());
@@ -375,7 +478,7 @@ impl App {
                             .map(|((id, rev), payload)| (*id, *rev, payload.clone()))
                             .collect();
                         let submitted = shared.client.prepare_edit(
-                            shared.revision,
+                            base,
                             command,
                             originals,
                             self.options.path.clone(),
@@ -384,15 +487,18 @@ impl App {
                         submitted
                     } else {
                         CommandDto::from_command(&command)
-                            .and_then(|command| shared.client.edit(shared.revision, command))
+                            .and_then(|command| shared.client.edit(base, command))
                     }
                 }
-                BackendRequest::Undo => shared.client.undo(shared.revision),
-                BackendRequest::Redo => shared.client.redo(shared.revision),
+                BackendRequest::Undo => shared.client.undo(base),
+                BackendRequest::Redo => shared.client.redo(base),
             };
             match result {
                 Ok(operation) => {
                     shared.in_flight = Some(operation);
+                    if lease_command {
+                        shared.leases.submitted(operation);
+                    }
                 }
                 Err(error) => {
                     self.interaction_error = Some(error.to_string());

@@ -1,3 +1,4 @@
+mod leases;
 mod transfers;
 use crate::{AssetStore, Authority, Change, MAX_BOARDS, MAX_CLIENTS, Result, Upload};
 use std::{
@@ -65,6 +66,7 @@ struct Hub {
     root: PathBuf,
     boards: BTreeMap<WireId, Authority>,
     subscribers: BTreeMap<usize, Subscriber>,
+    leases: leases::LeaseTable,
 }
 pub fn serve(config: ServerConfig) -> Result<()> {
     if !config.root.exists() {
@@ -82,6 +84,7 @@ pub fn serve(config: ServerConfig) -> Result<()> {
         root: boards_root,
         boards: BTreeMap::new(),
         subscribers: BTreeMap::new(),
+        leases: Default::default(),
     }));
     let active = Arc::new(AtomicUsize::new(0));
     let ids = AtomicUsize::new(1);
@@ -144,6 +147,7 @@ pub fn serve(config: ServerConfig) -> Result<()> {
                 }
                 if let Ok(mut hub) = hub.lock() {
                     hub.subscribers.remove(&id);
+                    let _ = leases::release_connection(&mut hub, id);
                 }
                 active.fetch_sub(1, Ordering::AcqRel);
             });
@@ -265,6 +269,7 @@ fn connection(
     // Remove the hub's sender before joining; otherwise an idle writer never exits.
     if let Ok(mut hub) = hub.lock() {
         hub.subscribers.remove(&id);
+        let _ = leases::release_connection(&mut hub, id);
     }
     drop(out);
     let _ = socket.shutdown(Shutdown::Read);
@@ -287,7 +292,17 @@ fn reply(out: &Out, message: Message) -> Result<()> {
 }
 fn control(message: Message, id: usize, hub: &Arc<Mutex<Hub>>, out: &Arc<Out>) -> Result<()> {
     let mut hub = hub.lock().map_err(|_| "authority lock poisoned")?;
+    if let Some(subscriber) = hub.subscribers.get(&id) {
+        let board = subscriber.board;
+        leases::prune(&mut hub, board)?;
+    }
     match message {
+        Message::LeaseAcquire {
+            operation,
+            base,
+            objects,
+        } => leases::acquire(&mut hub, id, operation, base, objects, out),
+        Message::LeaseRelease { operation } => leases::release(&mut hub, id, operation),
         Message::Hello {
             board,
             client,
@@ -351,6 +366,18 @@ fn control(message: Message, id: usize, hub: &Arc<Mutex<Hub>>, out: &Arc<Out>) -
     }
 }
 fn join(hub: &mut Hub, id: usize, board: WireId, client: WireId, out: &Arc<Out>) -> Result<()> {
+    leases::release_connection(hub, id)?;
+    let replaced: Vec<_> = hub
+        .subscribers
+        .iter()
+        .filter_map(|(other, subscriber)| {
+            (*other != id && subscriber.board == board && subscriber.client == client)
+                .then_some(*other)
+        })
+        .collect();
+    for other in replaced {
+        leases::release_connection(hub, other)?;
+    }
     if hub
         .subscribers
         .values()
@@ -412,6 +439,12 @@ fn join(hub: &mut Hub, id: usize, board: WireId, client: WireId, out: &Arc<Out>)
                 .filter(|s| s.board == board)
                 .count() as u32,
         },
+    )?;
+    reply(
+        out,
+        Message::LeaseSnapshot {
+            leases: hub.leases.snapshot(board),
+        },
     )
 }
 fn apply(
@@ -430,23 +463,36 @@ fn apply(
         );
     };
     let (board, client) = (subscriber.board, subscriber.client);
-    let authority = hub.boards.get_mut(&board).ok_or("board unavailable")?;
+    let authority = hub.boards.get(&board).ok_or("board unavailable")?;
     // Exact duplicate delivery acknowledges its original receipt only to its sender.
     if let Some(change) = authority.receipt(client, operation) {
         return reply(out, accepted(board, change));
     }
+    let target = command
+        .as_ref()
+        .map(|(command, _)| command)
+        .or_else(|| authority.history_command(client, redo));
+    if let Some(command) = target {
+        let scope = command.scope(authority.document());
+        if let Err(reason) = hub.leases.check(board, id, &scope.objects) {
+            return reply(
+                out,
+                refusal(
+                    Some(operation),
+                    authority.revision(),
+                    RefusalCode::Busy,
+                    &reason,
+                ),
+            );
+        }
+    }
+    let authority = hub.boards.get_mut(&board).ok_or("board unavailable")?;
     let result = match command {
         Some((command, sources)) => authority.edit(client, operation, base, command, sources),
         None => authority.history(client, operation, base, redo),
     };
     match result {
-        Ok(change) => {
-            let bytes = Arc::new(frame(&accepted(board, change))?);
-            hub.subscribers.retain(|_, subscriber| {
-                subscriber.board != board || subscriber.out.send(Arc::clone(&bytes))
-            });
-            Ok(())
-        }
+        Ok(change) => leases::broadcast(hub, board, accepted(board, change)),
         Err(e) => {
             if !authority.is_available() {
                 hub.subscribers.retain(|_, s| {
@@ -459,9 +505,9 @@ fn apply(
                 });
                 return Err("authority published but directory durability uncertain; reconnect reloads validated authority".into());
             }
-            let code = if base != authority.revision() {
+            let code = if e.starts_with("stale revision") {
                 RefusalCode::StaleRevision
-            } else if e.starts_with("undo conflict") {
+            } else if e.starts_with("undo conflict") || e.starts_with("object conflict") {
                 RefusalCode::Conflict
             } else {
                 RefusalCode::InvalidOperation

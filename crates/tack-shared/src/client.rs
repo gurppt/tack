@@ -50,6 +50,19 @@ impl ConnectionState {
     }
 }
 pub enum ClientEvent {
+    LeaseSnapshot {
+        leases: Vec<crate::LeaseRecord>,
+    },
+    LeaseChanged {
+        operation: Option<WireId>,
+        client: Option<WireId>,
+        objects: Vec<WireId>,
+        ttl_ms: u32,
+    },
+    LeaseDenied {
+        operation: WireId,
+        reason: String,
+    },
     State(ConnectionState),
     Snapshot {
         revision: u64,
@@ -86,6 +99,10 @@ pub enum ClientEvent {
     Error(String),
 }
 enum Request {
+    Lease {
+        epoch: u64,
+        message: crate::Message,
+    },
     Edit {
         epoch: u64,
         operation: WireId,
@@ -113,7 +130,7 @@ enum Transfer {
         epoch: u64,
         operation: WireId,
         base: u64,
-        command: Command,
+        command: Box<Command>,
         originals: Vec<(SourceId, u64, Payload)>,
         path: PathBuf,
     },
@@ -278,6 +295,22 @@ impl SharedClient {
     pub fn edit(&self, base: u64, command: CommandDto) -> Result<WireId> {
         self.edit_sources(base, command, vec![])
     }
+    pub fn acquire_lease(&self, operation: WireId, base: u64, objects: Vec<WireId>) -> Result<()> {
+        self.send(Request::Lease {
+            epoch: self.context.epoch.load(Ordering::Acquire),
+            message: crate::Message::LeaseAcquire {
+                operation,
+                base,
+                objects,
+            },
+        })
+    }
+    pub fn release_lease(&self, operation: WireId) -> Result<()> {
+        self.send(Request::Lease {
+            epoch: self.context.epoch.load(Ordering::Acquire),
+            message: crate::Message::LeaseRelease { operation },
+        })
+    }
     pub fn edit_sources(
         &self,
         base: u64,
@@ -314,7 +347,7 @@ impl SharedClient {
                 epoch: self.context.epoch.load(Ordering::Acquire),
                 operation,
                 base,
-                command,
+                command: Box::new(command),
                 originals,
                 path,
             },

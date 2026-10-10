@@ -43,43 +43,85 @@ impl LocalUi {
             &mut budget,
         );
         let actions = Self::toolbar_actions();
+        let mid = (width + 24.) / 2.;
+        g.ui_text(
+            c,
+            [24. * s, 66. * s],
+            mid - 24.,
+            "AVAILABLE ACTIONS",
+            p.theme.palette().accent_secondary,
+            &mut budget,
+        );
+        g.ui_text(
+            c,
+            [(mid + 8.) * s, 66. * s],
+            width - mid,
+            "TOOLBAR ORDER",
+            p.theme.palette().accent_secondary,
+            &mut budget,
+        );
+        self.layout[3] = 88.;
+        self.visible = ((height - 170.) / 22.).floor().clamp(1., 12.) as usize;
+        let length = if self.toolbar_order {
+            p.toolbar.actions.len()
+        } else {
+            actions.len()
+        };
+        self.selected = self.selected.min(length.saturating_sub(1));
         self.first = self
             .selected
             .saturating_sub(self.visible / 2)
-            .min(actions.len().saturating_sub(self.visible));
-        for (i, a) in actions
-            .iter()
-            .enumerate()
-            .skip(self.first)
-            .take(self.visible)
-        {
-            let y = 70. + (i - self.first) as f64 * 22.;
-            if i == self.selected {
-                g.pixel_rect(
+            .min(length.saturating_sub(self.visible));
+        for right in [false, true] {
+            let list: Vec<_> = if right {
+                p.toolbar
+                    .actions
+                    .iter()
+                    .filter_map(|id| Action::from_id(id))
+                    .collect()
+            } else {
+                actions.clone()
+            };
+            let first = if self.toolbar_order == right {
+                self.first
+            } else {
+                0
+            };
+            let x = if right { mid + 8. } else { 24. };
+            let available = if right { width - x } else { mid - x - 8. };
+            for (index, action) in list.iter().enumerate().skip(first).take(self.visible) {
+                let y = 88. + (index - first) as f64 * 22.;
+                if self.toolbar_order == right && index == self.selected {
+                    g.pixel_rect(
+                        c,
+                        [(x - 4.) * s, y * s],
+                        [(x + available) * s, (y + 20.) * s],
+                        p.theme.palette().selection,
+                        None,
+                    );
+                }
+                g.ui_text(
                     c,
-                    [20. * s, y * s],
-                    [(width + 4.) * s, (y + 20.) * s],
-                    p.theme.palette().selection,
-                    None,
+                    [x * s, (y + 2.) * s],
+                    available,
+                    action.label(),
+                    p.theme.palette().text_primary,
+                    &mut budget,
                 );
             }
-            let label = if let Some(pos) = p.toolbar.actions.iter().position(|id| *id == a.id()) {
-                format!("{:02}  {}", pos + 1, a.label())
-            } else {
-                format!("--  {}", a.label())
-            };
-            g.ui_text(
-                c,
-                [24. * s, (y + 2.) * s],
-                width - 24.,
-                &label,
-                p.theme.palette().text_primary,
-                &mut budget,
-            );
         }
+        g.ui_text(
+            c,
+            [24. * s, (height - 78.) * s],
+            width - 24.,
+            "Tab: column  Ctrl+Up/Down: reorder",
+            p.theme.palette().accent_attention,
+            &mut budget,
+        );
         self.hits.clear();
         let labels = [
-            ("Add/Remove", Command::ToolbarToggle),
+            ("Add", Command::ToolbarToggle),
+            ("Remove", Command::ToolbarRemove),
             ("Up", Command::ToolbarUp),
             ("Down", Command::ToolbarDown),
             ("Position", Command::ToolbarPlacement),
@@ -87,10 +129,10 @@ impl LocalUi {
             ("Done", Command::Close),
         ];
         for (i, (label, command)) in labels.into_iter().enumerate() {
-            let row = i / 3;
-            let x = 24. + (i % 3) as f64 * (width - 32.) / 3.;
+            let row = i / 4;
+            let x = 24. + (i % 4) as f64 * (width - 32.) / 4.;
             let y = height - 54. + row as f64 * 26.;
-            let x2 = x + (width - 32.) / 3. - 4.;
+            let x2 = x + (width - 32.) / 4. - 4.;
             self.hits.push(Hit {
                 rect: [x, y, x2, y + 22.],
                 command,
@@ -118,16 +160,27 @@ impl LocalUi {
         cmd: Command,
         p: &mut Preferences,
     ) -> Option<UiResult> {
-        let a = Self::toolbar_actions().get(self.selected).copied();
+        let a = if self.toolbar_order {
+            p.toolbar
+                .actions
+                .get(self.selected)
+                .and_then(|id| Action::from_id(id))
+        } else {
+            Self::toolbar_actions().get(self.selected).copied()
+        };
         let id = a.map(Action::id);
         let position = id
             .as_ref()
             .and_then(|id| p.toolbar.actions.iter().position(|v| v == id));
         match cmd {
-            Command::ToolbarToggle => {
+            Command::ToolbarRemove => {
                 if let Some(i) = position {
                     p.toolbar.actions.remove(i);
-                } else if p.toolbar.actions.len() < 32
+                }
+            }
+            Command::ToolbarToggle => {
+                if position.is_none()
+                    && p.toolbar.actions.len() < 32
                     && let Some(id) = id
                 {
                     p.toolbar.actions.push(id);
@@ -138,6 +191,9 @@ impl LocalUi {
                     && i > 0
                 {
                     p.toolbar.actions.swap(i, i - 1);
+                    if self.toolbar_order {
+                        self.selected = i - 1;
+                    }
                 }
             }
             Command::ToolbarDown => {
@@ -145,6 +201,9 @@ impl LocalUi {
                     && i + 1 < p.toolbar.actions.len()
                 {
                     p.toolbar.actions.swap(i, i + 1);
+                    if self.toolbar_order {
+                        self.selected = i + 1;
+                    }
                 }
             }
             Command::ToolbarPlacement => {

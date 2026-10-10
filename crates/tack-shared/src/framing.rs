@@ -78,6 +78,38 @@ fn validate_bindings(bindings: &[crate::SourceBinding]) -> Result<()> {
 fn validate_message(message: &Message) -> Result<()> {
     use Message::*;
     match message {
+        LeaseAcquire { objects, .. } => validate_lease_objects(objects, crate::MAX_LEASE_TARGETS)?,
+        LeaseSnapshot { leases } => {
+            let objects: Vec<_> = leases.iter().map(|lease| lease.object).collect();
+            if !leases.is_empty() {
+                validate_lease_objects(&objects, crate::MAX_BOARD_LEASES)?;
+            }
+            if leases
+                .iter()
+                .any(|lease| lease.ttl_ms == 0 || lease.ttl_ms > crate::LEASE_TTL_MS)
+            {
+                return Err(Error::Invalid("lease lifetime"));
+            }
+        }
+        LeaseChanged {
+            objects,
+            ttl_ms,
+            client,
+            operation,
+        } => {
+            validate_lease_objects(objects, crate::MAX_BOARD_LEASES)?;
+            if *ttl_ms > crate::LEASE_TTL_MS
+                || client.is_some() != operation.is_some()
+                || client.is_some() != (*ttl_ms > 0)
+            {
+                return Err(Error::Invalid("lease state"));
+            }
+        }
+        LeaseDenied { reason, .. }
+            if reason.len() > 512 || reason.chars().any(char::is_control) =>
+        {
+            return Err(Error::Invalid("lease reason"));
+        }
         Snapshot {
             board,
             document,
@@ -158,6 +190,19 @@ fn validate_message(message: &Message) -> Result<()> {
             return Err(Error::Invalid("asset progress range"));
         }
         _ => {}
+    }
+    Ok(())
+}
+fn validate_lease_objects(objects: &[crate::WireId], maximum: usize) -> Result<()> {
+    if objects.is_empty()
+        || objects.len() > maximum
+        || objects
+            .iter()
+            .collect::<std::collections::BTreeSet<_>>()
+            .len()
+            != objects.len()
+    {
+        return Err(Error::Invalid("lease object count or duplicate"));
     }
     Ok(())
 }

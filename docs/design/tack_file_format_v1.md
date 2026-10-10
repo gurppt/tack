@@ -225,3 +225,12 @@ groups or frames use [schema 2](tack_file_format_v2.md), retaining the same cont
 
 Phase 1E annotations use [schema 3](tack_file_format_v3.md), retaining the same
 container, image records, sources and derived-data directories.
+
+## Optional frame-color authority (schema 5, Phase 2A5)
+
+Existing schemas 1–4 remain readable and gray-only documents keep their previous
+schema. Nondefault Frame color opts into schema 5. After the schema-4 bookmark
+section (including its count, possibly zero), append u32 color count and records
+of object ID (16 bytes) plus RGBA (4 bytes). Count is bounded by object count,
+IDs distinct, live and Frame-only. Gray is implicit. Other object layouts and
+original/preview directories are unchanged. Older readers must refuse schema 5.

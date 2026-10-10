@@ -112,7 +112,7 @@ pub(crate) fn encode_document(doc: &Document) -> Result<Vec<u8>> {
         + doc
             .objects()
             .map(|o| match o.kind() {
-                ObjectKind::Frame(n) => n.len() + 4,
+                ObjectKind::Frame(n) => n.len() + 28,
                 ObjectKind::Annotation(a) => crate::annotation_codec::estimate(a),
                 _ => 0,
             })
@@ -218,7 +218,7 @@ pub(crate) fn encode_document(doc: &Document) -> Result<Vec<u8>> {
             }
         }
     }
-    if spatial_schema(doc) == 4 {
+    if spatial_schema(doc) >= 4 {
         out.extend((doc.bookmarks().len() as u32).to_le_bytes());
         for b in doc.bookmarks() {
             out.extend(1u16.to_le_bytes());
@@ -230,9 +230,28 @@ pub(crate) fn encode_document(doc: &Document) -> Result<Vec<u8>> {
             out.extend(b.name().as_bytes());
         }
     }
+    if spatial_schema(doc) >= 5 {
+        let frames: Vec<_> = doc
+            .objects()
+            .filter(|o| {
+                matches!(o.kind(), ObjectKind::Frame(_)) && o.frame_color() != DEFAULT_FRAME_COLOR
+            })
+            .collect();
+        out.extend((frames.len() as u32).to_le_bytes());
+        for frame in frames {
+            out.extend(frame.id().value().to_le_bytes());
+            out.extend(frame.frame_color().0);
+        }
+    }
     Ok(out)
 }
 pub(crate) fn spatial_schema(doc: &Document) -> u32 {
+    if doc
+        .objects()
+        .any(|o| matches!(o.kind(), ObjectKind::Frame(_)) && o.frame_color() != DEFAULT_FRAME_COLOR)
+    {
+        return 5;
+    }
     if !doc.bookmarks().is_empty() {
         return 4;
     }
@@ -419,7 +438,7 @@ pub(crate) fn decode_document(
                 .map_err(invalid)?;
         }
     }
-    if schema == 4 {
+    if schema >= 4 {
         let count = d.u32()? as usize;
         if count > MAX_CAMERA_BOOKMARKS {
             return Err(StorageError::Invalid("bookmark count"));
@@ -441,6 +460,22 @@ pub(crate) fn decode_document(
         }
         doc.apply(Command::SetCameraBookmarks(views))
             .map_err(invalid)?;
+    }
+    if schema >= 5 {
+        let count = d.u32()? as usize;
+        if count > counts[2] {
+            return Err(StorageError::Invalid("frame color count"));
+        }
+        let mut seen = std::collections::BTreeSet::new();
+        for _ in 0..count {
+            let object = ObjectId::new(d.id()?).map_err(invalid)?;
+            if !seen.insert(object) {
+                return Err(StorageError::Invalid("duplicate frame color"));
+            }
+            let color = Color(d.take(4)?.try_into().map_err(invalid)?);
+            doc.apply(Command::SetFrameColor { object, color })
+                .map_err(invalid)?;
+        }
     }
     Ok(doc)
 }

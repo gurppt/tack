@@ -512,6 +512,11 @@ impl App {
         let supply_ms = supply_start.elapsed().as_secs_f64() * 1000.;
         if let Some(editor) = &self.editor {
             self.input.build_overlay(editor, &self.camera);
+            if let Some(shared) = &self.shared {
+                shared
+                    .leases
+                    .overlay(&mut self.input.gizmo, editor.document(), &self.camera);
+            }
         }
         let active_tool = self.input.active_tool();
         chrome::draw(
@@ -797,7 +802,9 @@ impl ApplicationHandler<Event> for App {
         let started = self.options.output.is_some().then(Instant::now);
         let wheel =
             self.options.output.is_some() && matches!(&event, WindowEvent::MouseWheel { .. });
+        self.sync_leases();
         self.handle_window_event(e, id, event);
+        self.sync_leases();
         if let Some(t) = started
             && self.event_samples.len() < 7200
         {
@@ -812,6 +819,7 @@ impl ApplicationHandler<Event> for App {
     fn about_to_wait(&mut self, e: &ActiveEventLoop) {
         self.wakeups += 1;
         self.poll_shared();
+        self.sync_leases();
         self.flush_shared();
         if self.options.output.is_some()
             && let Some(shared) = &mut self.shared
@@ -819,11 +827,40 @@ impl ApplicationHandler<Event> for App {
             shared.probe(self.started);
         }
         self.poll_local();
+        if self
+            .local
+            .feedback_deadline
+            .is_some_and(|at| Instant::now() >= at)
+        {
+            self.local.feedback_deadline = None;
+            self.chrome.last_state = "";
+            if let Some(ui) = &mut self.local.ui
+                && ui.message == "COPIED"
+            {
+                ui.message.clear();
+            }
+            self.dirty = true;
+        }
         self.poll_storage();
         self.invalidate_context();
         if self.local.close_ready {
-            e.exit();
-            return;
+            if self.local.close_board {
+                self.local.close_board = false;
+                self.local.close_ready = false;
+                self.input.cancel();
+                self.local.close_after_save = false;
+                self.local.close_after_discard = false;
+                if let Err(error) = self.operation(tack_app::local_worker::Operation::EmptyBoard(
+                    self.local.root.clone(),
+                )) {
+                    self.local_error(error.to_string());
+                } else {
+                    self.panel(tack_app::local_ui::Panel::Connecting);
+                }
+            } else {
+                e.exit();
+                return;
+            }
         }
         if self
             .options
@@ -1061,6 +1098,8 @@ impl ApplicationHandler<Event> for App {
                     .filter(|_| self.options.output.is_some())
                     .and_then(|shared| shared.probe_deadline(self.started)),
             )
+            .chain(self.local.feedback_deadline)
+            .chain(self.shared.as_ref().and_then(|s| s.leases.deadline()))
             .min();
         e.set_control_flow(if periodic {
             ControlFlow::WaitUntil(Instant::now() + Duration::from_millis(16))
@@ -1076,6 +1115,9 @@ pub use launch::{run, run_new, run_shared};
 
 impl App {
     fn handle_window_event(&mut self, e: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
+        if self.local.ui.is_none() && self.context.is_none() && self.camera_capture(&event) {
+            return;
+        }
         if matches!(&event, WindowEvent::KeyboardInput { event, .. }
             if event.state == winit::event::ElementState::Pressed
             && event.physical_key == winit::keyboard::PhysicalKey::Code(winit::keyboard::KeyCode::F5))
@@ -1091,6 +1133,7 @@ impl App {
             return;
         }
         if matches!(event, WindowEvent::CloseRequested) {
+            self.local.close_board = false;
             if self.host.is_some() {
                 if let Err(error) = self.stop_hosting(true) {
                     self.local_error(error.to_string());

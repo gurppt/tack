@@ -12,7 +12,7 @@ pub fn point(t: Transform, normalized: [f64; 2]) -> [f64; 2] {
 }
 pub fn arrow_head(a: [f64; 2], b: [f64; 2], width: f64) -> [[f64; 2]; 3] {
     let length = (b[0] - a[0]).hypot(b[1] - a[1]);
-    let head = (width * 4. + 8.).clamp(6., 64.).min(length * 0.35);
+    let head = (width * 4. + 8.).clamp(8., 96.).min(length * 0.8);
     let v = if length > 0. {
         [(b[0] - a[0]) / length, (b[1] - a[1]) / length]
     } else {

@@ -55,3 +55,23 @@ undoes the single note operation. File-name modals also consume keyboard input.
 Opt-in `TACK_TRACE_INPUT=1` logs actual physical/logical identity, modifiers,
 normalized event, resolved action and owner history counters for diagnosis.
 It is disabled in normal runs and all accepted performance observations.
+
+## 2A5 corrective
+
+Shortcut-column double-click enters capture immediately. Escape cancels without
+a timer. Collision reassignment explains that the old action is now unbound.
+Tool shortcuts show Normal (select) or Hold (temporary, restore on release);
+Hold uses the existing TemporaryTool action/token, not a release script.
+Preferences and Keymap exports are separate; the latter has version/bindings
+only. Legacy combined exports remain accepted by Import Keymap. Preferences
+export excludes keymap, recent paths and local camera slots.
+
+New defaults: F8 annotation selection filter; F9 toolbar; Ctrl+Up/Down z-order
+one step; Ctrl+Shift+Up/Down front/back. Former vertical layout defaults move
+to Ctrl+Alt+Up/Down and Alt+Shift+Up. Existing customized profiles retain their
+bindings: reset the desired action/all shortcuts deliberately to adopt defaults.
+B captures one mapped view action (digits 0–9 by default), Escape cancels.
+NumLock-on numpad digits and top-row digits share the logical digit bindings.
+This avoids a second macro or overlapping physical/logical key domain. Slots
+are local per board ID, at most 64 views in the profile; shared document
+revisions/undo are untouched. Legacy named board bookmarks remain available.

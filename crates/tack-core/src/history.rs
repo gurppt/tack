@@ -25,8 +25,9 @@ pub enum BackendRequest {
 }
 struct SharedCommands {
     writable: bool,
-    requests: VecDeque<BackendRequest>,
+    requests: VecDeque<(u64, BackendRequest)>,
     bytes: usize,
+    revision: u64,
 }
 impl DocumentEditor {
     /// Zero capacity disables recording. Capacity is chosen explicitly by owner.
@@ -168,6 +169,27 @@ impl DocumentEditor {
         }
         Ok(true)
     }
+    /// Interactive requests retain the authority observed when their gesture began.
+    pub fn shared_revision(&self) -> Option<u64> {
+        self.shared.as_ref().map(|s| s.revision)
+    }
+    pub fn execute_at_revision(
+        &mut self,
+        command: Command,
+        base: Option<u64>,
+    ) -> Result<bool, CommandError> {
+        if let (Some(base), Some(shared)) = (base, &mut self.shared) {
+            let current = shared.revision;
+            shared.revision = base;
+            let result = self.request_shared(BackendRequest::Edit(command));
+            if let Some(shared) = &mut self.shared {
+                shared.revision = current;
+            }
+            result
+        } else {
+            self.execute(command)
+        }
+    }
     pub fn undo(&mut self) -> Result<bool, CommandError> {
         if self.shared.is_some() {
             return self.request_shared(BackendRequest::Undo);
@@ -227,6 +249,7 @@ impl DocumentEditor {
             writable: false,
             requests: VecDeque::new(),
             bytes: 0,
+            revision: 0,
         }));
         editor
     }
@@ -272,16 +295,46 @@ impl DocumentEditor {
             return Err(CommandError::LimitReached("shared command queue"));
         }
         shared.bytes += bytes;
-        shared.requests.push_back(request);
+        shared.requests.push_back((shared.revision, request));
         Ok(true)
     }
     pub fn take_backend_request(&mut self) -> Option<BackendRequest> {
+        self.take_backend_request_at_revision()
+            .map(|(_, request)| request)
+    }
+    pub fn set_shared_revision(&mut self, revision: u64) {
+        if let Some(shared) = &mut self.shared {
+            shared.revision = revision;
+        }
+    }
+    pub fn discard_backend_requests(
+        &mut self,
+        mut invalid: impl FnMut(&BackendRequest, &Document) -> bool,
+    ) -> usize {
+        let Some(shared) = &mut self.shared else {
+            return 0;
+        };
+        let before = shared.requests.len();
+        shared
+            .requests
+            .retain(|(_, request)| !invalid(request, &self.document));
+        shared.bytes = shared
+            .requests
+            .iter()
+            .map(|(_, request)| match request {
+                BackendRequest::Edit(c) => c.retained_bytes(),
+                _ => 0,
+            })
+            .sum();
+        before - shared.requests.len()
+    }
+    pub fn take_backend_request_at_revision(&mut self) -> Option<(u64, BackendRequest)> {
         let shared = self.shared.as_mut()?;
-        let request = shared.requests.pop_front()?;
+        let (revision, request) = shared.requests.pop_front()?;
         if let BackendRequest::Edit(command) = &request {
             shared.bytes = shared.bytes.saturating_sub(command.retained_bytes());
         }
-        Some(request)
+        Some((revision, request))
     }
     /// Only the backend may supply accepted commands. No private undo is recorded.
     pub fn accept_authoritative(&mut self, command: Command) -> Result<bool, CommandError> {

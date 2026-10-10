@@ -38,8 +38,8 @@ fn next_style(s: AnnotationStyle, action: StyleAction) -> Result<AnnotationStyle
                 Some(Color([color.0[0], color.0[1], color.0[2], 64]))
             }
         }
-        StyleAction::Wider => width = (width * 1.25).min(256.),
-        StyleAction::Narrower => width = (width / 1.25).max(0.1),
+        StyleAction::Wider => width = (width + if width < 10. { 1. } else { 2. }).min(256.),
+        StyleAction::Narrower => width = (width - if width <= 10. { 1. } else { 2. }).max(1.),
         StyleAction::OpacityUp => {
             opacity = Opacity::new((opacity.value() + 0.1).min(1.))
                 .map_err(|_| ModelError::InvalidAnnotation)?
@@ -119,6 +119,20 @@ impl ImageInput {
                     let Some(o) = editor.document().object(id) else {
                         continue;
                     };
+                    if matches!(o.kind(), ObjectKind::Frame(_)) && action == StyleAction::Color {
+                        let color = o.frame_color();
+                        let next = PALETTE[(PALETTE
+                            .iter()
+                            .position(|c| *c == color)
+                            .unwrap_or(PALETTE.len() - 1)
+                            + 1)
+                            % PALETTE.len()];
+                        commands.push(Command::SetFrameColor {
+                            object: id,
+                            color: next,
+                        });
+                        continue;
+                    }
                     let ObjectKind::Annotation(a) = o.kind() else {
                         continue;
                     };
@@ -156,7 +170,9 @@ impl ImageInput {
                     }
                 }
                 editor.execute(Command::Batch(commands))?;
-                self.annotation.style = next_style(self.annotation.style, action)?;
+                if self.images.selection.is_empty() {
+                    self.annotation.style = next_style(self.annotation.style, action)?;
+                }
                 Ok(true)
             }
             Action::RenameFrame
@@ -348,7 +364,12 @@ impl ImageInput {
                         self.annotation.tools.reset_pointer();
                         self.reset_modal_inputs();
                     }
-                    PhysicalKey::Code(KeyCode::Enter) if ctrl => {
+                    PhysicalKey::Code(KeyCode::Enter)
+                        if !self
+                            .state
+                            .modifiers()
+                            .contains(crate::input::Modifiers::SHIFT) =>
+                    {
                         if let Some(edit) = self.annotation.edit.clone() {
                             let id = edit.id;
                             let is_new = edit.is_new;

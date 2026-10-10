@@ -49,12 +49,16 @@ impl Placement {
         }
     }
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Config {
     pub actions: Vec<String>,
     pub placement: Placement,
     pub offset: u16,
+    #[serde(default)]
+    pub offset_set: bool,
+    #[serde(default)]
+    pub last_visible: Placement,
     pub floating: [u16; 2],
 }
 impl Default for Config {
@@ -63,6 +67,8 @@ impl Default for Config {
             actions: DEFAULT_ACTIONS.map(Action::id).to_vec(),
             placement: Placement::Top,
             offset: 0,
+            offset_set: false,
+            last_visible: Placement::Top,
             floating: [48, 48],
         }
     }
@@ -140,7 +146,13 @@ impl Toolbar {
         } else {
             [across as f64 * 22. + 12., rows as f64 * 22. + 4.]
         };
-        let offset = f64::from(config.offset);
+        let offset = if config.offset_set || config.offset > 0 {
+            f64::from(config.offset)
+        } else if vertical {
+            (h - dims[1]) / 2.
+        } else {
+            (w - dims[0]) / 2.
+        };
         let origin = match config.placement {
             Placement::Top => [offset, 2.],
             Placement::Bottom => [offset, h - dims[1] - 2.],
@@ -212,8 +224,13 @@ impl Toolbar {
     }
     pub fn toggle(profile: &mut Preferences) {
         profile.toolbar.placement = if profile.toolbar.placement == Placement::Hidden {
-            Placement::Top
+            if profile.toolbar.last_visible == Placement::Hidden {
+                Placement::Top
+            } else {
+                profile.toolbar.last_visible
+            }
         } else {
+            profile.toolbar.last_visible = profile.toolbar.placement;
             Placement::Hidden
         };
     }

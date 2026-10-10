@@ -169,6 +169,15 @@ impl LocalUi {
         );
         let actions = self.actions(keymap);
         self.selected = self.selected.min(actions.len().saturating_sub(1));
+        if !self.capture
+            && let Some(action) = actions.get(self.selected)
+            && let Some(binding) = keymap
+                .bindings()
+                .iter()
+                .find(|b| shortcut_matches(*action, b.action))
+        {
+            self.release = binding.trigger == Trigger::Hold;
+        }
         self.first = self
             .selected
             .saturating_sub(self.visible / 2)
@@ -193,8 +202,20 @@ impl LocalUi {
                 },
             );
             let bindings: Vec<_> = keymap
-                .for_action(*action)
-                .map(crate::context_menu::binding_label)
+                .bindings()
+                .iter()
+                .filter(|b| shortcut_matches(*action, b.action))
+                .map(|b| {
+                    format!(
+                        "{} [{}]",
+                        crate::context_menu::binding_label(b),
+                        if b.trigger == Trigger::Hold {
+                            "Hold"
+                        } else {
+                            "Normal"
+                        }
+                    )
+                })
                 .collect();
             let label = if bindings.is_empty() {
                 "Unassigned".into()
@@ -222,6 +243,9 @@ impl LocalUi {
                 p.text_secondary,
             );
         }
+        if self.capture {
+            paint.rect([24., 70., 32., 78.], p.accent_attention);
+        }
         let available = !actions.is_empty();
         let gap = 4.;
         let cell = (width - 24. - gap * 2.) / 3.;
@@ -241,7 +265,11 @@ impl LocalUi {
                 ("Export...", Command::Export, true),
                 ("Reset all...", Command::ResetAll, true),
                 (
-                    if self.release { "Release" } else { "Press" },
+                    if self.release {
+                        "Mode: Hold"
+                    } else {
+                        "Mode: Normal"
+                    },
                     Command::Trigger,
                     true,
                 ),
@@ -365,9 +393,11 @@ impl LocalUi {
                 ("Background".into(), format!("{} >", profile.theme.label())),
                 ("Handle Size".into(), format!("{} px", profile.handle_size)),
                 ("Hit Radius".into(), format!("{} px", profile.hit_radius)),
-                ("Keymap...".into(), String::new()),
-                ("Import keymap...".into(), String::new()),
-                ("Export preferences/keymap...".into(), String::new()),
+                (
+                    "Frame title size".into(),
+                    format!("{}x", profile.frame_title_scale),
+                ),
+                ("Export Preferences...".into(), String::new()),
                 ("Close".into(), String::new()),
             ],
             Panel::Scale => ["Auto/System", "1x", "2x", "3x", "4x"]

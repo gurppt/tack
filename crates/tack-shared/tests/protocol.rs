@@ -176,10 +176,10 @@ fn major_magic_truncation_and_declared_oversize_refused_before_body()
         );
     }
     let mut wrong = frame.clone();
-    wrong[4..6].copy_from_slice(&2u16.to_be_bytes());
+    wrong[4..6].copy_from_slice(&3u16.to_be_bytes());
     assert!(matches!(
         read_message(&mut Cursor::new(wrong)),
-        Err(Error::Version(2))
+        Err(Error::Version(3))
     ));
     let mut wrong = frame.clone();
     wrong[0] = 0;

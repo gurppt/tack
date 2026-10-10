@@ -7,6 +7,22 @@ use crate::{
 use winit::{event::MouseButton, keyboard::KeyCode};
 pub fn product_keymap() -> Result<Keymap, BindingError> {
     let mut map = Keymap::default();
+    map.bind(Binding {
+        control: PhysicalControl::LogicalKey(crate::input::LogicalKey::Character('b')),
+        modifiers: ModifierMatch::Exact(Modifiers::NONE),
+        trigger: Trigger::Press,
+        action: Action::AddCameraBookmark,
+    })?;
+    for slot in 0..10u8 {
+        map.bind(Binding {
+            control: PhysicalControl::LogicalKey(crate::input::LogicalKey::Character(char::from(
+                b'0' + slot,
+            ))),
+            modifiers: ModifierMatch::Exact(Modifiers::NONE),
+            trigger: Trigger::Press,
+            action: Action::JumpCameraSlot(slot),
+        })?;
+    }
     use crate::spatial_layout::Layout;
     let left = PhysicalControl::Pointer(PointerButton::Mouse(MouseButton::Left));
     let ctrl = Modifiers::CONTROL;
@@ -14,6 +30,32 @@ pub fn product_keymap() -> Result<Keymap, BindingError> {
     let alt = Modifiers::ALT;
     use crate::{actions::Tool, annotation_tool::StyleAction};
     for (code, mods, action) in [
+        (
+            KeyCode::F8,
+            Modifiers::NONE,
+            Action::ToggleAnnotationSelectionLock,
+        ),
+        (KeyCode::F9, Modifiers::NONE, Action::ToggleToolbar),
+        (
+            KeyCode::ArrowUp,
+            ctrl,
+            Action::Order(crate::selection_commands::Order::Forward),
+        ),
+        (
+            KeyCode::ArrowDown,
+            ctrl,
+            Action::Order(crate::selection_commands::Order::Backward),
+        ),
+        (
+            KeyCode::ArrowUp,
+            ctrl.union(shift),
+            Action::Order(crate::selection_commands::Order::Front),
+        ),
+        (
+            KeyCode::ArrowDown,
+            ctrl.union(shift),
+            Action::Order(crate::selection_commands::Order::Back),
+        ),
         (KeyCode::F10, Modifiers::NONE, Action::ApplicationMenu),
         (KeyCode::KeyN, ctrl, Action::NewBoard),
         (KeyCode::KeyO, ctrl, Action::OpenBoard),
@@ -182,8 +224,16 @@ pub fn product_keymap() -> Result<Keymap, BindingError> {
         (KeyCode::PageUp, Modifiers::NONE, Action::PreviousFrame),
         (KeyCode::ArrowLeft, ctrl, Action::Layout(Layout::Left)),
         (KeyCode::ArrowRight, ctrl, Action::Layout(Layout::Right)),
-        (KeyCode::ArrowUp, ctrl, Action::Layout(Layout::Top)),
-        (KeyCode::ArrowDown, ctrl, Action::Layout(Layout::Bottom)),
+        (
+            KeyCode::ArrowUp,
+            ctrl.union(alt),
+            Action::Layout(Layout::Top),
+        ),
+        (
+            KeyCode::ArrowDown,
+            ctrl.union(alt),
+            Action::Layout(Layout::Bottom),
+        ),
         (
             KeyCode::ArrowLeft,
             ctrl.union(shift),
@@ -191,7 +241,7 @@ pub fn product_keymap() -> Result<Keymap, BindingError> {
         ),
         (
             KeyCode::ArrowUp,
-            ctrl.union(shift),
+            alt.union(shift),
             Action::Layout(Layout::VerticalCenter),
         ),
         (

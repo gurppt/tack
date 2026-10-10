@@ -8,9 +8,11 @@ fn main() -> Result<(), Box<dyn Error>> {
     } else {
         ""
     };
-    let native = manifest.join(format!(
-        "../../target/native/libjpeg-turbo-3.2.0/bin/djpeg{suffix}"
-    ));
+    println!("cargo:rerun-if-env-changed=TACK_JPEG_NATIVE_ROOT");
+    let root = env::var_os("TACK_JPEG_NATIVE_ROOT")
+        .map(PathBuf::from)
+        .unwrap_or_else(|| manifest.join("../../target/native/libjpeg-turbo-3.2.0"));
+    let native = root.join(format!("bin/djpeg{suffix}"));
     println!("cargo:rerun-if-changed={}", native.display());
     let bytes = fs::read(&native)
         .map_err(|e| format!("prepare pinned djpeg with tools/prepare_turbojpeg.py: {e}"))?;

@@ -41,6 +41,10 @@ pub enum Command {
     /// Final back-to-front index after removing the object's old position.
     AddGroup(crate::Group),
     RemoveGroup(crate::GroupId),
+    SetFrameColor {
+        object: ObjectId,
+        color: crate::Color,
+    },
     SetFrameName {
         object: ObjectId,
         name: String,
@@ -160,6 +164,7 @@ impl Command {
                 | Self::AddGroup(_)
                 | Self::RemoveGroup(_)
                 | Self::SetFrameName { .. }
+                | Self::SetFrameColor { .. }
                 | Self::SetText { .. }
                 | Self::SetAnnotationStyle { .. }
         )
@@ -452,6 +457,25 @@ impl Document {
                     Some(SetText {
                         object,
                         text: std::mem::replace(previous, text),
+                    })
+                }
+            }
+            SetFrameColor { object, color } => {
+                let target = self
+                    .objects
+                    .get_mut(&object)
+                    .ok_or(CommandError::MissingObject(object))?;
+                if !matches!(target.kind, ObjectKind::Frame(_)) {
+                    return Err(CommandError::WrongObjectKind(object));
+                }
+                let previous = target.frame_color();
+                if previous == color {
+                    None
+                } else {
+                    target.frame_color = (color != crate::DEFAULT_FRAME_COLOR).then_some(color);
+                    Some(SetFrameColor {
+                        object,
+                        color: previous,
                     })
                 }
             }

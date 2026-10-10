@@ -17,6 +17,7 @@ use winit::{
 pub use crate::product_bindings::product_keymap;
 pub struct ImageInput {
     pub images: ImageInteraction,
+    pub gesture_waiting: bool,
     pub gizmo: ImageGizmo,
     pub keymap: Keymap,
     pub grid_visible: bool,
@@ -42,6 +43,7 @@ impl ImageInput {
     pub fn new() -> Result<Self, BindingError> {
         Ok(Self {
             images: ImageInteraction::default(),
+            gesture_waiting: false,
             gizmo: ImageGizmo::default(),
             keymap: product_keymap()?,
             grid_visible: false,
@@ -79,6 +81,7 @@ impl ImageInput {
         Ok(())
     }
     pub fn cancel(&mut self) {
+        self.gesture_waiting = false;
         if let Some(c) = &self.annotation.creation {
             self.annotation.tools.complete_creation(c.tool);
         }
@@ -202,6 +205,14 @@ impl ImageInput {
         self.gizmo
             .build(&self.images, editor.document(), camera, hover);
         self.spatial_overlay(editor, camera);
+        if self.images.selection.annotations_locked {
+            self.gizmo.label(
+                camera,
+                [56. * self.gizmo.scale, 28. * self.gizmo.scale],
+                "ANNOTATIONS LOCKED",
+                &mut 100,
+            );
+        }
         if let Some(c) = &self.annotation.creation
             && c.tool != crate::actions::Tool::Scribble
             && let Ok(t) = c.transform()
@@ -214,7 +225,7 @@ impl ImageInput {
         }
         if self.annotation.tools.tool().is_annotation() || self.annotation.edit.is_some() {
             let label = if self.annotation.edit.is_some() {
-                "Text Ctrl+Enter"
+                "Enter: done  Shift+Enter: newline"
             } else {
                 self.annotation.tools.tool().label()
             };
@@ -275,7 +286,11 @@ impl ImageInput {
             if self.active_token == Some(token) {
                 self.active_token = None;
                 self.finish_annotation(editor, camera)?;
-                self.images.commit(editor)?;
+                if self.gesture_waiting {
+                    self.images.cancel();
+                } else {
+                    self.images.commit(editor)?;
+                }
                 self.snap.clear();
                 if let Some((start, end, additive)) = self.marquee.take()
                     && let Ok(rect) = WorldRect::new(
@@ -460,6 +475,11 @@ impl ImageInput {
                 Action::Redo => {
                     editor.redo()?;
                 }
+                Action::ToggleAnnotationSelectionLock => {
+                    self.images.selection.annotations_locked =
+                        !self.images.selection.annotations_locked;
+                    self.images.selection.prune(editor.document());
+                }
                 Action::SelectAll => self.images.selection.select_all(editor.document()),
                 Action::DeleteSelection => {
                     self.images.delete(editor)?;
@@ -586,7 +606,9 @@ impl ImageInput {
                 *end = world;
             }
             // Bad geometry is ignored; preserve the last valid preview.
-            let _ = self.update_snapped(world, editor, camera);
+            if !self.gesture_waiting {
+                let _ = self.update_snapped(world, editor, camera);
+            }
         }
         let _ = editor;
         Ok(())

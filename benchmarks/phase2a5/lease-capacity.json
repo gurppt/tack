@@ -1,0 +1,154 @@
+{
+  "server_sha256": "606435b69c0f301908899be9fcc190687beca9a8e13e37aa4e33d470b4d54941",
+  "harness_sha256": "8cd18c5bdf0aa8ff3a7268fc678bcb3db49baa672a9cea791f9c90386b875033",
+  "scope": "RSS includes allocator, JSON and outgoing queues; not exact lease entry allocation",
+  "checks": [
+    {
+      "name": "1024 board leases admitted; 1025th refused",
+      "observed": true,
+      "detail": {
+        "type": "lease_denied",
+        "operation": "68c0e5d86f8949ef953cd89ba8587498",
+        "reason": "Manipulation lease capacity reached"
+      }
+    },
+    {
+      "name": "lease RSS growth measured at 0/256/512/768/1024",
+      "observed": true,
+      "detail": [
+        {
+          "leases": 0,
+          "rss_bytes": 8863744
+        },
+        {
+          "leases": 256,
+          "rss_bytes": 8863744
+        },
+        {
+          "leases": 512,
+          "rss_bytes": 8863744
+        },
+        {
+          "leases": 768,
+          "rss_bytes": 8863744
+        },
+        {
+          "leases": 1024,
+          "rss_bytes": 8863744
+        }
+      ]
+    },
+    {
+      "name": "server has no lease maintenance timer even across expiry",
+      "observed": true,
+      "detail": {
+        "seconds": 5.2077492660610005,
+        "rss_before": 8863744,
+        "rss_after": 8863744,
+        "threads": 11,
+        "tasks": [
+          {
+            "name": "tack-server",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-lan-sessio",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-lan-writer",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-lan-sessio",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-lan-writer",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-lan-sessio",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-lan-writer",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-lan-sessio",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-lan-writer",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-lan-sessio",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-lan-writer",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "ticks": 0,
+        "cpu_percent_one_core": 0.0,
+        "socket_records": [
+          {
+            "kind": "tcp",
+            "record": "6: 0100007F:91EF 00000000:0000 0A 00000000:00000000 00:00000000 00000000  1000        0 12116231 1 0000000000000000 100 0 0 10 0"
+          },
+          {
+            "kind": "tcp",
+            "record": "12: 0100007F:91EF 0100007F:E214 01 00000000:00000000 00:00000000 00000000  1000        0 12116234 1 0000000000000000 20 4 29 10 -1"
+          },
+          {
+            "kind": "tcp",
+            "record": "13: 0100007F:91EF 0100007F:E1F2 01 00000000:00000000 00:00000000 00000000  1000        0 12116232 1 0000000000000000 20 4 1 10 -1"
+          },
+          {
+            "kind": "tcp",
+            "record": "15: 0100007F:91EF 0100007F:E1FC 01 00000000:00000000 00:00000000 00000000  1000        0 12108247 1 0000000000000000 20 5 29 10 -1"
+          },
+          {
+            "kind": "tcp",
+            "record": "29: 0100007F:91EF 0100007F:E204 01 00000000:00000000 00:00000000 00000000  1000        0 12116233 1 0000000000000000 20 4 29 10 -1"
+          },
+          {
+            "kind": "tcp",
+            "record": "32: 0100007F:91EF 0100007F:E208 01 00000000:00000000 00:00000000 00000000  1000        0 12108248 1 0000000000000000 20 4 29 10 -1"
+          }
+        ],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        }
+      }
+    },
+    {
+      "name": "expired full table is empty on explicit rejoin",
+      "observed": true,
+      "detail": {
+        "type": "lease_snapshot",
+        "leases": []
+      }
+    }
+  ]
+}

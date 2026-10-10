@@ -8,15 +8,46 @@ use tack_app::{
 };
 impl App {
     pub(super) fn share_panel(&mut self) -> Result<(), AssetError> {
-        let (rows, choices) = if self.host.is_some() {
+        let disconnected = self.offline.is_some()
+            && self
+                .shared
+                .as_ref()
+                .is_none_or(|s| s.state != tack_shared::client::ConnectionState::Connected);
+        let (mut rows, mut choices) = if disconnected {
+            (
+                vec![
+                    "SHARED BOARD OFFLINE".into(),
+                    "Editing is disabled until you reconnect.".into(),
+                    "RECONNECT".into(),
+                    "SAVE TO LOCAL...".into(),
+                ],
+                vec![
+                    Choice::None,
+                    Choice::None,
+                    if self.shared.is_some() {
+                        Choice::Reconnect
+                    } else {
+                        Choice::Online
+                    },
+                    Choice::SaveLocal,
+                ],
+            )
+        } else if self.host.is_some() {
             (
                 vec![
                     "Board is online from this computer".into(),
+                    "Original local board remains on disk".into(),
                     "Copy Invite".into(),
                     "Stop Sharing".into(),
                     "Advanced sharing...".into(),
                 ],
-                vec![Choice::None, Choice::Copy, Choice::Stop, Choice::Advanced],
+                vec![
+                    Choice::None,
+                    Choice::None,
+                    Choice::Copy,
+                    Choice::Stop,
+                    Choice::Advanced,
+                ],
             )
         } else if self.shared.is_some() {
             (
@@ -57,6 +88,29 @@ impl App {
                 vec![Choice::Host, Choice::Remote],
             )
         };
+        let invite = self
+            .host
+            .as_ref()
+            .map(|h| h.descriptor.invite.clone())
+            .or_else(|| {
+                self.shared
+                    .as_ref()
+                    .map(|s| format!("tack://{}/{}", s.address, s.board))
+            })
+            .or_else(|| self.offline.as_ref().map(|d| d.invite.clone()));
+        if let Some(invite) = invite {
+            let columns = ((f64::from(self.camera.screen_size()[0]) / self.camera.ui_scale() - 64.)
+                / 8.)
+                .floor()
+                .clamp(12., 68.) as usize;
+            let mut links = vec!["Invite".into()];
+            for chunk in invite.as_bytes().chunks(columns) {
+                links.push(String::from_utf8_lossy(chunk).into_owned());
+            }
+            let count = links.len();
+            rows.splice(1..1, links);
+            choices.splice(1..1, std::iter::repeat_n(Choice::None, count));
+        }
         self.daily_panel(
             Panel::Sharing,
             DailyPanel {
@@ -99,6 +153,7 @@ impl App {
                 );
             }
             Choice::Start => self.pick_share_copy()?,
+            Choice::SaveLocal => self.local_action(Action::SaveToLocal)?,
             Choice::Copy => self.daily_action(Action::CopySharedBoardAddress)?,
             Choice::Stop => self.stop_hosting(false)?,
             Choice::Offline => self.local.ui = None,
@@ -124,7 +179,7 @@ impl App {
                 } else if let Some(s) = &self.shared {
                     rows.push(format!("{} / {}", s.address, s.board));
                 }
-                rows.push("Protocol 1 - shared cache max 512 MiB".into());
+                rows.push("Protocol 2 - shared cache max 512 MiB".into());
                 self.daily_panel(
                     Panel::Info,
                     DailyPanel {
@@ -220,6 +275,42 @@ impl App {
             })?;
         }
         self.daily_panel(Panel::Connecting, DailyPanel::default());
+        Ok(())
+    }
+    pub(super) fn abort_shared_transition(&mut self) {
+        self.shared = None;
+        self.host = None;
+        self.offline = None;
+        self.shared_copy = None;
+        self.input.gesture_waiting = false;
+        self.input.images.blocked.clear();
+        self.input.images.reservation_pending = false;
+        self.local.ui = None;
+        self.dirty = true;
+    }
+    pub(super) fn share_ready(
+        &mut self,
+        result: Result<Option<tack_app::hosting::ShareReady>, String>,
+    ) -> Result<(), AssetError> {
+        let Some(ready) = result.map_err(AssetError::from)? else {
+            self.local.ui = None;
+            return Ok(());
+        };
+        let address = ready.descriptor.address()?;
+        let mut state = shared::SharedState::start(
+            address.server.to_string(),
+            address.board,
+            self.work.join("shared"),
+            self.proxy.clone(),
+        )?;
+        state.transitioning = true;
+        self.shared_copy = Some(ready.snapshot);
+        self.offline = Some(ready.descriptor);
+        self.host = ready.host;
+        self.shared = Some(Box::new(state));
+        self.interaction_error =
+            Some("Sharing this view; the original local file remains on disk".into());
+        self.dirty = true;
         Ok(())
     }
     pub(super) fn host_ready(

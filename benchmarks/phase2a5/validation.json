@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "rust_tests_passed": 350,
+  "python_tests": 28,
+  "gpu_tests": 11,
+  "gate_log_sha256": "ab2c52e76174f9ed2fd0c5410b55be7d5e2c55a3f3df50387599743281106ac0",
+  "gpu_log_sha256": "b27740dfbb760c0913b29ee99928b6554545586f2b1b71b99c3624cf3a02af92",
+  "cargo_lock_sha256": "2387e7e539c7c250ebad451a7e879f0e148e7707e9b6791e849a888400cd3940",
+  "dependency_delta": 0,
+  "physical_two_computer": "PENDING",
+  "physical_windows_desktop": "PENDING"
+}

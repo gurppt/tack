@@ -19,7 +19,7 @@ impl App {
             &self.local.profile.toolbar,
             self.camera.screen_size(),
             self.camera.ui_scale(),
-            self.local.profile.status_bar,
+            self.local.profile.status_bar || self.shared.is_some() || self.offline.is_some(),
         );
         self.dirty = true;
     }
@@ -29,6 +29,10 @@ impl App {
             .as_ref()
             .and_then(|m| m.hovered_action())
             .or(self.chrome.toolbar.hover);
+        if self.local.feedback_deadline.is_some() {
+            self.chrome.status = "COPIED".into();
+            return;
+        }
         let state = if let Some(s) = &self.shared {
             match s.state {
                 tack_shared::client::ConnectionState::Connected => "Shared board online",
@@ -52,7 +56,12 @@ impl App {
             self.chrome.last_state = state;
             self.chrome.status = if let Some(a) = hovered {
                 format!(
-                    "{}  [{}]",
+                    "{}  {}  [{}]",
+                    if self.shared.is_some() || self.offline.is_some() {
+                        state
+                    } else {
+                        ""
+                    },
                     a.label(),
                     tack_app::context_menu::shortcut(&self.input.keymap, a)
                 )
@@ -74,10 +83,32 @@ impl App {
             self.pointer = [position.x, position.y];
             if let Some(delta) = self.chrome.toolbar.drag {
                 let scale = self.camera.ui_scale().round().clamp(1., 4.);
-                self.local.profile.toolbar.floating = [
-                    ((position.x - delta[0]) / scale).clamp(0., 8192.) as u16,
-                    ((position.y - delta[1]) / scale).clamp(0., 8192.) as u16,
-                ];
+                match self.local.profile.toolbar.placement {
+                    Placement::Top | Placement::Bottom => {
+                        self.local.profile.toolbar.offset = ((self.pointer[0] - delta[0]) / scale)
+                            .round()
+                            .clamp(0., 8192.)
+                            as u16;
+                        self.local.profile.toolbar.offset_set = true;
+                    }
+                    Placement::Left | Placement::Right => {
+                        self.local.profile.toolbar.offset = ((self.pointer[1] - delta[1]) / scale)
+                            .round()
+                            .clamp(0., 8192.)
+                            as u16;
+                        self.local.profile.toolbar.offset_set = true;
+                    }
+                    _ => {
+                        self.local.profile.toolbar.floating = [
+                            ((self.pointer[0] - delta[0]) / scale)
+                                .round()
+                                .clamp(0., 8192.) as u16,
+                            ((self.pointer[1] - delta[1]) / scale)
+                                .round()
+                                .clamp(0., 8192.) as u16,
+                        ]
+                    }
+                }
                 self.chrome_layout();
                 return Ok(true);
             }
@@ -125,9 +156,7 @@ impl App {
                 }
             )
         {
-            if self.chrome.toolbar.grip_hit(self.pointer)
-                && self.local.profile.toolbar.placement == Placement::Floating
-            {
+            if self.chrome.toolbar.grip_hit(self.pointer) {
                 let b = self.chrome.toolbar.bounds;
                 self.chrome.toolbar.drag = Some([self.pointer[0] - b[0], self.pointer[1] - b[1]]);
             } else if let Some(a) = self.chrome.toolbar.hit(self.pointer) {
@@ -214,7 +243,7 @@ pub(super) fn draw(
     }
     gpu.set_ui_icons(&icons[..count])?;
     let [w, h] = c.screen_size().map(f64::from);
-    if p.status_bar {
+    if p.status_bar || shared.is_some() {
         g.pixel_rect(c, [0., h - 20. * scale], [w, h], palette.menu_bg, None);
         let mut budget = 180;
         g.ui_text(
@@ -233,11 +262,7 @@ pub(super) fn draw(
             | tack_shared::client::ConnectionState::Reconnecting => palette.accent_attention,
             _ => [0.85, 0.02, 0.02, 1.],
         };
-        let y = if p.status_bar {
-            h - 14. * scale
-        } else {
-            6. * scale
-        };
+        let y = h - 14. * scale;
         g.pixel_rect(
             c,
             [5. * scale, y],

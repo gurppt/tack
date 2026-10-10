@@ -36,25 +36,16 @@ fn nested_keymap_back_and_direct_close_release_all_capture_state()
 -> Result<(), tack_assets::AssetError> {
     let mut profile = Preferences::defaults()?;
     let mut keymap = profile.keymap()?;
-    let mut ui = LocalUi::new(Panel::Preferences);
-    for _ in 0..20 {
-        ui.selected = 7;
-        assert!(ui.activate(&mut keymap, &mut profile).is_none());
-        assert_eq!(ui.panel, Panel::Keymap);
-        ui.capture = true;
-        ui.release = true;
-        ui.focus = Some(Command::Search);
-        ui.confirm_reset = Some(ResetScope::All);
-        ui.search = "Undo".into();
-        assert!(
-            ui.command(Command::Close, &mut keymap, &mut profile)
-                .is_none()
-        );
-        assert_eq!(ui.panel, Panel::Preferences);
-        assert_eq!(ui.selected, 7);
-        assert!(!ui.capture && !ui.release && ui.focus.is_none() && ui.confirm_reset.is_none());
-        assert!(ui.search.is_empty() && ui.parents.is_empty());
-    }
+    let mut ui = LocalUi::new(Panel::Keymap);
+    ui.capture = true;
+    ui.release = true;
+    ui.focus = Some(Command::Search);
+    ui.confirm_reset = Some(ResetScope::All);
+    assert!(matches!(
+        ui.command(Command::Close, &mut keymap, &mut profile),
+        Some(UiResult::Dismiss)
+    ));
+    assert!(!ui.capture && !ui.release && ui.focus.is_none() && ui.confirm_reset.is_none());
     let mut direct = LocalUi::new(Panel::Keymap);
     assert!(matches!(direct.back(), Some(UiResult::Dismiss)));
     Ok(())
@@ -104,7 +95,7 @@ fn numeric_changes_are_bounded_and_reversible_without_wrap() -> Result<(), tack_
     Ok(())
 }
 #[test]
-fn capture_conflict_preserves_old_binding_and_global_reset_requires_confirm()
+fn capture_conflict_reassigns_binding_and_global_reset_requires_confirm()
 -> Result<(), tack_assets::AssetError> {
     let mut profile = Preferences::defaults()?;
     let mut keymap = profile.keymap()?;
@@ -118,14 +109,21 @@ fn capture_conflict_preserves_old_binding_and_global_reset_requires_confirm()
         ModifierMatch::Exact(m) => m,
         _ => Modifiers::NONE,
     };
-    let before = serde_json::to_vec(&profile)?;
     ui.command(Command::Change, &mut keymap, &mut profile);
-    assert!(
-        ui.capture_binding(paste.control, &mut keymap, &mut profile)
-            .is_none()
+    assert!(matches!(
+        ui.capture_binding(paste.control, &mut keymap, &mut profile),
+        Some(UiResult::PreferencesChanged)
+    ));
+    assert_eq!(keymap.for_action(Action::Paste).count(), 0);
+    assert_eq!(
+        keymap
+            .for_action(Action::Undo)
+            .next()
+            .ok_or("Undo")?
+            .control,
+        paste.control
     );
-    assert_eq!(serde_json::to_vec(&profile)?, before);
-    assert!(ui.message.contains(Action::Paste.label()) && ui.message.contains("Refused"));
+    assert!(ui.message.contains(Action::Paste.label()) && ui.message.contains("unbound"));
     ui.command(Command::Cancel, &mut keymap, &mut profile);
     ui.command(Command::Unassign, &mut keymap, &mut profile);
     assert_eq!(keymap.for_action(Action::Undo).count(), 0);
@@ -143,7 +141,13 @@ fn filter_matches_action_category_and_active_shortcut_case_insensitively()
 -> Result<(), tack_assets::AssetError> {
     let profile = Preferences::defaults()?;
     let keymap = profile.keymap()?;
-    assert_eq!(filtered_actions("", &keymap).len(), Action::ALL.len());
+    assert_eq!(
+        filtered_actions("", &keymap).len(),
+        Action::ALL
+            .into_iter()
+            .filter(|a| !matches!(a, Action::TemporaryTool(_)))
+            .count()
+    );
     assert!(filtered_actions("uNdO", &keymap).contains(&Action::Undo));
     assert!(filtered_actions(Action::Undo.category(), &keymap).contains(&Action::Undo));
     let label = crate::context_menu::binding_label(

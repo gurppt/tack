@@ -26,6 +26,7 @@ pub enum Choice {
     Offline,
     Online,
     Reconnect,
+    SaveLocal,
 }
 pub fn sidecar(path: &Path) -> PathBuf {
     let mut name = path.as_os_str().to_owned();

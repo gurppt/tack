@@ -34,6 +34,7 @@ pub struct ImageGizmo {
     pub style: GizmoStyle,
     pub palette: crate::ui_theme::Palette,
     pub scale: f64,
+    pub frame_title_scale: u8,
     hit_scale: f64,
     pub quads: Vec<OverlayQuad>,
     pub selection: Vec<SelectionRect>,
@@ -44,6 +45,7 @@ impl Default for ImageGizmo {
             style: GizmoStyle::default(),
             palette: crate::ui_theme::Theme::default().palette(),
             scale: 1.,
+            frame_title_scale: 2,
             hit_scale: 1.,
             quads: Vec::with_capacity(128),
             selection: Vec::new(),
@@ -170,8 +172,27 @@ impl ImageGizmo {
                     self.selection
                         .reserve_exact(capacity - self.selection.len());
                 }
+                let outer = doc.object(id).is_some_and(|o| match o.kind() {
+                    tack_core::ObjectKind::Frame(_) => true,
+                    tack_core::ObjectKind::Annotation(a) => {
+                        matches!(a.kind(), tack_core::AnnotationKind::Rect)
+                    }
+                    _ => false,
+                });
+                let margin = 3. * self.scale / camera.zoom();
+                let outline = if outer {
+                    Transform::new(
+                        t.center(),
+                        t.size().map(|s| s + margin * 2.),
+                        t.rotation(),
+                        t.flips(),
+                    )
+                    .unwrap_or(t)
+                } else {
+                    t
+                };
                 self.selection.push(SelectionRect {
-                    transform: t,
+                    transform: outline,
                     color,
                     width: self.style.line_width * self.scale / camera.ui_scale(),
                 });

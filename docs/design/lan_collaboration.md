@@ -21,11 +21,12 @@ undo command can mutate shared authority directly. `BackendRequest` contains
 only a semantic Command, Undo or Redo; the core has no network dependencies.
 
 The native adapter submits one durable request at a time. Another request waits
-for acceptance or visible refusal. Remote accepted edits discard unsent requests
-created against older authority and cancel an active gesture/text edit. An
-already transmitted operation keeps its original base revision and is refused
-if stale. A refusal never counts as a document mutation. An accepted command
-increments the editor generation and updates the ordinary query/render path.
+for acceptance or visible refusal. Phase 2A5 captures request bases and checks
+[object conflict clocks and transient leases](object_revisions_leases.md).
+Unrelated accepted edits preserve active gestures and local UI. Exact target
+changes invalidate only intersecting gestures/drafts/unsent edits; menu actions
+check fresh live targets. Refusal does not count as a mutation or clear unrelated
+queued requests. An accepted command advances ordinary query/render generation.
 Camera, selection, tools, preferences and renderer caches never enter the wire.
 A fixed pixel indicator and artist-facing status/title expose connection state.
 Revision/address debugging belongs in Advanced or explicit diagnostics; F5

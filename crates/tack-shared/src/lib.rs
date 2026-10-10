@@ -4,13 +4,17 @@ mod domain;
 mod framing;
 mod identity;
 mod protocol;
+mod scope;
 pub use commands::{AssetDto, CommandDto, ObjectDto, SourceDto, StyleDto, TextDto, TransformDto};
 pub use domain::{DocumentRecord, SourceBinding, shared_document};
 pub use framing::{decode_message, encode_message, read_message, write_message};
 pub use identity::{ContentHash, WireId, decode_hex, encode_hex, hash_reader};
-pub use protocol::{Message, RefusalCode};
+pub use protocol::{
+    LEASE_TTL_MS, LeaseRecord, MAX_BOARD_LEASES, MAX_LEASE_TARGETS, Message, RefusalCode,
+};
+pub use scope::CommandScope;
 
-pub const PROTOCOL_MAJOR: u16 = 1;
+pub const PROTOCOL_MAJOR: u16 = 2;
 pub const MAX_FRAME_BYTES: usize = 64 * 1024 * 1024;
 pub const MAX_OPERATION_BYTES: usize = 1024 * 1024;
 pub const MAX_CHUNK_BYTES: usize = 64 * 1024;

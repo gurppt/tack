@@ -85,9 +85,11 @@ pub enum Action {
     ApplicationMenu,
     About,
     NewBoard,
+    CloseBoard,
     OpenBoard,
     ImportImages,
     SaveAs,
+    SaveToLocal,
     Paste,
     RelinkSource,
     SaveOriginalAs,
@@ -96,21 +98,24 @@ pub enum Action {
     RecentBoards,
     ImportKeymap,
     ExportKeymap,
+    ExportPreferences,
     DuplicateSelection,
     AddCameraBookmark,
+    JumpCameraSlot(u8),
     CameraBookmarks,
     SourceInfo,
     JoinSharedBoard,
     CopySharedBoardAddress,
     ShareBoard,
     StopSharing,
+    ToggleAnnotationSelectionLock,
     ToggleToolbar,
     EditToolbar,
     ToggleStatusBar,
 }
 impl Action {
     /// Enumerable action catalog, including currently unassigned actions.
-    pub const ALL: [Self; 104] = [
+    pub const ALL: [Self; 118] = [
         Self::SelectTool(Tool::Pointer),
         Self::SelectTool(Tool::Pan),
         Self::SelectTool(Tool::RotateView),
@@ -193,9 +198,11 @@ impl Action {
         Self::ApplicationMenu,
         Self::About,
         Self::NewBoard,
+        Self::CloseBoard,
         Self::OpenBoard,
         Self::ImportImages,
         Self::SaveAs,
+        Self::SaveToLocal,
         Self::Paste,
         Self::RelinkSource,
         Self::SaveOriginalAs,
@@ -204,14 +211,26 @@ impl Action {
         Self::RecentBoards,
         Self::ImportKeymap,
         Self::ExportKeymap,
+        Self::ExportPreferences,
         Self::DuplicateSelection,
         Self::AddCameraBookmark,
+        Self::JumpCameraSlot(0),
+        Self::JumpCameraSlot(1),
+        Self::JumpCameraSlot(2),
+        Self::JumpCameraSlot(3),
+        Self::JumpCameraSlot(4),
+        Self::JumpCameraSlot(5),
+        Self::JumpCameraSlot(6),
+        Self::JumpCameraSlot(7),
+        Self::JumpCameraSlot(8),
+        Self::JumpCameraSlot(9),
         Self::CameraBookmarks,
         Self::SourceInfo,
         Self::JoinSharedBoard,
         Self::CopySharedBoardAddress,
         Self::ShareBoard,
         Self::StopSharing,
+        Self::ToggleAnnotationSelectionLock,
         Self::ToggleToolbar,
         Self::EditToolbar,
         Self::ToggleStatusBar,
@@ -229,9 +248,11 @@ impl Action {
             Self::ApplicationMenu
                 | Self::About
                 | Self::NewBoard
+                | Self::CloseBoard
                 | Self::OpenBoard
                 | Self::ImportImages
                 | Self::SaveAs
+                | Self::SaveToLocal
                 | Self::Paste
                 | Self::RelinkSource
                 | Self::SaveOriginalAs
@@ -240,8 +261,10 @@ impl Action {
                 | Self::RecentBoards
                 | Self::ImportKeymap
                 | Self::ExportKeymap
+                | Self::ExportPreferences
                 | Self::DuplicateSelection
                 | Self::AddCameraBookmark
+                | Self::JumpCameraSlot(_)
                 | Self::CameraBookmarks
                 | Self::SourceInfo
                 | Self::JoinSharedBoard
@@ -262,6 +285,7 @@ impl Action {
             | Self::ZoomView
             | Self::CenterPointer
             | Self::AddCameraBookmark
+            | Self::JumpCameraSlot(_)
             | Self::CameraBookmarks => "Navigation",
             Self::DuplicateSelection => "Selection and editing",
             Self::SourceInfo => "Sources",
@@ -358,7 +382,7 @@ impl Action {
             Self::UngroupSelection => "Ungroup selection",
             Self::CreateFrame => "Create frame",
             Self::RenameFrame => "Rename frame",
-            Self::FocusFrame => "Focus selected frame",
+            Self::FocusFrame => "Fit Frame in View",
             Self::NextFrame => "Focus next frame",
             Self::PreviousFrame => "Focus previous frame",
             Self::SelectTool(tool) => tool.label(),
@@ -379,9 +403,11 @@ impl Action {
             Self::CopySourcePath => "Copy linked source path",
             Self::ApplicationMenu => "Local menu",
             Self::About => "About Tack",
+            Self::CloseBoard => "Close Board",
             Self::NewBoard => "New board",
             Self::OpenBoard => "Open board",
             Self::ImportImages => "Import images",
+            Self::SaveToLocal => "Save to Local...",
             Self::SaveAs => "Save As",
             Self::Paste => "Paste",
             Self::RelinkSource => "Relink selected source",
@@ -390,15 +416,30 @@ impl Action {
             Self::KeymapEditor => "Edit keymap",
             Self::RecentBoards => "Recent boards",
             Self::ImportKeymap => "Import keymap",
+            Self::ExportPreferences => "Export Preferences...",
             Self::ExportKeymap => "Export keymap",
             Self::DuplicateSelection => "Duplicate selection",
-            Self::AddCameraBookmark => "Add camera bookmark...",
+            Self::AddCameraBookmark => "Assign view shortcut...",
+            Self::JumpCameraSlot(slot) => match slot {
+                0 => "Jump to view 0",
+                1 => "Jump to view 1",
+                2 => "Jump to view 2",
+                3 => "Jump to view 3",
+                4 => "Jump to view 4",
+                5 => "Jump to view 5",
+                6 => "Jump to view 6",
+                7 => "Jump to view 7",
+                8 => "Jump to view 8",
+                9 => "Jump to view 9",
+                _ => "Jump to view",
+            },
             Self::CameraBookmarks => "Camera bookmarks...",
             Self::SourceInfo => "Image information...",
             Self::JoinSharedBoard => "Join shared board...",
             Self::CopySharedBoardAddress => "Copy Invite",
             Self::ShareBoard => "Share Board...",
             Self::StopSharing => "Stop Sharing",
+            Self::ToggleAnnotationSelectionLock => "Lock annotation selection",
             Self::ToggleToolbar => "Show / hide toolbar",
             Self::EditToolbar => "Edit Toolbar...",
             Self::ToggleStatusBar => "Show / hide status bar",

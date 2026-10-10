@@ -543,6 +543,7 @@ fn nested_temporary_tools_never_outlive_modal_note_state() -> R {
         let mut c = Camera::new([800, 600]);
         invoke(&mut input, &mut e, &mut c, Action::SelectTool(Tool::Pan))?;
         for (ch, tool) in [('b', Tool::Pan), ('q', Tool::Text)] {
+            input.keymap.unassign(Action::AddCameraBookmark);
             input.keymap.bind(Binding {
                 control: PhysicalControl::LogicalKey(LogicalKey::Character(ch)),
                 modifiers: ModifierMatch::Exact(Modifiers::NONE),

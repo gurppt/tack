@@ -1,0 +1,98 @@
+{
+  "binary_sha256": "a44797c860d0ca2ca7a45a7fbe87bc3d61efdb77a338687c2936b16cfbce8a85",
+  "harness_sha256": "442ec7542ee3d73593e27df44c2d77f72573d37b10e311a4fc491355981620c0",
+  "scope": "Native Linux GPU on owned isolated display; physical LAN/Windows pending",
+  "checks": [
+    {
+      "name": "native repeated toolbar toggle Top",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "native repeated toolbar toggle Left",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "native repeated toolbar toggle Right",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "native repeated toolbar toggle Bottom",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "native repeated toolbar toggle Floating",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "toolbar editor reset returns centered Top",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "double-click capture reassigns collision and unbinds old action",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "Share transitions current view and preserves local original",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "Copy returns visible canonical invite",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "Save to Local has fresh identity, originals and no shared companion",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "local copy accepts edits without server",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "Close Board retains application process",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "Note Shift+Enter newline and Enter completion",
+      "observed": true,
+      "detail": [
+        {
+          "id": 216558375846194570337561463293336744782,
+          "kind": 3,
+          "center": [
+            -110.0,
+            -50.0
+          ],
+          "size": [
+            220.0,
+            140.0
+          ],
+          "rotation": 0.0,
+          "stroke": [
+            255,
+            198,
+            82,
+            255
+          ],
+          "filled": 0,
+          "width": 3.0,
+          "opacity": 1.0,
+          "font_size": 24.0,
+          "alignment": 0,
+          "text": "First\nSecond"
+        }
+      ]
+    }
+  ]
+}

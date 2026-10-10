@@ -150,39 +150,7 @@ fn run_mode(
                         return Err("new board filename already exists".into());
                     }
                     let lease = if untitled {
-                        let mut chosen = None;
-                        for slot in 1..=16 {
-                            let candidate = root.join(format!("untitled-slot-{slot}.tack"));
-                            // Reclaim only an owned, verified empty crash seed with no
-                            // recovery directory. Never infer discard from an empty base.
-                            if let Ok(metadata) = std::fs::symlink_metadata(&candidate) {
-                                // Reclamation owns this private leaf, never a symlink's
-                                // external target (ordinary Open deliberately allows aliases).
-                                if !metadata.is_file() || metadata.file_type().is_symlink() {
-                                    continue;
-                                }
-                                if let Ok(owner) = tack_storage::BoardLease::acquire(&candidate)
-                                    && !owner.recovery_directory().exists()
-                                    && let Ok(seed) = owner.open()
-                                    && seed.document.objects().next().is_none()
-                                    && seed.document.sources().next().is_none()
-                                    && owner.retire_empty_seed(seed.document.id()).is_ok()
-                                {
-                                    chosen = Some(owner);
-                                    break;
-                                }
-                                continue;
-                            }
-                            if let Ok(owner) = tack_storage::BoardLease::acquire_new(&candidate)
-                                && !owner.recovery_directory().exists()
-                            {
-                                chosen = Some(owner);
-                                break;
-                            }
-                        }
-                        Arc::new(chosen.ok_or(
-                            "16 retained Untitled boards; open Recent boards to recover/save them",
-                        )?)
+                        tack_app::local_worker::untitled_lease(&root)?
                     } else {
                         Arc::new(if new_board {
                             tack_storage::BoardLease::acquire_new(&input)?

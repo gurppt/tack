@@ -1,4 +1,4 @@
-# Phase 2A LAN protocol, major 1
+# LAN protocol, major 2 (Phase 2A5)
 
 Tack uses an optional, persistent, bidirectional TCP protocol with explicit semantic
 records. Linking `tack-shared` creates no socket, worker, timer or service. Only
@@ -18,7 +18,7 @@ Each frame has a ten-byte header followed by exactly the declared UTF-8 JSON byt
 | Offset | Length | Meaning |
 | --- | --- | --- |
 | 0 | 4 | ASCII `TLAN` |
-| 4 | 2 | Protocol major, unsigned big endian; currently 1 |
+| 4 | 2 | Protocol major, unsigned big endian; currently 2 |
 | 6 | 4 | Payload byte count, unsigned big endian |
 | 10 | count | JSON message |
 
@@ -55,6 +55,8 @@ All messages have a `type` field with the following stable names. The Rust
 | `accepted` | Authoritative board/revision, origin client/operation, command and source-binding delta |
 | `undo`, `redo` | Operation ID and base revision; inverse selection belongs to the server |
 | `refused` | Optional operation ID, current revision, typed reason code and short printable explanation |
+| `lease_acquire`, `lease_release` | Explicit bounded active-transform reservation and release |
+| `lease_snapshot`, `lease_changed`, `lease_denied` | Temporary ownership, expiry and refusal; never document history |
 | `asset_begin` | SHA-256 hash and declared total length |
 | `asset_status` | Hash/length and whether the verified original already exists |
 | `asset_chunk` | Hash, absolute offset and hex-encoded bytes |
@@ -78,7 +80,7 @@ edit acknowledgement.
 (sources/assets/objects) and hexadecimal metadata bytes. The metadata codec is
 the same explicit validated codec used by local `.tack` snapshots; no Rust memory
 layout, caches, renderer data or executable content crosses the wire. Schemas
-1 through 3 are supported. The LAN envelope permits less than 32 MiB of binary
+1 through 5 are supported. Schema 5 adds optional Frame palette colors. The LAN envelope permits less than 32 MiB of binary
 metadata so the encoded snapshot remains within its 64-MiB frame bound. Source
 bindings and JSON overhead count toward that final frame bound too.
 
@@ -94,7 +96,7 @@ from a validated hash after decoding, outside document authority.
 
 Commands have stable `kind` names for all current core operations: flat batch,
 add/remove/set source, add/remove/set asset, add/remove object, transform, crop,
-opacity, filtering, add/remove group, frame name, annotation style, text and order.
+opacity, filtering, add/remove group, frame name/color, annotation style, text and order.
 The object DTO includes all image properties and frame or annotation metadata;
 annotations include rectangle, text, line, arrow and scribble. Ellipses are absent.
 
@@ -128,8 +130,14 @@ original request whose receipt expired retains its old base and is stale rather
 than being applied again. This is a bounded idempotence window, not an unbounded
 operation archive.
 
-The server decides authoritative ordering, duplicate-operation receipts, stale
-base handling, inverse conflicts and durable publication. Reconnection starts
+The server decides authoritative ordering, duplicate-operation receipts, scoped
+base handling, inverse conflicts and durable publication. A global base is a
+snapshot timestamp, not a board lock: object stamps and dependency/order barriers
+validate the affected scope. Leases last five seconds and renew only while a
+native transform is active; settled idle has no lease heartbeat. See
+[object revisions and leases](object_revisions_leases.md) for bounds and undo
+ownership rules. Major 1 peers must upgrade; incompatible framing fails explicitly.
+Reconnection starts
 with Hello and authoritative reconciliation, not an opaque replay of a client's
 private history. See the authority/storage and conflict notes for those policies.
 

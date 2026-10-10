@@ -44,6 +44,58 @@ fn edit(x: f64) -> Result<CommandDto, Box<dyn std::error::Error>> {
     })?)
 }
 #[test]
+fn unrelated_edits_and_undo_survive_global_revision_changes_and_restart() -> R {
+    let work = Work::new()?;
+    let mut document = fixture()?;
+    document.apply(Command::AddObject {
+        object: DocumentObject::frame(
+            ObjectId::new(4)?,
+            "Frame".into(),
+            Transform::new([0., 0.], [100., 100.], 0., [false; 2])?,
+        )?,
+        index: 1,
+    })?;
+    let mut authority = Authority::publish(&work.0, document, vec![])?;
+    let a = WireId::new(20)?;
+    let b = WireId::new(21)?;
+    let name = CommandDto::from_command(&Command::SetFrameName {
+        object: ObjectId::new(4)?,
+        name: "Other target".into(),
+    })?;
+    authority.edit(b, WireId::new(30)?, 0, name, vec![])?;
+    assert_eq!(
+        authority
+            .edit(a, WireId::new(31)?, 0, edit(11.)?, vec![])?
+            .revision,
+        2
+    );
+    authority = Authority::open(&work.0, authority.board())?;
+    assert!(
+        authority
+            .edit(b, WireId::new(32)?, 0, edit(12.)?, vec![])
+            .is_err()
+    );
+    assert_eq!(
+        authority.history(b, WireId::new(33)?, 2, false)?.revision,
+        3
+    );
+    assert_eq!(
+        authority.history(a, WireId::new(34)?, 3, false)?.revision,
+        4
+    );
+    assert_eq!(
+        authority
+            .document()
+            .object(ObjectId::new(3)?)
+            .ok_or("image")?
+            .transform()
+            .center(),
+        [10., 20.]
+    );
+    assert_eq!(authority.history(a, WireId::new(35)?, 4, true)?.revision, 5);
+    Ok(())
+}
+#[test]
 fn authority_dedupe_stale_conflict_persisted_undo() -> R {
     let work = Work::new()?;
     let mut authority = Authority::publish(&work.0, fixture()?, vec![])?;
@@ -259,5 +311,28 @@ fn binding_cannot_change_without_source_replacement() -> R {
     );
     assert_eq!(authority.revision(), 0);
     assert_eq!(authority.sources(), &[old]);
+    Ok(())
+}
+
+#[test]
+fn undo_does_not_rearm_across_another_clients_same_object_edit() -> R {
+    let work = Work::new()?;
+    let mut authority = Authority::publish(&work.0, fixture()?, vec![])?;
+    let a = WireId::new(20)?;
+    let b = WireId::new(21)?;
+    authority.edit(a, WireId::new(30)?, 0, edit(11.)?, vec![])?;
+    authority.edit(b, WireId::new(31)?, 1, edit(12.)?, vec![])?;
+    authority.edit(a, WireId::new(32)?, 2, edit(13.)?, vec![])?;
+    authority.history(a, WireId::new(33)?, 3, false)?;
+    assert!(authority.history(a, WireId::new(34)?, 4, false).is_err());
+    assert_eq!(
+        authority
+            .document()
+            .object(ObjectId::new(3)?)
+            .ok_or("image")?
+            .transform()
+            .center(),
+        [12., 20.]
+    );
     Ok(())
 }

@@ -6,11 +6,14 @@ Scribble, Frame, Duplicate, Undo, Redo, Share. Pan uses existing camera pan;
 tool choice and camera remain local even on shared boards.
 
 View → Toggle Toolbar / Edit Toolbar / Toggle Status Bar are remappable
-semantic actions. The temporary editor toggles catalog entries, reorders with
-Up/Down, cycles Top/Left/Right/Bottom/Floating/Hidden and resets the defaults.
-Floating moves by its small grip inside the canvas. Preferences persist at most
+semantic actions. The temporary two-column editor lists Available Actions and Toolbar Order,
+with Add/Remove, Up/Down and Ctrl+Up/Down, cycles Top/Left/Right/Bottom/Floating/Hidden and resets the defaults.
+The grip moves floating or docked placement within the canvas. Docked edges
+center by default; `edge + offset` persists an explicit user offset. Preferences persist at most
 32 action IDs and bounded placement coordinates. Unknown/duplicate/held-only
-IDs normalize away. Toggle from Hidden returns to Top.
+IDs normalize away. Toggle from Hidden restores the last visible placement. F9 is the new default.
+Preference saves merge independent setting/recent-board changes across windows;
+conflicting writes to the same setting are reported without a modal.
 
 Geometry is a fixed 32-button array, integer-snapped at scales 1–4, wrapping
 and clamping to the client area. Resizing relayouts hit rectangles. Active canvas
@@ -49,6 +52,6 @@ sampling gives exact integer pixel expansion; no SVG, antialiasing or watcher.
 Static draw geometry uses stack arrays. Hover/state text is cached and reads
 the current keymap; preferences invalidate it. The optional bottom strip shows
 one action/shortcut or a stable saved/shared state. Connection blocks are fixed
-green/yellow/red rectangles; Connecting/Reconnecting are yellow. Indicator
-remains visible when the strip is hidden. Ordinary local boards have no indicator.
+green/yellow/red rectangles; Connecting/Reconnecting are yellow. Shared boards keep the strip and indicator visible even when the local strip
+preference is hidden. Ordinary local boards have no indicator.
 There are no fade/hover/blink timers or recurring idle redraws.

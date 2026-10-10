@@ -52,14 +52,23 @@ impl ImageInput {
         editor: &DocumentEditor,
         camera: &Camera,
     ) -> Result<(), tack_core::GeometryError> {
-        self.images.update(world)?;
-        if self.snap.disabled || (!self.snap.enabled && !self.snap.grid) {
+        self.snap.temporary = self.modifiers().contains(crate::input::Modifiers::SHIFT);
+        let snapping =
+            !self.snap.disabled && (self.snap.enabled || self.snap.grid || self.snap.temporary);
+        if !snapping {
+            self.images.update(world)?;
             self.snap.clear();
             return Ok(());
         }
-        let Some(frame) = self.images.frame(editor.document()) else {
-            self.snap.clear();
-            return Ok(());
+        let frame = if let Some(frame) = self.images.raw_move_frame(world)? {
+            frame
+        } else {
+            self.images.update_snapped_rotation(world, true)?;
+            let Some(frame) = self.images.frame(editor.document()) else {
+                self.snap.clear();
+                return Ok(());
+            };
+            frame
         };
         let kind = self.images.gesture_kind();
         let resize = match kind {

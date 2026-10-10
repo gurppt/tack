@@ -2,6 +2,18 @@ use crate::{CommandDto, ContentHash, DocumentRecord, SourceBinding, WireId};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct LeaseRecord {
+    pub object: WireId,
+    pub client: WireId,
+    pub operation: WireId,
+    pub ttl_ms: u32,
+}
+pub const MAX_LEASE_TARGETS: usize = 256;
+pub const MAX_BOARD_LEASES: usize = 1024;
+pub const LEASE_TTL_MS: u32 = 5000;
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum RefusalCode {
     StaleRevision,
@@ -20,6 +32,27 @@ pub enum RefusalCode {
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 #[serde(tag = "type", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Message {
+    LeaseAcquire {
+        operation: WireId,
+        base: u64,
+        objects: Vec<WireId>,
+    },
+    LeaseRelease {
+        operation: WireId,
+    },
+    LeaseSnapshot {
+        leases: Vec<LeaseRecord>,
+    },
+    LeaseChanged {
+        operation: Option<WireId>,
+        client: Option<WireId>,
+        objects: Vec<WireId>,
+        ttl_ms: u32,
+    },
+    LeaseDenied {
+        operation: WireId,
+        reason: String,
+    },
     Hello {
         board: WireId,
         client: WireId,

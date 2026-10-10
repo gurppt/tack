@@ -138,8 +138,8 @@ impl Context {
     }
     pub fn enabled(self, action: Action) -> bool {
         match action {
-            Action::DuplicateSelection => self.any && !self.shared,
-            Action::AddCameraBookmark => !self.shared,
+            Action::DuplicateSelection => self.any,
+            Action::AddCameraBookmark => true,
             Action::CopySharedBoardAddress => self.shared,
             Action::StopSharing => self.hosted,
             Action::SourceInfo => self.selection_kind == ContextKind::Image,
@@ -451,10 +451,12 @@ fn context_items(context: Context, submenu: Option<Group>, keymap: &Keymap) -> V
             ],
             Group::File => vec![
                 a("New board", NewBoard),
+                a("Close board", CloseBoard),
                 a("Open...", OpenBoard),
                 a("Import images...", ImportImages),
                 a("Save", Save),
                 a("Save As...", SaveAs),
+                a("Save to Local...", SaveToLocal),
                 a("Recent boards", RecentBoards),
                 a("Share Board...", ShareBoard),
                 a("Stop Sharing", StopSharing),
@@ -704,14 +706,29 @@ impl List {
                 );
                 continue;
             }
-            let color =
-                if item.enabled && matches!(item.command, Command::Action(Action::SelectTool(_))) {
-                    palette.accent_secondary
-                } else if item.enabled {
-                    palette.text_primary
-                } else {
-                    palette.text_disabled
-                };
+            let color = if item.enabled
+                && matches!(
+                    item.command,
+                    Command::Action(
+                        Action::SelectTool(_)
+                            | Action::SourceInfo
+                            | Action::CopySharedBoardAddress
+                            | Action::CameraBookmarks
+                    )
+                ) {
+                palette.accent_secondary
+            } else if item.enabled
+                && matches!(
+                    item.command,
+                    Command::Action(Action::DeleteSelection | Action::StopSharing)
+                )
+            {
+                [0.94, 0.26, 0.29, 1.]
+            } else if item.enabled {
+                palette.text_primary
+            } else {
+                palette.text_disabled
+            };
             let suffix = if matches!(item.command, Command::Submenu(_)) {
                 ">"
             } else {

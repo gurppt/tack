@@ -70,3 +70,7 @@ pub mod sharing;
 pub mod sharing_address;
 
 pub mod owned_window;
+
+pub mod independent_copy;
+
+pub mod camera_slots;

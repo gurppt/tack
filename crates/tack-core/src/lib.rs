@@ -38,3 +38,5 @@ pub use source_path::{LinkedPath, PathPlatform};
 mod groups;
 pub use groups::Group;
 pub use model::{MAX_FRAME_NAME_BYTES, validate_frame_name};
+
+pub use model::DEFAULT_FRAME_COLOR;

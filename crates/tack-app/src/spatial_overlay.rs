@@ -55,6 +55,53 @@ impl ImageGizmo {
             *budget -= 1;
         }
     }
+    fn frame_label(
+        &mut self,
+        camera: &Camera,
+        at: [f64; 2],
+        width: f64,
+        text: &str,
+        budget: &mut usize,
+    ) {
+        let scale = self.scale * f64::from(self.frame_title_scale.clamp(1, 3));
+        let available = (width - 4. * self.scale).max(0.);
+        let line_width = available / scale;
+        let rows = crate::note_layout::NoteLines::new(text, line_width, 16.).count();
+        let height = rows as f64 * 18. * scale;
+        let top = (at[1] / self.scale).round() * self.scale - height;
+        let left = (at[0] / self.scale).round() * self.scale;
+        self.pixel_rect(
+            camera,
+            [left, top],
+            [left + width, at[1]],
+            self.palette.menu_bg,
+            None,
+        );
+        for (row, (line, _)) in
+            crate::note_layout::NoteLines::new(text, line_width, 16.).enumerate()
+        {
+            let mut x = left + 2. * self.scale;
+            for c in line.chars() {
+                let (bits, advance) = pixel_font::glyph(c);
+                if *budget == 0
+                    || x + advance as f64 * scale > left + width - 2. * self.scale
+                    || self.quads.len() == MAX_OVERLAY_QUADS
+                {
+                    break;
+                }
+                let y = top + row as f64 * 18. * scale;
+                self.pixel_rect(
+                    camera,
+                    [x, y],
+                    [x + 16. * scale, y + 16. * scale],
+                    self.palette.text_primary,
+                    Some(bits),
+                );
+                x += advance as f64 * scale;
+                *budget -= 1;
+            }
+        }
+    }
     pub(crate) fn label(&mut self, camera: &Camera, at: [f64; 2], text: &str, budget: &mut usize) {
         let mut x = (at[0] / self.scale).round() * self.scale;
         let right = x + 160. * self.scale;
@@ -114,15 +161,8 @@ impl ImageInput {
             if self.gizmo.quads.len() + 4 >= MAX_OVERLAY_QUADS {
                 break;
             }
-            self.gizmo.outline(
-                t,
-                camera,
-                if self.images.selection.contains(o.id()) {
-                    self.gizmo.style.selection
-                } else {
-                    self.gizmo.palette.text_secondary
-                },
-            );
+            self.gizmo
+                .outline(t, camera, o.frame_color().rgba(tack_core::Opacity::OPAQUE));
             let b = t.bounds();
             let p = camera.world_to_screen([b.x, b.y]);
             if p[0] >= -160. * self.gizmo.scale
@@ -136,12 +176,8 @@ impl ImageInput {
                     .as_ref()
                     .filter(|e| e.id == o.id())
                     .map_or(name.as_str(), |e| e.value.as_str());
-                self.gizmo.label(
-                    camera,
-                    [p[0], p[1] - 18. * self.gizmo.scale],
-                    text,
-                    &mut labels,
-                );
+                self.gizmo
+                    .frame_label(camera, p, t.size()[0] * camera.zoom(), text, &mut labels);
             }
         }
         self.gizmo.quads.truncate(MAX_OVERLAY_QUADS - 2);

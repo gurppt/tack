@@ -19,6 +19,10 @@ use std::{
 use tack_assets::AssetError;
 use tack_core::{ObjectId, Source};
 pub enum LocalUpdate {
+    EmptyBoard(Result<OpenedBoard, String>),
+    SharedReady(Result<Option<crate::hosting::ShareReady>, String>),
+    SavedLocal(Result<OpenedBoard, String>),
+    AddressCopied,
     Joined(Result<bool, String>),
     Hosted(Result<crate::hosting::Hosted, String>),
     HostStopped(Result<(), String>),
@@ -38,7 +42,7 @@ pub enum LocalUpdate {
         result: Result<Clipboard, String>,
         received: mpsc::SyncSender<()>,
     },
-    Profile(Result<u32, String>),
+    Profile(Result<preferences::SavedProfile, String>),
     Keymap(Action, Result<Option<Preferences>, String>),
     Done(Result<(), String>),
 }
@@ -77,6 +81,8 @@ impl OpenedBoard {
     }
 }
 pub enum Operation {
+    EmptyBoard(PathBuf),
+    SaveLocal(crate::independent_copy::Request),
     Share(Box<crate::hosting::ShareRequest>, PathBuf),
     Host {
         profile: PathBuf,
@@ -112,8 +118,7 @@ pub enum Operation {
     Profile {
         root: PathBuf,
         profile: Preferences,
-        base: Option<u32>,
-        changed: bool,
+        baseline: Preferences,
         board: Option<PathBuf>,
     },
     Keymap {
@@ -180,6 +185,8 @@ impl LocalWorker {
                 | Operation::Relink(..)
                 | Operation::RestoreRecovery { .. }
                 | Operation::OpenBoard(_)
+                | Operation::EmptyBoard(_)
+                | Operation::SaveLocal(_)
         );
         let (tx, receiver) = mpsc::sync_channel(1);
         let cancel = Arc::new(AtomicBool::new(false));
@@ -196,8 +203,36 @@ impl LocalWorker {
                 };
                 let result = (|| -> Result<(), AssetError> {
                     match operation {
+                        Operation::EmptyBoard(root) => {
+                            let result = (|| -> Result<OpenedBoard, AssetError> {
+                                let lease = untitled_lease(&root)?;
+                                lease.save(
+                                    &tack_core::Document::new(
+                                        tack_storage::new_document_id()?,
+                                        tack_core::DocumentLimits::default(),
+                                    ),
+                                    vec![],
+                                )?;
+                                let board = lease.open()?;
+                                Ok(OpenedBoard {
+                                    path: lease.path().to_owned(),
+                                    board,
+                                    lease,
+                                    metadata_ms: 0.,
+                                    sharing: None,
+                                    recovery: false,
+                                    warning: None,
+                                })
+                            })();
+                            emit(LocalUpdate::EmptyBoard(result.map_err(|e| e.to_string())));
+                        }
+                        Operation::SaveLocal(request) => {
+                            emit(LocalUpdate::SavedLocal(
+                                request.run(&stop).map_err(|e| e.to_string()),
+                            ));
+                        }
                         Operation::Share(request, work) => {
-                            emit(LocalUpdate::Joined(
+                            emit(LocalUpdate::SharedReady(
                                 request.run(&work, &stop).map_err(|e| e.to_string()),
                             ));
                         }
@@ -229,6 +264,7 @@ impl LocalWorker {
                         }
                         Operation::CopyAddress(text) => {
                             crate::source_actions::copy_text(&text)?;
+                            emit(LocalUpdate::AddressCopied);
                         }
                         Operation::PasteAddress(work) => {
                             emit(LocalUpdate::AddressText(
@@ -302,16 +338,14 @@ impl LocalWorker {
                         Operation::Profile {
                             root,
                             profile,
-                            base,
-                            changed,
+                            baseline,
                             board,
                         } => {
                             emit(LocalUpdate::Profile(
-                                preferences::save_profile(
+                                preferences::save_profile_merged(
                                     &root,
-                                    &profile,
-                                    base,
-                                    changed,
+                                    profile,
+                                    &baseline,
                                     board.as_deref(),
                                 )
                                 .map_err(|e| e.to_string()),
@@ -323,7 +357,9 @@ impl LocalWorker {
                             profile,
                         } => {
                             let result = if action == Action::ImportKeymap {
-                                preferences::read(&path).map(Some)
+                                preferences::read_keymap(&path).map(Some)
+                            } else if action == Action::ExportPreferences {
+                                preferences::export_preferences(&path, &profile).map(|_| None)
                             } else {
                                 preferences::export_keymap(&path, &profile).map(|_| None)
                             };
@@ -383,6 +419,9 @@ impl LocalWorker {
                             && matches!(
                                 update,
                                 LocalUpdate::Opened(_)
+                                    | LocalUpdate::EmptyBoard(_)
+                                    | LocalUpdate::SavedLocal(_)
+                                    | LocalUpdate::SharedReady(_)
                                     | LocalUpdate::Hosted(_)
                                     | LocalUpdate::Joined(_)
                                     | LocalUpdate::AddressText(_)
@@ -430,3 +469,30 @@ impl Drop for LocalWorker {
 
 #[cfg(test)]
 mod cancel_tests;
+
+/// Reuse only a verified, privately owned empty seed without recovery data.
+pub fn untitled_lease(root: &std::path::Path) -> Result<Arc<tack_storage::BoardLease>, AssetError> {
+    tack_storage::create_private_directory(root, true)?;
+    for slot in 1..=16 {
+        let candidate = root.join(format!("untitled-slot-{slot}.tack"));
+        if let Ok(metadata) = std::fs::symlink_metadata(&candidate) {
+            if !metadata.is_file() || metadata.file_type().is_symlink() {
+                continue;
+            }
+            if let Ok(owner) = tack_storage::BoardLease::acquire(&candidate)
+                && !owner.recovery_directory().exists()
+                && let Ok(seed) = owner.open()
+                && seed.document.objects().next().is_none()
+                && seed.document.sources().next().is_none()
+                && owner.retire_empty_seed(seed.document.id()).is_ok()
+            {
+                return Ok(Arc::new(owner));
+            }
+        } else if let Ok(owner) = tack_storage::BoardLease::acquire_new(&candidate)
+            && !owner.recovery_directory().exists()
+        {
+            return Ok(Arc::new(owner));
+        }
+    }
+    Err("16 retained Untitled boards; open Recent boards to recover/save them".into())
+}

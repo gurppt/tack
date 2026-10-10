@@ -15,8 +15,8 @@ impl App {
                 self.operation(Operation::CopyAddress(address.canonical()))?;
             }
             Action::DuplicateSelection => {
-                if self.shared.is_some() || self.offline.is_some() {
-                    return Err("Duplicate is local-only in this phase".into());
+                if self.offline.is_some() && self.shared.is_none() {
+                    return Err("Reconnect before duplicating shared objects".into());
                 }
                 let editor = self.editor.as_mut().ok_or("document unavailable")?;
                 let step = tack_app::spatial_snap::grid_spacing(
@@ -30,33 +30,24 @@ impl App {
                 )?;
                 if !ids.is_empty() {
                     editor.execute(command)?;
-                    self.input.images.selection.clear();
-                    for id in ids {
-                        self.input.images.selection.select(Some(id), true);
+                    if let Some(shared) = &mut self.shared {
+                        shared.duplicate_selection = ids;
+                    } else {
+                        self.input.images.selection.clear();
+                        for id in ids {
+                            self.input.images.selection.select(Some(id), true);
+                        }
                     }
                 }
             }
             Action::AddCameraBookmark => {
-                if self.shared.is_some() || self.offline.is_some() {
-                    return Err("Bookmark editing is local-only in this phase".into());
-                }
-                let doc = self
-                    .editor
-                    .as_ref()
-                    .ok_or("document unavailable")?
-                    .document();
-                if doc.bookmarks().len() == tack_core::MAX_CAMERA_BOOKMARKS {
-                    return Err("A board supports at most 64 bookmarks".into());
-                }
-                self.daily_panel(
-                    Panel::BookmarkName,
-                    DailyPanel {
-                        text: format!("View {}", doc.bookmarks().len() + 1),
-                        replace: true,
-                        ..Default::default()
-                    },
-                );
+                let screen = self.camera.screen_size().map(|v| f64::from(v) / 2.);
+                self.local.pending_camera =
+                    Some((self.camera.screen_to_world(screen), self.camera.zoom()));
+                self.interaction_error =
+                    Some("Press a view shortcut (Num0-9); Escape cancels".into());
             }
+            Action::JumpCameraSlot(slot) => self.camera_slot(slot)?,
             Action::CameraBookmarks => self.bookmarks_panel()?,
             Action::SourceInfo => {
                 if self.input.images.selection.len() != 1 {
@@ -117,6 +108,93 @@ impl App {
             _ => {}
         }
         Ok(())
+    }
+    pub(in super::super) fn camera_slot(&mut self, slot: u8) -> Result<(), AssetError> {
+        let board = format!(
+            "{:032x}",
+            self.editor
+                .as_ref()
+                .ok_or("document unavailable")?
+                .document()
+                .id()
+                .value()
+        );
+        if let Some((center, zoom)) = self.local.pending_camera.take() {
+            tack_app::camera_slots::assign(
+                &mut self.local.profile.local_views,
+                tack_app::camera_slots::View {
+                    board,
+                    slot,
+                    center,
+                    zoom,
+                },
+            )?;
+            self.local.profile_pending = true;
+            self.local.profile_changed = true;
+            self.interaction_error = Some(format!("View {slot} assigned"));
+        } else if let Some(view) = self
+            .local
+            .profile
+            .local_views
+            .iter()
+            .find(|v| v.board == board && v.slot == slot)
+        {
+            self.camera.set_view(view.center, view.zoom)?;
+        } else {
+            self.interaction_error = Some(format!("View {slot} unassigned; press B to assign"));
+        }
+        self.dirty = true;
+        Ok(())
+    }
+    pub(in super::super) fn camera_capture(&mut self, event: &WindowEvent) -> bool {
+        if self.local.pending_camera.is_none() {
+            return false;
+        }
+        let WindowEvent::KeyboardInput { event, .. } = event else {
+            return false;
+        };
+        // The B release must reach InputState: swallowing it would leave B held
+        // and make the next view assignment look like a repeated press.
+        if event.state != winit::event::ElementState::Pressed {
+            return false;
+        }
+        if event.repeat {
+            return true;
+        }
+        if event.physical_key
+            == winit::keyboard::PhysicalKey::Code(winit::keyboard::KeyCode::Escape)
+        {
+            self.local.pending_camera = None;
+            self.interaction_error = None;
+        } else {
+            let modifiers = self.input.modifiers();
+            let control = self.input.keymap.keyboard_control(
+                event.physical_key,
+                tack_app::input::logical_key(event),
+                modifiers,
+            );
+            let slot = self.input.keymap.bindings().iter().find_map(|b| {
+                if b.control == control
+                    && b.modifiers.matches(modifiers)
+                    && b.trigger == tack_app::bindings::Trigger::Press
+                    && let Action::JumpCameraSlot(slot) = b.action
+                {
+                    Some(slot)
+                } else {
+                    None
+                }
+            });
+            if let Some(slot) = slot {
+                if let Err(error) = self.camera_slot(slot) {
+                    self.interaction_error = Some(error.to_string());
+                }
+            } else {
+                self.interaction_error =
+                    Some("Choose a mapped view shortcut (Num0-9), or Escape".into());
+            }
+        }
+        self.dirty = true;
+        true
     }
     pub(in super::super) fn daily_panel(&mut self, panel: Panel, data: DailyPanel) {
         self.panel(panel);

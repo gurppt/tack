@@ -3,6 +3,51 @@ use super::*;
 impl App {
     pub(in super::super) fn local_update(&mut self, update: LocalUpdate) -> Result<(), AssetError> {
         match update {
+            LocalUpdate::EmptyBoard(result) => {
+                let opened = result.map_err(AssetError::from)?;
+                self.install_loaded(
+                    LoadedBoard {
+                        board: opened.board,
+                        lease: opened.lease,
+                        metadata_ms: opened.metadata_ms,
+                        path: opened.path,
+                        sharing: None,
+                        recovery: false,
+                        warning: None,
+                    },
+                    true,
+                )?;
+                self.shared = None;
+                self.host = None;
+            }
+            LocalUpdate::SharedReady(result) => self.share_ready(result)?,
+            LocalUpdate::SavedLocal(result) => {
+                let opened = result.map_err(AssetError::from)?;
+                let camera = self.camera;
+                self.install_loaded(
+                    LoadedBoard {
+                        board: opened.board,
+                        lease: opened.lease,
+                        metadata_ms: opened.metadata_ms,
+                        path: opened.path,
+                        sharing: None,
+                        recovery: false,
+                        warning: None,
+                    },
+                    true,
+                )?;
+                self.shared = None;
+                self.host = None;
+                self.camera = camera;
+            }
+            LocalUpdate::AddressCopied => {
+                self.local.feedback_deadline = Some(Instant::now() + Duration::from_millis(1200));
+                if let Some(ui) = &mut self.local.ui {
+                    ui.message = "COPIED".into();
+                }
+                self.chrome.last_state = "";
+                self.dirty = true;
+            }
             LocalUpdate::Hosted(result) => self.host_ready(result)?,
             LocalUpdate::HostStopped(result) => self.host_stopped(result)?,
             LocalUpdate::Joined(result) => {
@@ -204,9 +249,21 @@ impl App {
                     }
                 }
             },
-            LocalUpdate::Profile(result) => {
-                self.local.profile_base = Some(result.map_err(AssetError::from)?);
-            }
+            LocalUpdate::Profile(result) => match result {
+                Ok(saved) => {
+                    self.local.profile_base = Some(saved.fingerprint);
+                    preferences::adopt_saved(
+                        &mut self.local.profile,
+                        &saved.submitted,
+                        &saved.saved,
+                    );
+                    self.local.profile_saved = saved.saved;
+                    self.apply_preferences()?;
+                }
+                Err(error) => {
+                    self.interaction_error = Some(error);
+                }
+            },
             LocalUpdate::Keymap(action, result) => {
                 if let Some(profile) = result.map_err(AssetError::from)? {
                     self.local.profile.keymap = profile.keymap;
@@ -220,6 +277,8 @@ impl App {
                 if let Some(ui) = &mut self.local.ui {
                     ui.message = if action == Action::ImportKeymap {
                         "Keymap imported"
+                    } else if action == Action::ExportPreferences {
+                        "Preferences exported"
                     } else {
                         "Keymap exported"
                     }

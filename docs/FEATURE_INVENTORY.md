@@ -238,3 +238,24 @@ Phase 2A4 scope: editable hard-alpha PNG16 icons and primitive native toolbar/st
 are documented in [pixel_toolbar.md](design/pixel_toolbar.md); desktop identity
 and server ownership in [shared_desktop_lifecycle.md](design/shared_desktop_lifecycle.md).
 Physical two-computer LAN acceptance remains separate from same-host automation.
+
+Phase 2A5 adds scoped object conflicts and bounded five-second active-transform
+leases, foreign red pixel outlines, unrelated-menu/gesture preservation, explicit
+Save to Local, current-window Share and Close Board. Shared state stays in the
+bottom strip; disconnect opens a centered panel and invites are readable/copyable.
+These features keep the authoritative server; there is no CRDT or offline merge.
+
+Interaction corrections include 15° rotation snap and temporary Shift snap,
+outward Rectangle/Frame selection outlines, three-pixel creation strokes separate
+from edited widths, clearer arrowheads, Note Enter/Shift+Enter, annotation selection
+filter (F8), shared metadata-only Duplicate, Frame palette colors/wrapped 2× titles,
+and semantic z-order defaults. The centered docked toolbar has an explicit saved
+offset, remembered visibility placement and two-column editor. Keymap supports
+shortcut double-click capture, reassignment that unbinds a collision, Normal/Hold
+tool mode, separate keymap/preferences exports and local B → 0–9 camera slots.
+Existing custom keymaps retain their bindings; Reset adopts changed defaults.
+
+Frame palette colors require schema 5 only when nondefault colors exist. LAN peers
+must use protocol major 2. Test evidence and remaining physical acceptance are
+recorded in [the 2A5 report](MISSION_2A5_CONCURRENT_EDITING_INTERACTION_REPORT.md).
+Quadratic curves, Post-it redesign and Plain Text remain deferred.

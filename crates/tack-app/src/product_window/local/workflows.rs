@@ -8,6 +8,7 @@ impl App {
         self.input.gizmo.style.selection = palette.accent_primary;
         self.input.gizmo.style.active = palette.accent_secondary;
         self.input.gizmo.style.crop = palette.accent_attention;
+        self.input.gizmo.frame_title_scale = self.local.profile.frame_title_scale;
         self.input.gizmo.style.handle_size = f64::from(self.local.profile.handle_size);
         self.input.gizmo.style.hit_radius = f64::from(self.local.profile.hit_radius);
         let scale = if self.local.profile.ui_scale > 0 {
@@ -62,7 +63,7 @@ impl App {
         if (self.shared.is_some() || self.offline.is_some())
             && matches!(action, Action::Save | Action::SaveAs)
         {
-            return Err("Shared edits are saved by the server. Local snapshot export is reserved for the documented streaming API.".into());
+            return Err("Shared edits are saved by the server. Use Save to Local for an independent editable copy.".into());
         }
         if self.load_failed {
             return Ok(());
@@ -88,6 +89,7 @@ impl App {
         self.local.ui = None;
         self.release_about();
         match action {
+            CloseBoard => self.request_board_close()?,
             ToggleToolbar => {
                 tack_app::toolbar::Toolbar::toggle(&mut self.local.profile);
                 self.local.profile_pending = true;
@@ -105,6 +107,7 @@ impl App {
             StopSharing => self.stop_hosting(false)?,
             DuplicateSelection
             | AddCameraBookmark
+            | JumpCameraSlot(_)
             | CameraBookmarks
             | SourceInfo
             | JoinSharedBoard
@@ -169,13 +172,15 @@ impl App {
                     ticket,
                 })?;
             }
-            OpenBoard | ImportImages | SaveAs | RelinkSource | ImportKeymap | ExportKeymap => {
+            OpenBoard | ImportImages | SaveAs | SaveToLocal | RelinkSource | ImportKeymap
+            | ExportKeymap | ExportPreferences => {
                 let kind = match action {
                     OpenBoard => Picker::Open,
                     ImportImages => Picker::Import,
-                    SaveAs => Picker::Save,
+                    SaveAs | SaveToLocal => Picker::Save,
                     RelinkSource => Picker::Relink,
                     ImportKeymap => Picker::ImportKeymap,
+                    ExportPreferences => Picker::ExportPreferences,
                     _ => Picker::ExportKeymap,
                 };
                 if matches!(action, ImportKeymap | ExportKeymap) {
@@ -247,6 +252,17 @@ impl App {
                     self.apply_preferences()?;
                 }
                 UiResult::Dismiss => {
+                    if self
+                        .local
+                        .ui
+                        .as_ref()
+                        .is_some_and(|ui| ui.panel == Panel::Close)
+                    {
+                        self.local.close_board = false;
+                    }
+                    if self.shared.as_ref().is_some_and(|s| s.transitioning) {
+                        self.abort_shared_transition();
+                    }
                     if self
                         .local
                         .ui
@@ -364,6 +380,38 @@ impl App {
         let path = paths.first().ok_or("picker returned no path")?.clone();
         match action {
             Action::ShareBoard => self.share_to(path),
+            Action::SaveToLocal => {
+                let editor = self.editor.as_ref().ok_or("document unavailable")?;
+                if editor.pending_backend_requests() > 0
+                    || self.shared.as_ref().is_some_and(|s| s.has_in_flight())
+                {
+                    return Err("Wait for pending shared edits before Save to Local".into());
+                }
+                if self.shared.is_none() && self.offline.is_none() {
+                    return Err("Save to Local applies to shared boards".into());
+                }
+                let request = tack_app::independent_copy::Request {
+                    board_path: self.options.path.clone(),
+                    document: editor.document().clone(),
+                    board: self.board.clone().ok_or("board unavailable")?,
+                    sources: self
+                        .shared
+                        .as_ref()
+                        .map(|s| s.bindings.values().cloned().collect())
+                        .unwrap_or_default(),
+                    cache: self
+                        .shared
+                        .as_ref()
+                        .map(|s| s.client.cache_dir().to_owned()),
+                    server: self
+                        .shared
+                        .as_ref()
+                        .filter(|s| s.client.connected())
+                        .map(|s| s.address.clone()),
+                    target: path,
+                };
+                self.operation(Operation::SaveLocal(request))
+            }
             Action::OpenBoard => self.open_board(path),
             Action::ImportImages => self.import_paths(paths, false),
             Action::SaveAs => {
@@ -394,12 +442,43 @@ impl App {
                     .clone();
                 self.operation(Operation::Relink(source, path))
             }
-            Action::ImportKeymap | Action::ExportKeymap => self.operation(Operation::Keymap {
-                action,
-                path,
-                profile: self.local.profile.clone(),
-            }),
+            Action::ImportKeymap | Action::ExportKeymap | Action::ExportPreferences => self
+                .operation(Operation::Keymap {
+                    action,
+                    path,
+                    profile: self.local.profile.clone(),
+                }),
             _ => Ok(()),
         }
+    }
+}
+
+impl App {
+    pub(in super::super) fn request_board_close(&mut self) -> Result<(), AssetError> {
+        if self.local.worker.active()
+            || self.save.active()
+            || self.local.recovery_pending
+            || self.local.importing
+        {
+            return Err("Finish the current operation before closing the board".into());
+        }
+        if self
+            .editor
+            .as_ref()
+            .is_some_and(|e| e.pending_backend_requests() > 0)
+            || self.shared.as_ref().is_some_and(|s| s.has_in_flight())
+        {
+            return Err("Wait for pending shared edits before closing the board".into());
+        }
+        self.local.close_board = true;
+        self.input.cancel();
+        if self.host.is_some() {
+            self.stop_hosting(true)?;
+        } else if self.editor.as_ref().is_some_and(|e| e.is_dirty()) {
+            self.panel(Panel::Close);
+        } else {
+            self.local.close_ready = true;
+        }
+        Ok(())
     }
 }

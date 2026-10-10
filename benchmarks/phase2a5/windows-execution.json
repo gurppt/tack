@@ -1,0 +1,104 @@
+{
+  "scope": "Linux Wine Windows CLI/decoder execution; no Windows desktop/physical LAN claim",
+  "executable_sha256": "a3cf2b4433a243be82156004fcbb4d9651827fcdbce9804d98fc0afc3a0fdec8",
+  "decoder_sha256": "5d8ddfdd07efc7a33c3931757af1fe1327fb492df8218b6e488f1cf52f93681c",
+  "harness_sha256": "26dc1a392b86d5fb9eb952614a045507b233d7d4d79085706ff535752a3d10dd",
+  "seconds": 40.15156643697992,
+  "checks": [
+    {
+      "name": "Windows executable creates/reopens JPEG board",
+      "observed": true,
+      "detail": {
+        "created": {
+          "container_bytes_read": 4029,
+          "derived_bytes_written": 482,
+          "dirty_after_save": false,
+          "embedded": true,
+          "errors": 0,
+          "file_bytes": 1845,
+          "metadata_import_ms": 1.5578,
+          "metadata_source_bytes": 625,
+          "objects": 1,
+          "operation": "create",
+          "overview_generated": 1,
+          "overview_reused": 0,
+          "peak_pending": 1,
+          "preparation_ms": 5.5914,
+          "progress": [
+            {
+              "elapsed_ms": 0.009000000000000001,
+              "errors": 0,
+              "ready": 0
+            },
+            {
+              "elapsed_ms": 5.5909,
+              "errors": 0,
+              "ready": 1
+            }
+          ],
+          "save_ms": 6.6158,
+          "source_bytes_read": 1535,
+          "total_ms": 24.5105
+        },
+        "inspected": {
+          "assets": 1,
+          "bookmarks": [],
+          "discarded_overviews": 0,
+          "document_id": "a5b571764325867967e34330f2bc6106",
+          "embedded": 1,
+          "metadata_bytes": 453,
+          "metadata_ms": 0.9045000000000001,
+          "objects": 1,
+          "original_bytes_read": 0,
+          "overviews": 1,
+          "sources": 1
+        }
+      }
+    },
+    {
+      "name": "Windows JPEG decoder executes scalar",
+      "observed": true,
+      "detail": {
+        "size": [
+          160,
+          100
+        ],
+        "sha256": "ceb56b6024685595dd868860efb36c138ccd855328db259289d0870b9648aa65"
+      }
+    },
+    {
+      "name": "Windows JPEG decoder executes sse2",
+      "observed": true,
+      "detail": {
+        "size": [
+          160,
+          100
+        ],
+        "sha256": "ceb56b6024685595dd868860efb36c138ccd855328db259289d0870b9648aa65"
+      }
+    },
+    {
+      "name": "Windows JPEG decoder executes automatic-simd",
+      "observed": true,
+      "detail": {
+        "size": [
+          160,
+          100
+        ],
+        "sha256": "ceb56b6024685595dd868860efb36c138ccd855328db259289d0870b9648aa65"
+      }
+    },
+    {
+      "name": "scalar/SSE2/automatic SIMD decoder output matches",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "owned Wine scratch stays within documented 2 GiB exception",
+      "observed": true,
+      "detail": {
+        "bytes": 1696539835
+      }
+    }
+  ]
+}

@@ -295,7 +295,7 @@ fn menu_and_keyboard_share_command_history_and_shortcut_display() -> R {
     let m = &input.keymap;
     assert_eq!(context_menu::shortcut(m, Action::Undo), "Ctrl+Z");
     assert_eq!(context_menu::shortcut(m, Action::Redo), "Ctrl+Shift+Z");
-    assert!(context_menu::shortcut(m, Action::Order(Order::Front)).is_empty());
+    assert!(!context_menu::shortcut(m, Action::Order(Order::Front)).is_empty());
     input.keymap.unassign(Action::Undo);
     assert!(context_menu::shortcut(&input.keymap, Action::Undo).is_empty());
     Ok(())

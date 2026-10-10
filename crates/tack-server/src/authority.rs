@@ -41,6 +41,8 @@ pub(crate) struct State {
     pub document: DocumentRecord,
     pub sources: Vec<SourceBinding>,
     pub clients: BTreeMap<WireId, ClientHistory>,
+    #[serde(default)]
+    pub object_clock: Option<crate::object_clock::ObjectClock>,
 }
 pub struct Authority {
     path: PathBuf,
@@ -67,6 +69,7 @@ impl Authority {
             document: document_record,
             sources,
             clients: BTreeMap::new(),
+            object_clock: Some(crate::object_clock::ObjectClock::new(&canonical, 0)),
         };
         ensure_joinable(&state)?;
         crate::persistence::publish(&path, &state)?;
@@ -79,7 +82,7 @@ impl Authority {
     }
     pub fn open(root: &Path, board: WireId) -> Result<Self> {
         let path = root.join(format!("{board}.board"));
-        let state = crate::persistence::read(&path)?;
+        let mut state = crate::persistence::read(&path)?;
         #[cfg(unix)]
         crate::persistence::sync_directory(root)
             .map_err(|e| format!("authority directory durability unavailable: {e}"))?;
@@ -87,6 +90,10 @@ impl Authority {
             return Err("invalid authority version, board or clients".into());
         }
         let document = state.document.to_document().map_err(|e| e.to_string())?;
+        let clock = state.object_clock.get_or_insert_with(|| {
+            crate::object_clock::ObjectClock::new(&document, state.revision)
+        });
+        clock.validate(&document, state.revision)?;
         if document.id().value() != board.value() {
             return Err("authority identity mismatch".into());
         }
@@ -167,6 +174,25 @@ impl Authority {
     pub fn record(&self) -> &DocumentRecord {
         &self.state.document
     }
+    pub fn check_objects(&self, base: u64, objects: &[WireId]) -> Result<()> {
+        let scope = tack_shared::CommandScope {
+            objects: objects.iter().copied().collect(),
+            ..Default::default()
+        };
+        self.clock()?.check(&scope, base, self.revision())
+    }
+    pub fn history_command(&self, client: WireId, redo: bool) -> Option<&CommandDto> {
+        let history = self.state.clients.get(&client)?;
+        (if redo { &history.redo } else { &history.undo })
+            .last()
+            .map(|entry| &entry.command)
+    }
+    fn clock(&self) -> Result<&crate::object_clock::ObjectClock> {
+        self.state
+            .object_clock
+            .as_ref()
+            .ok_or_else(|| "object conflict clock unavailable".into())
+    }
     pub fn receipt(&self, client: WireId, operation: WireId) -> Option<Change> {
         self.state
             .clients
@@ -190,7 +216,8 @@ impl Authority {
         if let Some(receipt) = self.receipt(client, operation) {
             return Ok(receipt);
         }
-        self.check(client, base)?;
+        let scope = command.scope(&self.document);
+        self.clock()?.check(&scope, base, self.revision())?;
         validate_binding_delta(&command, &sources)?;
         let next_high_water = source_revision(&command, self.state.source_high_water)?;
         let mut document = self.document.clone();
@@ -204,8 +231,11 @@ impl Authority {
         let history = state.clients.entry(client).or_default();
         history.redo.clear();
         history.undo.push(HistoryEntry {
-            before: base,
-            after: base + 1,
+            before: self.revision(),
+            after: self
+                .revision()
+                .checked_add(1)
+                .ok_or("authority revision exhausted")?,
             command: CommandDto::from_command(&inverse).map_err(|e| e.to_string())?,
             sources: inverse_bindings(&inverse, &self.state.sources),
         });
@@ -225,7 +255,6 @@ impl Authority {
         if let Some(receipt) = self.receipt(client, operation) {
             return Ok(receipt);
         }
-        self.check(client, base)?;
         let mut state = self.state.clone();
         admit_history(&mut state, client);
         let history = state.clients.entry(client).or_default();
@@ -235,9 +264,15 @@ impl Authority {
             &mut history.undo
         };
         let entry = entries.pop().ok_or("history is empty")?;
-        if entry.after != base {
-            return Err("undo conflict: another accepted operation changed authority".into());
-        }
+        let scope = entry.command.scope(&self.document);
+        self.clock()?.check(&scope, base, self.revision())?;
+        self.clock()?
+            .check(&scope, entry.after, self.revision())
+            .map_err(|e| format!("undo conflict: {e}"))?;
+        let next_revision = self
+            .revision()
+            .checked_add(1)
+            .ok_or("authority revision exhausted")?;
         let mut document = self.document.clone();
         let inverse = document
             .apply_inverse(entry.command.to_command().map_err(|e| e.to_string())?)
@@ -245,8 +280,9 @@ impl Authority {
             .ok_or("undo made no change")?;
         if let Some(previous) = entries.last_mut()
             && previous.after == entry.before
+            && previous.command.scope(&self.document).objects == scope.objects
         {
-            previous.after = base + 1;
+            previous.after = next_revision;
         }
         let destination = if redo {
             &mut history.undo
@@ -254,8 +290,8 @@ impl Authority {
             &mut history.redo
         };
         destination.push(HistoryEntry {
-            before: base,
-            after: base + 1,
+            before: self.revision(),
+            after: next_revision,
             command: CommandDto::from_command(&inverse).map_err(|e| e.to_string())?,
             sources: inverse_bindings(&inverse, &self.state.sources),
         });
@@ -268,15 +304,6 @@ impl Authority {
             entry.command,
             entry.sources,
         )
-    }
-    fn check(&self, _client: WireId, base: u64) -> Result<()> {
-        if base != self.state.revision {
-            return Err("stale revision; rejoin authoritative state".into());
-        }
-        if base == u64::MAX {
-            return Err("authority revision exhausted".into());
-        }
-        Ok(())
     }
     fn commit(
         &mut self,
@@ -292,6 +319,12 @@ impl Authority {
             .revision
             .checked_add(1)
             .ok_or("authority revision exhausted")?;
+        let scope = command.scope(&self.document);
+        state
+            .object_clock
+            .as_mut()
+            .ok_or("object conflict clock unavailable")?
+            .advance(&scope, &document, revision);
         let mut bindings: BTreeMap<_, _> = state
             .sources
             .into_iter()

@@ -55,13 +55,12 @@ impl App {
         }
         // Preferences mutations also validate before editor replacement.
         let mut profile = self.local.profile.clone();
-        let private_seed = !reuse
-            && loaded.path.parent() == Some(self.local.root.as_path())
+        let private_seed = loaded.path.parent() == Some(self.local.root.as_path())
             && loaded
                 .path
                 .file_name()
                 .is_some_and(|n| n.to_string_lossy().starts_with("untitled-slot-"));
-        if (!self.local.untitled && !private_seed) || reuse {
+        if !private_seed && (!self.local.untitled || reuse) {
             profile.remember(&loaded.path)?;
             profile.remember_board_directory(&loaded.path)?;
         }
@@ -70,6 +69,7 @@ impl App {
         input.gizmo.style = self.input.gizmo.style;
         input.gizmo.palette = profile.theme.palette();
         input.gizmo.set_scale(camera.ui_scale());
+        input.gizmo.frame_title_scale = profile.frame_title_scale;
         if reuse {
             self.release_about();
             self.input.cancel();
@@ -87,6 +87,7 @@ impl App {
             self.local.recovery = RecoverySchedule::default();
             self.local.recovery_pending = false;
             self.local.ui = None;
+            self.local.pending_camera = None;
             self.local.untitled = false;
             self.options.new = false;
             self.options.untitled = false;
@@ -99,13 +100,17 @@ impl App {
             if let Some(gpu) = &mut self.gpu {
                 gpu.clear_products();
             }
-        } else if loaded.path.parent() == Some(self.local.root.as_path())
+        }
+        if loaded.path.parent() == Some(self.local.root.as_path())
             && loaded
                 .path
                 .file_name()
                 .is_some_and(|n| n.to_string_lossy().starts_with("untitled-slot-"))
         {
             self.local.untitled = true;
+            self.options.new = true;
+            self.options.untitled = true;
+            self.local.retire_seed = false;
             self.local.seed = Some((Arc::clone(&loaded.lease), board.document.id()));
         }
         self.offline = loaded.sharing;

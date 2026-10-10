@@ -188,6 +188,8 @@ pub enum ObjectDto {
         filtering: u8,
     },
     Frame {
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        color: Option<[u8; 4]>,
         id: WireId,
         name: String,
         transform: TransformDto,
@@ -213,6 +215,8 @@ impl ObjectDto {
                 filtering: encode_filtering(image.filtering()),
             },
             ObjectKind::Frame(name) => Self::Frame {
+                color: (object.frame_color() != tack_core::DEFAULT_FRAME_COLOR)
+                    .then_some(object.frame_color().0),
                 id,
                 name: name.clone(),
                 transform,
@@ -243,13 +247,15 @@ impl ObjectDto {
                 decode_filtering(*filtering)?,
             )),
             Self::Frame {
+                color,
                 id,
                 name,
                 transform,
-            } => DocumentObject::frame(
+            } => DocumentObject::frame_with_color(
                 ObjectId::new(id.value()).map_err(domain_error)?,
                 name.clone(),
                 transform.to_transform()?,
+                color.map_or(tack_core::DEFAULT_FRAME_COLOR, tack_core::Color),
             )
             .map_err(domain_error),
             Self::Annotation {

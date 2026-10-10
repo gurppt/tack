@@ -13,6 +13,7 @@ use tack_core::{
 #[derive(Default)]
 pub struct SelectionState {
     ids: BTreeSet<ObjectId>,
+    pub annotations_locked: bool,
 }
 impl SelectionState {
     pub fn ids(&self) -> impl Iterator<Item = ObjectId> + '_ {
@@ -31,7 +32,12 @@ impl SelectionState {
         self.ids.clear();
     }
     pub fn select_all(&mut self, doc: &Document) {
-        self.ids = doc.object_order().iter().copied().collect();
+        self.ids = doc
+            .object_order()
+            .iter()
+            .copied()
+            .filter(|id| !self.annotations_locked || doc.object_render_data(*id).is_some())
+            .collect();
     }
     pub fn select(&mut self, id: Option<ObjectId>, toggle: bool) {
         if toggle {
@@ -51,7 +57,9 @@ impl SelectionState {
         if !toggle {
             self.clear();
         }
-        if let Some(id) = id {
+        if let Some(id) =
+            id.filter(|id| !self.annotations_locked || doc.object_render_data(*id).is_some())
+        {
             if let Some(group) = doc.group_for(id) {
                 let remove = toggle && group.members().iter().all(|id| self.contains(*id));
                 for id in group.members() {
@@ -74,13 +82,19 @@ impl SelectionState {
         }
     }
     pub fn prune(&mut self, doc: &Document) {
-        self.ids.retain(|id| doc.object(*id).is_some());
+        self.ids.retain(|id| {
+            doc.object(*id).is_some()
+                && (!self.annotations_locked || doc.object_render_data(*id).is_some())
+        });
     }
     pub fn marquee(&mut self, doc: &Document, r: WorldRect, additive: bool) {
         if !additive {
             self.clear();
         }
         for id in doc.object_order() {
+            if self.annotations_locked && doc.object_render_data(*id).is_none() {
+                continue;
+            }
             if doc.object(*id).is_some_and(|o| match o.kind() {
                 tack_core::ObjectKind::Image(_) => geometry::intersects(o.transform(), r),
                 tack_core::ObjectKind::Annotation(a) => {
@@ -113,10 +127,17 @@ pub enum GestureKind {
 #[derive(Default)]
 pub struct ImageInteraction {
     pub selection: SelectionState,
+    pub blocked: BTreeSet<ObjectId>,
+    pub reservation_pending: bool,
     gesture: Option<Gesture>,
     pub crop_mode: bool,
 }
 impl ImageInteraction {
+    pub fn gesture_targets(&self) -> impl Iterator<Item = ObjectId> + '_ {
+        self.gesture
+            .iter()
+            .flat_map(|g| g.initial.iter().map(|d| d.object_id))
+    }
     pub fn active(&self) -> bool {
         self.gesture.is_some()
     }
@@ -188,6 +209,9 @@ impl ImageInteraction {
             .iter()
             .rev()
             .find(|id| {
+                if self.selection.annotations_locked && doc.object_render_data(**id).is_none() {
+                    return false;
+                }
                 doc.object(**id).is_some_and(|o| {
                     let t = self.preview_transform(doc, **id).unwrap_or(o.transform());
                     match o.kind() {

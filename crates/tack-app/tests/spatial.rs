@@ -601,3 +601,83 @@ fn crowded_frames_keep_overlay_and_glyph_bounds_and_guide_priority() -> R {
     );
     Ok(())
 }
+
+#[test]
+fn rotated_move_preview_stays_latched_and_commit_has_no_snap_release_jump() -> R {
+    let mut e = fixture()?;
+    let id = ObjectId::new(1)?;
+    let t = Transform::new([0., 0.], [100., 50.], 0.4, [false; 2])?;
+    e.execute(Command::SetTransform {
+        object: id,
+        transform: t,
+    })?;
+    let mut input = ImageInput::new()?;
+    let mut c = Camera::new([800, 600]);
+    input.snap.enabled = true;
+    input.images.selection.select(Some(id), false);
+    let start = [400., 300.];
+    input.cursor_moved(start, &e, &mut c)?;
+    input.physical(
+        PhysicalEvent::Button {
+            control: PhysicalControl::Pointer(PointerButton::Mouse(
+                winit::event::MouseButton::Left,
+            )),
+            state: winit::event::ElementState::Pressed,
+            repeat: false,
+        },
+        &mut e,
+        &mut c,
+    )?;
+    let mut previous = None;
+    for jitter in [0., 0.01, -0.01, 0.02, -0.02, 0.] {
+        input.cursor_moved([445. + jitter, 300.], &e, &mut c)?;
+        let next = input
+            .images
+            .preview_transform(e.document(), id)
+            .ok_or("preview")?;
+        assert_eq!(next.rotation(), t.rotation());
+        if let Some(old) = previous {
+            assert_eq!(next, old);
+        }
+        previous = Some(next);
+    }
+    input.physical(
+        PhysicalEvent::Button {
+            control: PhysicalControl::Pointer(PointerButton::Mouse(
+                winit::event::MouseButton::Left,
+            )),
+            state: winit::event::ElementState::Released,
+            repeat: false,
+        },
+        &mut e,
+        &mut c,
+    )?;
+    assert_eq!(
+        e.document().object(id).ok_or("object")?.transform(),
+        previous.ok_or("pose")?
+    );
+    e.undo()?;
+    assert_eq!(e.document().object(id).ok_or("object")?.transform(), t);
+    Ok(())
+}
+#[test]
+fn temporary_shift_snap_and_fifteen_degree_rotation_use_same_gesture() -> R {
+    let mut e = fixture()?;
+    let id = ObjectId::new(1)?;
+    let mut input = ImageInput::new()?;
+    let mut c = Camera::new([800, 600]);
+    input.images.selection.select(Some(id), false);
+    input.physical(PhysicalEvent::Modifiers(Modifiers::SHIFT), &mut e, &mut c)?;
+    input.images.begin(GestureKind::Rotate, [50., 0.], &e)?;
+    input.cursor_moved(c.world_to_screen([49., 11.]), &e, &mut c)?;
+    let t = input
+        .images
+        .preview_transform(e.document(), id)
+        .ok_or("preview")?;
+    assert!((t.rotation() - std::f64::consts::PI / 12.).abs() < 1e-12);
+    assert!(!input.snap.enabled);
+    assert!(input.snap.temporary);
+    input.images.commit(&mut e)?;
+    assert_eq!(e.document().object(id).ok_or("object")?.transform(), t);
+    Ok(())
+}

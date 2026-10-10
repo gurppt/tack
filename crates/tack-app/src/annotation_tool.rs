@@ -20,13 +20,6 @@ impl Creation {
         generation: u64,
         tolerance: f64,
     ) -> Self {
-        // The arrow default uses a modestly stronger shaft; its existing bounded
-        // head sizing consequently grows from 20 to 24 logical world units.
-        let style = if tool == Tool::Arrow && style.width() == AnnotationStyle::default().width() {
-            AnnotationStyle::new(style.stroke(), style.fill(), 4., style.opacity()).unwrap_or(style)
-        } else {
-            style
-        };
         Self {
             tool,
             start,

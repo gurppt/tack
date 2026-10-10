@@ -22,7 +22,8 @@ Built in Rust, with a native GPU-rendered canvas. Boards are saved locally as
 - **Mark up ideas.** Add text notes, rectangles, lines, arrows and freehand
   strokes. Label regions with frames and jump between them.
 - **Save useful views.** Name exact camera positions and zoom levels without adding canvas objects; jump back from View → Camera bookmarks.
-- **Duplicate quickly.** Press Ctrl+D to duplicate a local selection, reusing image originals and keeping one Undo step.
+- **Duplicate quickly.** Press Ctrl+D to duplicate a selection locally or on a
+  shared board, reusing image originals and keeping one Undo step.
 - **Edit with confidence.** Undo and redo board edits, save your work, and recover
   completed recovery snapshots after an interrupted session.
 - **Choose how images are stored.** Embed originals for portable boards or link
@@ -31,11 +32,19 @@ Built in Rust, with a native GPU-rendered canvas. Boards are saved locally as
   crisp bitmap UI, direct integer scaling and editable shortcuts. Right-click keeps application and contextual commands together.
 - **Share a board on your LAN.** File → Share Board → Share from this computer
   creates a separate `-shared.tack` and manages the optional server while that
-  hosted window is open. Click Copy Invite; another artist pastes it into
+  window is open. Your current view becomes the shared copy; the original stays
+  on disk. Click Copy Invite; another artist pastes it into
   File → Join Shared Board. Stop sharing or reopen the shared copy and Put Online.
+  Artists can manipulate separate references together. A red outline marks a
+  reference being manipulated elsewhere. Save to Local creates an independent
+  editable copy when you need to leave the shared board.
 - **Keep tools close.** One compact pixel toolbar offers mouse access to tools
   and commands. Move it to an edge or float it, choose up to 32 actions, and hide
   it whenever you want. The optional status strip shows current shortcuts/state.
+  Shared connection state always stays visible at the bottom.
+- **Recall a view.** Press B, then a digit to store your camera; press that digit
+  to return. These views stay local. Existing customized keymaps keep their
+  shortcuts; Keymap Reset adopts the new defaults.
 
 The renderer loads image detail progressively and uses bounded caches. See the
 [feature inventory](docs/FEATURE_INVENTORY.md) for exact behavior and limits.
@@ -119,9 +128,11 @@ implemented.
 
 Optional LAN collaboration is a foundation for trusted networks. It has no
 authentication or TLS, uses conservative conflict/undo refusal, and requires an
-explicit reconnect after connection loss. Shared snapshot export has a tested
-storage API; its desktop action is still pending. See the
-[LAN test guide](docs/HUMAN_TEST_2A.md) for server, Publish and Join commands.
+explicit reconnect after connection loss. Save to Local requires complete
+originals; an offline preview alone cannot replace missing source bytes. All
+peers must use the current protocol version. The
+[current LAN checklist](docs/HUMAN_TEST_2A5_LAN.md) tracks physical two-computer
+acceptance separately from automated same-host tests.
 
 See the [LAN report](docs/MISSION_2A_REPORT.md),
 [image supply report](docs/MISSION_1L_REPORT.md),

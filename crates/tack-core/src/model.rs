@@ -149,11 +149,14 @@ pub enum ObjectKind {
     Annotation(Box<crate::Annotation>),
 }
 
+pub const DEFAULT_FRAME_COLOR: crate::Color = crate::Color([139, 145, 156, 255]);
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct DocumentObject {
     pub(crate) id: ObjectId,
     pub(crate) transform: Transform,
     pub(crate) kind: ObjectKind,
+    pub(crate) frame_color: Option<crate::Color>,
 }
 impl DocumentObject {
     pub fn annotation(
@@ -165,6 +168,7 @@ impl DocumentObject {
         Ok(Self {
             id,
             transform,
+            frame_color: None,
             kind: ObjectKind::Annotation(Box::new(annotation)),
         })
     }
@@ -180,6 +184,7 @@ impl DocumentObject {
         Self {
             id,
             transform,
+            frame_color: None,
             kind: ObjectKind::Image(ImageObject::new(asset)),
         }
     }
@@ -195,6 +200,7 @@ impl DocumentObject {
         Self {
             id,
             transform,
+            frame_color: None,
             kind: ObjectKind::Image(ImageObject {
                 asset,
                 crop,
@@ -211,8 +217,22 @@ impl DocumentObject {
         Ok(Self {
             id,
             transform,
+            frame_color: None,
             kind: ObjectKind::Frame(name),
         })
+    }
+    pub fn frame_color(&self) -> crate::Color {
+        self.frame_color.unwrap_or(DEFAULT_FRAME_COLOR)
+    }
+    pub fn frame_with_color(
+        id: ObjectId,
+        name: String,
+        transform: Transform,
+        color: crate::Color,
+    ) -> Result<Self, ModelError> {
+        let mut object = Self::frame(id, name, transform)?;
+        object.frame_color = (color != DEFAULT_FRAME_COLOR).then_some(color);
+        Ok(object)
     }
     pub fn duplicate(&self, id: ObjectId, offset: [f64; 2]) -> Result<Self, crate::GeometryError> {
         let mut copy = self.clone();

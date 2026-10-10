@@ -14,7 +14,7 @@ use tack_assets::AssetError;
 const MAX_PROFILE_BYTES: usize = 256 * 1024;
 pub const MAX_RECENT: usize = 16;
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct BindingRecord {
     pub action: String,
@@ -94,9 +94,11 @@ impl RecentPath {
             .ok_or_else(|| "recent board belongs to another platform".into())
     }
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Preferences {
+    #[serde(default)]
+    pub local_views: Vec<crate::camera_slots::View>,
     pub version: u32,
     #[serde(default)]
     pub toolbar: crate::toolbar::Config,
@@ -109,6 +111,8 @@ pub struct Preferences {
     pub ui_scale: u8,
     #[serde(default)]
     pub theme: crate::ui_theme::Theme,
+    #[serde(default = "frame_title_default")]
+    pub frame_title_scale: u8,
     pub handle_size: u8,
     pub hit_radius: u8,
     pub keymap: Vec<BindingRecord>,
@@ -120,6 +124,7 @@ impl Preferences {
     pub fn defaults() -> Result<Self, AssetError> {
         Ok(Self {
             version: 2,
+            local_views: Vec::new(),
             toolbar: crate::toolbar::Config::default(),
             status_bar: true,
             grid: false,
@@ -127,6 +132,7 @@ impl Preferences {
             embedded_import: true,
             ui_scale: 0,
             theme: crate::ui_theme::Theme::default(),
+            frame_title_scale: 2,
             handle_size: 7,
             hit_radius: 9,
             keymap: crate::image_input::product_keymap()?
@@ -143,12 +149,14 @@ impl Preferences {
             || self.keymap.len() > crate::bindings::MAX_BINDINGS
             || self.recent.len() > MAX_RECENT
             || self.ui_scale > 4
+            || !(1..=3).contains(&self.frame_title_scale)
             || !(3..=21).contains(&self.handle_size)
             || !(5..=32).contains(&self.hit_radius)
             || !matches!(self.sampling.as_str(), "Smooth" | "Nearest")
         {
             return Err("unsupported or out-of-bounds preferences".into());
         }
+        crate::camera_slots::validate(&self.local_views)?;
         self.toolbar.clone().normalize()?;
         for recent in self.recent.iter().chain(self.last_board_directory.iter()) {
             if recent.bytes.len() > tack_core::MAX_SOURCE_PATH_BYTES {
@@ -239,7 +247,7 @@ pub fn write(path: &Path, profile: &Preferences) -> Result<(), AssetError> {
 pub fn export_keymap(path: &Path, profile: &Preferences) -> Result<(), AssetError> {
     let target = crate::file_names::keymap(path);
     if target == path {
-        return write(path, profile);
+        return write_keymap(path, profile);
     }
     let mut leaf = target.file_name().ok_or("keymap filename")?.to_os_string();
     leaf.push(".tack-lock");
@@ -249,11 +257,14 @@ pub fn export_keymap(path: &Path, profile: &Preferences) -> Result<(), AssetErro
         Err(error) => return Err(error.into()),
         Ok(_) => return Err("keymap filename with .tackey already exists; select that full filename to confirm replacement".into()),
     }
-    write_locked(&target, profile)
+    write_keymap_locked(&target, profile)
 }
 fn write_locked(path: &Path, profile: &Preferences) -> Result<(), AssetError> {
     profile.keymap()?;
     let bytes = serde_json::to_vec_pretty(profile)?;
+    write_bytes_locked(path, &bytes)
+}
+fn write_bytes_locked(path: &Path, bytes: &[u8]) -> Result<(), AssetError> {
     if bytes.len() > MAX_PROFILE_BYTES {
         return Err("preferences file exceeds bound".into());
     }
@@ -274,7 +285,7 @@ fn write_locked(path: &Path, profile: &Preferences) -> Result<(), AssetError> {
             options.mode(0o600);
         }
         let mut file = options.open(&temporary)?;
-        file.write_all(&bytes)?;
+        file.write_all(bytes)?;
         file.sync_all()?;
         drop(file);
         std::fs::rename(&temporary, path)?;
@@ -343,4 +354,158 @@ pub fn save_profile(
 
 fn status_default() -> bool {
     true
+}
+
+#[derive(Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct KeymapFile {
+    version: u32,
+    bindings: Vec<BindingRecord>,
+}
+fn write_keymap_locked(path: &Path, profile: &Preferences) -> Result<(), AssetError> {
+    profile.keymap()?;
+    write_bytes_locked(
+        path,
+        &serde_json::to_vec_pretty(&KeymapFile {
+            version: 1,
+            bindings: profile.keymap.clone(),
+        })?,
+    )
+}
+fn write_keymap(path: &Path, profile: &Preferences) -> Result<(), AssetError> {
+    let mut leaf = path.file_name().ok_or("keymap filename")?.to_os_string();
+    leaf.push(".tack-lock");
+    let _lock = tack_storage::lock_sidecar(&path.with_file_name(leaf))?;
+    write_keymap_locked(path, profile)
+}
+pub fn read_keymap(path: &Path) -> Result<Preferences, AssetError> {
+    let mut bytes = Vec::new();
+    File::open(path)?
+        .take((MAX_PROFILE_BYTES + 1) as u64)
+        .read_to_end(&mut bytes)?;
+    if bytes.len() > MAX_PROFILE_BYTES {
+        return Err("keymap file exceeds bound".into());
+    }
+    if let Ok(file) = serde_json::from_slice::<KeymapFile>(&bytes) {
+        if file.version != 1 {
+            return Err("unsupported keymap version".into());
+        }
+        let mut profile = Preferences::defaults()?;
+        profile.keymap = file.bindings;
+        profile.keymap()?;
+        Ok(profile)
+    } else {
+        read(path)
+    } // Legacy combined preferences/keymap exports remain readable.
+}
+pub fn export_preferences(path: &Path, profile: &Preferences) -> Result<(), AssetError> {
+    profile.keymap()?;
+    let mut value = serde_json::to_value(profile)?;
+    if let Some(object) = value.as_object_mut() {
+        object.remove("keymap");
+        object.remove("recent");
+        object.remove("last_board_directory");
+        object.remove("local_views");
+    }
+    let mut leaf = path
+        .file_name()
+        .ok_or("preferences filename")?
+        .to_os_string();
+    leaf.push(".tack-lock");
+    let _lock = tack_storage::lock_sidecar(&path.with_file_name(leaf))?;
+    write_bytes_locked(path, &serde_json::to_vec_pretty(&value)?)
+}
+
+fn frame_title_default() -> u8 {
+    2
+}
+
+/// Merge only settings changed by this window. Recent-board writes are not settings conflicts.
+pub fn merge_settings(
+    base: &Preferences,
+    desired: &Preferences,
+    current: &Preferences,
+) -> Result<Preferences, AssetError> {
+    let mut next = current.clone();
+    macro_rules! field { ($($name:ident),*) => { $(
+        if desired.$name != base.$name {
+            if current.$name != base.$name && current.$name != desired.$name {
+                return Err(concat!("Preference changed in another window: ", stringify!($name)).into());
+            }
+            next.$name = desired.$name.clone();
+        }
+    )* }; }
+    field!(
+        toolbar,
+        status_bar,
+        grid,
+        sampling,
+        embedded_import,
+        ui_scale,
+        theme,
+        frame_title_scale,
+        handle_size,
+        hit_radius,
+        keymap
+    );
+    next.local_views = crate::camera_slots::merge(
+        &base.local_views,
+        &desired.local_views,
+        &current.local_views,
+    )?;
+    next.keymap()?;
+    Ok(next)
+}
+/// Preserve edits made while the bounded worker published earlier settings.
+pub fn adopt_saved(local: &mut Preferences, submitted: &Preferences, saved: &Preferences) {
+    macro_rules! field { ($($name:ident),*) => { $(
+        if local.$name == submitted.$name { local.$name = saved.$name.clone(); }
+    )* }; }
+    field!(
+        toolbar,
+        status_bar,
+        grid,
+        sampling,
+        embedded_import,
+        ui_scale,
+        theme,
+        frame_title_scale,
+        handle_size,
+        hit_radius,
+        keymap,
+        local_views,
+        recent,
+        last_board_directory
+    );
+}
+pub struct SavedProfile {
+    pub fingerprint: u32,
+    pub submitted: Preferences,
+    pub saved: Preferences,
+}
+pub fn save_profile_merged(
+    root: &Path,
+    profile: Preferences,
+    baseline: &Preferences,
+    board: Option<&Path>,
+) -> Result<SavedProfile, AssetError> {
+    tack_storage::create_private_directory(root, true)?;
+    let path = root.join("preferences.json");
+    let _lock = tack_storage::lock_sidecar(&root.join("preferences.json.tack-lock"))?;
+    let current = if fingerprint(&path)?.is_some() {
+        read(&path)?
+    } else {
+        baseline.clone()
+    };
+    let mut saved = merge_settings(baseline, &profile, &current)?;
+    if let Some(board) = board {
+        saved.remember(board)?;
+        saved.remember_board_directory(board)?;
+    }
+    write_locked(&path, &saved)?;
+    Ok(SavedProfile {
+        fingerprint: fingerprint(&path)?.ok_or("preferences publication missing")?,
+        submitted: profile,
+        saved,
+    })
 }

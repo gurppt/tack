@@ -1,5 +1,5 @@
 //! Explicit owned subprocess lifecycle. No server construction for ordinary boards.
-use crate::{shared_address::SharedAddress, sharing::Descriptor};
+use crate::sharing::Descriptor;
 use std::{
     path::{Path, PathBuf},
     process::{Child, Command, Stdio},
@@ -191,10 +191,15 @@ pub struct ShareRequest {
     pub profile: PathBuf,
     pub remote: Option<String>,
 }
+pub struct ShareReady {
+    pub descriptor: Descriptor,
+    pub snapshot: PathBuf,
+    pub host: Option<Hosted>,
+}
 impl ShareRequest {
-    pub fn run(self, work: &Path, cancel: &AtomicBool) -> Result<bool, AssetError> {
+    pub fn run(self, work: &Path, cancel: &AtomicBool) -> Result<Option<ShareReady>, AssetError> {
         if cancel.load(Ordering::Relaxed) {
-            return Ok(false);
+            return Ok(None);
         }
         if self.target.exists() || crate::sharing::sidecar(&self.target).exists() {
             return Err("Shared copy already exists. Open it and choose Put Online, or choose a new filename.".into());
@@ -252,12 +257,22 @@ impl ShareRequest {
         lease.save(&doc, inputs)?;
         descriptor.write_new(&self.target)?;
         drop(lease);
-        if let Some(address) = self.remote {
+        let host = if let Some(address) = self.remote {
             let client = tack_shared::WireId::new(tack_storage::new_document_id()?.value())?;
             tack_shared::publish::publish_board(&address, &self.target, client, cancel)?;
-            crate::join_launch::launch(&SharedAddress::parse(&descriptor.invite)?, work, cancel)
+            None
         } else {
-            launch_host(&self.target, work, cancel)
-        }
+            Some(Hosted::start(
+                &self.profile,
+                &self.target,
+                descriptor.clone(),
+                cancel,
+            )?)
+        };
+        Ok(Some(ShareReady {
+            descriptor,
+            snapshot: self.target,
+            host,
+        }))
     }
 }

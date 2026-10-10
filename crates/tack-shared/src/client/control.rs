@@ -50,6 +50,12 @@ pub(super) fn run(context: Context, requests: Receiver<Request>, sender: SyncSen
             continue;
         }
         let message = match request {
+            Request::Lease { epoch, message } => {
+                if epoch != context.epoch.load(Ordering::Acquire) {
+                    continue;
+                }
+                message
+            }
             Request::Edit {
                 epoch: _,
                 operation,
@@ -190,6 +196,25 @@ fn consume(
     message: Message,
 ) -> Result<()> {
     match message {
+        Message::LeaseSnapshot { leases } => {
+            context.emit(ClientEvent::LeaseSnapshot { leases });
+        }
+        Message::LeaseChanged {
+            operation,
+            client,
+            objects,
+            ttl_ms,
+        } => {
+            context.emit(ClientEvent::LeaseChanged {
+                operation,
+                client,
+                objects,
+                ttl_ms,
+            });
+        }
+        Message::LeaseDenied { operation, reason } => {
+            context.emit(ClientEvent::LeaseDenied { operation, reason });
+        }
         Message::Snapshot {
             board,
             revision,

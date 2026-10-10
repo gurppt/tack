@@ -82,7 +82,12 @@ fn exchange(
     message: Message,
 ) -> Result<Message, Box<dyn std::error::Error>> {
     write_message(socket, &message)?;
-    Ok(read_message(socket)?)
+    loop {
+        let incoming = read_message(socket)?;
+        if !matches!(incoming, Message::LeaseSnapshot { .. }) {
+            return Ok(incoming);
+        }
+    }
 }
 fn rename(name: &str) -> Result<CommandDto, Box<dyn std::error::Error>> {
     Ok(CommandDto::from_command(
@@ -149,6 +154,14 @@ fn three_sessions_bidirectional_conflict_rejoin_restart_dedupe_and_assets() -> R
         )?,
         0,
     )?;
+    assert!(matches!(
+        read_message(&mut sb)?,
+        Message::LeaseSnapshot { .. }
+    ));
+    assert!(matches!(
+        read_message(&mut sc)?,
+        Message::LeaseSnapshot { .. }
+    ));
     let edit_a = Message::Edit {
         operation: WireId::new(20)?,
         base: 0,
@@ -178,7 +191,7 @@ fn three_sessions_bidirectional_conflict_rejoin_restart_dedupe_and_assets() -> R
             }
         )?,
         Message::Refused {
-            code: RefusalCode::StaleRevision,
+            code: RefusalCode::Conflict,
             revision: 1,
             ..
         }
@@ -300,5 +313,167 @@ fn three_sessions_bidirectional_conflict_rejoin_restart_dedupe_and_assets() -> R
         Message::Accepted { revision: 1, .. }
     ));
     assert_eq!(fs::read_dir(server.root.join("assets"))?.count(), 1);
+    Ok(())
+}
+
+#[test]
+fn three_connections_scoped_edits_atomic_leases_expiry_and_disconnect() -> R {
+    let server = Server::start()?;
+    let board = WireId::new(100)?;
+    let mut document = Document::new(DocumentId::new(100)?, DocumentLimits::default());
+    for index in 0..3 {
+        document.apply(tack_core::Command::AddObject {
+            object: DocumentObject::frame(
+                ObjectId::new(200 + index)?,
+                "Frame".into(),
+                Transform::new([index as f64 * 120., 0.], [100., 50.], 0., [false; 2])?,
+            )?,
+            index: index as usize,
+        })?;
+    }
+    let mut sockets = [server.connect()?, server.connect()?, server.connect()?];
+    for (i, socket) in sockets.iter_mut().enumerate() {
+        let message = if i == 0 {
+            Message::Publish {
+                board,
+                client: WireId::new(300)?,
+                document: DocumentRecord::from_document(&document)?,
+                sources: vec![],
+            }
+        } else {
+            Message::Hello {
+                board,
+                client: WireId::new(300 + i as u128)?,
+                revision: 0,
+            }
+        };
+        snapshot(exchange(socket, message)?, 0)?;
+        assert!(matches!(
+            read_message(socket)?,
+            Message::LeaseSnapshot { .. }
+        ));
+    }
+    let operation = WireId::new(400)?;
+    write_message(
+        &mut sockets[0],
+        &Message::LeaseAcquire {
+            operation,
+            base: 0,
+            objects: vec![WireId::new(200)?],
+        },
+    )?;
+    for socket in &mut sockets {
+        assert!(
+            matches!(read_message(socket)?, Message::LeaseChanged { operation: Some(id), ttl_ms: 5000, .. } if id == operation)
+        );
+    }
+    assert!(matches!(
+        exchange(
+            &mut sockets[1],
+            Message::LeaseAcquire {
+                operation: WireId::new(401)?,
+                base: 0,
+                objects: vec![WireId::new(201)?, WireId::new(200)?]
+            }
+        )?,
+        Message::LeaseDenied { .. }
+    ));
+    // The failed multi-object request did not reserve its free member.
+    write_message(
+        &mut sockets[2],
+        &Message::LeaseAcquire {
+            operation: WireId::new(402)?,
+            base: 0,
+            objects: vec![WireId::new(201)?],
+        },
+    )?;
+    for socket in &mut sockets {
+        assert!(matches!(
+            read_message(socket)?,
+            Message::LeaseChanged {
+                operation: Some(_),
+                ..
+            }
+        ));
+    }
+    let transform = |object: u128, x: f64| -> Result<CommandDto, Box<dyn std::error::Error>> {
+        Ok(CommandDto::from_command(
+            &tack_core::Command::SetTransform {
+                object: ObjectId::new(object)?,
+                transform: Transform::new([x, 0.], [100., 50.], 0., [false; 2])?,
+            },
+        )?)
+    };
+    // Foreign delete/edit cannot circumvent the lease.
+    assert!(matches!(
+        exchange(
+            &mut sockets[1],
+            Message::Edit {
+                operation: WireId::new(403)?,
+                base: 0,
+                command: transform(200, 40.)?,
+                sources: vec![]
+            }
+        )?,
+        Message::Refused {
+            code: RefusalCode::Busy,
+            ..
+        }
+    ));
+    for (client, object, x) in [(0, 200, 10.), (2, 201, 130.), (1, 202, 250.)] {
+        write_message(
+            &mut sockets[client],
+            &Message::Edit {
+                operation: WireId::new(410 + object)?,
+                base: 0,
+                command: transform(object, x)?,
+                sources: vec![],
+            },
+        )?;
+        for socket in &mut sockets {
+            assert!(matches!(read_message(socket)?, Message::Accepted { .. }));
+        }
+    }
+    // A connected but silent owner loses its reservation without idle traffic.
+    thread::sleep(Duration::from_millis(5100));
+    write_message(
+        &mut sockets[1],
+        &Message::LeaseAcquire {
+            operation: WireId::new(420)?,
+            base: 3,
+            objects: vec![WireId::new(200)?],
+        },
+    )?;
+    for socket in &mut sockets {
+        assert!(matches!(
+            read_message(socket)?,
+            Message::LeaseChanged {
+                operation: None,
+                ..
+            }
+        ));
+        assert!(matches!(
+            read_message(socket)?,
+            Message::LeaseChanged {
+                operation: Some(_),
+                ..
+            }
+        ));
+    }
+    sockets[1].shutdown(std::net::Shutdown::Both)?;
+    assert!(matches!(
+        read_message(&mut sockets[0])?,
+        Message::LeaseChanged {
+            operation: None,
+            ..
+        }
+    ));
+    assert!(matches!(
+        read_message(&mut sockets[2])?,
+        Message::LeaseChanged {
+            operation: None,
+            ..
+        }
+    ));
     Ok(())
 }

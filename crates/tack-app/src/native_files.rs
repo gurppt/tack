@@ -15,6 +15,7 @@ pub enum Picker {
     Relink,
     ImportKeymap,
     ExportKeymap,
+    ExportPreferences,
     ExportOriginal,
 }
 /// Resident descriptors only; folder accessibility is checked on the picker worker.
@@ -128,6 +129,7 @@ pub fn pick_with_options(
     let directory = usable_directory(options.directory.as_deref());
     let suggested_name = options.suggested_name.clone().or_else(|| match kind {
         Picker::Save => Some("Untitled.tack".into()),
+        Picker::ExportPreferences => Some("preferences.json".into()),
         Picker::ExportKeymap => Some("keymap.tackey".into()),
         _ => None,
     });
@@ -143,7 +145,10 @@ pub fn pick_with_options(
                     "--file-filter=Images | *.png *.jpg *.jpeg *.PNG *.JPG *.JPEG",
                 ]);
             }
-            Picker::Save | Picker::ExportKeymap | Picker::ExportOriginal => {
+            Picker::Save
+            | Picker::ExportKeymap
+            | Picker::ExportPreferences
+            | Picker::ExportOriginal => {
                 command.args(["--save", "--confirm-overwrite"]);
             }
             Picker::Relink => {
@@ -224,13 +229,14 @@ pub fn pick_with_options(
 #[cfg(windows)]
 const WINDOWS_PICKER: &str = r#"[Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false)
 Add-Type -AssemblyName System.Windows.Forms
-if ($args[0] -eq 'Save' -or $args[0] -eq 'ExportKeymap' -or $args[0] -eq 'ExportOriginal') { $d = New-Object System.Windows.Forms.SaveFileDialog } else { $d = New-Object System.Windows.Forms.OpenFileDialog }
+if ($args[0] -eq 'Save' -or $args[0] -eq 'ExportPreferences' -or $args[0] -eq 'ExportKeymap' -or $args[0] -eq 'ExportOriginal') { $d = New-Object System.Windows.Forms.SaveFileDialog } else { $d = New-Object System.Windows.Forms.OpenFileDialog }
 $d.Title = 'Tack'
 $d.AddExtension = $false
 if ($args[1]) { $d.InitialDirectory = $args[1] }
 if ($args[2]) { $d.FileName = $args[2] }
 if ($args[0] -eq 'Open' -or $args[0] -eq 'Save') { $d.Filter = 'Tack boards (*.tack)|*.tack' }
 if ($args[0] -eq 'ImportKeymap') { $d.Filter = 'Tack keymaps (*.tackey)|*.tackey|Legacy Tack preferences (*.json)|*.json' }
+if ($args[0] -eq 'ExportPreferences') { $d.Filter = 'Tack preferences (*.json)|*.json' }
 if ($args[0] -eq 'ExportKeymap') { $d.Filter = 'Tack keymaps (*.tackey)|*.tackey' }
 if ($args[0] -eq 'Import' -or $args[0] -eq 'Relink') { $d.Filter = 'Images (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg' }
 if ($args[0] -eq 'Import') { $d.Multiselect = $true }

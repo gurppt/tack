@@ -8,6 +8,8 @@ impl LocalUi {
         profile: &Preferences,
     ) {
         self.hits.clear();
+        self.panel_offset = [0.; 2];
+        let start_quad = gizmo.quads.len();
         if self.panel == Panel::Toolbar {
             self.draw_toolbar(gizmo, camera, profile);
             return;
@@ -213,9 +215,36 @@ impl LocalUi {
                 [24. * scale, (height - 8.) * scale],
                 width - 24.,
                 &self.message,
-                palette.accent_attention,
+                if self.message == "COPIED" {
+                    palette.accent_secondary
+                } else {
+                    palette.accent_attention
+                },
                 &mut budget,
             );
+        }
+        if self.panel == Panel::Sharing
+            && self
+                .daily
+                .as_ref()
+                .is_some_and(|d| d.rows.first().is_some_and(|r| r == "SHARED BOARD OFFLINE"))
+        {
+            self.panel_offset = [
+                ((f64::from(screen[0]) / scale - width) / 2. - 12.)
+                    .max(0.)
+                    .round(),
+                ((f64::from(screen[1]) / scale - height) / 2. - 12.)
+                    .max(0.)
+                    .round(),
+            ];
+            let offset = self.panel_offset.map(|v| v * scale / camera.zoom());
+            for quad in &mut gizmo.quads[start_quad..] {
+                for point in &mut quad.points {
+                    for i in 0..2 {
+                        point[i] += offset[i];
+                    }
+                }
+            }
         }
     }
 }

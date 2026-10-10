@@ -43,7 +43,9 @@ impl LocalUi {
         if let Some(result) = self.daily_event(event) {
             return result;
         }
-        let p = self.cursor.map(|v| v / self.layout[0]);
+        let p = std::array::from_fn::<_, 2, _>(|i| {
+            self.cursor[i] / self.layout[0] - self.panel_offset[i]
+        });
         let hit = self.hits.iter().copied().find(|h| h.contains(p));
         if self.capture {
             if matches!(
@@ -118,12 +120,36 @@ impl LocalUi {
                     && p[1] >= top
                     && p[1] < top + self.visible as f64 * 22.
                 {
+                    if self.panel == Panel::Toolbar {
+                        let order = p[0] >= (width + 24.) / 2.;
+                        if order != self.toolbar_order {
+                            self.first = 0;
+                        }
+                        self.toolbar_order = order;
+                    }
                     let selected = self.first + ((p[1] - top) / 22.).floor() as usize;
                     if selected < self.count(keymap, profile) {
                         self.selected = selected;
                         self.focus = None;
-                        if !(matches!(self.panel, Panel::Keymap | Panel::Info | Panel::Connecting)
-                            || self.panel == Panel::Preferences && matches!(selected, 5 | 6))
+                        if self.panel == Panel::Keymap {
+                            let action = self.actions(keymap).get(selected).copied()?;
+                            self.release = keymap.bindings().iter().any(|b| {
+                                shortcut_matches(action, b.action) && b.trigger == Trigger::Hold
+                            });
+                            let column = 24. + (width - 24.) * 0.55;
+                            let now = std::time::Instant::now();
+                            let twice = self.shortcut_click.is_some_and(|(row, at)| {
+                                row == selected && now.duration_since(at).as_millis() <= 450
+                            });
+                            self.shortcut_click = (p[0] >= column).then_some((selected, now));
+                            if twice && p[0] >= column {
+                                return self.command(Command::Change, keymap, profile);
+                            }
+                        }
+                        if !(matches!(
+                            self.panel,
+                            Panel::Toolbar | Panel::Keymap | Panel::Info | Panel::Connecting
+                        ) || self.panel == Panel::Preferences && matches!(selected, 5 | 6))
                         {
                             return self.activate(keymap, profile);
                         }
@@ -184,6 +210,12 @@ impl LocalUi {
                     self.back()
                 }
             }
+            PhysicalKey::Code(KeyCode::Tab) if self.panel == Panel::Toolbar => {
+                self.toolbar_order = !self.toolbar_order;
+                self.selected = 0;
+                self.focus = None;
+                None
+            }
             PhysicalKey::Code(KeyCode::Tab) => {
                 let enabled: Vec<_> = self
                     .hits
@@ -203,6 +235,18 @@ impl LocalUi {
                 };
                 self.focus = enabled.get(next).copied();
                 None
+            }
+            PhysicalKey::Code(KeyCode::ArrowUp | KeyCode::ArrowDown)
+                if self.panel == Panel::Toolbar && self.modifiers.contains(Modifiers::CONTROL) =>
+            {
+                self.toolbar_command(
+                    if event.physical_key == PhysicalKey::Code(KeyCode::ArrowUp) {
+                        Command::ToolbarUp
+                    } else {
+                        Command::ToolbarDown
+                    },
+                    profile,
+                )
             }
             PhysicalKey::Code(KeyCode::ArrowDown) => {
                 self.selected = (self.selected + 1).min(count.saturating_sub(1));

@@ -59,6 +59,10 @@ pub enum CommandDto {
     RemoveGroup {
         group: WireId,
     },
+    SetFrameColor {
+        object: WireId,
+        color: [u8; 4],
+    },
     SetFrameName {
         object: WireId,
         name: String,
@@ -155,6 +159,10 @@ impl CommandDto {
             RemoveGroup(group) => Self::RemoveGroup {
                 group: wire_id(group.value())?,
             },
+            SetFrameColor { object, color } => Self::SetFrameColor {
+                object: wire_id(object.value())?,
+                color: color.0,
+            },
             SetFrameName { object, name } => Self::SetFrameName {
                 object: wire_id(object.value())?,
                 name: name.clone(),
@@ -231,6 +239,10 @@ impl CommandDto {
             RemoveGroup { group } => {
                 Command::RemoveGroup(GroupId::new(group.value()).map_err(domain_error)?)
             }
+            SetFrameColor { object, color } => Command::SetFrameColor {
+                object: object_id(*object)?,
+                color: tack_core::Color(*color),
+            },
             SetFrameName { object, name } => {
                 validate_frame_name(name).map_err(domain_error)?;
                 Command::SetFrameName {
