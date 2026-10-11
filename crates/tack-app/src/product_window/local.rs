@@ -3,6 +3,7 @@ use super::*;
 mod daily;
 mod fresh;
 mod installer;
+mod linked;
 mod updates;
 mod updates_ui;
 mod workflows;
@@ -64,6 +65,7 @@ pub(super) struct LocalState {
     pub drop_deadline: Option<Instant>,
     pub untitled: bool,
     pub reload_offline: bool,
+    pub linked_probe_pending: bool,
 }
 impl LocalState {
     pub fn new() -> Result<Self, AssetError> {
@@ -128,6 +130,7 @@ impl LocalState {
             drop_deadline: None,
             untitled: false,
             reload_offline: false,
+            linked_probe_pending: false,
         })
     }
 }
@@ -146,6 +149,7 @@ impl App {
         self.assets = None;
         self.local.originals.clear();
         self.local.spool = None;
+        self.local.linked_probe_pending = false;
         self.local.recovery = RecoverySchedule::default();
         self.local.recovery_pending = false;
         self.local.drops.clear();
@@ -295,6 +299,7 @@ impl App {
                 }
             }
         }
+        self.probe_linked_sources();
     }
     pub(super) fn poll_storage(&mut self) {
         if self.shared.is_some() || self.offline.is_some() {

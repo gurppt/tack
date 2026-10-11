@@ -1292,7 +1292,32 @@ fn poisoned_current_generator_detail_sizes_regenerate_and_cannot_misstate_lod() 
         let path = f.root.join("seed.tack");
         let cache = f.root.join("current-generator-cache");
         fs::create_dir(&cache).unwrap();
-        let file = cache.join(format!("{:032x}-1-6-512.png", f.source.value()));
+        let demand = [ProductDemand {
+            asset: f.asset,
+            lod: Lod::Medium,
+            edge: 512,
+            priority: 1,
+            resident: false,
+        }];
+        let mut warm = ProductAssets::new(
+            Arc::new(TackFile::open(&path).unwrap()),
+            &path,
+            cache.clone(),
+        )
+        .unwrap();
+        warm.replace_view(&demand, &f.document, &Default::default());
+        settle_view(&mut warm);
+        drop(warm);
+        let file = fs::read_dir(&cache)
+            .unwrap()
+            .map(|e| e.unwrap().path())
+            .find(|p| {
+                p.file_name()
+                    .unwrap()
+                    .to_string_lossy()
+                    .ends_with("-1-6-512.png")
+            })
+            .unwrap();
         image::RgbImage::from_pixel(bad[0], bad[1], image::Rgb([99, 99, 99]))
             .save(&file)
             .unwrap();

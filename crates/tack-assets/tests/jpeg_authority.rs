@@ -185,10 +185,16 @@ fn save_reopen(embedded: bool) {
     assert_eq!(assets.stats().source_bytes, 0);
     assert_eq!(assets.stats().repair_cache_hits, 1);
     drop(assets);
-    let tilepath = f
-        .root
-        .join("derived")
-        .join(format!("{:032x}-1-5-{edge}.png", f.source.value()));
+    let tilepath = fs::read_dir(f.root.join("derived"))
+        .unwrap()
+        .map(|e| e.unwrap().path())
+        .find(|p| {
+            p.file_name()
+                .unwrap()
+                .to_string_lossy()
+                .ends_with(&format!("-1-5-{edge}.png"))
+        })
+        .unwrap();
     fs::remove_file(tilepath).unwrap();
     let (_, mut assets) = f.load("saved.tack");
     assets.replace_view(&f.demand(), &f.document, &Default::default());
@@ -256,4 +262,82 @@ fn changed_link_refuses_cached_jpeg_detail_and_relink_revision_replaces_pixels()
     assert!(assets.supports_jpeg_tiles(f.source, 2));
     assert!(!assets.supports_jpeg_tiles(f.source, 1));
     assert_eq!(fs::read(f.root.join("original.jpg")).unwrap(), changed);
+}
+
+#[test]
+fn reused_revision_after_reopen_does_not_resurrect_stale_linked_lods() {
+    let f = Fixture::new(false);
+    let (_, mut assets) = f.load("seed.tack");
+    let path = f.root.join("original.jpg");
+    let linked = LinkedPath::native(std::path::Path::new("original.jpg")).unwrap();
+    let mut document = f.document.clone();
+    document
+        .apply(Command::SetSource(
+            Source::from_descriptor(
+                f.source,
+                SourceLocation::Linked(linked.clone()),
+                3,
+                Some(source_fingerprint(&path).unwrap()),
+            )
+            .unwrap(),
+        ))
+        .unwrap();
+    let demand = [
+        ProductDemand {
+            asset: f.asset,
+            lod: Lod::Thumbnail,
+            edge: 128,
+            priority: 1,
+            resident: false,
+        },
+        ProductDemand {
+            asset: f.asset,
+            lod: Lod::Detail,
+            edge: 2048,
+            priority: 2,
+            resident: false,
+        },
+    ];
+    assets.replace_view(&demand, &document, &Default::default());
+    settle(&mut assets);
+    assert!(
+        assets
+            .get_rep(f.asset, 3, Lod::Thumbnail, 128)
+            .unwrap()
+            .rgba[0]
+            < 40
+    );
+    drop(assets);
+    // A previous session's transient revision 3 still exists on disk. A newly
+    // reopened editor can allocate 3 again after a Linked/Embedded round trip.
+    fs::write(&path, jpeg(211)).unwrap();
+    document = f.document.clone();
+    document
+        .apply(Command::SetSource(
+            Source::from_descriptor(
+                f.source,
+                SourceLocation::Linked(linked),
+                3,
+                Some(source_fingerprint(&path).unwrap()),
+            )
+            .unwrap(),
+        ))
+        .unwrap();
+    let (_, mut assets) = f.load("seed.tack");
+    assets.replace_view(&demand, &document, &Default::default());
+    settle(&mut assets);
+    for (lod, edge) in [(Lod::Thumbnail, 128), (Lod::Detail, 2048)] {
+        assert!(
+            assets.get_rep(f.asset, 3, lod, edge).unwrap().rgba[0] > 190,
+            "stale {lod:?}"
+        );
+    }
+    assert_eq!(assets.stats().repair_cache_hits, 0);
+    drop(assets);
+    // The corrected products still reuse safely on a subsequent reopen.
+    let (_, mut assets) = f.load("seed.tack");
+    assets.replace_view(&demand, &document, &Default::default());
+    settle(&mut assets);
+    assert_eq!(assets.stats().repair_cache_hits, 2);
+    assert_eq!(assets.stats().source_bytes, 0);
 }

@@ -18,6 +18,7 @@ use std::{
 };
 use tack_core::{AssetId, ByteCache, Document, ImageAsset, Lod, Source, SourceId, SourceLocation};
 use tack_storage::{Payload, RangeReader, TackFile};
+mod identity;
 mod tiles;
 mod trace;
 pub use trace::RepTrace;
@@ -855,6 +856,7 @@ fn load(job: Job, base: &Path, dir: &Path, disk: &Mutex<crate::decode::DiskCache
                 .document
                 .asset(id)
                 .is_some_and(|a| a.source_id() == source)
+            && board.document.source(source) == Some(s)
         {
             outcome.container_bytes += e.range.len;
             if let Ok(image) = board.overview_bytes(id).and_then(|bytes| {
@@ -868,14 +870,16 @@ fn load(job: Job, base: &Path, dir: &Path, disk: &Mutex<crate::decode::DiskCache
                 );
             }
         }
+        let namespace = identity::namespace(&job, path.as_deref());
         let cache_path = |generator| {
             dir.join(format!(
-                "{:032x}-{}-{}-{}.png",
+                "{:032x}-{}-{}-{}-{}.png",
                 if job.lod == Lod::Thumbnail {
                     id.value()
                 } else {
                     s.id().value()
                 },
+                namespace,
                 s.revision(),
                 generator,
                 job.edge

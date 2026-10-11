@@ -37,6 +37,7 @@ pub enum LocalUpdate {
     Imported(ImportUpdate),
     Relinked(Result<RelinkReady, String>),
     SourceTransition(Result<Option<crate::source_transition::Ready>, String>),
+    LinkedRefresh(crate::linked_refresh::Ready),
     Restored(Result<tack_storage::TackFile, String>),
     Discarded(Result<(), String>),
     Clipboard {
@@ -115,6 +116,7 @@ pub enum Operation {
     Import(ImportRequest),
     Relink(Source, PathBuf),
     SourceTransition(crate::source_transition::Request),
+    LinkedRefresh(crate::linked_refresh::Request),
     Clipboard {
         work: PathBuf,
         ticket: Option<(ObjectId, String)>,
@@ -189,6 +191,7 @@ impl LocalWorker {
             Operation::Import(_)
                 | Operation::Relink(..)
                 | Operation::SourceTransition(_)
+                | Operation::LinkedRefresh(_)
                 | Operation::RestoreRecovery { .. }
                 | Operation::OpenBoard(_)
                 | Operation::EmptyBoard(_)
@@ -322,6 +325,9 @@ impl LocalWorker {
                             emit(LocalUpdate::SourceTransition(
                                 request.run(&stop).map_err(|e| e.to_string()),
                             ));
+                        }
+                        Operation::LinkedRefresh(request) => {
+                            emit(LocalUpdate::LinkedRefresh(request.run(&stop)));
                         }
                         Operation::Relink(source, path) => {
                             emit(LocalUpdate::Relinked(
@@ -457,6 +463,7 @@ impl LocalWorker {
                             && matches!(
                                 update,
                                 LocalUpdate::SourceTransition(_)
+                                    | LocalUpdate::LinkedRefresh(_)
                                     | LocalUpdate::Relinked(_)
                                     | LocalUpdate::Update(_)
                                     | LocalUpdate::Opened(_)

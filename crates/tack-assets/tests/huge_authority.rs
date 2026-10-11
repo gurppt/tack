@@ -228,10 +228,16 @@ fn save_reopen_authority(embedded: bool) {
     let image = assets.get_rep(fixture.asset, 1, Lod::Detail, tile).unwrap();
     assert_eq!([image.width, image.height], [256, 1]);
     let expected_tile = image.rgba.clone();
-    let tile_path = fixture
-        .root
-        .join("derived")
-        .join(format!("{:032x}-1-3-{tile}.png", fixture.source.value()));
+    let tile_path = fs::read_dir(fixture.root.join("derived"))
+        .unwrap()
+        .map(|e| e.unwrap().path())
+        .find(|p| {
+            p.file_name()
+                .unwrap()
+                .to_string_lossy()
+                .ends_with(&format!("-1-3-{tile}.png"))
+        })
+        .unwrap();
     assert!(tile_path.is_file());
     let mut blobs = vec![BlobInput::overview(
         fixture.asset,

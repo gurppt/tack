@@ -230,6 +230,26 @@ impl App {
                     self.input.status = "Source refreshed; progressive detail requested".into();
                 }
             }
+            LocalUpdate::LinkedRefresh(ready) => {
+                if matches!(
+                    self.local.queued,
+                    Some(Operation::SourceTransition(_) | Operation::Relink(..))
+                ) {
+                    // An explicit queued source edit has already captured its
+                    // descriptor. Let it win; re-probe once after it finishes.
+                    self.local.linked_probe_pending = true;
+                } else if self.shared.is_none()
+                    && self.offline.is_none()
+                    && let Some(editor) = &mut self.editor
+                {
+                    let changed = ready.apply(editor)?;
+                    if changed > 0 {
+                        self.visibility.invalidate();
+                        self.local.cache_generation = None;
+                        self.input.status = format!("Updated {changed} linked source(s)");
+                    }
+                }
+            }
             LocalUpdate::Relinked(result) => {
                 result
                     .map_err(AssetError::from)?

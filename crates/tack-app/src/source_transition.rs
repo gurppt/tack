@@ -103,6 +103,21 @@ impl Request {
     }
 }
 impl Ready {
+    pub(crate) fn edits(&self, revision: u64, doc: &Document) -> Result<Vec<Command>, AssetError> {
+        let id = self.previous.id();
+        let source =
+            Source::from_descriptor(id, self.location.clone(), revision, Some(self.fingerprint))?
+                .with_original_path(Some(self.origin.clone()));
+        let mut edits = vec![Command::SetSource(source)];
+        for asset in doc.assets().filter(|a| a.source_id() == id) {
+            edits.push(Command::SetAsset(ImageAsset::new(
+                asset.id(),
+                id,
+                self.pixels,
+            )?));
+        }
+        Ok(edits)
+    }
     /// Return the original's new revision only after one validated atomic edit.
     pub fn apply(
         self,
@@ -117,17 +132,7 @@ impl Ready {
             .next_source_revision()
             .ok_or("Source revision exhausted")?;
         let id = self.previous.id();
-        let source = Source::from_descriptor(id, self.location, revision, Some(self.fingerprint))?
-            .with_original_path(Some(self.origin));
-        let mut edits = vec![Command::SetSource(source)];
-        for asset in editor.document().assets().filter(|a| a.source_id() == id) {
-            edits.push(Command::SetAsset(ImageAsset::new(
-                asset.id(),
-                id,
-                self.pixels,
-            )?));
-        }
-        editor.execute(Command::Batch(edits))?;
+        editor.execute(Command::Batch(self.edits(revision, editor.document())?))?;
         Ok((id, revision, self.original))
     }
 }

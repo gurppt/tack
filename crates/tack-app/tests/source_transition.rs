@@ -155,3 +155,118 @@ fn cancelled_and_stale_completions_do_not_mutate_document() -> R {
     );
     Ok(())
 }
+
+#[test]
+fn event_driven_link_probe_refreshes_changed_sources_once_and_preserves_geometry() -> R {
+    let r = Root::new()?;
+    let mut e = fixture(&r)?;
+    request(&e, &r, false)?
+        .run(&AtomicBool::new(false))?
+        .ok_or("ready")?
+        .apply(&mut e)?;
+    let before = e.document().clone();
+    let undo = e.undo_len();
+    let probe = |e: &DocumentEditor| tack_app::linked_refresh::Request {
+        document: e.document().id(),
+        sources: e.document().sources().cloned().collect(),
+        board: r.0.join("board.tack"),
+        work: r.0.join("probe"),
+    };
+    assert_eq!(probe(&e).run(&AtomicBool::new(false)).apply(&mut e)?, 0);
+    assert_eq!(e.undo_len(), undo);
+    let mut pixels = PNG.to_vec();
+    pixels.extend_from_slice(b"changed externally");
+    fs::write(r.0.join("source.png"), &pixels)?;
+    assert_eq!(probe(&e).run(&AtomicBool::new(true)).apply(&mut e)?, 0);
+    assert_eq!(e.document(), &before);
+    assert_eq!(probe(&e).run(&AtomicBool::new(false)).apply(&mut e)?, 1);
+    assert_eq!(e.undo_len(), undo + 1);
+    assert_eq!(
+        e.document().object(ObjectId::new(1)?),
+        before.object(ObjectId::new(1)?)
+    );
+    assert_eq!(probe(&e).run(&AtomicBool::new(false)).apply(&mut e)?, 0);
+    e.undo()?;
+    assert_eq!(e.document(), &before);
+    // A pending focus probe must not reverse a later explicit toggle to Embedded.
+    let late = probe(&e).run(&AtomicBool::new(false));
+    request(&e, &r, true)?
+        .run(&AtomicBool::new(false))?
+        .ok_or("ready")?
+        .apply(&mut e)?;
+    let embedded = e.document().clone();
+    assert_eq!(late.apply(&mut e)?, 0);
+    assert_eq!(probe(&e).run(&AtomicBool::new(false)).apply(&mut e)?, 0);
+    assert_eq!(e.document(), &embedded);
+    Ok(())
+}
+#[test]
+fn unavailable_or_invalid_link_probe_keeps_last_known_state_without_mutation() -> R {
+    let r = Root::new()?;
+    let mut e = fixture(&r)?;
+    let before = e.document().clone();
+    for invalid in [Some(b"not an image".as_slice()), None] {
+        if let Some(bytes) = invalid {
+            fs::write(r.0.join("source.png"), bytes)?;
+        } else {
+            fs::remove_file(r.0.join("source.png"))?;
+        }
+        let probe = tack_app::linked_refresh::Request {
+            document: e.document().id(),
+            sources: e.document().sources().cloned().collect(),
+            board: r.0.join("board.tack"),
+            work: r.0.join("probe"),
+        };
+        assert_eq!(probe.run(&AtomicBool::new(false)).apply(&mut e)?, 0);
+        assert_eq!(e.document(), &before);
+        assert_eq!(e.undo_len(), 0);
+    }
+    Ok(())
+}
+
+#[test]
+fn focus_batch_uses_distinct_revisions_and_one_undo_for_multiple_linked_sources() -> R {
+    let r = Root::new()?;
+    let mut e = fixture(&r)?;
+    request(&e, &r, false)?
+        .run(&AtomicBool::new(false))?
+        .ok_or("ready")?
+        .apply(&mut e)?;
+    let first = e
+        .document()
+        .source(SourceId::new(1)?)
+        .ok_or("source")?
+        .clone();
+    e.execute(Command::Batch(vec![
+        Command::AddSource(Source::from_descriptor(
+            SourceId::new(2)?,
+            first.location().clone(),
+            first.revision(),
+            first.fingerprint(),
+        )?),
+        Command::AddAsset(ImageAsset::new(
+            AssetId::new(2)?,
+            SourceId::new(2)?,
+            [2, 1],
+        )?),
+    ]))?;
+    let before = e.document().clone();
+    let undo = e.undo_len();
+    let mut changed = PNG.to_vec();
+    changed.extend_from_slice(b"both aliases changed");
+    fs::write(r.0.join("source.png"), changed)?;
+    let probe = tack_app::linked_refresh::Request {
+        document: e.document().id(),
+        sources: e.document().sources().cloned().collect(),
+        board: r.0.join("board.tack"),
+        work: r.0.join("probe"),
+    };
+    assert_eq!(probe.run(&AtomicBool::new(false)).apply(&mut e)?, 2);
+    assert_eq!(e.undo_len(), undo + 1);
+    let revisions: Vec<_> = e.document().sources().map(Source::revision).collect();
+    assert_ne!(revisions[0], revisions[1]);
+    assert!(revisions.iter().all(|r| *r > first.revision()));
+    e.undo()?;
+    assert_eq!(e.document(), &before);
+    Ok(())
+}

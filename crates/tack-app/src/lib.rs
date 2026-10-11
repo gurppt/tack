@@ -58,6 +58,7 @@ pub mod source_export;
 
 pub mod duplicate;
 pub mod join_launch;
+pub mod linked_refresh;
 pub mod shared_address;
 pub mod source_info;
 pub mod source_transition;

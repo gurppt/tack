@@ -1239,6 +1239,9 @@ impl App {
         }
         if let WindowEvent::Focused(focused) = &event {
             self.input.edit_focused = *focused;
+            if *focused {
+                self.local.linked_probe_pending = true;
+            }
         }
         if matches!(&event, WindowEvent::KeyboardInput { event, .. }
             if event.state == winit::event::ElementState::Pressed

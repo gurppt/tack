@@ -134,6 +134,7 @@ impl App {
             DocumentEditor::new(board.document.clone(), 200)
         });
         self.board = Some(board);
+        self.local.linked_probe_pending = self.offline.is_none();
         self.visibility.invalidate();
         self.load_failed = false;
         if !reuse {
