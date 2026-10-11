@@ -1,0 +1,121 @@
+{
+  "implementation_commit": "161f615993ab85c34fa3ca503aeed93ef0314bda",
+  "linux": {
+    "path": "bin/tack",
+    "sha256": "548ba4c9d4b7f2446a998302d7cc6589e66c55fa7908bc6a6f136749663824b4",
+    "build_txt": "STATUS: CURRENT\ncommit: 161f615993ab85c34fa3ca503aeed93ef0314bda\nprofile: release\nbuilt_utc: 2026-10-11T05:12:24Z\nbinary: ./bin/tack\nserver_binary: ./bin/tack-server\nworktree_dirty: true\nsha256: 548ba4c9d4b7f2446a998302d7cc6589e66c55fa7908bc6a6f136749663824b4\nupdater_sha256: f2449035697042f0fdae85820d3601fc5356da37063c9199f3407ff095a3a4be\nversion: 0.1.0-dev.1\nserver_sha256: e45dbe7029f7000cabcefc7569866e5290007d70abb86d891576c24f422d7163\nabout_asset_sha256: d22641555380426ad6567153edca7b83548ad964acdc9c3fbdb70b59ac7759ee\njpeg_decoder_sha256: 4fcef9b973c80de96ecf2d5babe86ef87b1be2459f22559243c8e85da3ebe587\ncheckpoint: Phase 2A9 + portable profiles and toolbar sets\n"
+  },
+  "windows": {
+    "path": "bin/tack-windows-x86_64.zip",
+    "bytes": 13819536,
+    "sha256": "b643d84212b555103e7716685f76d56ef882e8aa0ca0899271545c20dcb6cff7",
+    "metadata": {
+      "commit": "161f615993ab85c34fa3ca503aeed93ef0314bda",
+      "built_utc": "2026-10-11T05:12:57.760465+00:00",
+      "target": "x86_64-pc-windows-gnu",
+      "working_tree": true,
+      "jpeg": "libjpeg-turbo 3.2.0 static SIMD SSE2/AVX2",
+      "native": {
+        "version": "3.2.0",
+        "target": "windows-gnu",
+        "source_url": "https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.2.0/libjpeg-turbo-3.2.0.tar.gz",
+        "source_sha256": "6f30092cef9fb839779646608f4ee14ae3cbac989c47fa05e841b0841f09878e",
+        "cmake_command": [
+          "cmake",
+          "-S",
+          "/home/gurp/softs/tack/target/native/source/libjpeg-turbo-3.2.0",
+          "-B",
+          "/home/gurp/softs/tack/target/native/turbojpeg-build-windows-gnu",
+          "-DCMAKE_INSTALL_PREFIX=/home/gurp/softs/tack/target/native/libjpeg-turbo-3.2.0-windows-gnu",
+          "-DCMAKE_INSTALL_LIBDIR=lib",
+          "-DCMAKE_BUILD_TYPE=Release",
+          "-DENABLE_SHARED=OFF",
+          "-DENABLE_STATIC=ON",
+          "-DWITH_TURBOJPEG=ON",
+          "-DREQUIRE_SIMD=ON",
+          "-DWITH_JAVA=OFF",
+          "-DWITH_CRT_DLL=ON",
+          "-DCMAKE_TOOLCHAIN_FILE=/home/gurp/softs/tack/target/native/windows-gnu-toolchain.cmake",
+          "-DWITH_TESTS=OFF",
+          "-DWITH_SIMD=ON",
+          "-DCMAKE_ASM_NASM_COMPILER=/home/gurp/softs/tack/target/native/tools/nasm-root/usr/bin/nasm"
+        ],
+        "decoder_sha256": "622e230c5aadee33248723fff3fe05d6c5d498a9b5ffa1b710060c9b2e0f51cc",
+        "library_sha256": {
+          "libturbojpeg.a": "d07bddf151580f24058b224d490d33485d9e1e8a3bae25a5a06e27714868d4fc"
+        },
+        "compiler_cache": [],
+        "nasm": "NASM version 2.16.01"
+      },
+      "executable_imports": {
+        "tack-jpeg-decoder.exe": [
+          "KERNEL32.dll",
+          "msvcrt.dll"
+        ],
+        "tack-server.exe": [
+          "api-ms-win-core-synch-l1-2-0.dll",
+          "bcryptprimitives.dll",
+          "KERNEL32.dll",
+          "msvcrt.dll",
+          "ntdll.dll",
+          "USERENV.dll",
+          "WS2_32.dll"
+        ],
+        "tack-updater.exe": [
+          "api-ms-win-core-synch-l1-2-0.dll",
+          "bcryptprimitives.dll",
+          "ADVAPI32.dll",
+          "bcrypt.dll",
+          "KERNEL32.dll",
+          "msvcrt.dll",
+          "ntdll.dll",
+          "USERENV.dll",
+          "WS2_32.dll"
+        ],
+        "tack.exe": [
+          "api-ms-win-core-winrt-error-l1-1-0.dll",
+          "dwmapi.dll",
+          "gdi32.dll",
+          "imm32.dll",
+          "kernel32.dll",
+          "ntdll.dll",
+          "ole32.dll",
+          "oleaut32.dll",
+          "propsys.dll",
+          "shell32.dll",
+          "user32.dll",
+          "userenv.dll",
+          "uxtheme.dll",
+          "ws2_32.dll",
+          "api-ms-win-core-synch-l1-2-0.dll",
+          "bcryptprimitives.dll",
+          "kernel32.dll",
+          "kernel32.dll",
+          "kernel32.dll",
+          "KERNEL32.dll",
+          "msvcrt.dll",
+          "ntdll.dll",
+          "OPENGL32.dll"
+        ]
+      },
+      "files": {
+        "tack-jpeg-decoder.exe": {
+          "bytes": 872960,
+          "sha256": "9c1ba15376bcd864c1bc8d6f80d3aa0bb70e923132843b1d3844cb96e9e19076"
+        },
+        "tack-server.exe": {
+          "bytes": 3331584,
+          "sha256": "c259029df1f512e47d147bd2899b4093a445b4d131a57ecaff178d8de38113ef"
+        },
+        "tack-updater.exe": {
+          "bytes": 4357632,
+          "sha256": "61716a37adb92e0dfdcf4d213b3a09670bc8aee1d026504b3200e3f73eb13adc"
+        },
+        "tack.exe": {
+          "bytes": 25127936,
+          "sha256": "2cf1fe8a8e7bbbe2be87fc1c08f55eaafecb4dfb70fafb4211e78f69df207f64"
+        }
+      }
+    }
+  }
+}

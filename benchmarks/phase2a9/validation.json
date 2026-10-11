@@ -1,0 +1,19 @@
+{
+  "implementation_commit": "161f615993ab85c34fa3ca503aeed93ef0314bda",
+  "rust_passed": 449,
+  "rust_ignored": 17,
+  "python_passed": 31,
+  "fmt": true,
+  "check": true,
+  "clippy": true,
+  "docs": true,
+  "deny": "advisories ok, bans ok, licenses ok, sources ok",
+  "no_default_features_all_targets": true,
+  "gpu_explicit_passed": 9,
+  "native_final_checks": 30,
+  "native_candidate_link_checks": 6,
+  "native_candidate_mouse_checks": 21,
+  "huge_final_passed": true,
+  "independent_review": "Pending separate reviewer; not a public release",
+  "physical_windows": "Pending"
+}

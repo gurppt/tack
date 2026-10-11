@@ -1,0 +1,15 @@
+{
+  "scope": "Software Vulkan/Lavapipe, LP_NUM_THREADS=2. CPU submission is not GPU time. First native viewport overlapped huge check and incremental Windows build.",
+  "viewports": {
+    "800x600": {
+      "frames": 102,
+      "cpu_submission_p95_ms": 2.390809,
+      "max_reported_gpu_bytes": 2631680
+    },
+    "1024x768": {
+      "frames": 102,
+      "cpu_submission_p95_ms": 0.452502,
+      "max_reported_gpu_bytes": 2631680
+    }
+  }
+}

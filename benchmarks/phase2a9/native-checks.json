@@ -1,0 +1,318 @@
+[
+  {
+    "name": "800x600 grayscale persisted",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "800x600 grayscale exact Undo",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "800x600 grayscale Redo",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "800x600 object lock persisted",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "800x600 locked selection recovery",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "800x600 Actual Size uses intrinsic dimensions",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "800x600 Linked to Embedded",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "800x600 Embedded to remembered Linked",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "800x600 refreshed pixels replace old supply",
+    "observed": true,
+    "detail": [
+      199,
+      199,
+      199
+    ]
+  },
+  {
+    "name": "800x600 Refresh preserves geometry",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "800x600 next set content",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "800x600 portable sets and path stripping",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "800x600 backup before profile import",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "800x600 Update remains open",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "800x600 idle has no recurring CPU activity",
+    "observed": true,
+    "detail": {
+      "seconds": 2.0,
+      "rss_before": 124956672,
+      "rss_after": 124956672,
+      "threads": 11,
+      "tasks": [
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-0",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-1",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack:disk$0",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "WSI swapchain q",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "WSI swapchain e",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        }
+      ],
+      "ticks": 0,
+      "cpu_percent_one_core": 0.0,
+      "socket_records": [
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 112727"
+        }
+      ],
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      }
+    }
+  },
+  {
+    "name": "1024x768 grayscale persisted",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "1024x768 grayscale exact Undo",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "1024x768 grayscale Redo",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "1024x768 object lock persisted",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "1024x768 locked selection recovery",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "1024x768 Actual Size uses intrinsic dimensions",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "1024x768 Linked to Embedded",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "1024x768 Embedded to remembered Linked",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "1024x768 refreshed pixels replace old supply",
+    "observed": true,
+    "detail": [
+      199,
+      199,
+      199
+    ]
+  },
+  {
+    "name": "1024x768 Refresh preserves geometry",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "1024x768 next set content",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "1024x768 portable sets and path stripping",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "1024x768 backup before profile import",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "1024x768 Update remains open",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "1024x768 idle has no recurring CPU activity",
+    "observed": true,
+    "detail": {
+      "seconds": 2.0,
+      "rss_before": 128217088,
+      "rss_after": 128217088,
+      "threads": 11,
+      "tasks": [
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-0",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-1",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack:disk$0",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "WSI swapchain q",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "WSI swapchain e",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        }
+      ],
+      "ticks": 0,
+      "cpu_percent_one_core": 0.0,
+      "socket_records": [
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 115880"
+        }
+      ],
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      }
+    }
+  }
+]
