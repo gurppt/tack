@@ -37,7 +37,8 @@ Mulot parks horizontally beside the full cheese canvas: one source pixel gap
 Both 32px canvases share a vertical center. The side is retained during pursuit,
 with edge fallback; on parking it faces the cheese. Idle jitter preserves the
 anchored dwell reference while moving the dock along with the cheese. Attack
-frame 11 advances the frozen anchor horizontally by 12 display pixels once.
+frame 11 moves the anchor horizontally onto the frozen cheese center once
+(34 display pixels from this lateral dock), without changing its height.
 
 Painter order is footprints, smoke, then Mulot. Footprints use the authored
 silhouette tinted black at runtime, spaced 28 logical pixels instead of 18.

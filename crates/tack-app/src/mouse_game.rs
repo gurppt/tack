@@ -165,12 +165,8 @@ impl Game {
                     if self.frame == 10 {
                         self.hidden = true;
                         self.advances += 1;
-                        // The saved cheese is lateral to the parked mouse: advance horizontally.
-                        self.at[0] += if self.saved[0] > self.at[0] {
-                            12.
-                        } else {
-                            -12.
-                        };
+                        // Land on the frozen cheese center once; never change the ground height.
+                        self.at[0] = self.saved[0];
                     }
                 } else {
                     self.enter(State::Munch, now);

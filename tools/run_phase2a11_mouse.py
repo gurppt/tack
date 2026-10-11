@@ -79,7 +79,9 @@ def main():
    gap=(px-14)-(mx+16) if mx<px else (mx-16)-(px+18)
    record(size+' lateral park with two display pixels gap',abs(gap-2)<.01 and abs(my-16-(py+2))<.01,dict(mouse=idle['at'],pointer=idle['pointer'],gap=gap))
    record(size+' all 15 attack and 12 explosion frames presented', [r['frame'] for r in attack]==list(range(1,16)) and [r['frame'] for r in explosion]==list(range(1,13)) and all(r.get('presented') for r in attack+explosion))
-   landing=attack[10]['at'];record(size+' one advance and stable final anchors',all(r['advances']==1 and r['at']==landing for r in trace if r['state'] in ['Munch','Explosion','PostExplosionWait']))
+   landing=attack[10]['at'];parked=attack[0]['at'];cheese=attack[0]['pointer']
+   record(size+' attack lands horizontally on frozen cheese',abs(landing[0]-(cheese[0]+2))<.01 and landing[1]==parked[1] and abs(abs(landing[0]-parked[0])-34)<.01,dict(parked=parked,landed=landing))
+   record(size+' one advance and stable final anchors',all(r['advances']==1 and r['at']==landing for r in trace if r['state'] in ['Munch','Explosion','PostExplosionWait']))
    postrow=next(r for r in trace if r['state']=='PostExplosionWait');finished=next(r for r in trace if r['state']=='Finished');record(size+' full 1 second hidden wait',finished['ms']-postrow['ms']>=1000,finished['ms']-postrow['ms'])
    record(size+' releases assets, game and deadlines',not receipt['mouse']['game_active'] and receipt['mouse']['artwork_bytes']==0 and not receipt['mouse']['deadline_active'])
    if size=='800x600':

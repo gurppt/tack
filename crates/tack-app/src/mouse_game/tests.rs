@@ -15,7 +15,7 @@ fn exact_sequence_every_frame_hidden_until_full_wait_and_fixed_landing() {
             assert_eq!(g.advances, 0);
         }
         if frame >= 10 {
-            assert_eq!(g.at, [412., 300.]);
+            assert_eq!(g.at, [410., 300.]);
             assert_eq!(g.advances, 1);
         }
         g.pointer([700., 500.]);
@@ -372,4 +372,25 @@ fn footprints_are_black_and_behind_smoke_and_character() -> Result<(), tack_asse
     assert!(foreground.quads[0].color[3] < 1.);
     assert!(foreground.quads.iter().any(|q| q.color[0] != q.color[1]));
     Ok(())
+}
+
+#[test]
+fn attack_lands_horizontally_on_frozen_cheese_from_either_side() {
+    let now = Instant::now();
+    for right in [false, true] {
+        let mut g = Game::new(now, [400., 300.], 0);
+        g.dock_right = right;
+        g.at = g.dock_target();
+        let parked = g.at;
+        g.saved = [402., 300.];
+        g.enter(State::Attack, now);
+        for frame in 1..15 {
+            g.pointer([720., 500.]);
+            g.tick(now + FRAME * frame, [800., 600.]);
+            assert_eq!(g.at[1], parked[1]);
+            assert_eq!(g.at[0], if frame < 10 { parked[0] } else { 402. });
+            assert_eq!(g.advances, u32::from(frame >= 10));
+        }
+        assert_eq!((parked[0] - g.at[0]).abs(), 34.);
+    }
 }
