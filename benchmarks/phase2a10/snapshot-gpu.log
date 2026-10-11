@@ -1,0 +1,10 @@
+   Compiling tack-app v0.1.0-dev.1 (/home/gurp/softs/tack/crates/tack-app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.44s
+     Running unittests src/lib.rs (target/debug/deps/tack_app-42cc3d7b78534b44)
+
+running 2 tests
+test board_snapshot::tests::snapshot_renders_nine_sources_embedded_text_shapes_and_frame_labels ... ok
+test board_snapshot::tests::snapshot_uses_board_pixels_and_keeps_destination_on_cancel ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 69 filtered out; finished in 0.20s
+

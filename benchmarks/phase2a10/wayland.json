@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "Wayland fixed F10 opens application menu",
+      "observed": true
+    },
+    {
+      "name": "Wayland unsupported Top returns an explicit message",
+      "observed": true
+    },
+    {
+      "name": "Wayland keeps hover controls when native CSD is absent",
+      "observed": true
+    },
+    {
+      "name": "Native Wayland renderer exits cleanly",
+      "observed": true
+    }
+  ],
+  "desktop": {
+    "always_on_top": false,
+    "always_on_top_requested": false,
+    "always_on_top_supported": false,
+    "grid_lines": true,
+    "hover_chrome": true,
+    "native_title_bar": true,
+    "native_title_bar_requested": true,
+    "wayland": true
+  },
+  "binary_sha256": "0972e8bd348a027b18f69bd2ac8fdb992f3d8234627334fb253b2e48f90cdcf7",
+  "scope": "Owned Xvfb126, nested Weston kiosk shell/pixman, native Wayland winit, Lavapipe Vulkan; timed smoke only, not an idle or physical compositor/move acceptance."
+}

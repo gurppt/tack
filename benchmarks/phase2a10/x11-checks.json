@@ -1,0 +1,259 @@
+[
+  {
+    "name": "Compact window decoration request",
+    "observed": true,
+    "detail": "_MOTIF_WM_HINTS(_MOTIF_WM_HINTS) = 0x2, 0x0, 0x0, 0x0, 0x0"
+  },
+  {
+    "name": "Top edge reveals chrome",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "Chrome hides on pointer departure",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "Mini Tack menu opens",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "Fixed F10 still opens menu",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "Native left chrome drag moves window",
+    "observed": true,
+    "detail": {
+      "before": {
+        "X": 5,
+        "Y": 29,
+        "WIDTH": 800,
+        "HEIGHT": 600
+      },
+      "after": {
+        "X": 285,
+        "Y": 204,
+        "WIDTH": 800,
+        "HEIGHT": 600
+      }
+    }
+  },
+  {
+    "name": "X11 right drag provides a nonmodal left-chrome fallback",
+    "observed": true,
+    "detail": {
+      "before": {
+        "X": 285,
+        "Y": 204,
+        "WIDTH": 800,
+        "HEIGHT": 600
+      },
+      "after": {
+        "X": 285,
+        "Y": 204,
+        "WIDTH": 800,
+        "HEIGHT": 600
+      }
+    }
+  },
+  {
+    "name": "Simple empty right click keeps context menu",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "Subthreshold right movement preserves menu",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "Object right drag never moves native window",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "Native edge resize changes width",
+    "observed": true,
+    "detail": {
+      "before": {
+        "X": 285,
+        "Y": 204,
+        "WIDTH": 800,
+        "HEIGHT": 600
+      },
+      "after": {
+        "X": 285,
+        "Y": 204,
+        "WIDTH": 820,
+        "HEIGHT": 600
+      }
+    }
+  },
+  {
+    "name": "Always on Top reaches WM",
+    "observed": true,
+    "detail": "_NET_WM_STATE(ATOM) = _NET_WM_STATE_ABOVE, _NET_WM_STATE_FOCUSED"
+  },
+  {
+    "name": "Always on Top disabled without polling",
+    "observed": true,
+    "detail": "_NET_WM_STATE(ATOM) = _NET_WM_STATE_FOCUSED"
+  },
+  {
+    "name": "Native title bar can be restored",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "Chrome maximize uses native state",
+    "observed": true,
+    "detail": {
+      "X": 0,
+      "Y": 0,
+      "WIDTH": 1600,
+      "HEIGHT": 1200
+    }
+  },
+  {
+    "name": "Chrome restore returns to initial width",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "Chrome minimize uses native state",
+    "observed": true,
+    "detail": "_NET_WM_STATE(ATOM) = _NET_WM_STATE_HIDDEN"
+  },
+  {
+    "name": "Grid Lines setting is inline and persists",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "Real directory picker / selected Linked bytes",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "All sources do not replace prior export",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "Real snapshot picker produces board pixels",
+    "observed": true,
+    "detail": {
+      "size": [
+        648,
+        448
+      ]
+    }
+  },
+  {
+    "name": "Desktop/export idle has zero CPU and I/O",
+    "observed": true,
+    "detail": {
+      "seconds": 3.0,
+      "rss_before": 128098304,
+      "rss_after": 128098304,
+      "threads": 11,
+      "tasks": [
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-0",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-1",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack:disk$0",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "WSI swapchain q",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "WSI swapchain e",
+          "ticks": 0,
+          "voluntary_switches": 0
+        }
+      ],
+      "ticks": 0,
+      "cpu_percent_one_core": 0.0,
+      "socket_records": [
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 190347"
+        }
+      ],
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      }
+    }
+  },
+  {
+    "name": "Chrome close exits the owned clean board",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "Custom right-button pan bypasses window fallback and menu",
+    "observed": true,
+    "detail": {
+      "always_on_top": false,
+      "always_on_top_requested": false,
+      "always_on_top_supported": true,
+      "grid_lines": true,
+      "hover_chrome": false,
+      "native_title_bar": false,
+      "native_title_bar_requested": false,
+      "wayland": false
+    }
+  }
+]

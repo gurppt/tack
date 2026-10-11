@@ -1,0 +1,129 @@
+{
+  "implementation_commit": "980dc342fa19ad43a175be76dbbdef3f231f16cb",
+  "linux": "STATUS: CURRENT\ncommit: 980dc342fa19ad43a175be76dbbdef3f231f16cb\nprofile: release\nbuilt_utc: 2026-10-11T10:14:54Z\nbinary: ./bin/tack\nserver_binary: ./bin/tack-server\nworktree_dirty: true\nsha256: 0972e8bd348a027b18f69bd2ac8fdb992f3d8234627334fb253b2e48f90cdcf7\nupdater_sha256: 31eab2f6ed6e228b10ae9774bb4286e8b0cbb8392e7c1d59501ce5f411ab37ed\nversion: 0.1.0-dev.1\nserver_sha256: a90ed5f93a2820a26bc381197351df08e0ac2950692f59cdd74bd361a323eeab\nabout_asset_sha256: d22641555380426ad6567153edca7b83548ad964acdc9c3fbdb70b59ac7759ee\njpeg_decoder_sha256: 4fcef9b973c80de96ecf2d5babe86ef87b1be2459f22559243c8e85da3ebe587\ncheckpoint: Phase 2A10 desktop workflow and export\n",
+  "linux_build_info": {
+    "channel": "dev",
+    "git_sha": "980dc342fa19ad43a175be76dbbdef3f231f16cb",
+    "network": true,
+    "protocol_major": 4,
+    "updater": true,
+    "version": "0.1.0-dev.1"
+  },
+  "windows": {
+    "commit": "980dc342fa19ad43a175be76dbbdef3f231f16cb",
+    "built_utc": "2026-10-11T10:16:30.374801+00:00",
+    "target": "x86_64-pc-windows-gnu",
+    "working_tree": true,
+    "jpeg": "libjpeg-turbo 3.2.0 static SIMD SSE2/AVX2",
+    "native": {
+      "version": "3.2.0",
+      "target": "windows-gnu",
+      "source_url": "https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.2.0/libjpeg-turbo-3.2.0.tar.gz",
+      "source_sha256": "6f30092cef9fb839779646608f4ee14ae3cbac989c47fa05e841b0841f09878e",
+      "cmake_command": [
+        "cmake",
+        "-S",
+        "/home/gurp/softs/tack/target/native/source/libjpeg-turbo-3.2.0",
+        "-B",
+        "/home/gurp/softs/tack/target/native/turbojpeg-build-windows-gnu",
+        "-DCMAKE_INSTALL_PREFIX=/home/gurp/softs/tack/target/native/libjpeg-turbo-3.2.0-windows-gnu",
+        "-DCMAKE_INSTALL_LIBDIR=lib",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DENABLE_SHARED=OFF",
+        "-DENABLE_STATIC=ON",
+        "-DWITH_TURBOJPEG=ON",
+        "-DREQUIRE_SIMD=ON",
+        "-DWITH_JAVA=OFF",
+        "-DWITH_CRT_DLL=ON",
+        "-DCMAKE_TOOLCHAIN_FILE=/home/gurp/softs/tack/target/native/windows-gnu-toolchain.cmake",
+        "-DWITH_TESTS=OFF",
+        "-DWITH_SIMD=ON",
+        "-DCMAKE_ASM_NASM_COMPILER=/home/gurp/softs/tack/target/native/tools/nasm-root/usr/bin/nasm"
+      ],
+      "decoder_sha256": "622e230c5aadee33248723fff3fe05d6c5d498a9b5ffa1b710060c9b2e0f51cc",
+      "library_sha256": {
+        "libturbojpeg.a": "d07bddf151580f24058b224d490d33485d9e1e8a3bae25a5a06e27714868d4fc"
+      },
+      "compiler_cache": [],
+      "nasm": "NASM version 2.16.01"
+    },
+    "executable_imports": {
+      "tack-jpeg-decoder.exe": [
+        "KERNEL32.dll",
+        "msvcrt.dll"
+      ],
+      "tack-server.exe": [
+        "api-ms-win-core-synch-l1-2-0.dll",
+        "bcryptprimitives.dll",
+        "KERNEL32.dll",
+        "msvcrt.dll",
+        "ntdll.dll",
+        "USERENV.dll",
+        "WS2_32.dll"
+      ],
+      "tack-updater.exe": [
+        "api-ms-win-core-synch-l1-2-0.dll",
+        "bcryptprimitives.dll",
+        "ADVAPI32.dll",
+        "bcrypt.dll",
+        "KERNEL32.dll",
+        "msvcrt.dll",
+        "ntdll.dll",
+        "USERENV.dll",
+        "WS2_32.dll"
+      ],
+      "tack.exe": [
+        "api-ms-win-core-winrt-error-l1-1-0.dll",
+        "dwmapi.dll",
+        "gdi32.dll",
+        "imm32.dll",
+        "kernel32.dll",
+        "ntdll.dll",
+        "ole32.dll",
+        "oleaut32.dll",
+        "propsys.dll",
+        "shell32.dll",
+        "user32.dll",
+        "userenv.dll",
+        "uxtheme.dll",
+        "ws2_32.dll",
+        "api-ms-win-core-synch-l1-2-0.dll",
+        "bcryptprimitives.dll",
+        "kernel32.dll",
+        "kernel32.dll",
+        "kernel32.dll",
+        "KERNEL32.dll",
+        "msvcrt.dll",
+        "ntdll.dll",
+        "OPENGL32.dll"
+      ]
+    },
+    "files": {
+      "tack-jpeg-decoder.exe": {
+        "bytes": 872960,
+        "sha256": "6cee724d91c8e6141d58f5b2db22825ed43d44a397aa10c2f613689408a44489"
+      },
+      "tack-server.exe": {
+        "bytes": 3331584,
+        "sha256": "f00223968750501010c169700ec3b46f7d65c5541b4b71d46e9b440c345abef1"
+      },
+      "tack-updater.exe": {
+        "bytes": 4357632,
+        "sha256": "717f106eccdd6644b437e824f32fa2ec536198768a4e476c93d6996fada531e1"
+      },
+      "tack.exe": {
+        "bytes": 25567744,
+        "sha256": "3a7077ecad3da3673dd7bbaa978cd9f05cd9d0912a78571ed5c74eabb94e0ba9"
+      }
+    }
+  },
+  "windows_zip_sha256": "4010df9dc15fd00f11e7f7cddc2269ef68ee8cdd32b9b00c6a2ece7d32325cfc",
+  "windows_zip_bytes": 13954753,
+  "windows_embedded_implementation_identity": {
+    "tack.exe": true,
+    "tack-server.exe": true,
+    "tack-updater.exe": true
+  },
+  "free_disk_bytes_after_verification": 15307350016,
+  "preexisting_worktree_edits_excluded": "README.md and listed user-owned untracked assets/handoff files; implementation code is committed"
+}

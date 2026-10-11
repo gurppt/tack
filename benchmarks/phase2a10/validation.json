@@ -1,0 +1,25 @@
+{
+  "implementation_commit": "980dc342fa19ad43a175be76dbbdef3f231f16cb",
+  "quality_pipeline_passed": true,
+  "rust_workspace_doctest_passes": 460,
+  "ignored_in_regular_run": 20,
+  "python_passes": 31,
+  "production_renderer_gpu_passes": 10,
+  "snapshot_gpu_passes": 2,
+  "x11_native_checks": 24,
+  "wayland_native_checks": 4,
+  "cargo_deny": "0.20.2; advisories/bans/licenses/sources ok",
+  "raw_quality_sha256": "86eac9369210b46f140359ed9b488086d6c70deba7fcd7e9cb011455cdbe31a3",
+  "targeted_followups": {
+    "clippy-final.log": "14428b46d73288bd4a9babcfc7b78992aa81bcbd89e7a2eebdb150ce2efc8336",
+    "source-export-final.log": "b019c931e2c5caccca127ba977cf34c656437f1a0c45639b7403ad7d2526c41a",
+    "snapshot-gpu-final.log": "e890410849329ae05e01133e53e97efdcb18241c964d00e07f54eac862f60098"
+  },
+  "harness_sha256": {
+    "run_phase2a10_checks.py": "34a538891093537e3be4f293e9b2f3f0a62cfa9b12f341447a798570cfeafeac",
+    "run_phase2a10_wayland.py": "9d4df3db92d1867880624923991cf3e53c635cb4adffd69955b3613f47a0008c",
+    "run_local_production.py": "a6b80d6354ffd51091e44eaa353c698ce3c6e191719f27a5ef5ac2e7e8db6155"
+  },
+  "grid_shader_sha256": "43c8ef4ed1e5dad7afa2b8680c9eaf4b7d0ca090dde878809fc45982391c2fb8",
+  "scope": "Pinned checks and software-Vulkan native X11/Wayland; Windows CLI/JPEG under Wine. Physical desktops and independent code review remain release acceptance gates."
+}

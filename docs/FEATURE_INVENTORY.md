@@ -358,3 +358,31 @@ Undo batch, retaining object geometry/crop/style; Embedded sources stay pinned.
 Whole-image persistent LOD keys include descriptor identity and fingerprint,
 preventing transient revision reuse from resurrecting old pixels after reopening.
 See [corrective report](LINKED_LOD_REFRESH_CORRECTIVE_REPORT.md).
+
+
+## Phase 2A10 desktop workflow and export
+
+Compact top-edge chrome exposes the application menu, minimize, maximize/restore
+and close. Left chrome drag and thin edge resize use native window requests.
+Window offers Always on Top (X11/Windows) and native title-bar visibility; Wayland
+keeps Tack controls when compositor decorations are unavailable. Empty right-click
+opens context on release. An unbound empty right drag has an 8 logical-pixel
+threshold: Wayland requests native move; X11/Windows give a nonmodal hint to use
+left chrome drag. Object hits and explicit right-button bindings are preserved.
+F10 remains reserved. Seven new semantic actions bring the total to 151 / 141
+keymap rows. No defaults are reassigned.
+
+Preferences adds Dots/Lines in the existing procedural grid pass, with stronger
+major lines every five subdivisions. New desktop/grid/export settings migrate
+and round-trip through `.tackprofile`. File offers Selected/All Sources using a
+folder picker, copying current Linked bytes or authoritative Embedded originals
+without re-encoding into a new `Tack Sources[_N]` directory. Optional Frame folders
+use sanitized names, duplicate suffixes, `_unframed` and deterministic `notes.txt`.
+
+Board Snapshot saves a rendered PNG of selection bounds or the full board with
+images, Text/Notes, shapes, Frames and optional grid. It rejects sizes above 4096
+pixels per side / 8 Mi pixels before allocation, uses display representations up
+to 2048 pixels per source edge and a 64 MiB decoded-texture budget. Shared boards
+require Save to Local before these exports. Per-application stacking and Always
+on Bottom are deferred. See [2A10 report](MISSION_2A10_DESKTOP_WORKFLOW_REPORT.md)
+for exact budgets, native evidence and physical-platform acceptance gaps.

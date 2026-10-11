@@ -1,0 +1,104 @@
+{
+  "passed": true,
+  "checks": 24,
+  "binary_sha256": "0972e8bd348a027b18f69bd2ac8fdb992f3d8234627334fb253b2e48f90cdcf7",
+  "build_info": {
+    "channel": "dev",
+    "git_sha": "980dc342fa19ad43a175be76dbbdef3f231f16cb",
+    "network": true,
+    "protocol_major": 4,
+    "updater": true,
+    "version": "0.1.0-dev.1"
+  },
+  "idle": {
+    "seconds": 3.0,
+    "rss_before": 128098304,
+    "rss_after": 128098304,
+    "threads": 11,
+    "tasks": [
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-0",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-1",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack:disk$0",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-product-di",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-product-di",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "WSI swapchain q",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "WSI swapchain e",
+        "ticks": 0,
+        "voluntary_switches": 0
+      }
+    ],
+    "ticks": 0,
+    "cpu_percent_one_core": 0.0,
+    "socket_records": [
+      {
+        "kind": "unix",
+        "record": "0000000000000000: 00000003 00000000 00000000 0001 03 190347"
+      }
+    ],
+    "io_delta": {
+      "rchar": 0,
+      "wchar": 0,
+      "syscr": 0,
+      "syscw": 0,
+      "read_bytes": 0,
+      "write_bytes": 0,
+      "cancelled_write_bytes": 0
+    }
+  },
+  "desktop": {
+    "always_on_top": false,
+    "always_on_top_requested": false,
+    "always_on_top_supported": true,
+    "grid_lines": true,
+    "hover_chrome": true,
+    "native_title_bar": false,
+    "native_title_bar_requested": false,
+    "wayland": false
+  },
+  "scope": "Owned Xvfb125 + xfwm4; Lavapipe Vulkan two threads; physical Windows/Wayland remain explicit acceptance gaps. X11 right drag uses a bounded left-chrome fallback."
+}

@@ -30,8 +30,8 @@ Start with the [public overview](../README.md) for features and everyday control
 - [Client workers, cache and streaming snapshots](design/lan_client.md)
 - [Headless server storage and authority](../crates/tack-server/README.md)
 
-Current checkpoint: [Mouse and Link pre-alpha polish](MISSION_MOUSE_PRE_ALPHA_REPORT.md),
-on the [2A8 alpha foundation](MISSION_2A8_ALPHA_FOUNDATION_REPORT.md).
+Current checkpoint: [2A10 desktop workflow and export](MISSION_2A10_DESKTOP_WORKFLOW_REPORT.md),
+on the 2A9 UX and portable-profile foundation.
 
 - [Release, updates, capability boundaries](ALPHA_FOUNDATION.md)
 - [Compound Scribble and Frame links](SCRIBBLE_FRAME_LINKS.md)
@@ -45,6 +45,7 @@ reports supersede earlier feature status, limitations and stop conditions.
 
 | Checkpoint | Focus |
 | --- | --- |
+| [2A10](MISSION_2A10_DESKTOP_WORKFLOW_REPORT.md) | Native chrome/window actions, procedural Lines grid, original-source export and bounded board snapshots |
 | [Mouse / Link polish](MISSION_MOUSE_PRE_ALPHA_REPORT.md) | Optional Mulot, inline themes and bounded crash-safe Link previews |
 | [2A8](MISSION_2A8_ALPHA_FOUNDATION_REPORT.md) | Alpha release/updater foundation, compound Scribble, Frame links and authored artwork |
 | [2A](MISSION_2A_REPORT.md) | Optional native LAN collaboration, authoritative server, bounded CAS and local-first regression |
