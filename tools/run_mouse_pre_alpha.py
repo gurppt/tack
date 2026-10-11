@@ -62,16 +62,22 @@ def main():
             else: s.key('Down')
             s.key('Return'); wait(lambda: read()['theme'] == theme, 'inline theme persistence')
             s.shot('theme-' + theme); record('inline theme preview persisted: ' + theme, read()['theme'] == theme)
-        s.key('Escape', 'F4'); s.text('Mulot'); s.shot('keymap'); s.key('Escape', 'Escape', 'F5')
+        s.key('Escape', 'F4'); s.text('Mulot'); s.shot('keymap')
+        shot = Image.open(root / 'mouse-keymap.png').convert('RGB')
+        icon = Image.open(binary.parent / 'gfx/icons/mulot_icone.png').convert('RGBA')
+        opaque = [(x,y) for y in range(16) for x in range(16) if icon.getpixel((x,y))[3] == 255]
+        record('Keymap renders authored Mouse icon pixels', bool(opaque) and all(
+            max(abs(a-b) for a,b in zip(shot.getpixel((24+x,86+y)), icon.getpixel((x,y))[:3])) <= 1 for x,y in opaque))
+        s.key('Escape', 'Escape', 'F5')
         # Catalog starts Separator, Mouse. Enter is the normal Add command.
         click(120, 106); s.key('Return'); time.sleep(.3)
         record('Mouse manually added in Edit Toolbar', 'SelectTool(Mouse)' in read()['toolbar']['actions'])
         s.key('Escape'); move(600,400); s.key('F1'); move(601,401)
-        record('canvas cursor exact authored minimulot', cursor.pixels() == expected(binary.parent / 'gfx/cursors/minimulot.png', [7,7]))
+        record('canvas cursor exact authored minimulot', cursor.pixels() == expected(binary.parent / 'gfx/cursors/minimulot.png', [14,14], 2))
         move(25,10)
         record('toolbar cursor exact normal pointer', cursor.pixels() == expected(binary.parent / 'gfx/cursors/cursor_pointer.png', [1,1]))
         move(450,340)
-        record('return to canvas restores minimulot', cursor.pixels() == expected(binary.parent / 'gfx/cursors/minimulot.png', [7,7]))
+        record('return to canvas restores minimulot', cursor.pixels() == expected(binary.parent / 'gfx/cursors/minimulot.png', [14,14], 2))
         for dx,dy in [(0,-40),(40,-40),(40,0),(40,40),(0,40),(-40,40),(-40,0),(-40,-40)]:
             move(450+dx,340+dy); move(450,340)
         s.shot('paws'); time.sleep(.9)

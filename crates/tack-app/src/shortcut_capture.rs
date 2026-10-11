@@ -20,7 +20,7 @@ impl Behavior {
     }
     pub(crate) fn label(self) -> &'static str {
         match self {
-            Self::Normal => "Normal",
+            Self::Normal => "onClick",
             Self::Hold => "Hold",
             Self::Release => "Release",
         }

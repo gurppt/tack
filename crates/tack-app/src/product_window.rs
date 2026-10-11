@@ -569,7 +569,10 @@ impl App {
                 &self.input.keymap,
                 &self.local.profile,
             );
-            if ui.panel == tack_app::local_ui::Panel::Toolbar {
+            if matches!(
+                ui.panel,
+                tack_app::local_ui::Panel::Toolbar | tack_app::local_ui::Panel::Keymap
+            ) {
                 gpu.set_ui_icons(ui.icons())?;
             }
             if ui.about_image

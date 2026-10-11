@@ -37,8 +37,10 @@ class Cursor:
         finally: self.x11.XFree(result)
     def close(self): self.x11.XCloseDisplay(self.display)
 
-def expected(path, hotspot):
+def expected(path, hotspot, scale=1):
     img = Image.open(path).convert('RGBA')
+    if scale != 1:
+        img = img.resize((img.width * scale, img.height * scale), Image.Resampling.NEAREST)
     return dict(size=list(img.size),hotspot=hotspot,
                 pixels=[(a<<24)|(r<<16)|(g<<8)|b for r,g,b,a in img.getdata()])
 

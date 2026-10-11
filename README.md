@@ -52,7 +52,7 @@ Built in Rust, with a native GPU-rendered canvas. Boards are saved locally as
 - **Recall a view.** Press B, capture a keyboard or mouse shortcut, and confirm
   with Enter. Use that shortcut to return. These views stay local.
 - **Customize shortcuts.** Navigate the Action / Shortcut / Behavior grid, choose
-  Normal, Hold or Release, and save named `.tackey` keysets. Existing customized
+  onClick, Hold or Release, and save named `.tackey` keysets. Existing customized
   keymaps keep their shortcuts; Keymap Reset adopts the new defaults.
 
 The renderer loads image detail progressively and uses bounded caches. See the

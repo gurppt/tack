@@ -459,7 +459,7 @@ impl LocalUi {
                     .iter()
                     .any(|b| matches!(b.control, PhysicalControl::Wheel(_)))
                 {
-                    self.message = "Wheel shortcuts have Normal behavior only".into();
+                    self.message = "Wheel shortcuts have onClick behavior only".into();
                     return None;
                 }
                 let mut next = current.next();

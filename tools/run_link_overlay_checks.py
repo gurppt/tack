@@ -36,8 +36,10 @@ def main():
         start=time.monotonic()-s.started
         for k in range(32):move(100+k*3,100+k%7*9)
         end=time.monotonic()-s.started
-        s.key('Escape');time.sleep(.3);s.key('F1');move(700,512);command('xdotool','click','1');time.sleep(.4)
-        linked=s.save(board);record('all 32 Link operations complete despite bounded preview',len(linked.get('links',[]))==32,linked.get('links',[]))
+        s.key('Escape');time.sleep(.3);s.key('F1');move(700,512)
+        command('xdotool','mousedown','1');move(700,502);s.shot('frame-tab-release')
+        command('xdotool','mouseup','1');time.sleep(.4)
+        linked=s.save(board);record('all 32 links commit on release over the Frame title tab',len(linked.get('links',[]))==32,linked.get('links',[]))
         s.key('ctrl+z');record('Link Undo exact',s.save(board)==base);s.key('ctrl+y');record('Link Redo exact',s.save(board)==linked)
         s.key('F1');move(100,100);s.shot('final-preview');s.key('Escape');time.sleep(.8)
         idle_start=time.monotonic()-s.started;time.sleep(2.);idle_end=time.monotonic()-s.started

@@ -232,10 +232,27 @@ impl LocalUi {
                 };
                 paint.rect([lo, y + 19., hi, y + 20.], p.accent_secondary);
             }
+            let icon = crate::toolbar_icons::actual_index(*action);
+            if let Some(index) = icon
+                && self.icon_count < self.icons.len()
+            {
+                self.icons[self.icon_count] = tack_render::UiIcon {
+                    rect: [
+                        24. * paint.camera.ui_scale(),
+                        (y + 2.) * paint.camera.ui_scale(),
+                        16. * paint.camera.ui_scale(),
+                        16. * paint.camera.ui_scale(),
+                    ],
+                    index,
+                    disabled: false,
+                };
+                self.icon_count += 1;
+            }
+            let inset = if icon.is_some() { 20. } else { 0. };
             paint.text(
-                24.,
+                24. + inset,
                 y + 2.,
-                column - 28.,
+                column - 28. - inset,
                 action.label(),
                 if index == self.selected {
                     p.accent_primary

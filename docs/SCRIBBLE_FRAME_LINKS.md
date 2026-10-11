@@ -32,7 +32,8 @@ pixel, static 4-on/4-off, clipped to the visible screen. Each line uses one thin
 quad in the existing overlay pass, with at most 256 lines; remaining capacity
 selects a deterministic subset or skips optional decoration. Simplification
 never changes the complete Link command or shuts down the app. A valid Frame
-highlights on hover; initiating press and matching release commit. Invalid targets
+highlights on hover; its visible title tab is also a valid press/release target,
+using the same geometry as its displayed label; initiating press and matching release commit. Invalid targets
 show Forbidden after the attempt; Escape cancels without mutation. The prior tool
 is retained. Confirmation is one 1.2-second deadline; shared confirmation only
 appears after authoritative links are present. A slow shared acknowledgement can

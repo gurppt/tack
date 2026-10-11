@@ -64,7 +64,9 @@ load edited icons or cursors; there is no file watcher or idle polling.
 
 The nine author-approved `work_icons` PNGs are copied byte for byte into tracked
 defaults: `mulot_icone` and the six `pawL/R_{n,45,w}` plus `poo_easter` under
-`gfx/icons/`, and `minimulot` under `gfx/cursors/` (hotspot 7,7). The semantic
+`gfx/icons/`, and `minimulot` under `gfx/cursors/`. Its 16×16 source
+is displayed at 2× by nearest pixel replication in memory, with a 14,14
+hotspot in the 32×32 cursor. Other cursors retain their authored size. The semantic
 Mouse/Temporary Mouse actions share atlas slot 36; no default toolbar or keymap
 entry is added. The atlas remains 128 × 80. Paws use startup-cached binary masks,
 with mirrors of the authored orientations; original files are never generated

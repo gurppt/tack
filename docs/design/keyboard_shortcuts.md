@@ -60,7 +60,7 @@ It is disabled in normal runs and all accepted performance observations.
 
 Shortcut-column double-click enters capture immediately. Escape cancels without
 a timer. Collision reassignment explains that the old action is now unbound.
-Tool shortcuts show Normal (select) or Hold (temporary, restore on release);
+Tool shortcuts show onClick (select) or Hold (temporary, restore on release);
 Hold uses the existing TemporaryTool action/token, not a release script.
 Preferences and Keymap exports are separate; the latter has version/bindings
 only. Legacy combined exports remain accepted by Import Keymap. Preferences

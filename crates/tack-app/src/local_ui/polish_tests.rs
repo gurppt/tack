@@ -242,7 +242,7 @@ fn release_behavior_is_real_and_captured_actions_refuse_illegal_modes() -> R {
     );
     ui.search = "ZoomView".into();
     ui.command(Command::Trigger, &mut map, &mut p);
-    assert!(ui.message.contains("Normal"));
+    assert!(ui.message.contains("onClick"));
     Ok(())
 }
 #[test]
@@ -352,5 +352,34 @@ fn update_metadata_rows_cannot_download_or_restart() -> R {
         ui.handle(&WindowEvent::Focused(false), &mut map, &mut p)
             .is_none()
     );
+    Ok(())
+}
+
+#[test]
+fn keymap_reuses_authored_icons_at_ui_scale_and_clears_them_on_panel_change() -> R {
+    let p = Preferences::defaults()?;
+    let map = p.keymap()?;
+    for scale in [1., 2., 3.] {
+        let mut camera = Camera::new([1280, 1024]);
+        camera.set_ui_scale(scale);
+        let mut ui = LocalUi::new(Panel::Keymap);
+        ui.search = "Mulot".into();
+        let mut g = ImageGizmo::default();
+        ui.draw(&mut g, &camera, &map, &p);
+        assert!(!ui.icons().is_empty());
+        assert!(ui.icons().len() <= ui.visible);
+        for icon in ui.icons() {
+            assert_eq!(
+                icon.index,
+                crate::toolbar_icons::index(Action::SelectTool(crate::actions::Tool::Mouse))
+            );
+            assert_eq!(icon.rect[2..], [16. * scale, 16. * scale]);
+        }
+        ui.panel = Panel::Preferences;
+        g.quads.clear();
+        ui.draw(&mut g, &camera, &map, &p);
+        assert!(ui.icons().is_empty());
+    }
+    assert_eq!(crate::shortcut_capture::Behavior::Normal.label(), "onClick");
     Ok(())
 }

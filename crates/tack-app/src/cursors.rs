@@ -1,4 +1,4 @@
-//! Seventeen fixed pixel cursors; tiny static hotspots, loaded once and cached.
+//! Eighteen fixed pixel cursors; tiny static hotspots, loaded once and cached.
 use winit::{
     event_loop::ActiveEventLoop,
     window::{CursorIcon, CustomCursor},
@@ -64,7 +64,17 @@ impl Cache {
                 .map(|(name, x, y)| {
                     crate::toolbar_icons::read(&directory.join(format!("{name}.png")))
                         .ok()
-                        .and_then(|rgba| CustomCursor::from_rgba(rgba, 16, 16, *x, *y).ok())
+                        .and_then(|rgba| {
+                            let scale = if *name == "minimulot" { 2 } else { 1 };
+                            CustomCursor::from_rgba(
+                                scaled_rgba(rgba, scale),
+                                16 * scale,
+                                16 * scale,
+                                *x * scale,
+                                *y * scale,
+                            )
+                            .ok()
+                        })
                         .map(|source| event_loop.create_custom_cursor(source))
                 })
                 .collect(),
@@ -94,4 +104,22 @@ impl Kind {
             _ => CursorIcon::Crosshair,
         }
     }
+}
+
+// Startup-only nearest replication: preserve PNG bytes and every hard pixel.
+fn scaled_rgba(rgba: Vec<u8>, scale: u16) -> Vec<u8> {
+    if scale == 1 {
+        return rgba;
+    }
+    let scale = usize::from(scale);
+    let edge = 16 * scale;
+    let mut out = vec![0; edge * edge * 4];
+    for y in 0..edge {
+        for x in 0..edge {
+            let source = ((y / scale) * 16 + x / scale) * 4;
+            let target = (y * edge + x) * 4;
+            out[target..target + 4].copy_from_slice(&rgba[source..source + 4]);
+        }
+    }
+    out
 }

@@ -118,7 +118,7 @@ impl ImageInput {
         Ok(())
     }
     pub(super) fn link_motion(&mut self, editor: &DocumentEditor, camera: &Camera) -> bool {
-        let Some(stage) = &mut self.link else {
+        let Some(stage) = &self.link else {
             return false;
         };
         if stage.generation != editor.generation() {
@@ -132,11 +132,16 @@ impl ImageInput {
         if let Some((_, end, _)) = &mut self.marquee {
             *end = world;
         }
-        stage.hover = stage.frames.iter().find_map(|(id, t)| {
-            (!self.images.blocked.contains(id) && crate::image_geometry::hit(*t, world))
-                .then_some(*id)
+        let hover = stage.frames.iter().find_map(|(id, t)| {
+            (!self.images.blocked.contains(id)
+                && (crate::image_geometry::hit(*t, world)
+                    || self.frame_title_hit(editor, camera, *id)))
+            .then_some(*id)
         });
-        stage.forbidden &= stage.hover.is_none();
+        if let Some(stage) = &mut self.link {
+            stage.hover = hover;
+            stage.forbidden &= stage.hover.is_none();
+        }
         true
     }
     pub(super) fn link_dispatch(

@@ -1048,3 +1048,50 @@ fn bounded_dotted_preview_keeps_mixed_group_and_large_selection_link_usable() ->
     }
     Ok(())
 }
+
+#[test]
+fn frame_link_accepts_title_tab_press_and_body_to_tab_release_at_ui_scales() -> R {
+    for (scale, title_scale, zoom) in [(1., 1, 0.5), (2., 1, 2.), (2., 3, 0.5)] {
+        for press_in_body in [false, true] {
+            let mut e = linked_fixture()?;
+            let initial = e.document().clone();
+            let frame = ObjectId::new(10)?;
+            let child = ObjectId::new(1)?;
+            let mut c = Camera::new([1280, 1024]);
+            c.set_ui_scale(scale);
+            c.set_view([500., 0.], zoom)?;
+            let mut i = ImageInput::new()?;
+            i.gizmo.frame_title_scale = title_scale;
+            i.images.selection.select(Some(child), false);
+            let object = e.document().object(frame).ok_or("Frame")?;
+            let t = object.transform();
+            let ObjectKind::Frame(name) = object.kind() else {
+                return Err("Frame kind".into());
+            };
+            let rect = tack_app::frame_ui::Label::new(t, &c, title_scale, name).rect;
+            let tab = [(rect[0] + rect[2]) / 2., (rect[1] + rect[3]) / 2.];
+            assert!(!tack_app::image_geometry::hit(t, c.screen_to_world(tab)));
+            invoke(&mut i, &mut e, &mut c, Action::LinkToFrame)?;
+            let press = if press_in_body {
+                c.world_to_screen(t.center())
+            } else {
+                tab
+            };
+            i.cursor_moved(press, &e, &mut c)?;
+            click_state(&mut i, &mut e, &mut c, true)?;
+            i.cursor_moved(tab, &e, &mut c)?;
+            assert_eq!(i.link_cursor(), Some(tack_app::cursors::Kind::LinkOpen));
+            click_state(&mut i, &mut e, &mut c, false)?;
+            assert_eq!(e.document().frame_parent(child), Some(frame));
+            e.undo()?;
+            assert_eq!(e.document(), &initial);
+            i.images.blocked.insert(frame);
+            invoke(&mut i, &mut e, &mut c, Action::LinkToFrame)?;
+            i.cursor_moved(tab, &e, &mut c)?;
+            click_state(&mut i, &mut e, &mut c, true)?;
+            click_state(&mut i, &mut e, &mut c, false)?;
+            assert_eq!(e.document().frame_parent(child), None);
+        }
+    }
+    Ok(())
+}
