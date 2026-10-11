@@ -1,166 +1,154 @@
 # Tack
 
-**A native reference board for images, ideas and notes.**
+**A reference board you can work on alone or together.**
 
 [![Quality](https://github.com/gurppt/tack/actions/workflows/quality.yml/badge.svg?branch=main)](https://github.com/gurppt/tack/actions/workflows/quality.yml)
+<img width="947" height="739" alt="image" src="https://github.com/user-attachments/assets/ea2c8659-7608-4ab5-a151-30b9551492b6" />
+<img width="943" height="734" alt="image" src="https://github.com/user-attachments/assets/b2aae767-2773-4df2-a477-6ee4bddbd928" />
+<img width="943" height="739" alt="image" src="https://github.com/user-attachments/assets/feaa6eb4-72e8-4332-b60b-b99e6c586eab" />
 
-Tack gives illustrators, animators and designers a place to collect, compare and
-arrange visual references. Drop in images, add notes, and build a board you can
-keep beside your creative tools.
 
-Built in Rust, with a native GPU-rendered canvas. Boards are saved locally as
-`.tack` files and remain usable offline.
+Tack is a lightweight, native reference board for animators, illustrators, designers and creative teams. Collect images, explore ideas, annotate, organize and keep everything in sight while you work.
 
-## What you can do
+**The difference? Your reference board doesn't have to be yours alone.**
 
-- **Collect references.** Drag and drop PNG/JPEG images, import files, or paste
-  screenshots and copied image files on Linux. Paste text to create a note.
-- **Compare and adjust.** Move, resize, rotate and flip images. Adjust opacity,
-  crop without destroying the original, restore distorted proportions, and choose
-  Smooth or Nearest sampling.
-- **Arrange your board.** Group images, align and distribute selections, pack
-  rows or columns, and arrange references in a grid. Use snapping when needed.
-- **Mark up ideas.** Add text notes, rectangles, lines, arrows and freehand
-  strokes. Keep colored post-it backgrounds, adjust text size with Numpad +/−,
-  and cycle rectangle fill opacity. Label regions with frames and jump between them.
-- **Save useful views.** Capture exact camera positions and zoom levels without
-  adding canvas objects, then return using your chosen shortcut.
-- **Duplicate quickly.** Press Ctrl+D to duplicate a selection locally or on a
-  shared board, reusing image originals and keeping one Undo step.
-- **Edit with confidence.** Undo and redo board edits, save your work, and recover
-  completed recovery snapshots after an interrupted session.
-- **Choose how images are stored.** Embed originals for portable boards or link
-  to external files. Relink missing sources when files move, and inspect dimensions, encoded size and source status from Image → Source → Image information.
-- **Make the workspace yours.** Flat Very Dark, Neutral Gray and Light themes,
-  crisp bitmap UI, direct integer scaling and editable shortcuts. Right-click keeps application and contextual commands together.
-- **Share a board on your LAN.** File → Share Board → Share from this computer
-  creates a separate `-shared.tack` and manages the optional server while that
-  window is open. Your current view becomes the shared copy; the original stays
-  on disk. Click Copy Invite; another artist pastes it into
-  File → Join Shared Board. Stop sharing or reopen the shared copy and Put Online.
-  Artists can manipulate separate references together. A red outline marks a
-  reference being manipulated elsewhere. Save to Local creates an independent
-  editable copy when you need to leave the shared board.
-- **Keep tools close.** One compact pixel toolbar offers mouse access to tools
-  and commands. Move it to an edge or float it, choose up to 32 actions, and hide
-  it whenever you want. Choose 1×, 2× or 3× controls independently of the menus;
-  toolbar positions follow window resizing. The optional status strip shows
-  current shortcuts and editing feedback.
-  Shared connection state always stays visible at the bottom.
-- **Recall a view.** Press B, capture a keyboard or mouse shortcut, and confirm
-  with Enter. Use that shortcut to return. These views stay local.
-- **Customize shortcuts.** Navigate the Action / Shortcut / Behavior grid, choose
-  Normal, Hold or Release, and save named `.tackey` keysets. Existing customized
-  keymaps keep their shortcuts; Keymap Reset adopts the new defaults.
+Work locally, completely offline, as you would with a traditional reference board. When you need other people involved, share a copy on your local network and work on the same board together — without moving your workflow into a browser.
 
-The renderer loads image detail progressively and uses bounded caches. See the
-[feature inventory](docs/FEATURE_INVENTORY.md) for exact behavior and limits.
+**Local-first. Collaborative when you need it.**
 
-## Get started
+> **Project status:** Tack is in **pre-alpha development**. Local boards and experimental collaboration over a **trusted LAN** are implemented. Collaboration over the wider Internet, browser-based access and a public alpha release are **not available yet**. See [Current status](#current-status) before testing it in production.
 
-Tack is an actively developed prototype, currently distributed as source.
-Build requirements: **Rust 1.95.0** (pinned by the repository), **Python 3.12+**,
-**Pillow 10.2.0** (build only), **CMake**, **NASM**, a C compiler and a supported
-desktop graphics driver.
+## One board. More than one pair of hands.
+
+Reference boards are essential to visual work. But as soon as a director, an animator, a layout artist and a production team need the same references, the board often turns into screenshots, exported images, duplicated files and messages explaining what changed.
+
+Tack is being built to remove that friction.
+
+- **Make a board for yourself.** No login, hosted workspace or network connection required. Your board is a local `.tack` file.
+- **Bring in your team.** Share a separate copy from Tack, send an invite and let teammates open the same board in their own native Tack windows.
+- **Work on it together.** Changes accepted by the shared board are synchronized between connected clients. Independent references can be manipulated by different artists; conflicting actions are handled explicitly.
+- **Take your work back offline.** Save an independent local copy of a shared board when its original image sources are available.
+
+The shared experience is optional. **An ordinary local board never needs a server.**
+
+### Sharing a board today
+
+On a trusted local network, choose **File → Share Board → Share from this computer**. Tack creates a separate shared copy, preserving the original local board. Use **Copy Invite** and send it to another Tack user, who can choose **File → Join Shared Board** and paste the invitation.
+
+This is an early LAN implementation, not a public Internet collaboration service. The current transport does **not** provide authentication or TLS encryption; do not expose the server directly to the Internet or untrusted networks.
+
+## Made for visual work, not meetings
+
+Tack stays focused on the things artists do with references every day:
+
+- **Gather.** Drag in PNG and JPEG images, import files, paste screenshots or text, and keep references on a flexible canvas.
+- **Compare.** Move, proportionally resize, rotate, flip, crop, fade or temporarily view images in grayscale. Switch between smooth and nearest-neighbor sampling.
+- **Organize.** Create named Frames, group images, align and distribute selections, arrange them into rows or grids, and use snapping when it helps. Link objects to a Frame so they travel with it.
+- **Annotate.** Add text blocks, rectangles, lines, arrows and pixel-crisp freehand Scribbles. Edit or erase strokes without flattening the underlying images.
+- **Stay in control.** Undo and redo edits, lock items you don't want to move, bookmark useful views, and use customizable shortcuts and toolbars.
+- **Keep the originals.** Embed images inside a portable board or link to files on disk. Reconnect missing sources and explicitly change how they are stored.
+
+The goal isn't to become an all-purpose whiteboard, project manager or design suite. **It's to remain a very good reference board.**
+
+## Fast by design. Quiet when idle.
+
+Tack is a native desktop application built in Rust, with a GPU-rendered canvas and a deliberately compact pixel-art interface. It is designed to sit beside demanding creative applications rather than compete with them for resources.
+
+Large images are supplied progressively instead of being decoded wholesale just to show a small preview. CPU and GPU caches are bounded, background work is limited, and a settled local board is designed not to redraw or poll unnecessarily.
+
+Those are engineering goals backed by development tests, **not a promise that every board or every older machine will reach a particular frame rate**. The project's [benchmarks](benchmarks/) and [technical documentation](docs/README.md) record what has actually been measured.
+
+## Your board. Your setup.
+
+Tack saves documents as local `.tack` files. Embedded boards carry their original image data; linked boards refer to external files. There is no mandatory cloud account or subscription service.
+
+Your workspace is customizable without turning into a complicated application: three compact themes, crisp bitmap controls, adjustable toolbars, named toolbar sets, and a remappable keymap. Export a `.tackprofile` to bring preferences, toolbar sets and shortcuts to another installation; `.tackey` remains available for keymap-only exchange.
+
+## Getting started
+
+**There is no public alpha download yet.** The project can currently be built from source, but the desktop and LAN workflows still need wider human testing. Portable Linux and Windows packages are being prepared for controlled alpha testing.
+
+If you're building it now, the shortest path on a suitably configured development machine is:
 
 ```bash
 git clone https://github.com/gurppt/tack.git
 cd tack
+
 python3 -m venv .venv
 . .venv/bin/activate
 python3 -m pip install Pillow==10.2.0
 python3 tools/prepare_turbojpeg.py
+
 cargo run --release --locked -p tack-app
 ```
 
-For the complete desktop sharing build, run `bash tools/build-test-bin.sh`, then
-launch `./bin/tack`. Keep the adjacent helper/server and assets when copying it.
-See the [two-computer checklist](docs/HUMAN_TEST_2A4_LAN.md).
+The build needs the repository-pinned Rust toolchain, Python 3.12+, CMake, NASM, a C compiler and suitable desktop/graphics dependencies. The image decoder preparation step downloads and builds the pinned decoder. See [building and troubleshooting](docs/DEVELOPMENT.md) for the actual prerequisites, platform-specific details and portable build procedure.
 
-The preparation step downloads and builds the pinned image decoder locally.
-No generated test corpus is needed to use the application.
-
-Large baseline JPEGs use streamed previews and requested detail tiles. Visited
-detail is retained in a bounded local cache and can be reused after reopening.
-Keep
-the packaged `tack-jpeg-decoder` executable beside Tack when copying a build;
-Cargo and `tools/build-test-bin.sh` prepare this automatically. Large progressive
-JPEGs remain unsupported by the bounded detail path.
-
-Launching opens an empty board. Drop in a few images, use right-click to explore
-commands, and press **Ctrl+S** to save. Open an existing board with:
+Tack starts with an empty board. Drop in some images, right-click to explore commands and press **Ctrl+S** to save. You can also open an existing board directly:
 
 ```bash
 cargo run --release --locked -p tack-app -- /path/to/board.tack
 ```
 
-On Linux, clipboard support needs **xclip** for X11 or **wl-clipboard** for
-Wayland. **zenity** provides native file pickers; **xsel** is a text-only X11
-clipboard fallback. See [building and troubleshooting](docs/DEVELOPMENT.md) for
-platform setup and the optional X11 startup workaround.
-
-## Everyday controls
+### A few useful controls
 
 | Input | Action |
 | --- | --- |
-| Middle-button drag / Alt + left drag away from handles | Pan |
-| Mouse wheel | Zoom around the cursor |
-| Left click / drag | Select / move |
-| Shift + click | Add or remove an item from the selection |
-| Resize / rotation handles | Resize / rotate the selection |
-| Right-click / F10 | Context commands / fixed application menu access |
-| Ctrl+I / Ctrl+V | Import images / paste |
-| T / R / L / A / P | Text / rectangle / line / arrow / freehand |
-| Ctrl+D | Duplicate local selection |
+| Mouse wheel | Zoom around the pointer |
+| Middle drag / Alt + left drag away from handles | Pan |
+| Left click / drag | Select and move |
+| Shift + click | Extend or reduce the selection |
+| Right-click / F10 | Context menu / application commands |
+| Ctrl+I / Ctrl+V | Import / paste |
+| T / R / L / A / P | Text / rectangle / line / arrow / Scribble |
+| Ctrl+Shift+F | Create a Frame |
+| Ctrl+L / Ctrl+Shift+L | Link / unlink selection to a Frame |
+| Ctrl+D | Duplicate |
 | Ctrl+Z / Ctrl+Shift+Z | Undo / redo |
-| Ctrl+S / Ctrl+Shift+S | Save / Save As |
-| Ctrl+O / Ctrl+N | Open / new board window |
-| Ctrl+, | Preferences |
-| Escape | Cancel an interaction or dismiss a menu |
+| Ctrl+S | Save |
+| Ctrl+PageDown / Ctrl+PageUp | Next / previous toolbar set |
 
-These are the default bindings. Open **Keymap** from right-click or F10 to
-search, change or reset shortcuts. **F10 is reserved** and always opens the menu,
-even with an empty keymap; unsaved-work confirmations remain protected.
-Only the toolbar has a manual size setting (1× / 2× / 3×); other UI follows
-system DPI. In a text note, **Ctrl+Enter** confirms editing.
+Most shortcuts can be remapped through **Keymap**. The [feature inventory](docs/FEATURE_INVENTORY.md) describes the current commands, their behavior and known limitations.
 
-## Project status
+## Current status
 
-The current desktop runtime is tested on **Linux/X11**. **Windows** builds and
-tests run in CI; Windows image clipboard and Wayland clipboard runtime have not
-yet been validated. Image import supports PNG/JPEG with a 64 MiB encoded-image
-limit. Large static PNG and baseline JPEG sources use bounded streaming;
-a 50,000 × 50,000 JPEG is covered by automated navigation tests. Format-specific
-limits and experimental PNG detail tiles are described in the
-[image supply documentation](docs/design/huge_images.md).
-Boards use Tack's own format; `.pur` import is not
-implemented.
+Tack is actively developed and **not production-ready**. Its current development version is `0.1.0-dev.1`.
 
-Optional LAN collaboration is a foundation for trusted networks. It has no
-authentication or TLS, uses conservative conflict/undo refusal, and requires an
-explicit reconnect after connection loss. Save to Local requires complete
-originals; an offline preview alone cannot replace missing source bytes. All
-peers must use the current protocol version. The
-[current LAN checklist](docs/HUMAN_TEST_2A5_LAN.md) tracks physical two-computer
-acceptance separately from automated same-host tests.
+- **Local boards:** available in the development builds, with local saving, recovery, image manipulation, organization and annotations.
+- **LAN collaboration:** implemented for trusted local networks, with explicit invites, synchronized accepted edits, conflict handling and local-copy workflows. Physical multi-machine acceptance is still in progress.
+- **Desktop platforms:** Linux/X11 has native test coverage. Windows packages build and run through CI checks, but complete real-desktop validation remains pending. Some clipboard and desktop behaviors vary by platform.
+- **Very large images:** bounded previews and regional detail loading exist, with format-specific constraints. See [image-supply details](docs/design/huge_images.md).
+- **Not implemented yet:** general Internet/WAN hosting, browser access, built-in cloud accounts, full timed-media playback, and direct import of PureRef `.pur` or Miro boards.
 
-See the [LAN report](docs/MISSION_2A_REPORT.md),
-[image supply report](docs/MISSION_1L_REPORT.md),
-[UI/clipboard report](docs/MISSION_1J_REPORT.md),
-[About report](docs/MISSION_1K_ABOUT_REPORT.md),
-[daily-use report](docs/MISSION_2A3_DAILY_USE_POLISH_REPORT.md) and
-[manual test checklist](docs/HUMAN_TEST_1J.md) for validation details.
+If you're considering Tack for a studio, please treat it as a project to **test with copies of non-critical boards**, not the sole home for production references. The [alpha acceptance checklist](docs/HUMAN_TEST_2A8_ALPHA.md) tracks what still needs real-world validation.
 
-## Documentation
+## For developers
 
-- [Build, troubleshooting and developer checks](docs/DEVELOPMENT.md)
-- [Complete feature inventory](docs/FEATURE_INVENTORY.md)
+Tack's architecture is deliberately modular. The shared semantic document model is independent of the renderer and storage backend; local editing requires no network services. Optional collaboration runs through a separate headless server, with bounded client workers and source caches.
+
+The workspace is divided into focused crates:
+
+- `tack-core` — document model, commands and geometry
+- `tack-assets` — image preparation, decoding and bounded image supply
+- `tack-render` — GPU canvas, overlays and pixel rendering
+- `tack-storage` — `.tack` persistence and recovery
+- `tack-app` — native desktop UI and interaction
+- `tack-shared` / `tack-server` — optional LAN protocol and authoritative server
+- `tack-update` / `tack-updater` — manual portable update support
+
+The project favors **small fixed costs, bounded work, no unnecessary idle activity and no mandatory web stack**. New importers or media support should remain optional rather than becoming permanent dependencies of the core.
+
+For architecture, profiling evidence, test instructions, protocol boundaries and development history, see:
+
+- [Documentation index](docs/README.md)
 - [Architecture](docs/architecture.md)
+- [Build and development guide](docs/DEVELOPMENT.md)
+- [Complete feature inventory](docs/FEATURE_INVENTORY.md)
 - [Board format and compatibility](docs/design/tack_document_compatibility.md)
-- [Design notes, reports and performance evidence](docs/README.md)
-- [Contribution guidelines](CONTRIBUTING.md)
+- [LAN collaboration design](docs/design/lan_collaboration.md)
+- [Benchmarks and test results](benchmarks/)
+- [Contributing](CONTRIBUTING.md)
 
 ## License
 
-The project license and contribution terms are still being decided. Dependency
-and font licenses are documented in [third-party notices](docs/THIRD_PARTY_NOTICES.md).
+The project license and contribution terms have **not yet been finalized**. Do not assume that the absence of a license file grants permission to redistribute or reuse the source. Dependency and font notices are documented in [third-party notices](docs/THIRD_PARTY_NOTICES.md).
