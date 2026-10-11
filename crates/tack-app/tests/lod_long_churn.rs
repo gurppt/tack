@@ -48,6 +48,7 @@ fn put(
 }
 fn draw_data(filtering: ImageFiltering, transformed: bool) -> Result<ImageRenderData, AssetError> {
     Ok(ImageRenderData {
+        grayscale: false,
         object_id: ObjectId::new(1)?,
         asset_id: AssetId::new(1)?,
         transform: Transform::new(

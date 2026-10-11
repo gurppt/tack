@@ -215,6 +215,21 @@ impl App {
                     String::new()
                 };
             }
+            LocalUpdate::SourceTransition(result) => {
+                if let Some(ready) = result.map_err(AssetError::from)? {
+                    let (id, revision, original) =
+                        ready.apply(self.editor.as_mut().ok_or("Document unavailable")?)?;
+                    if let Some(original) = original {
+                        if let tack_storage::Payload::Stored { file, .. } = &original {
+                            self.local.spool = Some(Arc::clone(file));
+                        }
+                        self.local.originals.insert((id, revision), original);
+                    }
+                    self.visibility.invalidate();
+                    self.local.cache_generation = None;
+                    self.input.status = "Source refreshed; progressive detail requested".into();
+                }
+            }
             LocalUpdate::Relinked(result) => {
                 result
                     .map_err(AssetError::from)?
@@ -285,7 +300,13 @@ impl App {
             },
             LocalUpdate::Keymap(action, result) => {
                 if let Some(profile) = result.map_err(AssetError::from)? {
-                    if action == Action::ImportKeymap {
+                    if action == Action::ImportProfile {
+                        self.input.cancel();
+                        self.local.profile = profile;
+                        self.input.grid_visible = self.local.profile.grid;
+                        self.apply_preferences()?;
+                        self.panel(Panel::Preferences);
+                    } else if action == Action::ImportKeymap {
                         self.local.profile.keymap = profile.keymap;
                         self.local.profile.keyset = profile.keyset;
                         self.apply_preferences()?;
@@ -299,7 +320,11 @@ impl App {
                     self.local.profile_changed = true;
                 }
                 if let Some(ui) = &mut self.local.ui {
-                    ui.message = if action == Action::ImportKeymap {
+                    ui.message = if action == Action::ImportProfile {
+                        "Profile restored; previous profile saved in before-import.tackprofile"
+                    } else if action == Action::ExportProfile {
+                        "Profile exported"
+                    } else if action == Action::ImportKeymap {
                         "Keymap imported"
                     } else if action == Action::ExportPreferences {
                         "Preferences exported"

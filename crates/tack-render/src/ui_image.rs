@@ -19,6 +19,7 @@ impl UiImage {
             position: camera.world_to_clip(camera.screen_to_world(points[i])),
             uv: uvs[i],
             opacity: 1.,
+            grayscale: 0.,
         });
         queue.write_buffer(&self.buffer, 0, bytemuck::cast_slice(&vertices));
     }

@@ -497,7 +497,8 @@ fn native_resize_snap_uses_active_edge_and_cancel_is_exact() -> R {
         .preview_transform(e.document(), ObjectId::new(1)?)
         .ok_or("transform")?;
     assert!((t.bounds().x + t.bounds().width - 100.).abs() < 1e-9);
-    assert_eq!(t.bounds().x, -50.);
+    assert_eq!(t.bounds().x, -100.);
+    assert_eq!(t.center(), [0., 0.]);
     invoke(&mut input, &mut e, &mut camera, Action::CancelInteraction)?;
     assert_eq!(e.document(), &before);
     assert!(input.snap.guides.iter().all(Option::is_none));

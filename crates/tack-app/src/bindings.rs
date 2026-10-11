@@ -123,6 +123,7 @@ impl Keymap {
                         (Trigger::Hold, Trigger::Press) | (Trigger::Press, Trigger::Hold)
                     ))
                 && b.modifiers.overlaps(binding.modifiers)
+                && b.action.context().overlaps(binding.action.context())
         }) {
             return Err(BindingError::Conflict { existing });
         }
@@ -140,11 +141,20 @@ impl Keymap {
         logical: Option<LogicalKey>,
         modifiers: Modifiers,
     ) -> PhysicalControl {
+        self.keyboard_control_where(physical, logical, modifiers, |_| true)
+    }
+    pub(crate) fn keyboard_control_where(
+        &self,
+        physical: winit::keyboard::PhysicalKey,
+        logical: Option<LogicalKey>,
+        modifiers: Modifiers,
+        eligible: impl Fn(Action) -> bool,
+    ) -> PhysicalControl {
         let physical = PhysicalControl::Key(physical);
         if self
             .bindings
             .iter()
-            .any(|b| b.control == physical && b.modifiers.matches(modifiers))
+            .any(|b| b.control == physical && b.modifiers.matches(modifiers) && eligible(b.action))
         {
             physical
         } else {

@@ -248,6 +248,7 @@ impl ImageInput {
             .or_else(|| self.images.hit_with_tolerance(doc, world, 6. / camera.zoom()));
         if let Some(id) = hit.filter(|id| !self.images.blocked.contains(id))
             && let Some(o) = doc.object(id)
+            && !o.locked()
             && let ObjectKind::Annotation(a) = o.kind()
             && matches!(a.kind(), AnnotationKind::Scribble(_))
         {

@@ -179,32 +179,36 @@ fn additive_marquee_group_rotated_annotation_and_immediate_transforms_match_high
     Ok(())
 }
 #[test]
-fn normal_note_corner_changes_wrapping_only_and_has_one_inverse() -> R {
+fn editing_note_corner_changes_wrapping_only_and_has_one_inverse() -> R {
     let (mut e, id) = note_fixture()?;
     let before = e.document().clone();
     let t = e.document().object(id).ok_or("note")?.transform();
-    let mut images = ImageInteraction::default();
-    images.selection.select(Some(id), false);
-    images.begin(
-        GestureKind::Resize {
-            handle: 4,
-            center: false,
-        },
-        [0.; 2],
-        &e,
+    let preview = tack_app::annotation_geometry::resize_note_box(
+        t,
+        geometry::rotate([-160., 60.], t.rotation()),
+        [1., 1.],
+        false,
     )?;
-    images.update(geometry::rotate([-160., 60.], t.rotation()))?;
-    let preview = images
-        .preview_transform(e.document(), id)
-        .ok_or("preview")?;
-    assert_eq!(images.preview_note_size(id), Some(24.));
     assert!((preview.size()[0] - 160.).abs() < 1e-9);
     assert!((preview.size()[1] - 220.).abs() < 1e-9);
     let a = geometry::world(t, t.size().map(|s| -s / 2.));
     let b = geometry::world(preview, preview.size().map(|s| -s / 2.));
     assert!((a[0] - b[0]).hypot(a[1] - b[1]) < 1e-9);
     assert_eq!(e.document(), &before);
-    images.commit(&mut e)?;
+    let text = note(&e, id)?.0.clone();
+    tack_app::annotation_tool::NoteEdit {
+        id,
+        value: text.value().into(),
+        size: text.font_size(),
+        alignment: text.alignment(),
+        transform: preview,
+        style: AnnotationStyle::default(),
+        generation: e.generation(),
+        is_new: false,
+        replace: false,
+        composing: false,
+    }
+    .finish(&mut e)?;
     assert_eq!(e.undo_len(), 1);
     let (text, style) = note(&e, id)?;
     assert_eq!(text.font_size(), 24.);
@@ -281,7 +285,7 @@ fn shift_note_scale_preview_uses_initial_values_and_commits_transform_text_style
     Ok(())
 }
 #[test]
-fn physical_shift_corner_scales_note_and_normal_corner_leaves_font_size() -> R {
+fn physical_corners_scale_text_with_or_without_shift() -> R {
     for shift in [false, true] {
         let (mut e, id) = note_fixture()?;
         let mut input = ImageInput::new()?;
@@ -303,7 +307,7 @@ fn physical_shift_corner_scales_note_and_normal_corner_leaves_font_size() -> R {
         input.cursor_moved([p[0] + delta[0], p[1] + delta[1]], &e, &mut c)?;
         input.physical(button(ElementState::Released), &mut e, &mut c)?;
         assert_eq!(e.undo_len(), 1);
-        assert_eq!(note(&e, id)?.0.font_size(), if shift { 36. } else { 24. });
+        assert_eq!(note(&e, id)?.0.font_size(), 36.);
     }
     Ok(())
 }
@@ -435,7 +439,7 @@ fn scaled_note_roundtrip_and_later_text_size_edits_remain_explicit_and_determini
 }
 
 #[test]
-fn shift_note_side_handles_resize_axis_without_toggling_selection_or_scaling_text() -> R {
+fn shift_note_side_handles_scale_block_without_toggling_selection() -> R {
     for handle in [1, 3, 5, 7] {
         let (mut e, id) = note_fixture()?;
         let before = e.document().clone();
@@ -458,8 +462,9 @@ fn shift_note_side_handles_resize_axis_without_toggling_selection_or_scaling_tex
         input.physical(button(ElementState::Released), &mut e, &mut c)?;
         let next = e.document().object(id).ok_or("note")?.transform();
         assert_ne!(next.size()[axis], t.size()[axis]);
-        assert_eq!(next.size()[1 - axis], t.size()[1 - axis]);
-        assert_eq!(note(&e, id)?.0.font_size(), 24.);
+        assert_ne!(next.size()[1 - axis], t.size()[1 - axis]);
+        let scale = next.size()[axis] / t.size()[axis];
+        assert!((note(&e, id)?.0.font_size() - 24. * scale).abs() < 1e-9);
         assert!(input.images.selection.contains(id));
         assert_eq!(e.undo_len(), 1);
         e.undo()?;

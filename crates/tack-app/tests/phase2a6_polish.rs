@@ -133,12 +133,13 @@ fn frame_label_double_click_uses_rename_dispatch_without_camera_focus() -> R {
     Ok(())
 }
 #[test]
-fn frame_label_palette_and_wrapped_title_hit_geometry_are_readable() -> R {
+fn frame_label_palette_and_unwrapped_title_hit_geometry_are_readable() -> R {
     let t = Transform::new([0., 0.], [120., 80.], 0., [false; 2])?;
     let mut c = Camera::new([800, 600]);
     c.set_ui_scale(2.);
     let l = Label::new(t, &c, 1, "A deliberately wrapped Frame label");
-    assert!(l.rect[3] - l.rect[1] > 36.);
+    assert_eq!(l.rect[3] - l.rect[1], 36.);
+    assert!(l.rect[2] - l.rect[0] > 240.);
     assert!(l.contains([l.rect[0] + 10., l.rect[1] + 5.]));
     assert!(!l.contains([l.rect[0] + 10., l.rect[3] + 20.]));
     let light = Color([230, 233, 239, 255]);

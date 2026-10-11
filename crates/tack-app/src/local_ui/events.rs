@@ -179,63 +179,65 @@ impl LocalUi {
                 return None;
             }
             let [_, width, _, top] = self.layout;
-            if p[0] >= 20.
+            let selected = if self.panel == Panel::Keymap {
+                self.key_rows
+                    .iter()
+                    .find(|(_, r)| p[0] >= r[0] && p[0] < r[2] && p[1] >= r[1] && p[1] < r[3])
+                    .map(|(i, _)| *i)
+            } else if p[0] >= 20.
                 && p[0] < width + 4.
                 && p[1] >= top
                 && p[1] < top + self.visible as f64 * 22.
             {
-                if self.panel == Panel::Toolbar {
-                    let order = p[0] >= (width + 24.) / 2.;
-                    if order != self.toolbar_order {
-                        self.first = 0;
-                    }
-                    self.toolbar_order = order;
-                }
-                let selected = self.first + ((p[1] - top) / 22.).floor() as usize;
-                if selected < self.count(keymap, profile) {
-                    self.selected = selected;
-                    self.focus = None;
-                    if self.panel == Panel::Keymap {
-                        let action = self.actions(keymap).get(selected).copied()?;
-                        self.behavior = keymap
-                            .bindings()
-                            .iter()
-                            .find(|b| shortcut_matches(action, b.action))
-                            .map_or(Default::default(), |b| {
-                                crate::shortcut_capture::Behavior::from_trigger(b.trigger)
-                            });
-                        let column = 24. + (width - 24.) * 0.42;
-                        let behavior_column = 24. + (width - 24.) * 0.76;
-                        self.key_column = if p[0] >= behavior_column {
-                            2
-                        } else {
-                            usize::from(p[0] >= column)
-                        };
-                        if self.key_column == 2 {
-                            return self.command(Command::Trigger, keymap, profile);
-                        }
-                        let now = std::time::Instant::now();
-                        let twice = self.shortcut_click.is_some_and(|(row, at)| {
-                            row == selected && now.duration_since(at).as_millis() <= 450
+                Some(self.first + ((p[1] - top) / 22.).floor() as usize)
+            } else {
+                None
+            };
+            if let Some(selected) = selected
+                && selected < self.count(keymap, profile)
+            {
+                self.selected = selected;
+                self.focus = None;
+                if self.panel == Panel::Keymap {
+                    let action = self.actions(keymap).get(selected).copied()?;
+                    self.behavior = keymap
+                        .bindings()
+                        .iter()
+                        .find(|b| shortcut_matches(action, b.action))
+                        .map_or(Default::default(), |b| {
+                            crate::shortcut_capture::Behavior::from_trigger(b.trigger)
                         });
-                        self.shortcut_click = (p[0] >= column).then_some((selected, now));
-                        if twice && p[0] >= column {
-                            return self.command(Command::Change, keymap, profile);
-                        }
+                    let column = 24. + (width - 24.) * 0.42;
+                    let behavior_column = 24. + (width - 24.) * 0.76;
+                    self.key_column = if p[0] >= behavior_column {
+                        2
+                    } else {
+                        usize::from(p[0] >= column)
+                    };
+                    if self.key_column == 2 {
+                        return self.command(Command::Trigger, keymap, profile);
                     }
-                    if !(matches!(
-                        self.panel,
-                        Panel::Toolbar
-                            | Panel::Keymap
-                            | Panel::Info
-                            | Panel::Connecting
-                            | Panel::UpdateChecking
-                            | Panel::UpdateOffer
-                            | Panel::UpdateReady
-                    ) || self.panel == Panel::Preferences && matches!(selected, 6 | 7))
-                    {
-                        return self.activate(keymap, profile);
+                    let now = std::time::Instant::now();
+                    let twice = self.shortcut_click.is_some_and(|(row, at)| {
+                        row == selected && now.duration_since(at).as_millis() <= 450
+                    });
+                    self.shortcut_click = (p[0] >= column).then_some((selected, now));
+                    if twice && p[0] >= column {
+                        return self.command(Command::Change, keymap, profile);
                     }
+                }
+                if !(matches!(
+                    self.panel,
+                    Panel::Toolbar
+                        | Panel::Keymap
+                        | Panel::Info
+                        | Panel::Connecting
+                        | Panel::UpdateChecking
+                        | Panel::UpdateOffer
+                        | Panel::UpdateReady
+                ) || self.panel == Panel::Preferences && matches!(selected, 6 | 7))
+                {
+                    return self.activate(keymap, profile);
                 }
             }
             return None;

@@ -14,6 +14,7 @@ pub(super) struct EditData {
     pub(super) crop: tack_core::Crop,
     pub(super) opacity: Opacity,
     pub(super) margin: f64,
+    image: bool,
     pub(super) note_size: Option<f64>,
     pub(super) style: Option<AnnotationStyle>,
 }
@@ -32,6 +33,7 @@ impl EditData {
                 },
                 |d| d.opacity,
             ),
+            image: image.is_some(),
             margin: (o.transform().bounds().x - o.bounds().x).max(0.),
             note_size: match o.kind() {
                 ObjectKind::Annotation(a) => match a.kind() {
@@ -69,7 +71,9 @@ impl ImageInteraction {
         if self.reservation_pending {
             return Ok(false);
         }
-        if self.selection.ids().any(|id| self.blocked.contains(&id)) {
+        if self.selection.ids().any(|id| {
+            self.blocked.contains(&id) || editor.document().object(id).is_some_and(|o| o.locked())
+        }) {
             return Ok(false);
         }
         if !pointer.iter().all(|p| p.is_finite()) {
@@ -82,8 +86,8 @@ impl ImageInteraction {
         {
             return Err(GeometryError);
         }
-        if let GestureKind::NoteScale { handle } = kind
-            && (handle % 2 != 0 || !self.selected_note(editor.document()))
+        if let GestureKind::NoteScale { .. } = kind
+            && !self.selected_note(editor.document())
         {
             return Ok(false);
         }
@@ -130,7 +134,9 @@ impl ImageInteraction {
                 }
             }
             for child in &derived {
-                if self.blocked.contains(child) {
+                if self.blocked.contains(child)
+                    || editor.document().object(*child).is_some_and(|o| o.locked())
+                {
                     return Ok(false);
                 }
                 if !self.selection.contains(*child)
@@ -190,24 +196,13 @@ impl ImageInteraction {
         };
         let delta = [pointer[0] - g.start[0], pointer[1] - g.start[1]];
         let resized = match g.kind {
-            GestureKind::Resize { handle, center } => Some(
-                if g.initial.len() == 1 && g.initial[0].note_size.is_some() {
-                    crate::annotation_geometry::resize_note_box(
-                        g.frame,
-                        delta,
-                        geometry::HANDLE_DIRECTIONS[handle],
-                        center,
-                    )?
-                } else {
-                    geometry::resize(
-                        g.frame,
-                        delta,
-                        geometry::HANDLE_DIRECTIONS[handle],
-                        center,
-                        g.initial.len() > 1,
-                    )?
-                },
-            ),
+            GestureKind::Resize { handle, center } => Some(geometry::resize(
+                g.frame,
+                delta,
+                geometry::HANDLE_DIRECTIONS[handle],
+                center || (g.initial.len() == 1 && g.initial[0].image),
+                g.initial.len() > 1 || g.initial[0].image || g.initial[0].note_size.is_some(),
+            )?),
             GestureKind::NoteScale { handle } => {
                 let direction = geometry::HANDLE_DIRECTIONS[handle];
                 let proposed = geometry::resize(g.frame, delta, direction, false, true)?;
@@ -315,7 +310,10 @@ impl ImageInteraction {
                     });
                 }
             };
-            if matches!(g.kind, GestureKind::NoteScale { .. }) {
+            if data.note_size.is_some()
+                && matches!(g.kind, GestureKind::NoteScale { .. } | GestureKind::Scale)
+                || data.note_size.is_some() && matches!(g.kind, GestureKind::Resize { .. })
+            {
                 let scale = transform.size()[0] / t.size()[0];
                 let style = data.style.ok_or(GeometryError)?;
                 let style = AnnotationStyle::new(

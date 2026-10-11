@@ -70,7 +70,7 @@ def main():
             max(abs(a-b) for a,b in zip(shot.getpixel((24+x,86+y)), icon.getpixel((x,y))[:3])) <= 1 for x,y in opaque))
         s.key('Escape', 'Escape', 'F5')
         # Catalog starts Separator, Mouse. Enter is the normal Add command.
-        click(120, 106); s.key('Return'); time.sleep(.3)
+        click(120, 154); s.key('Return'); time.sleep(.3)
         record('Mouse manually added in Edit Toolbar', 'SelectTool(Mouse)' in read()['toolbar']['actions'])
         s.key('Escape'); move(600,400); s.key('F1'); move(601,401)
         record('canvas cursor exact authored minimulot', cursor.pixels() == expected(binary.parent / 'gfx/cursors/minimulot.png', [14,14], 2))

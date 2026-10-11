@@ -62,7 +62,10 @@ impl LocalUi {
         let height = (f64::from(screen[1]) / scale - 24.).clamp(
             1.,
             if compact {
-                if self.panel == Panel::Info {
+                if matches!(
+                    self.panel,
+                    Panel::Info | Panel::UpdateChecking | Panel::UpdateOffer | Panel::UpdateReady
+                ) {
                     310.
                 } else {
                     240.
@@ -108,10 +111,10 @@ impl LocalUi {
             Panel::Info => "Information",
             Panel::Join => "Join Shared Board - paste invite",
             Panel::Connecting => "Join shared board",
-            Panel::UpdateApplying => "Applying Tack update",
-            Panel::UpdateChecking => "Checking for Updates",
-            Panel::UpdateOffer => "Tack update available",
-            Panel::UpdateReady => "Tack update verified",
+            Panel::UpdateApplying => "Update...",
+            Panel::UpdateChecking => "Update...",
+            Panel::UpdateOffer => "Update...",
+            Panel::UpdateReady => "Update...",
             Panel::Menu => "Tack - local files",
             Panel::Preferences => "Preferences",
             Panel::Keymap => "Keymap - type to search",
@@ -192,7 +195,11 @@ impl LocalUi {
                 [24. * scale, (y + 2.) * scale],
                 width - 24.,
                 row,
-                palette.text_primary,
+                self.daily
+                    .as_ref()
+                    .and_then(|d| d.source_color)
+                    .filter(|_| index == 3)
+                    .unwrap_or(palette.text_primary),
                 &mut budget,
             );
         }
@@ -206,13 +213,21 @@ impl LocalUi {
         if height >= 240. && self.daily.is_some() {
             let commands: &[(&str, Command)] = match self.panel {
                 Panel::UpdateApplying => &[],
-                Panel::UpdateOffer => &[
+                Panel::UpdateChecking => &[
+                    ("Channel", Command::UpdateChannel),
+                    ("Check", Command::UpdateCheck),
                     ("Download", Command::ConfirmDaily),
-                    ("Cancel", Command::Close),
+                    ("Close", Command::Close),
+                ],
+                Panel::UpdateOffer => &[
+                    ("Channel", Command::UpdateChannel),
+                    ("Check", Command::UpdateCheck),
+                    ("Download", Command::ConfirmDaily),
+                    ("Close", Command::Close),
                 ],
                 Panel::UpdateReady => &[
                     ("Restart and Update", Command::ConfirmDaily),
-                    ("Cancel", Command::Close),
+                    ("Close", Command::Close),
                 ],
                 Panel::Bookmarks => &[
                     ("Rename (F2)", Command::RenameBookmark),
@@ -228,11 +243,13 @@ impl LocalUi {
             for (i, (label, command)) in commands.iter().enumerate() {
                 let x = 24. + i as f64 * (width - 32.) / commands.len() as f64;
                 let x2 = x + (width - 32.) / commands.len() as f64 - 4.;
-                let enabled = !matches!(command, Command::RenameBookmark | Command::DeleteBookmark)
-                    || self
-                        .daily
-                        .as_ref()
-                        .is_some_and(|d| !d.shared && !d.bookmarks.is_empty());
+                let enabled = !(self.panel == Panel::UpdateChecking
+                    && *command == Command::ConfirmDaily)
+                    && (!matches!(command, Command::RenameBookmark | Command::DeleteBookmark)
+                        || self
+                            .daily
+                            .as_ref()
+                            .is_some_and(|d| !d.shared && !d.bookmarks.is_empty()));
                 self.hits.push(Hit {
                     rect: [x, height - 44., x2, height - 22.],
                     command: *command,

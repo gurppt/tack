@@ -2,6 +2,31 @@
 use super::*;
 impl App {
     fn update_panel(&mut self, panel: Panel, rows: Vec<String>) {
+        let current = rows.iter().any(|row| row.starts_with("Tack is up to date"));
+        let mut rows = rows;
+        rows.retain(|s| {
+            !s.starts_with("Current:") && !s.starts_with("Channel:") && !s.starts_with("Available:")
+        });
+        rows.insert(0, "Source: gurppt/tack".into());
+        rows.insert(
+            0,
+            format!("Channel: {}", self.local.profile.update_channel.label()),
+        );
+        rows.insert(
+            0,
+            format!(
+                "Available: {}",
+                self.local.update_offer.as_ref().map_or_else(
+                    || if current {
+                        env!("CARGO_PKG_VERSION").into()
+                    } else {
+                        "Not checked".into()
+                    },
+                    |o| o.manifest.version.clone()
+                )
+            ),
+        );
+        rows.insert(0, format!("Installed: {}", env!("CARGO_PKG_VERSION")));
         self.panel(panel);
         self.local.ui = Some(Box::new(LocalUi::daily(
             panel,
@@ -13,8 +38,17 @@ impl App {
         self.dirty = true;
     }
     pub(in super::super) fn check_for_updates(&mut self) -> Result<(), AssetError> {
+        self.local.update_offer = None;
+        self.local.update_stage = None;
+        self.update_panel(Panel::UpdateChecking, vec!["Not checked; use Check".into()]);
+        Ok(())
+    }
+    pub(in super::super) fn update_check(&mut self) -> Result<(), AssetError> {
         if !cfg!(feature = "updater") {
             return Err("Updates omitted from this build".into());
+        }
+        if self.local.worker.active() {
+            return Ok(());
         }
         self.local.update_offer = None;
         self.local.update_stage = None;
@@ -45,9 +79,9 @@ impl App {
         }
         match result {
             Ok(tack_update::Response::Applying) => self.local.close_ready = true,
-            Err(e) => self.update_panel(Panel::Error, vec![e.clone()]),
+            Err(e) => self.update_panel(Panel::UpdateChecking, vec![format!("Error: {e}")]),
             Ok(tack_update::Response::Current) => self.update_panel(
-                Panel::Info,
+                Panel::UpdateChecking,
                 vec![format!(
                     "Tack is up to date - {}",
                     env!("CARGO_PKG_VERSION")

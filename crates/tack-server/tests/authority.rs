@@ -523,3 +523,47 @@ fn compound_scribble_eraser_merge_authority_replay_history_and_restart() -> R {
     assert_eq!(&peer, a.document());
     Ok(())
 }
+#[test]
+fn grayscale_and_object_lock_are_atomic_shared_edits_with_durable_undo() -> R {
+    let work = Work::new()?;
+    let mut a = Authority::publish(&work.0, fixture()?, vec![])?;
+    let client = WireId::new(20)?;
+    let id = ObjectId::new(3)?;
+    let command = CommandDto::from_command(&Command::Batch(vec![
+        Command::SetGrayscale {
+            object: id,
+            grayscale: true,
+        },
+        Command::SetLocked {
+            object: id,
+            locked: true,
+        },
+    ]))?;
+    a.edit(client, WireId::new(41)?, 0, command, vec![])?;
+    assert!(a.document().object(id).ok_or("image")?.locked());
+    assert!(
+        a.document()
+            .object_render_data(id)
+            .ok_or("image")?
+            .grayscale
+    );
+    a = Authority::open(&work.0, a.board())?;
+    assert!(a.document().object(id).ok_or("image")?.locked());
+    a.history(client, WireId::new(42)?, 1, false)?;
+    assert!(!a.document().object(id).ok_or("image")?.locked());
+    assert!(
+        !a.document()
+            .object_render_data(id)
+            .ok_or("image")?
+            .grayscale
+    );
+    a.history(client, WireId::new(43)?, 2, true)?;
+    assert!(a.document().object(id).ok_or("image")?.locked());
+    assert!(
+        a.document()
+            .object_render_data(id)
+            .ok_or("image")?
+            .grayscale
+    );
+    Ok(())
+}

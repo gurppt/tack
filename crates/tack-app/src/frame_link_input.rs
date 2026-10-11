@@ -14,6 +14,25 @@ pub(super) struct Stage {
 }
 impl ImageInput {
     pub fn settle_link_feedback(&mut self, now: Instant, editor: Option<&DocumentEditor>) -> bool {
+        if let Some((generation, children, flash)) = &self.unlink_pending
+            && let Some(e) = editor
+            && e.generation() != *generation
+        {
+            if children
+                .iter()
+                .all(|id| e.document().frame_parent(*id).is_none())
+            {
+                self.unlink_flash = flash.clone();
+                self.unlink_pending = None;
+                self.link_feedback
+                    .acknowledge_for(now, Duration::from_millis(1800));
+                self.status = "Unlinked from Frame".into();
+                return true;
+            }
+            if let Some(pending) = &mut self.unlink_pending {
+                pending.0 = e.generation();
+            }
+        }
         if let Some((generation, frame, children)) = &self.link_pending
             && let Some(editor) = editor
             && editor.generation() != *generation
@@ -25,7 +44,8 @@ impl ImageInput {
             if accepted {
                 self.link_pending = None;
                 self.link_flash = Some(frame);
-                self.link_feedback.acknowledge(now);
+                self.link_feedback
+                    .acknowledge_for(now, Duration::from_millis(1800));
                 self.status = "Linked to Frame".into();
                 return true;
             }
@@ -36,6 +56,8 @@ impl ImageInput {
         if self.link_feedback.settle(now) {
             self.link_pending = None;
             self.link_flash = None;
+            self.unlink_flash.clear();
+            self.unlink_pending = None;
             return true;
         }
         false
@@ -67,7 +89,7 @@ impl ImageInput {
             .rev()
             .filter_map(|id| {
                 doc.object(*id)
-                    .filter(|o| matches!(o.kind(), ObjectKind::Frame(_)))
+                    .filter(|o| !o.locked() && matches!(o.kind(), ObjectKind::Frame(_)))
                     .map(|o| (*id, o.transform()))
             })
             .collect();
@@ -132,10 +154,13 @@ impl ImageInput {
         if let Some((_, end, _)) = &mut self.marquee {
             *end = world;
         }
+        let labels = self.frame_labels(editor.document(), camera);
         let hover = stage.frames.iter().find_map(|(id, t)| {
             (!self.images.blocked.contains(id)
                 && (crate::image_geometry::hit(*t, world)
-                    || self.frame_title_hit(editor, camera, *id)))
+                    || labels
+                        .iter()
+                        .any(|(object, label)| object == id && label.contains(self.cursor))))
             .then_some(*id)
         });
         if let Some(stage) = &mut self.link {
@@ -170,7 +195,26 @@ impl ImageInput {
                         .map(|id| (id, None))
                         .collect::<Vec<_>>();
                     if !changes.is_empty() {
+                        let flash: Vec<_> = changes
+                            .iter()
+                            .filter_map(|(id, _)| editor.document().frame_parent(*id))
+                            .chain(changes.iter().map(|(id, _)| *id))
+                            .take(256)
+                            .collect();
+                        let children: Vec<_> = changes.iter().map(|(id, _)| *id).collect();
+                        let generation = editor.generation();
                         editor.execute(Command::SetFrameLinks(changes))?;
+                        if children
+                            .iter()
+                            .all(|id| editor.document().frame_parent(*id).is_none())
+                        {
+                            self.unlink_flash = flash;
+                            self.status = "Unlinked from Frame".into();
+                        } else {
+                            self.unlink_pending = Some((generation, children, flash));
+                        }
+                        self.link_feedback
+                            .acknowledge_for(Instant::now(), Duration::from_millis(1800));
                     }
                     return Ok(true);
                 }
@@ -283,7 +327,8 @@ impl ImageInput {
                     // A queued shared edit is not an authoritative confirmation.
                     if editor.generation() != before {
                         self.link_flash = Some(frame);
-                        self.link_feedback.acknowledge(Instant::now());
+                        self.link_feedback
+                            .acknowledge_for(Instant::now(), Duration::from_millis(1800));
                     }
                     if editor.generation() == before
                         && children
@@ -292,7 +337,8 @@ impl ImageInput {
                     {
                         self.link_pending = Some((before, frame, children));
                         self.link_flash = None;
-                        self.link_feedback.acknowledge(Instant::now());
+                        self.link_feedback
+                            .acknowledge_for(Instant::now(), Duration::from_millis(1800));
                     }
                     self.link = None;
                     self.status = if editor.generation() == before {
@@ -323,6 +369,17 @@ impl ImageInput {
         {
             self.gizmo
                 .outline(frame.transform(), camera, self.gizmo.style.selection);
+        }
+        if self.link_feedback.active() {
+            for id in &self.unlink_flash {
+                if let Some(o) = editor.document().object(*id) {
+                    self.gizmo.outline(
+                        o.transform(),
+                        camera,
+                        tack_core::Color([248, 92, 218, 255]).rgba(tack_core::Opacity::OPAQUE),
+                    );
+                }
+            }
         }
         let Some(stage) = &self.link else {
             return;

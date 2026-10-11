@@ -70,7 +70,15 @@ pub enum Action {
     Opacity(crate::selection_commands::Alpha),
     Filtering(tack_core::ImageFiltering),
     CycleFiltering,
-    ResetAspectRatio,
+    ResetCrop,
+    ActualSize,
+    ToggleGrayscale,
+    ToggleLockSelection,
+    SelectLockedObjects,
+    RefreshSource,
+    ToggleSourceStorage,
+    ContextCoarseIncrease,
+    ContextCoarseDecrease,
     ContextIncrease,
     ContextDecrease,
     Save,
@@ -113,6 +121,10 @@ pub enum Action {
     ExportKeymap,
     SaveKeymap,
     ExportPreferences,
+    ExportProfile,
+    ImportProfile,
+    NextToolbarSet,
+    PreviousToolbarSet,
     DuplicateSelection,
     AddCameraBookmark,
     JumpCameraSlot(u8),
@@ -128,8 +140,86 @@ pub enum Action {
     ToggleStatusBar,
 }
 impl Action {
+    pub fn mutates_selection(self) -> bool {
+        use Action::*;
+        matches!(
+            self,
+            ResetCrop
+                | ActualSize
+                | ToggleGrayscale
+                | DeleteSelection
+                | FlipHorizontal
+                | FlipVertical
+                | Order(_)
+                | Opacity(_)
+                | Filtering(_)
+                | CycleFiltering
+                | Layout(_)
+                | GroupSelection
+                | UngroupSelection
+                | AnnotationStyle(_)
+                | ContextIncrease
+                | ContextDecrease
+                | ContextCoarseIncrease
+                | ContextCoarseDecrease
+                | RenameFrame
+                | LinkToFrame
+                | UnlinkFromFrame
+                | MergeScribbles
+                | RefreshSource
+                | ToggleSourceStorage
+                | RelinkSource
+        )
+    }
+    pub fn context(self) -> ActionContext {
+        use Action::*;
+        match self {
+            ResetCrop | ActualSize | ToggleGrayscale | CropMode | Filtering(_) | CycleFiltering
+            | OpenSource | RevealSource | CopySourcePath | RefreshSource | ToggleSourceStorage
+            | RelinkSource | SourceInfo | SaveOriginalAs => ActionContext::ImageSelection,
+            AnnotationStyle(
+                crate::annotation_tool::StyleAction::LargerText
+                | crate::annotation_tool::StyleAction::SmallerText
+                | crate::annotation_tool::StyleAction::AlignText,
+            ) => ActionContext::TextSelection,
+            AnnotationStyle(
+                crate::annotation_tool::StyleAction::Wider
+                | crate::annotation_tool::StyleAction::Narrower,
+            )
+            | MergeScribbles => ActionContext::DrawingSelection,
+            AnnotationStyle(_) => ActionContext::Global,
+            ImagePointer
+            | ToggleSelection
+            | RotateImage
+            | ScaleImage
+            | AdjustOpacity
+            | CenterPointer
+            | SelectAll
+            | DeleteSelection
+            | FlipHorizontal
+            | FlipVertical
+            | Order(_)
+            | Opacity(_)
+            | ContextIncrease
+            | ContextDecrease
+            | ContextCoarseIncrease
+            | ContextCoarseDecrease
+            | Layout(_)
+            | GroupSelection
+            | UngroupSelection
+            | CreateFrame
+            | RenameFrame
+            | LinkToFrame
+            | UnlinkFromFrame
+            | SelectLinkedObjects
+            | ToggleLockSelection
+            | SelectLockedObjects
+            | DuplicateSelection => ActionContext::Canvas,
+            _ => ActionContext::Global,
+        }
+    }
     /// Enumerable action catalog, including currently unassigned actions.
-    pub const ALL: [Self; 132] = [
+    pub const ALL: [Self; 144] = [
         Self::SelectTool(Tool::Mouse),
         Self::TemporaryTool(Tool::Mouse),
         Self::SelectTool(Tool::Pointer),
@@ -166,7 +256,15 @@ impl Action {
         Self::Filtering(tack_core::ImageFiltering::Smooth),
         Self::Filtering(tack_core::ImageFiltering::Nearest),
         Self::CycleFiltering,
-        Self::ResetAspectRatio,
+        Self::ResetCrop,
+        Self::ActualSize,
+        Self::ToggleGrayscale,
+        Self::ToggleLockSelection,
+        Self::SelectLockedObjects,
+        Self::RefreshSource,
+        Self::ToggleSourceStorage,
+        Self::ContextCoarseIncrease,
+        Self::ContextCoarseDecrease,
         Self::ContextIncrease,
         Self::ContextDecrease,
         Self::Save,
@@ -240,6 +338,10 @@ impl Action {
         Self::ExportKeymap,
         Self::SaveKeymap,
         Self::ExportPreferences,
+        Self::ExportProfile,
+        Self::ImportProfile,
+        Self::NextToolbarSet,
+        Self::PreviousToolbarSet,
         Self::DuplicateSelection,
         Self::AddCameraBookmark,
         Self::JumpCameraSlot(0),
@@ -291,6 +393,8 @@ impl Action {
                 | Self::SaveAs
                 | Self::SaveToLocal
                 | Self::Paste
+                | Self::RefreshSource
+                | Self::ToggleSourceStorage
                 | Self::RelinkSource
                 | Self::SaveOriginalAs
                 | Self::Preferences
@@ -299,6 +403,10 @@ impl Action {
                 | Self::ImportKeymap
                 | Self::SaveKeymap
                 | Self::ExportKeymap
+                | Self::ExportProfile
+                | Self::ImportProfile
+                | Self::NextToolbarSet
+                | Self::PreviousToolbarSet
                 | Self::ExportPreferences
                 | Self::DuplicateSelection
                 | Self::AddCameraBookmark
@@ -326,34 +434,35 @@ impl Action {
             && (self != Self::CheckForUpdates || cfg!(feature = "updater"))
     }
     pub fn category(self) -> &'static str {
+        use Action::*;
         match self {
-            Self::SelectTool(_) | Self::TemporaryTool(_) | Self::AnnotationStyle(_) => {
-                "Tools and annotations"
+            SelectTool(_) | TemporaryTool(_) | ToggleAnnotationSelectionLock => "TOOLS",
+            PanView | ZoomView | CenterPointer | AddCameraBookmark | JumpCameraSlot(_)
+            | CameraBookmarks | FocusFrame | NextFrame | PreviousFrame | ToggleGrid
+            | ToggleSnapping | SnapDisable => "NAVIGATION",
+            RefreshSource | ToggleSourceStorage | ImportImages | CropMode | ResetCrop
+            | ActualSize | ToggleGrayscale | Filtering(_) | CycleFiltering | SourceInfo
+            | OpenSource | RevealSource | CopySourcePath | SaveOriginalAs | RelinkSource
+            | RotateImage | ScaleImage | AdjustOpacity | FlipHorizontal | FlipVertical => "IMAGES",
+            AnnotationStyle(
+                crate::annotation_tool::StyleAction::LargerText
+                | crate::annotation_tool::StyleAction::SmallerText
+                | crate::annotation_tool::StyleAction::AlignText,
+            ) => "TEXT",
+            AnnotationStyle(_)
+            | FinishScribble
+            | MergeScribbles
+            | ContextIncrease
+            | ContextDecrease
+            | ContextCoarseIncrease
+            | ContextCoarseDecrease => "DRAWING",
+            CreateFrame | RenameFrame | LinkToFrame | UnlinkFromFrame | SelectLinkedObjects => {
+                "FRAMES"
             }
-            Self::PanView
-            | Self::ZoomView
-            | Self::CenterPointer
-            | Self::AddCameraBookmark
-            | Self::JumpCameraSlot(_)
-            | Self::CameraBookmarks => "Navigation",
-            Self::DuplicateSelection => "Selection and editing",
-            Self::SourceInfo => "Sources",
-            Self::OpenSource | Self::RevealSource | Self::CopySourcePath | Self::SaveOriginalAs => {
-                "Sources"
+            JoinSharedBoard | CopySharedBoardAddress | ShareBoard | StopSharing | SaveToLocal => {
+                "COLLABORATION"
             }
-            _ if self.is_local() || self == Self::Save => "Local files and preferences",
-            Self::Layout(_)
-            | Self::GroupSelection
-            | Self::UngroupSelection
-            | Self::CreateFrame
-            | Self::RenameFrame
-            | Self::FocusFrame
-            | Self::NextFrame
-            | Self::PreviousFrame
-            | Self::ToggleGrid
-            | Self::ToggleSnapping
-            | Self::SnapDisable => "Spatial organization",
-            _ => "Selection and editing",
+            _ => "GENERAL",
         }
     }
     pub fn captured_hold(self) -> bool {
@@ -371,7 +480,15 @@ impl Action {
     }
     pub fn label(self) -> &'static str {
         match self {
-            Self::ResetAspectRatio => "Reset aspect ratio",
+            Self::ResetCrop => "Reset Crop",
+            Self::ActualSize => "Actual Size / 1:1",
+            Self::ToggleGrayscale => "Toggle Grayscale",
+            Self::ToggleLockSelection => "Toggle Lock Selection",
+            Self::SelectLockedObjects => "Select Locked Objects",
+            Self::RefreshSource => "Refresh Source",
+            Self::ToggleSourceStorage => "Toggle Linked / Embedded",
+            Self::ContextCoarseIncrease => "Context coarse increase",
+            Self::ContextCoarseDecrease => "Context coarse decrease",
             Self::ContextIncrease => "Context increase",
             Self::ContextDecrease => "Context decrease",
             Self::SelectTool(Tool::Pointer) => "Pointer tool",
@@ -460,7 +577,7 @@ impl Action {
             Self::CopySourcePath => "Copy linked source path",
             Self::ApplicationMenu => "Local menu",
             Self::About => "About Tack",
-            Self::CheckForUpdates => "Check for Updates",
+            Self::CheckForUpdates => "Update...",
             Self::CloseBoard => "Close Board",
             Self::NewBoard => "New board",
             Self::OpenBoard => "Open board",
@@ -474,6 +591,10 @@ impl Action {
             Self::KeymapEditor => "Edit keymap",
             Self::RecentBoards => "Recent boards",
             Self::ImportKeymap => "Import keymap",
+            Self::ExportProfile => "Export Profile...",
+            Self::ImportProfile => "Import Profile...",
+            Self::NextToolbarSet => "Next Toolbar Set",
+            Self::PreviousToolbarSet => "Previous Toolbar Set",
             Self::ExportPreferences => "Export Preferences...",
             Self::SaveKeymap => "Save keyset",
             Self::ExportKeymap => "Export keymap",
@@ -503,6 +624,25 @@ impl Action {
             Self::EditToolbar => "Edit Toolbar...",
             Self::ToggleStatusBar => "Show / hide status bar",
         }
+    }
+}
+
+/// A deliberately small classification, independent of shortcut controls.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ActionContext {
+    Global,
+    Canvas,
+    ImageSelection,
+    DrawingSelection,
+    TextSelection,
+    TextEditing,
+    TimedAsset,
+}
+impl ActionContext {
+    pub fn overlaps(self, other: Self) -> bool {
+        self == other
+            || matches!(self, Self::Global | Self::Canvas)
+            || matches!(other, Self::Global | Self::Canvas)
     }
 }
 

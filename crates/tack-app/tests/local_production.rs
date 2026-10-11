@@ -43,6 +43,7 @@ const PNG: &[u8] = &[
 ];
 fn request(root: &Root, paths: Vec<PathBuf>, embedded: bool) -> ImportRequest {
     ImportRequest {
+        viewport: [800., 600.],
         mouse_easter_zoom: None,
         temporary: None,
         paths,

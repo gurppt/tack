@@ -72,6 +72,7 @@ impl Capture {
             if old.action != action
                 && crate::bindings::controls_overlap(old.control, binding.control)
                 && old.modifiers.overlaps(binding.modifiers)
+                && old.action.context().overlaps(binding.action.context())
                 && !displaced.contains(&old.action)
             {
                 candidate.unassign(old.action);

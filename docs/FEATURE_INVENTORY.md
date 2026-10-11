@@ -301,3 +301,51 @@ Release artifacts identify Cargo version, exact source commit/channel and protoc
 The October 10 authored icon set supplies 36 symbols, including alignment,
 arrangement/distribution, flips, stacking, color/sampling, snapping, rotate view
 and unlink. Common previews use these exact pixels. See [asset mapping](ICON_ASSETS.md).
+
+
+## Phase 2A9 corrective UX and portable profile
+
+Image edges/corners now scale proportionally, with the center preserved for one
+image. Full edge bands scale; outer corners rotate. Reset Crop, Actual Size / 1:1,
+and Grayscale are image commands with one batch Undo. Actual Size changes logical
+size, while Fit Selection changes the camera. Grayscale changes shader metadata;
+no image bytes are converted. Reset Aspect Ratio has been removed.
+
+Sources use turquoise Linked, fuchsia Embedded, and red missing Linked identity.
+Explicit Refresh Source replaces the fingerprint/revision and progressively
+requests new supply. Embedded refresh uses a remembered original; clipboard-only
+Embedded sources have no implicit origin. Toggle Linked / Embedded is a finite
+worker operation, with a picker when no local origin exists. Source binding
+changes remain local-only; shared originals belong to the server.
+
+Text tool click enters editing; Enter/outside click commits and Shift+Enter adds
+newlines. Selected blocks scale with their font. Editing edges/corners resize the
+box with a fixed font and a text minimum. Frame labels have a screen font minimum,
+never wrap to a vertical word, and use a bounded deterministic collision sweep.
+Object Lock is separate from Annotation Selection Lock. Normal picking/marquee
+skips locked objects; Select Locked Objects provides recovery. A Frame move is
+refused if it would move a locked child.
+
+Keymap covers all 144 semantic actions, displaying 134 rows: temporary tool
+variants share the tool row and its Hold setting. Nine flat category headers are
+not selectable; MEDIA is reserved and empty. Exclusive Image/Drawing/Text
+selection contexts may share shortcuts; Global/Canvas remain conservative.
+Numpad +/- adjusts context; Shift uses ten steps. F10 remains reserved.
+
+Update... retains checking/current/error states, installed/available versions,
+Dev/Stable channel, source, Check, Download/Update and Close. No polling.
+
+`.tackprofile` version 1 exports preferences, snapping, toolbar layout, named
+sets/active set and the complete keymap. It strips recent paths, keyset path,
+local camera views and absolute live toolbar coordinates. `.tackey` remains
+keymap-only. Import validates before replacement and writes
+`before-import.tackprofile` in the local profile directory. The toolbar editor
+supports up to 16 sets, New/Rename/Duplicate/Delete (at least one remains), content
+order and separators. Ctrl+PageDown/PageUp cycle sets and report `Toolbar: NAME`;
+position, scale and active tool remain shared.
+
+Compatibility: metadata schema 8 stores object Lock/Grayscale and remembered
+Embedded origins; schemas 1–7 remain readable. LAN protocol major 4 is required
+for the new object flags; update every collaborating client/server together.
+See [2A9 report](MISSION_2A9_ALPHA_UX_CORRECTIVE_REPORT.md) and
+[portable profile report](PROFILE_EXPORT_IMPORT_ADDENDUM_REPORT.md).

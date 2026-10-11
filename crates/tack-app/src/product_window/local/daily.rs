@@ -120,9 +120,16 @@ impl App {
                         .and_then(|a| a.states.get(&source.id()).copied()),
                     bytes,
                 )?;
+                let source_color = Some(tack_app::source_info::color(
+                    source.location(),
+                    self.assets
+                        .as_ref()
+                        .and_then(|a| a.states.get(&source.id()).copied()),
+                ));
                 self.daily_panel(
                     Panel::Info,
                     DailyPanel {
+                        source_color,
                         rows,
                         ..Default::default()
                     },

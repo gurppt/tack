@@ -72,6 +72,8 @@ impl CommandDto {
             }
             SetCrop { object, .. }
             | SetOpacity { object, .. }
+            | SetLocked { object, .. }
+            | SetGrayscale { object, .. }
             | SetImageFiltering { object, .. }
             | SetFrameName { object, .. }
             | SetFrameColor { object, .. }

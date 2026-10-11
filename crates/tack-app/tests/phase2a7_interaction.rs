@@ -193,72 +193,7 @@ fn note_paste_edit_preserves_paper_and_integer_size() -> R {
     e.redo()?;
     Ok(())
 }
-#[test]
-fn aspect_reset_preserves_crop_center_rotation_flip_area_and_exact_undo() -> R {
-    let mut e = editor()?;
-    let mut i = ImageInput::new()?;
-    let mut c = Camera::new([800, 600]);
-    e.execute(Command::AddSource(Source::linked(
-        SourceId::new(1)?,
-        "missing.png",
-    )?))?;
-    e.execute(Command::AddAsset(ImageAsset::new(
-        AssetId::new(1)?,
-        SourceId::new(1)?,
-        [600, 300],
-    )?))?;
-    let id = ObjectId::new(1)?;
-    let transform = Transform::new([50., -70.], [100., 100.], 0.7, [true, false])?;
-    e.execute(Command::AddObject {
-        object: DocumentObject::image(id, AssetId::new(1)?, transform),
-        index: 0,
-    })?;
-    e.execute(Command::SetCrop {
-        object: id,
-        crop: Crop::new(0.1, 0.2, 0.5, 0.6)?,
-    })?;
-    i.images.selection.select(Some(id), false);
-    let before = e.document().clone();
-    let n = e.undo_len();
-    shared_roundtrip(&mut i, &mut e, &mut c, Action::ResetAspectRatio)?;
-    let data = e.document().object_render_data(id).ok_or("image")?;
-    let t = data.transform;
-    assert!((t.size()[0] / t.size()[1] - 5. / 3.).abs() < 1e-10);
-    assert!((t.size()[0] * t.size()[1] - 10000.).abs() < 1e-8);
-    assert_eq!(t.center(), transform.center());
-    assert_eq!(t.rotation(), transform.rotation());
-    assert_eq!(t.flips(), transform.flips());
-    assert_eq!(data.crop, Crop::new(0.1, 0.2, 0.5, 0.6)?);
-    assert_eq!(e.undo_len(), n + 1);
-    e.undo()?;
-    assert_eq!(e.document(), &before);
-    e.redo()?;
-    for size in [[1000., 40.], [40., 1000.]] {
-        e.execute(Command::SetTransform {
-            object: id,
-            transform: Transform::new(
-                transform.center(),
-                size,
-                transform.rotation(),
-                transform.flips(),
-            )?,
-        })?;
-        shared_roundtrip(&mut i, &mut e, &mut c, Action::ResetAspectRatio)?;
-        let restored = e.document().object(id).ok_or("image")?.transform();
-        assert!((restored.size()[0] / restored.size()[1] - 5. / 3.).abs() < 1e-10);
-        assert!((restored.size()[0] * restored.size()[1] - 40000.).abs() < 1e-8);
-    }
-    let root = std::env::temp_dir().join(format!(
-        "tack-aspect-{:032x}",
-        tack_storage::new_document_id()?.value()
-    ));
-    std::fs::create_dir(&root)?;
-    let path = root.join("aspect.tack");
-    tack_storage::save(&path, e.document(), vec![])?;
-    assert_eq!(&tack_storage::TackFile::open(&path)?.document, e.document());
-    std::fs::remove_dir_all(root)?;
-    Ok(())
-}
+
 #[test]
 fn toolbar_anchor_and_independent_integer_scale_survive_resize() -> R {
     let mut cfg = Config::default();

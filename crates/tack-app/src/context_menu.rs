@@ -45,6 +45,8 @@ pub struct Context {
     ungroup: bool,
     align: bool,
     linked: bool,
+    source_color: Option<crate::ui_theme::Color>,
+    source_origin: bool,
     forward: bool,
     backward: bool,
     filtering: Option<ImageFiltering>,
@@ -129,6 +131,11 @@ impl Context {
             ungroup,
             align: multiple_units,
             linked,
+            source_origin: first.and_then(|d| doc.asset(d.asset_id))
+                .and_then(|a| doc.source(a.source_id())).is_some_and(|s| s.original_path().is_some()),
+            source_color: first_id.and_then(|id| doc.object_render_data(id))
+                .and_then(|d| doc.asset(d.asset_id)).and_then(|a| doc.source(a.source_id()))
+                .map(|s| crate::source_info::color(s.location(), None)),
             forward,
             backward,
             filtering,
@@ -139,6 +146,12 @@ impl Context {
             has_frames: doc.frame_count() > 0,
             annotation_fill: first_id.and_then(|id| doc.object(id)).is_some_and(|o| matches!(o.kind(), ObjectKind::Annotation(a) if matches!(a.kind(), AnnotationKind::Rect))),
         }
+    }
+    pub fn with_missing_source(mut self, missing: bool) -> Self {
+        if missing {
+            self.source_color = Some(crate::source_info::missing_color());
+        }
+        self
     }
     pub fn with_shared(mut self, shared: bool) -> Self {
         self.shared = shared;
@@ -178,7 +191,11 @@ impl Context {
                         _ => true,
                     }
             }
-            Action::ResetAspectRatio => self.all_images,
+            Action::ResetCrop | Action::ActualSize | Action::ToggleGrayscale => self.all_images,
+            Action::ToggleLockSelection => self.any,
+            Action::SelectLockedObjects => true,
+            Action::RefreshSource => self.all_images && self.source_origin,
+            Action::ToggleSourceStorage => self.all_images,
             Action::CropMode => self.selection_kind == ContextKind::Image,
             Action::FlipHorizontal | Action::FlipVertical => self.any && self.all_flippable,
             Action::Filtering(_) | Action::Opacity(_) => self.all_images,
@@ -499,6 +516,8 @@ fn context_items_all(context: Context, submenu: Option<Group>, keymap: &Keymap) 
                 a("Paste", Paste),
                 a("Duplicate selection", DuplicateSelection),
                 a("Select all", SelectAll),
+                a("Lock / unlock", ToggleLockSelection),
+                a("Select Locked Objects", SelectLockedObjects),
                 a("Delete", DeleteSelection),
             ],
             Group::View => vec![
@@ -515,7 +534,7 @@ fn context_items_all(context: Context, submenu: Option<Group>, keymap: &Keymap) 
             Group::Tools => vec![
                 a("Edit Toolbar...", EditToolbar),
                 a("Pointer", SelectTool(Tool::Pointer)),
-                a("Note (click/drag)", SelectTool(Tool::Text)),
+                a("Text Block", SelectTool(Tool::Text)),
                 a("Rectangle", SelectTool(Tool::Rectangle)),
                 a("Line", SelectTool(Tool::Line)),
                 a("Arrow", SelectTool(Tool::Arrow)),
@@ -537,7 +556,7 @@ fn context_items_all(context: Context, submenu: Option<Group>, keymap: &Keymap) 
             group("Tools", Group::Tools, true),
             a("Preferences...", Preferences),
             a("Keymap...", KeymapEditor),
-            a("Check for Updates", CheckForUpdates),
+            a("Update...", CheckForUpdates),
             a("About Tack", About),
         ];
     }
@@ -545,16 +564,30 @@ fn context_items_all(context: Context, submenu: Option<Group>, keymap: &Keymap) 
         return vec![
             a("Paste", Paste),
             a("Import images...", ImportImages),
-            a("New note (click/drag)", SelectTool(Tool::Text)),
+            a("New Text Block", SelectTool(Tool::Text)),
             a("New frame", CreateFrame),
             a("Link to Frame", LinkToFrame),
             a("Select all", SelectAll),
+            a("Select Locked Objects", SelectLockedObjects),
         ];
     }
     let mut v = Vec::new();
     match context.kind {
         ContextKind::Image => v.extend([
-            a("Reset aspect ratio", ResetAspectRatio),
+            a("Reset Crop", ResetCrop),
+            a("Actual Size / 1:1", ActualSize),
+            a("Grayscale", ToggleGrayscale),
+            a(
+                if context.linked {
+                    "Refresh Source"
+                } else {
+                    "Refresh Embedded from Original..."
+                },
+                RefreshSource,
+            ),
+            a("Toggle Linked / Embedded", ToggleSourceStorage),
+            a("Lock / unlock", ToggleLockSelection),
+            a("Select Locked Objects", SelectLockedObjects),
             a("Crop", CropMode),
             a("Flip horizontal", FlipHorizontal),
             a("Flip vertical", FlipVertical),
@@ -713,6 +746,7 @@ impl List {
         camera: &Camera,
         budget: &mut usize,
         palette: crate::ui_theme::Palette,
+        source_color: Option<crate::ui_theme::Color>,
     ) {
         let s = camera.ui_scale();
         let r = self.rect;
@@ -772,12 +806,26 @@ impl List {
                 && matches!(
                     item.command,
                     Command::Action(
+                        Action::SourceInfo
+                            | Action::RefreshSource
+                            | Action::ToggleSourceStorage
+                            | Action::RelinkSource
+                            | Action::OpenSource
+                            | Action::RevealSource
+                    )
+                ) {
+                source_color.unwrap_or(palette.accent_secondary)
+            } else if item.enabled
+                && matches!(
+                    item.command,
+                    Command::Action(
                         Action::SelectTool(_)
                             | Action::SourceInfo
                             | Action::CopySharedBoardAddress
                             | Action::CameraBookmarks
                     )
-                ) {
+                )
+            {
                 palette.accent_secondary
             } else if item.enabled
                 && matches!(
@@ -1185,10 +1233,21 @@ impl ContextMenu {
     pub fn draw(&mut self, gizmo: &mut ImageGizmo, camera: &Camera) {
         self.relayout(camera);
         let mut budget = 900;
-        self.root
-            .draw(gizmo, camera, &mut budget, self.theme.palette());
+        self.root.draw(
+            gizmo,
+            camera,
+            &mut budget,
+            self.theme.palette(),
+            self.context.source_color,
+        );
         if let Some(c) = &mut self.child {
-            c.draw(gizmo, camera, &mut budget, self.theme.palette());
+            c.draw(
+                gizmo,
+                camera,
+                &mut budget,
+                self.theme.palette(),
+                self.context.source_color,
+            );
         }
     }
 }

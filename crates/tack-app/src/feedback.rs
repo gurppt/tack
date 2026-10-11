@@ -7,7 +7,10 @@ pub struct Feedback {
 }
 impl Feedback {
     pub fn acknowledge(&mut self, now: Instant) {
-        self.deadline = Some(now + ACK_DURATION);
+        self.acknowledge_for(now, ACK_DURATION);
+    }
+    pub fn acknowledge_for(&mut self, now: Instant, duration: Duration) {
+        self.deadline = Some(now + duration);
     }
     pub fn deadline(&self) -> Option<Instant> {
         self.deadline

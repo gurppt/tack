@@ -5,7 +5,7 @@ const RECORD: usize = 37;
 pub fn glyph(character: char) -> ([u32; 8], usize) {
     // UI convention only; document strings and encoding remain unchanged.
     if character == '█' {
-        return ([0x00ff00ff; 8], 8);
+        return ([0xff00ff00; 8], 8);
     }
     lookup(PRIMARY, character)
         .or_else(|| lookup(&FONT, character))
@@ -43,7 +43,7 @@ fn lookup(font: &[u8], character: char) -> Option<([u32; 8], usize)> {
 mod tests {
     #[test]
     fn edit_block_is_a_hard_eight_by_sixteen_bitmap() {
-        assert_eq!(super::glyph('█'), ([0x00ff00ff; 8], 8));
+        assert_eq!(super::glyph('█'), ([0xff00ff00; 8], 8));
     }
     #[test]
     fn unicode_rows_are_distinct_and_font_sorted() {

@@ -69,6 +69,12 @@ def decoded_objects(data):
         count=struct.unpack_from('<I',data,p)[0];p+=4
         for _ in range(count):
             links.append([int.from_bytes(data[p:p+16],'little'),int.from_bytes(data[p+16:p+32],'little')]);p+=32
+    if schema>=8:
+        count=struct.unpack_from('<I',data,p)[0];p+=4
+        by_id={r['id']:r for r in records}
+        for _ in range(count):
+            identity=int.from_bytes(data[p:p+16],'little');locked,gray=data[p+16:p+18];p+=18
+            by_id[identity].update(locked=bool(locked),grayscale=bool(gray))
     result={'schema':schema,'objects':records,'groups':groups}
     if schema>=7:result['links']=links
     return result

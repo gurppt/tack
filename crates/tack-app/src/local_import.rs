@@ -23,6 +23,8 @@ pub struct ImportRequest {
     pub paths: Vec<PathBuf>,
     pub embedded: bool,
     pub position: [f64; 2],
+    /// Captured viewport world extent; residency remains independent.
+    pub viewport: [f64; 2],
     pub sampling: ImageFiltering,
     pub mouse_easter_zoom: Option<f64>,
     pub work: PathBuf,
@@ -53,7 +55,7 @@ pub enum ImportUpdate {
         spool: Option<Arc<File>>,
     },
 }
-fn pin_copy(
+pub(crate) fn pin_copy(
     path: &Path,
     work: &Path,
     spool: &mut Option<Arc<File>>,
@@ -175,16 +177,20 @@ impl ImportRequest {
                     } else {
                         SourceLocation::Linked(LinkedPath::native(&path)?)
                     };
-                    let source = Source::from_descriptor(id, location, 1, Some(fingerprint))?;
+                    let source = Source::from_descriptor(id, location, 1, Some(fingerprint))?
+                        .with_original_path(
+                            (self.embedded && self.temporary.is_none())
+                                .then(|| LinkedPath::native(&path))
+                                .transpose()?,
+                        );
                     let asset = ImageAsset::new(tack_storage::new_asset_id()?, id, pixels)?;
                     shared.insert(path, (source.clone(), asset));
                     (source, asset, original)
                 };
-                let scale = (350. / f64::from(pixels[0])).min(300. / f64::from(pixels[1]));
-                let size = pixels.map(|p| f64::from(p) * scale);
+                let size = placement_size(pixels, self.viewport);
                 let center = [
-                    self.position[0] + (i % 8) as f64 * 400.,
-                    self.position[1] + (i / 8) as f64 * 350.,
+                    self.position[0] + (i % 8) as f64 * self.viewport[0] * 0.55,
+                    self.position[1] + (i / 8) as f64 * self.viewport[1] * 0.55,
                 ];
                 let object = DocumentObject::image(
                     tack_storage::new_object_id()?,
@@ -260,4 +266,16 @@ pub fn admit(editor: &mut DocumentEditor, image: &AdmittedImage) -> Result<bool,
         filtering: image.sampling,
     });
     Ok(editor.execute(Command::Batch(commands))?)
+}
+
+/// Ordinary images fill 50% of the viewport; huge rasters 75%, without camera changes.
+pub fn placement_size(pixels: [u32; 2], viewport: [f64; 2]) -> [f64; 2] {
+    let fraction = if pixels.into_iter().max().unwrap_or(0) >= 16384 {
+        0.75
+    } else {
+        0.5
+    };
+    let scale = (viewport[0] * fraction / f64::from(pixels[0]))
+        .min(viewport[1] * fraction / f64::from(pixels[1]));
+    pixels.map(|p| f64::from(p) * scale)
 }

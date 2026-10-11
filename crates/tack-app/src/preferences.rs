@@ -11,7 +11,7 @@ use std::{
     path::{Path, PathBuf},
 };
 use tack_assets::AssetError;
-const MAX_PROFILE_BYTES: usize = 256 * 1024;
+pub(crate) const MAX_PROFILE_BYTES: usize = 256 * 1024;
 pub const MAX_RECENT: usize = 16;
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -136,11 +136,17 @@ pub struct Preferences {
     pub version: u32,
     #[serde(default)]
     pub toolbar: crate::toolbar::Config,
+    #[serde(default)]
+    pub toolbar_sets: Vec<crate::toolbar_sets::Set>,
+    #[serde(default)]
+    pub active_toolbar_set: usize,
     #[serde(default = "status_default")]
     pub status_bar: bool,
     #[serde(default)]
     pub update_channel: tack_update::Channel,
     pub grid: bool,
+    #[serde(default)]
+    pub snapping: bool,
     pub sampling: String,
     pub embedded_import: bool,
     /// Legacy manual override retained for file compatibility; native UI uses system DPI.
@@ -166,9 +172,15 @@ impl Preferences {
             keyset: Keyset::default(),
             local_views: Vec::new(),
             toolbar: crate::toolbar::Config::default(),
+            toolbar_sets: vec![crate::toolbar_sets::Set {
+                name: "DEFAULT".into(),
+                actions: crate::toolbar::Config::default().actions,
+            }],
+            active_toolbar_set: 0,
             status_bar: true,
             update_channel: Default::default(),
             grid: false,
+            snapping: false,
             sampling: "Smooth".into(),
             embedded_import: true,
             ui_scale: 0,
@@ -206,6 +218,7 @@ impl Preferences {
         }
         crate::camera_slots::validate(&self.local_views)?;
         self.toolbar.clone().normalize()?;
+        self.clone().normalize_sets()?;
         for recent in self.recent.iter().chain(self.last_board_directory.iter()) {
             if recent.bytes.len() > tack_core::MAX_SOURCE_PATH_BYTES {
                 return Err("recent path too long".into());
@@ -215,6 +228,10 @@ impl Preferences {
         }
         let mut keymap = Keymap::default();
         for record in &self.keymap {
+            // Removed restoration-only action must not invalidate a custom keyset.
+            if record.action == "ResetAspectRatio" {
+                continue;
+            }
             let mut binding = record.binding()?;
             if self.version == 1
                 && let PhysicalControl::Key(winit::keyboard::PhysicalKey::Code(code)) =
@@ -277,7 +294,30 @@ pub fn read(path: &Path) -> Result<Preferences, AssetError> {
         return Err("preferences file exceeds bound".into());
     }
     let mut profile: Preferences = serde_json::from_slice(&bytes)?;
+    profile.keymap.retain(|r| r.action != "ResetAspectRatio");
+    if profile.toolbar_sets.is_empty() && profile.keyset.name == "Default" && !profile.keyset.dirty
+    {
+        let mut map = profile.keymap()?;
+        for b in crate::image_input::product_keymap()?
+            .bindings()
+            .iter()
+            .filter(|b| {
+                matches!(
+                    b.action,
+                    Action::NextToolbarSet
+                        | Action::PreviousToolbarSet
+                        | Action::ContextCoarseIncrease
+                        | Action::ContextCoarseDecrease
+                )
+            })
+        {
+            if map.for_action(b.action).next().is_none() && map.bind(*b).is_ok() {
+                profile.keymap.push(BindingRecord::from_binding(b));
+            }
+        }
+    }
     profile.toolbar.normalize()?;
+    profile.normalize_sets()?;
     if profile.frame_title_default_version == 0 {
         if profile.frame_title_scale == 2 {
             profile.frame_title_scale = 1;
@@ -430,7 +470,12 @@ fn write_keymap_locked(path: &Path, profile: &Preferences) -> Result<(), AssetEr
         path,
         &serde_json::to_vec_pretty(&KeymapFile {
             version: 1,
-            bindings: profile.keymap.clone(),
+            bindings: profile
+                .keymap
+                .iter()
+                .filter(|r| r.action != "ResetAspectRatio")
+                .cloned()
+                .collect(),
         })?,
     )
 }
@@ -454,6 +499,7 @@ pub fn read_keymap(path: &Path) -> Result<Preferences, AssetError> {
         }
         let mut profile = Preferences::defaults()?;
         profile.keymap = file.bindings;
+        profile.keymap.retain(|r| r.action != "ResetAspectRatio");
         profile.keyset = Keyset::loaded(path)?;
         profile.keymap()?;
         Ok(profile)
@@ -486,6 +532,16 @@ fn frame_title_default() -> u8 {
     1
 }
 
+fn same_toolbar(a: &Preferences, b: &Preferences) -> bool {
+    a.toolbar == b.toolbar
+        && a.toolbar_sets == b.toolbar_sets
+        && a.active_toolbar_set == b.active_toolbar_set
+}
+fn copy_toolbar(to: &mut Preferences, from: &Preferences) {
+    to.toolbar = from.toolbar.clone();
+    to.toolbar_sets = from.toolbar_sets.clone();
+    to.active_toolbar_set = from.active_toolbar_set;
+}
 /// Merge only settings changed by this window. Recent-board writes are not settings conflicts.
 pub fn merge_settings(
     base: &Preferences,
@@ -493,6 +549,12 @@ pub fn merge_settings(
     current: &Preferences,
 ) -> Result<Preferences, AssetError> {
     let mut next = current.clone();
+    if !same_toolbar(desired, base) {
+        if !same_toolbar(current, base) && !same_toolbar(current, desired) {
+            return Err("Toolbar sets changed in another window".into());
+        }
+        copy_toolbar(&mut next, desired);
+    }
     macro_rules! field { ($($name:ident),*) => { $(
         if desired.$name != base.$name {
             if current.$name != base.$name && current.$name != desired.$name {
@@ -502,7 +564,7 @@ pub fn merge_settings(
         }
     )* }; }
     field!(
-        toolbar,
+        snapping,
         status_bar,
         update_channel,
         grid,
@@ -533,11 +595,14 @@ pub fn merge_settings(
 }
 /// Preserve edits made while the bounded worker published earlier settings.
 pub fn adopt_saved(local: &mut Preferences, submitted: &Preferences, saved: &Preferences) {
+    if same_toolbar(local, submitted) {
+        copy_toolbar(local, saved);
+    }
     macro_rules! field { ($($name:ident),*) => { $(
         if local.$name == submitted.$name { local.$name = saved.$name.clone(); }
     )* }; }
     field!(
-        toolbar,
+        snapping,
         status_bar,
         update_channel,
         grid,
@@ -593,4 +658,24 @@ pub fn save_profile_merged(
 pub fn acknowledge_keyset_export(current: &mut Preferences, exported: &Preferences) {
     current.keyset = exported.keyset.clone();
     current.keyset.dirty = current.keymap != exported.keymap;
+}
+
+/// Same locked atomic writer for portable exports; suffix additions cannot overwrite an unconfirmed file.
+pub(crate) fn export_bytes(target: &Path, selected: &Path, bytes: &[u8]) -> Result<(), AssetError> {
+    let mut leaf = target.file_name().ok_or("Profile filename")?.to_os_string();
+    leaf.push(".tack-lock");
+    let _lock = tack_storage::lock_sidecar(&target.with_file_name(leaf))?;
+    if target != selected {
+        match std::fs::symlink_metadata(target) {
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => {}
+            Err(e) => return Err(e.into()),
+            Ok(_) => {
+                return Err(
+                    ".tackprofile target exists; choose its full filename to confirm replacement"
+                        .into(),
+                );
+            }
+        }
+    }
+    write_bytes_locked(target, bytes)
 }

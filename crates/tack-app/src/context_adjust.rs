@@ -26,6 +26,7 @@ impl ImageInput {
     pub(crate) fn context_adjust(
         &mut self,
         increase: bool,
+        coarse: bool,
         editor: &mut DocumentEditor,
     ) -> Result<(), AssetError> {
         let mut commands = Vec::new();
@@ -34,11 +35,17 @@ impl ImageInput {
             let Some(o) = editor.document().object(object) else {
                 continue;
             };
+            if o.locked() {
+                continue;
+            }
             let ObjectKind::Annotation(a) = o.kind() else {
                 continue;
             };
             if let AnnotationKind::Text(t) = a.kind() {
-                let size = text_size(t.font_size(), increase);
+                let mut size = t.font_size();
+                for _ in 0..if coarse { 10 } else { 1 } {
+                    size = text_size(size, increase);
+                }
                 commands.push(Command::SetText {
                     object,
                     text: TextObject::new(t.value().to_owned(), size, t.alignment())?,
@@ -66,14 +73,17 @@ impl ImageInput {
                         s.opacity(),
                     )?
                 } else {
-                    let s = next_style(
-                        a.style(),
-                        if increase {
-                            StyleAction::Wider
-                        } else {
-                            StyleAction::Narrower
-                        },
-                    )?;
+                    let mut s = a.style();
+                    for _ in 0..if coarse { 10 } else { 1 } {
+                        s = next_style(
+                            s,
+                            if increase {
+                                StyleAction::Wider
+                            } else {
+                                StyleAction::Narrower
+                            },
+                        )?;
+                    }
                     self.status = format!("Stroke {} px", s.width() as u16);
                     s
                 };
@@ -81,33 +91,6 @@ impl ImageInput {
             }
         }
         editor.execute(Command::Batch(commands))?;
-        Ok(())
-    }
-    pub(crate) fn reset_aspect_ratio(
-        &mut self,
-        editor: &mut DocumentEditor,
-    ) -> Result<(), AssetError> {
-        let mut commands = Vec::new();
-        for id in self.images.selection.ids() {
-            let Some(d) = editor.document().object_render_data(id) else {
-                continue;
-            };
-            let Some(asset) = editor.document().asset(d.asset_id) else {
-                continue;
-            };
-            let pixels = asset.pixel_size();
-            let crop = d.crop.uv_rect();
-            let aspect = f64::from(pixels[0]) * crop[2] / (f64::from(pixels[1]) * crop[3]);
-            let t = d.transform;
-            let area = t.size()[0] * t.size()[1];
-            let size = [(area * aspect).sqrt(), (area / aspect).sqrt()];
-            commands.push(Command::SetTransform {
-                object: id,
-                transform: Transform::new(t.center(), size, t.rotation(), t.flips())?,
-            });
-        }
-        editor.execute(Command::Batch(commands))?;
-        self.status = "Aspect ratio restored".into();
         Ok(())
     }
 }

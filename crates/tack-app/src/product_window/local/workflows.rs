@@ -3,6 +3,8 @@ use super::*;
 impl App {
     pub(in super::super) fn apply_preferences(&mut self) -> Result<(), AssetError> {
         self.input.keymap = self.local.profile.keymap()?;
+        self.input.snap.enabled = self.local.profile.snapping;
+        self.input.grid_visible = self.local.profile.grid;
         let palette = self.local.profile.theme.palette();
         self.input.gizmo.palette = palette;
         self.input.gizmo.style.selection = palette.accent_primary;
@@ -37,6 +39,7 @@ impl App {
             && paths[0].parent() == Some(self.work.join("helpers").as_path()))
         .then(|| paths[0].clone());
         let request = ImportRequest {
+            viewport: [self.camera.viewport().width, self.camera.viewport().height],
             mouse_easter_zoom: None,
             temporary,
             paths,
@@ -78,7 +81,7 @@ impl App {
             return Err("Offline shared copies are read only".into());
         }
         use Action::*;
-        if action != Paste
+        if !matches!(action, Paste | NextToolbarSet | PreviousToolbarSet)
             && let Some(editor) = &mut self.editor
         {
             self.input.commit_drafts(editor)?;
@@ -93,6 +96,7 @@ impl App {
                 .and_then(|p| p.path().ok())
             {
                 return self.operation(Operation::Keymap {
+                    backup: None,
                     action: ExportKeymap,
                     path,
                     profile: self.local.profile.clone(),
@@ -107,6 +111,15 @@ impl App {
         self.release_about();
         match action {
             CloseBoard => self.request_board_close()?,
+            NextToolbarSet | PreviousToolbarSet => {
+                self.local
+                    .profile
+                    .cycle_toolbar_set(action == NextToolbarSet)?;
+                self.input.status = format!("Toolbar: {}", self.local.profile.toolbar_set_name());
+                self.local.profile_pending = true;
+                self.local.profile_changed = true;
+                self.chrome_layout();
+            }
             ToggleToolbar => {
                 tack_app::toolbar::Toolbar::toggle(&mut self.local.profile);
                 self.local.profile_pending = true;
@@ -142,6 +155,45 @@ impl App {
                 })?;
             }
             CheckForUpdates => self.check_for_updates()?,
+            RefreshSource | ToggleSourceStorage => {
+                if self.shared.is_some() || self.offline.is_some() {
+                    return Err("Shared originals are Embedded on the server; save a local copy to change their binding".into());
+                }
+                if self.input.images.selection.len() != 1 {
+                    self.input.status = "Source replacement requires one selected image".into();
+                    self.dirty = true;
+                    return Ok(());
+                }
+                let editor = self.editor.as_ref().ok_or("Document unavailable")?;
+                let id = self
+                    .input
+                    .images
+                    .selection
+                    .ids()
+                    .next()
+                    .ok_or("Select an image")?;
+                let o = editor.document().object(id).ok_or("Image unavailable")?;
+                if o.locked() {
+                    return Err("Unlock the image first".into());
+                }
+                let source = editor
+                    .document()
+                    .object_render_data(id)
+                    .and_then(|d| editor.document().asset(d.asset_id))
+                    .and_then(|a| editor.document().source(a.source_id()))
+                    .ok_or("Select an image")?
+                    .clone();
+                self.operation(Operation::SourceTransition(
+                    tack_app::source_transition::Request {
+                        document: editor.document().id(),
+                        previous: source,
+                        board: self.options.path.clone(),
+                        work: self.work.join("imports"),
+                        spool: self.local.spool.clone(),
+                        toggle: action == ToggleSourceStorage,
+                    },
+                ))?;
+            }
             Preferences => self.panel(Panel::Preferences),
             KeymapEditor => self.panel(Panel::Keymap),
             RecentBoards => self.panel(Panel::Recent),
@@ -191,13 +243,15 @@ impl App {
                 })?;
             }
             OpenBoard | ImportImages | SaveAs | SaveToLocal | RelinkSource | ImportKeymap
-            | ExportKeymap | ExportPreferences => {
+            | ExportKeymap | ExportPreferences | ImportProfile | ExportProfile => {
                 let kind = match action {
                     OpenBoard => Picker::Open,
                     ImportImages => Picker::Import,
                     SaveAs | SaveToLocal => Picker::Save,
                     RelinkSource => Picker::Relink,
                     ImportKeymap => Picker::ImportKeymap,
+                    ImportProfile => Picker::ImportProfile,
+                    ExportProfile => Picker::ExportProfile,
                     ExportPreferences => Picker::ExportPreferences,
                     _ => Picker::ExportKeymap,
                 };
@@ -253,6 +307,19 @@ impl App {
         if let Some(result) = result {
             match result {
                 UiResult::UpdateAdvance => self.advance_update()?,
+                UiResult::UpdateCheck => self.update_check()?,
+                UiResult::UpdateChannel => {
+                    if self.local.worker.active() {
+                        return Ok(true);
+                    }
+                    self.local.profile.update_channel = match self.local.profile.update_channel {
+                        tack_update::Channel::Dev => tack_update::Channel::Stable,
+                        tack_update::Channel::Stable => tack_update::Channel::Dev,
+                    };
+                    self.local.profile_changed = true;
+                    self.local.profile_pending = true;
+                    self.check_for_updates()?;
+                }
                 UiResult::AssignCameraSlot(slot) => {
                     self.camera_slot(slot)?;
                     self.local.profile_pending = true;
@@ -269,6 +336,15 @@ impl App {
                 | UiResult::Server(_) => self.daily_result(result)?,
                 UiResult::Action(action) => self.local_action(action)?,
                 UiResult::PreferencesChanged => {
+                    if self
+                        .local
+                        .ui
+                        .as_ref()
+                        .is_some_and(|u| u.panel == Panel::Toolbar)
+                    {
+                        self.input.status =
+                            format!("Toolbar: {}", self.local.profile.toolbar_set_name());
+                    }
                     if old_grid != self.local.profile.grid {
                         self.input.grid_visible = self.local.profile.grid;
                     }
@@ -468,12 +544,17 @@ impl App {
                     .clone();
                 self.operation(Operation::Relink(source, path))
             }
-            Action::ImportKeymap | Action::ExportKeymap | Action::ExportPreferences => self
-                .operation(Operation::Keymap {
-                    action,
-                    path,
-                    profile: self.local.profile.clone(),
-                }),
+            Action::ImportKeymap
+            | Action::ExportKeymap
+            | Action::ExportPreferences
+            | Action::ImportProfile
+            | Action::ExportProfile => self.operation(Operation::Keymap {
+                backup: (action == Action::ImportProfile)
+                    .then(|| self.local.root.join("before-import.tackprofile")),
+                action,
+                path,
+                profile: self.local.profile.clone(),
+            }),
             _ => Ok(()),
         }
     }

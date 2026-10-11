@@ -33,6 +33,7 @@ pub struct Source {
     location: SourceLocation,
     revision: u64,
     fingerprint: Option<SourceFingerprint>,
+    original_path: Option<crate::LinkedPath>,
 }
 impl Source {
     pub fn embedded(id: SourceId) -> Self {
@@ -41,6 +42,7 @@ impl Source {
             location: SourceLocation::Embedded,
             revision: 1,
             fingerprint: None,
+            original_path: None,
         }
     }
     pub fn linked(id: SourceId, path: impl AsRef<Path>) -> Result<Self, ModelError> {
@@ -66,7 +68,18 @@ impl Source {
             location,
             revision,
             fingerprint,
+            original_path: None,
         })
+    }
+    pub fn with_original_path(mut self, path: Option<crate::LinkedPath>) -> Self {
+        self.original_path = path;
+        self
+    }
+    pub fn original_path(&self) -> Option<&crate::LinkedPath> {
+        match &self.location {
+            SourceLocation::Linked(p) => Some(p),
+            SourceLocation::Embedded => self.original_path.as_ref(),
+        }
     }
     pub fn id(&self) -> SourceId {
         self.id
@@ -117,6 +130,7 @@ pub struct ImageObject {
     pub(crate) crop: Crop,
     pub(crate) opacity: Opacity,
     pub(crate) filtering: ImageFiltering,
+    pub(crate) grayscale: bool,
 }
 impl ImageObject {
     pub fn new(asset: AssetId) -> Self {
@@ -125,6 +139,7 @@ impl ImageObject {
             crop: Crop::FULL,
             opacity: Opacity::OPAQUE,
             filtering: ImageFiltering::Default,
+            grayscale: false,
         }
     }
     pub fn asset_id(self) -> AssetId {
@@ -135,6 +150,9 @@ impl ImageObject {
     }
     pub fn opacity(self) -> Opacity {
         self.opacity
+    }
+    pub fn grayscale(self) -> bool {
+        self.grayscale
     }
     pub fn filtering(self) -> ImageFiltering {
         self.filtering
@@ -157,6 +175,7 @@ pub struct DocumentObject {
     pub(crate) transform: Transform,
     pub(crate) kind: ObjectKind,
     pub(crate) frame_color: Option<crate::Color>,
+    pub(crate) locked: bool,
 }
 impl DocumentObject {
     pub fn annotation(
@@ -169,6 +188,7 @@ impl DocumentObject {
             id,
             transform,
             frame_color: None,
+            locked: false,
             kind: ObjectKind::Annotation(Box::new(annotation)),
         })
     }
@@ -185,6 +205,7 @@ impl DocumentObject {
             id,
             transform,
             frame_color: None,
+            locked: false,
             kind: ObjectKind::Image(ImageObject::new(asset)),
         }
     }
@@ -201,11 +222,13 @@ impl DocumentObject {
             id,
             transform,
             frame_color: None,
+            locked: false,
             kind: ObjectKind::Image(ImageObject {
                 asset,
                 crop,
                 opacity,
                 filtering,
+                grayscale: false,
             }),
         }
     }
@@ -218,8 +241,20 @@ impl DocumentObject {
             id,
             transform,
             frame_color: None,
+            locked: false,
             kind: ObjectKind::Frame(name),
         })
+    }
+    /// Validated adapters retain object flags without changing geometry or bytes.
+    pub fn with_flags(mut self, locked: bool, grayscale: bool) -> Self {
+        self.locked = locked;
+        if let Some(i) = self.image_mut() {
+            i.grayscale = grayscale;
+        }
+        self
+    }
+    pub fn locked(&self) -> bool {
+        self.locked
     }
     pub fn can_flip(&self) -> bool {
         matches!(self.kind(), ObjectKind::Image(_))

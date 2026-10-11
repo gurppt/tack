@@ -15,8 +15,8 @@ Built in Rust, with a native GPU-rendered canvas. Boards are saved locally as
 
 - **Collect references.** Drag and drop PNG/JPEG images, import files, or paste
   screenshots and copied image files on Linux. Paste text to create a note.
-- **Compare and adjust.** Move, resize, rotate and flip images. Adjust opacity,
-  crop without destroying the original, restore distorted proportions, and choose
+- **Compare and adjust.** Move, proportionally resize, rotate and flip images. Adjust opacity,
+  crop without destroying the original, reset cropping, toggle grayscale, and choose
   Smooth or Nearest sampling.
 - **Arrange your board.** Group images, align and distribute selections, pack
   rows or columns, and arrange references in a grid. Use snapping when needed.
@@ -32,7 +32,7 @@ Built in Rust, with a native GPU-rendered canvas. Boards are saved locally as
 - **Edit with confidence.** Undo and redo board edits, save your work, and recover
   completed recovery snapshots after an interrupted session.
 - **Choose how images are stored.** Embed originals for portable boards or link
-  to external files. Relink missing sources when files move, and inspect dimensions, encoded size and source status from Image → Source → Image information.
+  to external files. Refresh changed files, switch between Linked and Embedded, relink missing sources when files move, and inspect dimensions, encoded size and source status from Image → Source → Image information.
 - **Make the workspace yours.** Flat Very Dark, Neutral Gray and Light themes,
   crisp bitmap UI, custom pixel cursors, toolbar scaling and editable shortcuts. Right-click keeps application and contextual commands together.
 - **Share a board on your LAN.** File → Share Board → Share from this computer
@@ -47,10 +47,15 @@ Built in Rust, with a native GPU-rendered canvas. Boards are saved locally as
   and commands. Move it to an edge or float it, choose up to 32 actions, and hide
   it whenever you want. Choose 1×, 2× or 3× controls independently of the menus;
   toolbar positions follow window resizing. The optional status strip shows
-  current shortcuts and editing feedback.
+  current shortcuts and editing feedback. Create named toolbar sets and cycle them
+  with Ctrl+PageDown / Ctrl+PageUp without changing your active tool.
   Shared connection state always stays visible at the bottom.
 - **Recall a view.** Press B, capture a keyboard or mouse shortcut, and confirm
   with Enter. Use that shortcut to return. These views stay local.
+- **Carry your setup.** Export a `.tackprofile` to restore preferences, toolbar sets
+  and shortcuts on another installation. Boards and image files remain separate.
+- **Protect a selection.** Lock objects against accidental edits and recover them
+  with Select Locked Objects when you need to unlock them.
 - **Customize shortcuts.** Navigate the Action / Shortcut / Behavior grid, choose
   onClick, Hold or Release, and save named `.tackey` keysets. Existing customized
   keymaps keep their shortcuts; Keymap Reset adopts the new defaults.

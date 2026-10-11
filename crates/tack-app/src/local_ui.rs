@@ -15,6 +15,8 @@ mod daily;
 mod draw;
 pub use daily::DailyPanel;
 #[cfg(test)]
+mod corrective_tests;
+#[cfg(test)]
 mod daily_tests;
 mod events;
 #[cfg(test)]
@@ -51,6 +53,8 @@ pub enum Panel {
 }
 pub enum UiResult {
     UpdateAdvance,
+    UpdateCheck,
+    UpdateChannel,
     AssignCameraSlot(u8),
     JumpBookmark(tack_core::BookmarkId),
     SaveBookmark(Option<tack_core::BookmarkId>, String),
@@ -80,9 +84,19 @@ enum Command {
     ToolbarPlacement,
     ToolbarScale,
     ToolbarReset,
+    ToolbarSetNext,
+    ToolbarSetPrevious,
+    ToolbarSetNew,
+    ToolbarSetRename,
+    ToolbarSetDuplicate,
+    ToolbarSetDelete,
+    ToolbarImportProfile,
+    ToolbarExportProfile,
     RenameBookmark,
     DeleteBookmark,
     ConfirmDaily,
+    UpdateCheck,
+    UpdateChannel,
     Search,
     Change,
     Unassign,
@@ -124,6 +138,9 @@ pub struct LocalUi {
     parents: Vec<(Panel, usize)>,
     selected: usize,
     toolbar_order: bool,
+    toolbar_set_name: Option<String>,
+    toolbar_name_replace: bool,
+    key_rows: Vec<(usize, [f64; 4])>,
     toolbar_selected: [usize; 2],
     toolbar_first: [usize; 2],
     pub feedback: crate::feedback::Feedback,
@@ -151,11 +168,12 @@ pub struct LocalUi {
 }
 impl LocalUi {
     pub fn text_editing(&self) -> bool {
-        (matches!(
-            self.panel,
-            Panel::BookmarkName | Panel::Join | Panel::Server
-        ) && self.selected == 0
-            && self.focus.is_none())
+        self.toolbar_set_name.is_some()
+            || (matches!(
+                self.panel,
+                Panel::BookmarkName | Panel::Join | Panel::Server
+            ) && self.selected == 0
+                && self.focus.is_none())
             || (self.panel == Panel::Keymap
                 && !self.capture
                 && self.confirm_reset.is_none()
@@ -179,6 +197,9 @@ impl LocalUi {
             parents: Vec::new(),
             selected: 0,
             toolbar_order: false,
+            toolbar_set_name: None,
+            toolbar_name_replace: false,
+            key_rows: Vec::new(),
             toolbar_selected: [0; 2],
             toolbar_first: [0; 2],
             feedback: Default::default(),
@@ -250,7 +271,25 @@ impl LocalUi {
                 .filter(|a| a.is_local() && *a != Action::ApplicationMenu)
                 .collect()
         } else {
-            filtered_actions(&self.search, keymap)
+            let mut actions = filtered_actions(&self.search, keymap);
+            let categories = [
+                "GENERAL",
+                "NAVIGATION",
+                "IMAGES",
+                "DRAWING",
+                "TEXT",
+                "FRAMES",
+                "COLLABORATION",
+                "MEDIA",
+                "TOOLS",
+            ];
+            actions.sort_by_key(|a| {
+                categories
+                    .iter()
+                    .position(|c| *c == a.category())
+                    .unwrap_or(0)
+            });
+            actions
         }
     }
     fn count(&self, keymap: &Keymap, profile: &Preferences) -> usize {
@@ -273,7 +312,7 @@ impl LocalUi {
             | Panel::UpdateOffer
             | Panel::UpdateReady => self.daily_rows().len(),
             Panel::Menu | Panel::Keymap => self.actions(keymap).len(),
-            Panel::Preferences => 12,
+            Panel::Preferences => 13,
             Panel::Recent => profile.recent.len(),
             Panel::Close => 3,
             Panel::Recovery => 2,
@@ -391,9 +430,19 @@ impl LocalUi {
             | Command::ToolbarDown
             | Command::ToolbarScale
             | Command::ToolbarPlacement
-            | Command::ToolbarReset => None,
+            | Command::ToolbarReset
+            | Command::ToolbarSetNext
+            | Command::ToolbarSetPrevious
+            | Command::ToolbarSetNew
+            | Command::ToolbarSetRename
+            | Command::ToolbarSetDuplicate
+            | Command::ToolbarSetDelete
+            | Command::ToolbarImportProfile
+            | Command::ToolbarExportProfile => None,
             Command::RenameBookmark => self.daily_command(true),
             Command::DeleteBookmark => self.daily_command(false),
+            Command::UpdateCheck => Some(UiResult::UpdateCheck),
+            Command::UpdateChannel => Some(UiResult::UpdateChannel),
             Command::ConfirmDaily => {
                 self.selected = 1;
                 self.daily_activate()
@@ -583,13 +632,9 @@ impl LocalUi {
                     3..=5 => profile.theme = crate::ui_theme::Theme::ALL[self.selected - 3],
                     6 | 7 => return self.adjust(profile, true),
                     8 => profile.frame_title_scale = profile.frame_title_scale % 3 + 1,
-                    9 => {
-                        profile.update_channel = match profile.update_channel {
-                            tack_update::Channel::Dev => tack_update::Channel::Stable,
-                            tack_update::Channel::Stable => tack_update::Channel::Dev,
-                        };
-                    }
-                    10 => return Some(UiResult::Action(Action::ExportPreferences)),
+                    9 => return Some(UiResult::Action(Action::ExportProfile)),
+                    10 => return Some(UiResult::Action(Action::ImportProfile)),
+                    11 => return Some(UiResult::Action(Action::ExportPreferences)),
                     _ => return self.back(),
                 }
                 Some(UiResult::PreferencesChanged)

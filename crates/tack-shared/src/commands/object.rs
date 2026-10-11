@@ -219,21 +219,29 @@ impl AnnotationDto {
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum ObjectDto {
     Image {
+        #[serde(default)]
+        locked: bool,
         id: WireId,
         asset: WireId,
         transform: TransformDto,
         crop: [f64; 4],
         opacity: f64,
         filtering: u8,
+        #[serde(default)]
+        grayscale: bool,
     },
     Frame {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         color: Option<[u8; 4]>,
+        #[serde(default)]
+        locked: bool,
         id: WireId,
         name: String,
         transform: TransformDto,
     },
     Annotation {
+        #[serde(default)]
+        locked: bool,
         id: WireId,
         annotation: AnnotationDto,
         style: StyleDto,
@@ -246,21 +254,25 @@ impl ObjectDto {
         let transform = TransformDto::from_transform(object.transform());
         Ok(match object.kind() {
             ObjectKind::Image(image) => Self::Image {
+                locked: object.locked(),
                 id,
                 asset: WireId::new(image.asset_id().value())?,
                 transform,
                 crop: image.crop().uv_rect(),
                 opacity: image.opacity().value(),
                 filtering: encode_filtering(image.filtering()),
+                grayscale: image.grayscale(),
             },
             ObjectKind::Frame(name) => Self::Frame {
                 color: (object.frame_color() != tack_core::DEFAULT_FRAME_COLOR)
                     .then_some(object.frame_color().0),
+                locked: object.locked(),
                 id,
                 name: name.clone(),
                 transform,
             },
             ObjectKind::Annotation(a) => Self::Annotation {
+                locked: object.locked(),
                 id,
                 annotation: AnnotationDto::from_kind(a.kind()),
                 style: StyleDto::from_style(a.style()),
@@ -271,12 +283,14 @@ impl ObjectDto {
     pub fn to_object(&self) -> Result<DocumentObject> {
         match self {
             Self::Image {
+                locked,
                 id,
                 asset,
                 transform,
                 crop,
                 opacity,
                 filtering,
+                grayscale,
             } => Ok(DocumentObject::image_with_properties(
                 ObjectId::new(id.value()).map_err(domain_error)?,
                 AssetId::new(asset.value()).map_err(domain_error)?,
@@ -284,9 +298,11 @@ impl ObjectDto {
                 Crop::new(crop[0], crop[1], crop[2], crop[3]).map_err(domain_error)?,
                 Opacity::new(*opacity).map_err(domain_error)?,
                 decode_filtering(*filtering)?,
-            )),
+            )
+            .with_flags(*locked, *grayscale)),
             Self::Frame {
                 color,
+                locked,
                 id,
                 name,
                 transform,
@@ -296,8 +312,10 @@ impl ObjectDto {
                 transform.to_transform()?,
                 color.map_or(tack_core::DEFAULT_FRAME_COLOR, tack_core::Color),
             )
+            .map(|o| o.with_flags(*locked, false))
             .map_err(domain_error),
             Self::Annotation {
+                locked,
                 id,
                 annotation,
                 style,
@@ -307,6 +325,7 @@ impl ObjectDto {
                 Annotation::new(annotation.to_kind()?, style.to_style()?),
                 transform.to_transform()?,
             )
+            .map(|o| o.with_flags(*locked, false))
             .map_err(domain_error),
         }
     }

@@ -22,6 +22,7 @@ pub mod annotation_scene;
 mod annotation_text_scene;
 pub mod annotation_tool;
 mod context_adjust;
+mod image_metadata_actions;
 pub mod note_layout;
 mod product_bindings;
 pub mod source_actions;
@@ -59,11 +60,14 @@ pub mod duplicate;
 pub mod join_launch;
 pub mod shared_address;
 pub mod source_info;
+pub mod source_transition;
 
 pub mod icon;
 
+pub mod portable_profile;
 pub mod toolbar;
 pub mod toolbar_icons;
+pub mod toolbar_sets;
 
 pub mod hosting;
 pub mod sharing;

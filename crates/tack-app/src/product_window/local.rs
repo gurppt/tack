@@ -287,7 +287,7 @@ impl App {
                 let op = Operation::Profile {
                     root: self.local.root.clone(),
                     profile: self.local.profile.clone(),
-                    baseline: self.local.profile_saved.clone(),
+                    baseline: Box::new(self.local.profile_saved.clone()),
                     board: (!self.local.untitled).then(|| self.options.path.clone()),
                 };
                 if let Err(error) = self.operation(op) {

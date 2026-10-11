@@ -36,7 +36,10 @@ impl SelectionState {
             .object_order()
             .iter()
             .copied()
-            .filter(|id| !self.annotations_locked || doc.object_render_data(*id).is_some())
+            .filter(|id| {
+                doc.object(*id).is_some_and(|o| !o.locked())
+                    && (!self.annotations_locked || doc.object_render_data(*id).is_some())
+            })
             .collect();
     }
     pub fn select(&mut self, id: Option<ObjectId>, toggle: bool) {
@@ -57,9 +60,10 @@ impl SelectionState {
         if !toggle {
             self.clear();
         }
-        if let Some(id) =
-            id.filter(|id| !self.annotations_locked || doc.object_render_data(*id).is_some())
-        {
+        if let Some(id) = id.filter(|id| {
+            doc.object(*id).is_some_and(|o| !o.locked())
+                && (!self.annotations_locked || doc.object_render_data(*id).is_some())
+        }) {
             if let Some(group) = doc.group_for(id) {
                 let remove = toggle && group.members().iter().all(|id| self.contains(*id));
                 for id in group.members() {
@@ -92,7 +96,9 @@ impl SelectionState {
             self.clear();
         }
         for id in doc.object_order() {
-            if self.annotations_locked && doc.object_render_data(*id).is_none() {
+            if doc.object(*id).is_some_and(|o| o.locked())
+                || (self.annotations_locked && doc.object_render_data(*id).is_none())
+            {
                 continue;
             }
             if doc.object(*id).is_some_and(|o| match o.kind() {
@@ -213,6 +219,9 @@ impl ImageInteraction {
                     return false;
                 }
                 doc.object(**id).is_some_and(|o| {
+                    if o.locked() {
+                        return false;
+                    }
                     let t = self.preview_transform(doc, **id).unwrap_or(o.transform());
                     match o.kind() {
                         tack_core::ObjectKind::Image(_) => geometry::hit(t, point),

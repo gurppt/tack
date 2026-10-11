@@ -104,13 +104,16 @@ pub(crate) fn encode_document(doc: &Document) -> Result<Vec<u8>> {
             .sources()
             .map(|s| {
                 64 + match s.location() {
-                    SourceLocation::Embedded => 0,
+                    SourceLocation::Embedded => {
+                        s.original_path().map_or(0, |p| 6 + p.bytes().len())
+                    }
                     SourceLocation::Linked(p) => p.bytes().len(),
                 }
             })
             .sum::<usize>()
         + doc.assets().count() * 42
-        + doc.object_order().len() * 135
+        + 4
+        + doc.object_order().len() * (135 + 18)
         + doc
             .objects()
             .map(|o| match o.kind() {
@@ -130,7 +133,12 @@ pub(crate) fn encode_document(doc: &Document) -> Result<Vec<u8>> {
     out.extend(doc.id().value().to_le_bytes());
     for s in doc.sources() {
         let mut record = Vec::new();
-        record.extend(1u16.to_le_bytes());
+        let origin = if matches!(s.location(), SourceLocation::Embedded) {
+            s.original_path()
+        } else {
+            None
+        };
+        record.extend(if origin.is_some() { 2u16 } else { 1u16 }.to_le_bytes());
         record.extend(s.id().value().to_le_bytes());
         record.extend(s.revision().to_le_bytes());
         record.push(u8::from(s.fingerprint().is_some()));
@@ -150,6 +158,15 @@ pub(crate) fn encode_document(doc: &Document) -> Result<Vec<u8>> {
                 record.extend((p.bytes().len() as u32).to_le_bytes());
                 record.extend(p.bytes());
             }
+        }
+        if let Some(p) = origin {
+            record.push(match p.platform() {
+                PathPlatform::Unix => 1,
+                PathPlatform::Windows => 2,
+            });
+            record.push(u8::from(p.is_absolute()));
+            record.extend((p.bytes().len() as u32).to_le_bytes());
+            record.extend(p.bytes());
         }
         out.extend((record.len() as u32).to_le_bytes());
         out.extend(record);
@@ -252,9 +269,35 @@ pub(crate) fn encode_document(doc: &Document) -> Result<Vec<u8>> {
             out.extend(parent.value().to_le_bytes());
         }
     }
+    if spatial_schema(doc) >= 8 {
+        let flagged: Vec<_> = doc
+            .objects()
+            .filter(|o| o.locked() || matches!(o.kind(), ObjectKind::Image(i) if i.grayscale()))
+            .collect();
+        out.extend((flagged.len() as u32).to_le_bytes());
+        for o in flagged {
+            out.extend(o.id().value().to_le_bytes());
+            out.push(u8::from(o.locked()));
+            out.push(u8::from(
+                matches!(o.kind(), ObjectKind::Image(i) if i.grayscale()),
+            ));
+        }
+    }
     Ok(out)
 }
 pub(crate) fn spatial_schema(doc: &Document) -> u32 {
+    if doc
+        .sources()
+        .any(|s| matches!(s.location(), SourceLocation::Embedded) && s.original_path().is_some())
+    {
+        return 8;
+    }
+    if doc
+        .objects()
+        .any(|o| o.locked() || matches!(o.kind(), ObjectKind::Image(i) if i.grayscale()))
+    {
+        return 8;
+    }
     if doc.frame_links().next().is_some() {
         return 7;
     }
@@ -300,7 +343,10 @@ pub(crate) fn decode_document(
             return Err(StorageError::Invalid("source record length"));
         }
         let mut r = Decoder::new(d.take(len)?);
-        r.version()?;
+        let version = r.u16()?;
+        if version != 1 && !(schema >= 8 && version == 2) {
+            return Err(StorageError::Unsupported("source record version"));
+        }
         let id = SourceId::new(r.id()?).map_err(invalid)?;
         let revision = r.u64()?;
         let fingerprint = if r.boolean()? {
@@ -336,9 +382,26 @@ pub(crate) fn decode_document(
             }
             _ => return Err(StorageError::Unsupported("source kind")),
         };
+        let origin = if version == 2 {
+            let platform = match r.byte()? {
+                1 => PathPlatform::Unix,
+                2 => PathPlatform::Windows,
+                _ => return Err(StorageError::Invalid("origin platform")),
+            };
+            let absolute = r.boolean()?;
+            let len = r.u32()? as usize;
+            if len > MAX_SOURCE_PATH_BYTES {
+                return Err(StorageError::Invalid("origin path length"));
+            }
+            Some(LinkedPath::encoded(platform, absolute, r.take(len)?).map_err(invalid)?)
+        } else {
+            None
+        };
         r.finish()?;
         doc.apply(Command::AddSource(
-            Source::from_descriptor(id, loc, revision, fingerprint).map_err(invalid)?,
+            Source::from_descriptor(id, loc, revision, fingerprint)
+                .map_err(invalid)?
+                .with_original_path(origin),
         ))
         .map_err(invalid)?;
     }
@@ -505,6 +568,27 @@ pub(crate) fn decode_document(
             ));
         }
         doc.apply(Command::SetFrameLinks(links)).map_err(invalid)?;
+    }
+    if schema >= 8 {
+        let count = d.u32()? as usize;
+        if count > counts[2] {
+            return Err(StorageError::Invalid("object flags count"));
+        }
+        let mut seen = std::collections::BTreeSet::new();
+        for _ in 0..count {
+            let object = ObjectId::new(d.id()?).map_err(invalid)?;
+            if !seen.insert(object) {
+                return Err(StorageError::Invalid("duplicate object flags"));
+            }
+            let locked = d.boolean()?;
+            let grayscale = d.boolean()?;
+            doc.apply(Command::SetLocked { object, locked })
+                .map_err(invalid)?;
+            if grayscale {
+                doc.apply(Command::SetGrayscale { object, grayscale })
+                    .map_err(invalid)?;
+            }
+        }
     }
     Ok(doc)
 }

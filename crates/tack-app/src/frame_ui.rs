@@ -14,7 +14,12 @@ impl Label {
         let at = camera.world_to_screen([b.x, b.y]);
         let left = (at[0] / scale).round() * scale;
         let bottom = (at[1] / scale).round() * scale;
-        let width = (b.width * camera.zoom() / scale).round() * scale;
+        let text_width: f64 = text
+            .chars()
+            .map(|c| crate::note_layout::advance(c, 16.))
+            .sum();
+        let width = ((b.width * camera.zoom() / scale).round() * scale)
+            .max(text_width * glyph_scale + 4. * scale);
         let line_width = (width - 4. * scale).max(0.) / glyph_scale;
         let rows = NoteLines::new(text, line_width, 16.).count().max(1);
         Self {

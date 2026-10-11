@@ -133,7 +133,8 @@ impl ImageInput {
         let doc = editor.document();
         let viewport = camera.viewport();
         let mut labels = 512;
-        let hovered_frame = self.frame_hit(editor, camera);
+        let frame_labels = self.frame_labels(editor.document(), camera);
+        let hovered_frame = self.frame_hit_with_labels(editor, camera, &frame_labels);
         // Selection was built first and retains priority over crowded frame labels.
         for o in doc
             .object_order()
@@ -184,17 +185,20 @@ impl ImageInput {
                     text,
                     self.caret.visible && self.name_edit.as_ref().is_some_and(|e| e.id == o.id()),
                 );
-                let reserved = crate::feedback::edit_text(
-                    text,
-                    self.name_edit.as_ref().is_some_and(|e| e.id == o.id()),
-                );
-                let layout =
-                    crate::frame_ui::Label::new(t, camera, self.gizmo.frame_title_scale, &reserved);
+                let Some((_, layout)) = frame_labels.iter().find(|(id, _)| *id == o.id()) else {
+                    continue;
+                };
                 self.gizmo.frame_label(
                     camera,
-                    &layout,
+                    layout,
                     &display,
-                    o.frame_color(),
+                    if self.link_feedback.active() && self.link_flash == Some(o.id()) {
+                        tack_core::Color([44, 250, 187, 255])
+                    } else if self.link_feedback.active() && self.unlink_flash.contains(&o.id()) {
+                        tack_core::Color([248, 92, 218, 255])
+                    } else {
+                        o.frame_color()
+                    },
                     false,
                     &mut labels,
                 );

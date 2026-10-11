@@ -8,6 +8,7 @@ pub struct DailyPanel {
     pub id: Option<BookmarkId>,
     pub text: String,
     pub rows: Vec<String>,
+    pub source_color: Option<crate::ui_theme::Color>,
     pub shared: bool,
     pub replace: bool,
 }

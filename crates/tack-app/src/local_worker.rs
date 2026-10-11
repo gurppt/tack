@@ -36,6 +36,7 @@ pub enum LocalUpdate {
     Opened(Result<OpenedBoard, String>),
     Imported(ImportUpdate),
     Relinked(Result<RelinkReady, String>),
+    SourceTransition(Result<Option<crate::source_transition::Ready>, String>),
     Restored(Result<tack_storage::TackFile, String>),
     Discarded(Result<(), String>),
     Clipboard {
@@ -113,6 +114,7 @@ pub enum Operation {
     },
     Import(ImportRequest),
     Relink(Source, PathBuf),
+    SourceTransition(crate::source_transition::Request),
     Clipboard {
         work: PathBuf,
         ticket: Option<(ObjectId, String)>,
@@ -120,10 +122,11 @@ pub enum Operation {
     Profile {
         root: PathBuf,
         profile: Preferences,
-        baseline: Preferences,
+        baseline: Box<Preferences>,
         board: Option<PathBuf>,
     },
     Keymap {
+        backup: Option<PathBuf>,
         action: Action,
         path: PathBuf,
         profile: Preferences,
@@ -185,6 +188,7 @@ impl LocalWorker {
             operation,
             Operation::Import(_)
                 | Operation::Relink(..)
+                | Operation::SourceTransition(_)
                 | Operation::RestoreRecovery { .. }
                 | Operation::OpenBoard(_)
                 | Operation::EmptyBoard(_)
@@ -314,6 +318,11 @@ impl LocalWorker {
                             }
                             result?;
                         }
+                        Operation::SourceTransition(request) => {
+                            emit(LocalUpdate::SourceTransition(
+                                request.run(&stop).map_err(|e| e.to_string()),
+                            ));
+                        }
                         Operation::Relink(source, path) => {
                             emit(LocalUpdate::Relinked(
                                 RelinkReady::read(source, &path).map_err(|e| e.to_string()),
@@ -360,11 +369,22 @@ impl LocalWorker {
                             ));
                         }
                         Operation::Keymap {
+                            backup,
                             action,
                             path,
                             profile,
                         } => {
-                            let result = if action == Action::ImportKeymap {
+                            let result = if action == Action::ImportProfile {
+                                (|| -> Result<Option<Preferences>, AssetError> {
+                                    let imported = crate::portable_profile::read(&path)?;
+                                    if let Some(backup) = backup {
+                                        crate::portable_profile::export(&backup, &profile)?;
+                                    }
+                                    Ok(Some(imported))
+                                })()
+                            } else if action == Action::ExportProfile {
+                                crate::portable_profile::export(&path, &profile).map(|_| None)
+                            } else if action == Action::ImportKeymap {
                                 preferences::read_keymap(&path).map(Some)
                             } else if action == Action::ExportPreferences {
                                 preferences::export_preferences(&path, &profile).map(|_| None)
@@ -436,7 +456,9 @@ impl LocalWorker {
                         if active.cancel.load(Ordering::Relaxed)
                             && matches!(
                                 update,
-                                LocalUpdate::Update(_)
+                                LocalUpdate::SourceTransition(_)
+                                    | LocalUpdate::Relinked(_)
+                                    | LocalUpdate::Update(_)
                                     | LocalUpdate::Opened(_)
                                     | LocalUpdate::EmptyBoard(_)
                                     | LocalUpdate::SavedLocal(_)

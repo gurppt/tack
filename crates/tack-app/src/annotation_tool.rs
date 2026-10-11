@@ -120,6 +120,71 @@ pub struct NoteEdit {
     pub composing: bool,
 }
 impl NoteEdit {
+    pub(crate) fn minimum_size(&self, width: f64) -> [f64; 2] {
+        let padding = self.size * 0.2;
+        let word = self
+            .value
+            .split_whitespace()
+            .map(|s| {
+                s.chars()
+                    .map(|c| crate::note_layout::advance(c, self.size))
+                    .sum::<f64>()
+            })
+            .fold(self.size, f64::max)
+            .max(
+                self.value
+                    .chars()
+                    .filter(|c| *c != '\n')
+                    .map(|c| crate::note_layout::advance(c, self.size))
+                    .fold(0., f64::max),
+            );
+        let width = width.max(word + padding * 2.);
+        let rows = crate::note_layout::NoteLines::new(&self.value, width - padding * 2., self.size)
+            .count()
+            .max(1)
+            + usize::from(self.value.ends_with('\n'));
+        [
+            word + padding * 2.,
+            (rows.saturating_sub(1) as f64 * 1.3 + 1.) * self.size + padding * 2.,
+        ]
+    }
+    pub(crate) fn constrain_box(
+        &self,
+        proposed: [f64; 2],
+        direction: [f64; 2],
+        initial: [f64; 2],
+    ) -> [f64; 2] {
+        let minimum = self.minimum_size(proposed[0]);
+        let mut size = std::array::from_fn(|i| proposed[i].max(minimum[i]));
+        if direction[1] == 0. {
+            size[1] = initial[1];
+            if self.minimum_size(size[0])[1] > size[1] {
+                let mut lo = size[0];
+                let mut hi = initial[0].max(lo);
+                for _ in 0..16 {
+                    let mid = (lo + hi) * 0.5;
+                    if self.minimum_size(mid)[1] > size[1] {
+                        lo = mid;
+                    } else {
+                        hi = mid;
+                    }
+                }
+                size[0] = hi;
+            }
+        }
+        size
+    }
+    pub(crate) fn ensure_text_fits(&mut self) -> Result<(), tack_core::GeometryError> {
+        let minimum = self.minimum_size(self.transform.size()[0]);
+        let size = std::array::from_fn(|i| self.transform.size()[i].max(minimum[i]));
+        self.transform = Transform::new(
+            self.transform.center(),
+            size,
+            self.transform.rotation(),
+            self.transform.flips(),
+        )?;
+        Ok(())
+    }
     pub fn insert(&mut self, text: &str) {
         if text
             .chars()
@@ -151,21 +216,35 @@ impl NoteEdit {
         if editor.generation() != self.generation {
             return Err("document changed during text edit".into());
         }
+        let minimum = self.minimum_size(self.transform.size()[0]);
+        let size = std::array::from_fn(|i| self.transform.size()[i].max(minimum[i]));
+        let transform = Transform::new(
+            self.transform.center(),
+            size,
+            self.transform.rotation(),
+            self.transform.flips(),
+        )?;
         let text = TextObject::new(self.value, self.size, self.alignment)?;
         Ok(if self.is_new {
             editor.execute(Command::AddObject {
                 object: DocumentObject::annotation(
                     self.id,
                     Annotation::new(AnnotationKind::Text(text), self.style),
-                    self.transform,
+                    transform,
                 )?,
                 index: editor.document().object_order().len(),
             })?
         } else {
-            editor.execute(Command::SetText {
-                object: self.id,
-                text,
-            })?
+            editor.execute(Command::Batch(vec![
+                Command::SetText {
+                    object: self.id,
+                    text,
+                },
+                Command::SetTransform {
+                    object: self.id,
+                    transform,
+                },
+            ]))?
         })
     }
 }
@@ -189,4 +268,35 @@ pub struct AnnotationInput {
     pub scribble: Vec<Creation>,
     pub eraser: Option<Box<crate::scribble_edit::EraserDraft>>,
     pub style: AnnotationStyle,
+    pub box_resize: Option<(Transform, [f64; 2], usize)>,
+}
+#[cfg(test)]
+mod box_tests {
+    use super::*;
+    #[test]
+    fn horizontal_edit_resize_preserves_height_and_keeps_multiline_text_inside()
+    -> Result<(), tack_assets::AssetError> {
+        let mut edit = NoteEdit {
+            id: tack_core::ObjectId::new(1)?,
+            value: "Several words here\nSecond line\n\tThird".into(),
+            size: 16.,
+            alignment: TextAlignment::Left,
+            transform: Transform::new([0.; 2], [220., 80.], 0., [false; 2])?,
+            style: AnnotationStyle::default(),
+            generation: 0,
+            is_new: false,
+            replace: false,
+            composing: false,
+        };
+        edit.ensure_text_fits()?;
+        let initial = edit.transform.size();
+        let size = edit.constrain_box([5., initial[1]], [1., 0.], initial);
+        assert_eq!(size[1], initial[1]);
+        assert!(edit.minimum_size(size[0])[1] <= size[1]);
+        let corner = edit.constrain_box([1., 1.], [1., 1.], initial);
+        let minimum = edit.minimum_size(corner[0]);
+        assert!(corner[0] >= minimum[0] && corner[1] >= minimum[1]);
+        assert_eq!(edit.size, 16.);
+        Ok(())
+    }
 }

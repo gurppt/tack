@@ -290,6 +290,15 @@ impl InputState {
         &mut self,
         event: PhysicalEvent,
         keymap: &Keymap,
+        emit: impl FnMut(ActionEvent),
+    ) -> Result<(), InputError> {
+        self.handle_eligible(event, keymap, |_| true, emit)
+    }
+    pub(crate) fn handle_eligible(
+        &mut self,
+        event: PhysicalEvent,
+        keymap: &Keymap,
+        eligible: impl Fn(Action) -> bool,
         mut emit: impl FnMut(ActionEvent),
     ) -> Result<(), InputError> {
         let (identity, event) = if let PhysicalEvent::Keyboard {
@@ -310,7 +319,7 @@ impl InputState {
                 .iter()
                 .find(|h| h.identity == identity)
                 .map_or_else(
-                    || keymap.keyboard_control(physical, logical, self.modifiers),
+                    || keymap.keyboard_control_where(physical, logical, self.modifiers, &eligible),
                     |h| h.control,
                 );
             let assign = (state == ElementState::Pressed

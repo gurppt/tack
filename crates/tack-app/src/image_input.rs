@@ -35,7 +35,7 @@ pub struct ImageInput {
     pub(crate) adjust_fill: Option<tack_core::ObjectId>,
     pub(crate) state: InputState,
     input_trace: bool,
-    cursor: [f64; 2],
+    pub(crate) cursor: [f64; 2],
     active_token: Option<HoldToken>,
     center_handle: bool,
     marquee: Option<([f64; 2], [f64; 2], bool)>,
@@ -43,7 +43,9 @@ pub struct ImageInput {
     pub link_preview: crate::link_preview::Stats,
     pub link_feedback: crate::feedback::Feedback,
     link: Option<link::Stage>,
-    link_flash: Option<tack_core::ObjectId>,
+    pub(crate) link_flash: Option<tack_core::ObjectId>,
+    pub(crate) unlink_flash: Vec<tack_core::ObjectId>,
+    pub(crate) unlink_pending: Option<(u64, Vec<tack_core::ObjectId>, Vec<tack_core::ObjectId>)>,
     link_pending: Option<(u64, tack_core::ObjectId, Vec<tack_core::ObjectId>)>,
     last_click: Option<(tack_core::ObjectId, [f64; 2], Instant)>,
 }
@@ -79,7 +81,9 @@ impl ImageInput {
             link_feedback: Default::default(),
             link: None,
             link_flash: None,
+            unlink_flash: Vec::new(),
             link_pending: None,
+            unlink_pending: None,
             last_click: None,
         })
     }
@@ -105,7 +109,9 @@ impl ImageInput {
     pub fn cancel(&mut self) {
         self.link = None;
         self.link_pending = None;
+        self.unlink_pending = None;
         self.link_flash = None;
+        self.unlink_flash.clear();
         self.link_feedback = Default::default();
         self.link_preview = Default::default();
         self.gesture_waiting = false;
@@ -241,6 +247,23 @@ impl ImageInput {
         let hover = self.hover(editor, camera);
         self.gizmo
             .build(&self.images, editor.document(), camera, hover);
+        if let Some(edit) = &self.annotation.edit {
+            self.gizmo.quads.clear();
+            self.gizmo.selection.clear();
+            self.gizmo
+                .outline(edit.transform, camera, self.gizmo.style.selection);
+            for index in 0..8 {
+                let p = camera.world_to_screen(self.gizmo.handle(edit.transform, camera, index));
+                let r = 3. * camera.ui_scale();
+                self.gizmo.pixel_rect(
+                    camera,
+                    [p[0] - r, p[1] - r],
+                    [p[0] + r, p[1] + r],
+                    self.gizmo.style.selection,
+                    None,
+                );
+            }
+        }
         self.spatial_overlay(editor, camera);
         self.link_overlay(editor, camera);
         if self.images.selection.annotations_locked {
@@ -302,6 +325,29 @@ impl ImageInput {
             );
         }
         let ActionEvent { action, phase } = event;
+        if phase == ActionPhase::Invoke {
+            let doc = editor.document();
+            let valid = match action.context() {
+                crate::actions::ActionContext::ImageSelection => !self.images.selection.is_empty() && self.images.selection.ids().all(|id| doc.object_render_data(id).is_some()),
+                crate::actions::ActionContext::DrawingSelection => !self.images.selection.is_empty() && self.images.selection.ids().all(|id| doc.object(id).is_some_and(|o| matches!(o.kind(), tack_core::ObjectKind::Annotation(a) if !matches!(a.kind(), tack_core::AnnotationKind::Text(_))))),
+                crate::actions::ActionContext::TextSelection => !self.images.selection.is_empty() && self.images.selection.ids().all(|id| doc.object(id).is_some_and(|o| matches!(o.kind(), tack_core::ObjectKind::Annotation(a) if matches!(a.kind(), tack_core::AnnotationKind::Text(_))))),
+                _ => true,
+            };
+            if !valid {
+                return Ok(false);
+            }
+            if action.mutates_selection()
+                && self
+                    .images
+                    .selection
+                    .ids()
+                    .any(|id| doc.object(id).is_some_and(|o| o.locked()))
+            {
+                self.status = "Unlock the selection first".into();
+                return Ok(false);
+            }
+        }
+
         if self.active_tool() == crate::actions::Tool::Mouse
             && matches!(phase, ActionPhase::Invoke | ActionPhase::Begin(_))
             && matches!(
@@ -448,9 +494,13 @@ impl ImageInput {
                     && let Some(GizmoHit::Resize(handle)) = handle
                 {
                     self.images.begin(
-                        GestureKind::Resize {
-                            handle,
-                            center: true,
+                        if self.images.selected_note(editor.document()) {
+                            GestureKind::NoteScale { handle }
+                        } else {
+                            GestureKind::Resize {
+                                handle,
+                                center: true,
+                            }
                         },
                         pointer,
                         editor,
@@ -491,22 +541,6 @@ impl ImageInput {
                 return Ok(false);
             }
             if matches!(action, Action::ImagePointer | Action::ToggleSelection)
-                && self.modifiers().contains(crate::input::Modifiers::SHIFT)
-                && self.images.selected_note(editor.document())
-                && let Some(GizmoHit::Resize(handle)) = handle
-            {
-                let kind = if handle % 2 == 0 {
-                    GestureKind::NoteScale { handle }
-                } else {
-                    GestureKind::Resize {
-                        handle,
-                        center: false,
-                    }
-                };
-                self.images.begin(kind, pointer, editor)?;
-                return Ok(false);
-            }
-            if action == Action::ImagePointer
                 && let Some(handle) = handle
             {
                 let kind = match handle {
@@ -514,6 +548,8 @@ impl ImageInput {
                     GizmoHit::Resize(handle) => {
                         if self.images.crop_mode && self.images.selection.len() == 1 {
                             GestureKind::Crop { handle }
+                        } else if self.images.selected_note(editor.document()) {
+                            GestureKind::NoteScale { handle }
                         } else {
                             GestureKind::Resize {
                                 handle,
@@ -640,7 +676,11 @@ impl ImageInput {
                             })
                             && !self.images.crop_mode
                 }
-                Action::ResetAspectRatio => self.reset_aspect_ratio(editor)?,
+                Action::ResetCrop
+                | Action::ActualSize
+                | Action::ToggleGrayscale
+                | Action::ToggleLockSelection
+                | Action::SelectLockedObjects => self.image_metadata_action(action, editor)?,
                 Action::Save => return Ok(true),
                 _ => self.spatial_action(action, editor, camera)?,
             }
@@ -664,12 +704,51 @@ impl ImageInput {
         let focus = event == PhysicalEvent::FocusLost;
         let mut emitted = [None; crate::input::MAX_HELD_INPUTS];
         let mut count = 0;
-        self.state.handle(event, &self.keymap, |e| {
-            if count < emitted.len() {
-                emitted[count] = Some(e);
-                count += 1;
-            }
-        })?;
+        let doc = editor.document();
+        use crate::actions::ActionContext;
+        let selected_context = if !self.images.selection.is_empty()
+            && self
+                .images
+                .selection
+                .ids()
+                .all(|id| doc.object_render_data(id).is_some())
+        {
+            ActionContext::ImageSelection
+        } else if !self.images.selection.is_empty()
+            && self.images.selection.ids().all(|id| {
+                doc.object(id).is_some_and(|o| {
+                    matches!(o.kind(), tack_core::ObjectKind::Annotation(a)
+                if matches!(a.kind(), tack_core::AnnotationKind::Text(_)))
+                })
+            })
+        {
+            ActionContext::TextSelection
+        } else if !self.images.selection.is_empty()
+            && self.images.selection.ids().all(|id| {
+                doc.object(id).is_some_and(|o| {
+                    matches!(o.kind(), tack_core::ObjectKind::Annotation(a)
+                if !matches!(a.kind(), tack_core::AnnotationKind::Text(_)))
+                })
+            })
+        {
+            ActionContext::DrawingSelection
+        } else {
+            ActionContext::Canvas
+        };
+        self.state.handle_eligible(
+            event,
+            &self.keymap,
+            |a| {
+                matches!(a.context(), ActionContext::Global | ActionContext::Canvas)
+                    || a.context() == selected_context
+            },
+            |e| {
+                if count < emitted.len() {
+                    emitted[count] = Some(e);
+                    count += 1;
+                }
+            },
+        )?;
         if focus {
             self.cancel_gesture();
         }

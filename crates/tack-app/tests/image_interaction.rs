@@ -230,7 +230,7 @@ fn local_resize_pivot_and_screen_space_handles_are_dpi_zoom_independent() -> Res
                     .hit(
                         t,
                         &camera,
-                        [point[0] + 10. * scale, point[1] + 10. * scale],
+                        [point[0] + 100. * scale, point[1] + 100. * scale],
                         false,
                         false
                     )

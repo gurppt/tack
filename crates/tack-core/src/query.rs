@@ -11,6 +11,7 @@ pub struct ImageRenderData {
     pub crop: Crop,
     pub opacity: Opacity,
     pub filtering: ImageFiltering,
+    pub grayscale: bool,
 }
 
 /// Immutable resident geometry boundary. Implementations must not perform I/O,
@@ -33,6 +34,7 @@ impl DocumentQuery for Document {
             crop: image.crop(),
             opacity: image.opacity(),
             filtering: image.filtering(),
+            grayscale: image.grayscale(),
         })
     }
     /// Allocation-free ordered linear scan with O(log n) ID lookups; no spatial

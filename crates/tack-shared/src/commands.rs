@@ -51,6 +51,14 @@ pub enum CommandDto {
         object: WireId,
         opacity: f64,
     },
+    SetLocked {
+        object: WireId,
+        locked: bool,
+    },
+    SetGrayscale {
+        object: WireId,
+        grayscale: bool,
+    },
     SetImageFiltering {
         object: WireId,
         filtering: u8,
@@ -168,6 +176,14 @@ impl CommandDto {
                 object: wire_id(object.value())?,
                 opacity: opacity.value(),
             },
+            SetLocked { object, locked } => Self::SetLocked {
+                object: wire_id(object.value())?,
+                locked: *locked,
+            },
+            SetGrayscale { object, grayscale } => Self::SetGrayscale {
+                object: wire_id(object.value())?,
+                grayscale: *grayscale,
+            },
             SetImageFiltering { object, filtering } => Self::SetImageFiltering {
                 object: wire_id(object.value())?,
                 filtering: object::encode_filtering(*filtering),
@@ -258,6 +274,14 @@ impl CommandDto {
             SetOpacity { object, opacity } => Command::SetOpacity {
                 object: object_id(*object)?,
                 opacity: Opacity::new(*opacity).map_err(domain_error)?,
+            },
+            SetLocked { object, locked } => Command::SetLocked {
+                object: object_id(*object)?,
+                locked: *locked,
+            },
+            SetGrayscale { object, grayscale } => Command::SetGrayscale {
+                object: object_id(*object)?,
+                grayscale: *grayscale,
             },
             SetImageFiltering { object, filtering } => Command::SetImageFiltering {
                 object: object_id(*object)?,

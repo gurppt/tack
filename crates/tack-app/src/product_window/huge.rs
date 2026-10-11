@@ -316,6 +316,7 @@ mod tests {
     use super::*;
     fn data(flips: [bool; 2], angle: f64, crop: Crop) -> ImageRenderData {
         ImageRenderData {
+            grayscale: false,
             object_id: tack_core::ObjectId::new(1).unwrap(),
             asset_id: tack_core::AssetId::new(2).unwrap(),
             transform: Transform::new([0.; 2], [5000., 1000.], angle, flips).unwrap(),

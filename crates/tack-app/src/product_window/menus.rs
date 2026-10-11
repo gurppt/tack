@@ -54,7 +54,14 @@ impl App {
                 self.input.snap.enabled,
             )
             .with_shared(self.shared.is_some() || self.offline.is_some())
-            .with_hosted(self.host.is_some()),
+            .with_hosted(self.host.is_some())
+            .with_missing_source(self.input.images.selection.ids().any(|id| {
+                self.editor
+                    .as_ref()
+                    .and_then(|e| e.document().object_render_data(id))
+                    .and_then(|d| self.editor.as_ref()?.document().asset(d.asset_id))
+                    .is_some_and(|a| self.input.gizmo.missing_sources.contains(&a.source_id()))
+            })),
         )
     }
     fn prepare_menu(&mut self) -> Result<(), AssetError> {

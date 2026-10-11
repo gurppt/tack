@@ -113,6 +113,7 @@ fn keymap_worker_exports_tackey_and_imports_legacy_json_without_mutating_on_fail
     let target = root.0.join("studio.v3");
     worker.start(
         Operation::Keymap {
+            backup: None,
             action: Action::ExportKeymap,
             path: target,
             profile: profile.clone(),
@@ -133,6 +134,7 @@ fn keymap_worker_exports_tackey_and_imports_legacy_json_without_mutating_on_fail
     preferences::write(&legacy, &profile)?;
     worker.start(
         Operation::Keymap {
+            backup: None,
             action: Action::ImportKeymap,
             path: legacy.clone(),
             profile: profile.clone(),
@@ -146,6 +148,7 @@ fn keymap_worker_exports_tackey_and_imports_legacy_json_without_mutating_on_fail
     fs::write(&legacy, b"corrupt JSON")?;
     worker.start(
         Operation::Keymap {
+            backup: None,
             action: Action::ImportKeymap,
             path: legacy,
             profile: profile.clone(),
@@ -259,6 +262,7 @@ fn keymap_suffix_added_target_requires_explicit_replacement_choice() -> R {
     let mut worker = LocalWorker::default();
     worker.start(
         Operation::Keymap {
+            backup: None,
             action: Action::ExportKeymap,
             path: raw,
             profile: Preferences::defaults()?,
@@ -273,6 +277,7 @@ fn keymap_suffix_added_target_requires_explicit_replacement_choice() -> R {
     assert_eq!(fs::read(&target)?, b"existing keymap content");
     worker.start(
         Operation::Keymap {
+            backup: None,
             action: Action::ExportKeymap,
             path: target.clone(),
             profile: Preferences::defaults()?,

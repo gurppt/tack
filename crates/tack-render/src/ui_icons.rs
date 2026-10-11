@@ -22,6 +22,7 @@ impl UiIcons {
             position: [0.; 2],
             uv: [0.; 2],
             opacity: 1.,
+            grayscale: 0.,
         };
         let mut vertices = [blank; 192];
         for (j, icon) in self.icons[..self.count].iter().enumerate() {
@@ -41,6 +42,7 @@ impl UiIcons {
                     position: camera.world_to_clip(camera.screen_to_world(points[p])),
                     uv: uv[p],
                     opacity: if icon.disabled { 0.35 } else { 1. },
+                    grayscale: 0.,
                 };
             }
         }

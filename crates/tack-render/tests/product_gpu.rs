@@ -10,6 +10,7 @@ fn data() -> ImageRenderData {
         crop: Crop::FULL,
         opacity: Opacity::OPAQUE,
         filtering: ImageFiltering::Nearest,
+        grayscale: false,
     }
 }
 #[test]
@@ -266,6 +267,15 @@ fn product_gpu_honors_sampling_alpha_crop_flip_rotation_and_revision() -> Result
             rgba: vec![255, 0, 0, 255, 0, 0, 255, 255]
         }
     ));
+    d.grayscale = true;
+    let gray = pixels(&mut gpu, d, key)?;
+    for x in [16, 48] {
+        let p = pixel(&gray, x, 32);
+        assert_eq!(p[0], p[1]);
+        assert_eq!(p[1], p[2]);
+        assert!(p[0] > 50 && p[0] < 220);
+    }
+    d.grayscale = false;
     let nearest = pixels(&mut gpu, d, key)?;
     assert!(pixel(&nearest, 31, 32)[0] > 240);
     assert!(pixel(&nearest, 32, 32)[2] > 240);
@@ -715,7 +725,7 @@ fn lazy_ui_artwork_is_nearest_above_overlay_and_released_after_close() -> Result
     assert_eq!(gpu.ui_image_bytes(), 0);
     for _ in 0..20 {
         gpu.set_ui_image(&image)?;
-        assert_eq!(gpu.ui_image_bytes(), 128);
+        assert_eq!(gpu.ui_image_bytes(), 152);
         gpu.set_ui_image_rect([16., 16., 32., 16.]);
         gpu.set_ui_logo(&Decoded {
             width: 2,
@@ -723,7 +733,7 @@ fn lazy_ui_artwork_is_nearest_above_overlay_and_released_after_close() -> Result
             rgba: vec![255, 255, 0, 255, 255, 255, 0, 0],
         })?;
         gpu.set_ui_logo_rect([16., 40., 32., 16.]);
-        assert_eq!(gpu.ui_image_bytes(), 256);
+        assert_eq!(gpu.ui_image_bytes(), 304);
         for scale in [1., 2.] {
             let bytes = pixels_scene_scale(&mut gpu, d, key, &overlay, None, None, scale)?;
             assert_eq!(pixel(&bytes, 15, 20), [0, 255, 0, 255]);

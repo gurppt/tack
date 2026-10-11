@@ -180,7 +180,19 @@ impl LocalUi {
         }
     }
     fn draw_keymap(&mut self, paint: &mut Paint<'_>, width: f64, footer: f64, keymap: &Keymap) {
+        self.key_rows.clear();
         let p = paint.palette;
+        let contextual = keymap.bindings().iter().any(|a| {
+            keymap.bindings().iter().any(|b| {
+                a.action != b.action
+                    && crate::bindings::controls_overlap(a.control, b.control)
+                    && a.modifiers.overlaps(b.modifiers)
+                    && !a.action.context().overlaps(b.action.context())
+            })
+        });
+        if contextual && self.message.is_empty() {
+            self.message = "Contextual — allowed".into();
+        }
         self.button(
             paint,
             [24., 42., width, 64.],
@@ -216,13 +228,39 @@ impl LocalUi {
             self.first.min(actions.len().saturating_sub(self.visible))
         };
         self.reveal_row = false;
+        let mut y = 84.;
+        let mut previous_category = None;
+        let mut shown = 0;
         for (index, action) in actions
             .iter()
             .enumerate()
             .skip(self.first)
             .take(self.visible)
         {
-            let y = 84. + (index - self.first) as f64 * 22.;
+            if self.search.is_empty() && previous_category != Some(action.category()) {
+                let empty_media = action.category() == "TOOLS";
+                if y + if empty_media { 66. } else { 44. } > footer {
+                    break;
+                }
+                if empty_media {
+                    paint.text(24., y + 2., width - 28., "MEDIA", p.text_secondary);
+                    y += 22.;
+                }
+                paint.text(
+                    24.,
+                    y + 2.,
+                    width - 28.,
+                    action.category(),
+                    p.text_secondary,
+                );
+                y += 22.;
+                previous_category = Some(action.category());
+            }
+            if y + 22. > footer {
+                break;
+            }
+            shown += 1;
+            self.key_rows.push((index, [20., y, width + 4., y + 20.]));
             self.row(paint, index, y, width);
             if index == self.selected && self.focus.is_none() {
                 let (lo, hi) = match self.key_column {
@@ -303,7 +341,9 @@ impl LocalUi {
                 behavior.label(),
                 p.accent_secondary,
             );
+            y += 22.;
         }
+        self.visible = shown.max(1);
         self.scroll[0].draw(
             paint.gizmo,
             paint.camera,
@@ -489,10 +529,8 @@ impl LocalUi {
                     "Frame title size".into(),
                     format!("{}x", profile.frame_title_scale),
                 ),
-                (
-                    "Update channel".into(),
-                    format!("{} >", profile.update_channel.label()),
-                ),
+                ("Export Profile...".into(), String::new()),
+                ("Import Profile...".into(), String::new()),
                 ("Export Preferences...".into(), String::new()),
                 ("Close".into(), String::new()),
             ],

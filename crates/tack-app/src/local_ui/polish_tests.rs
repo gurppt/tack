@@ -57,6 +57,10 @@ fn toolbar_add_scroll_remove_reorder_and_button_keyboard_are_one_focus() -> R {
     );
     ui.modifiers = Modifiers::NONE;
     ui.toolbar_key(KeyCode::Tab, &mut map, &mut p);
+    assert_eq!(ui.focus, Some(Command::ToolbarSetPrevious));
+    for _ in 0..7 {
+        ui.toolbar_key(KeyCode::Tab, &mut map, &mut p);
+    }
     assert_eq!(ui.focus, Some(Command::ToolbarToggle));
     ui.toolbar_key(KeyCode::ArrowRight, &mut map, &mut p);
     assert_eq!(ui.focus, Some(Command::ToolbarRemove));
@@ -150,7 +154,7 @@ fn scrollbar_wheel_drag_and_hover_never_retarget_or_scroll_from_pointer_position
             assert_eq!(ui.first, 0);
             assert_eq!(ui.selected, 0);
         }
-        ui.handle(&motion(50., 100.), &mut map, &mut p);
+        ui.handle(&motion(50., ui.layout[3] + 16.), &mut map, &mut p);
         ui.handle(&wheel, &mut map, &mut p);
         g.quads.clear();
         ui.draw(&mut g, &c, &map, &p);

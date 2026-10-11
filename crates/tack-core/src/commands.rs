@@ -36,6 +36,14 @@ pub enum Command {
         object: ObjectId,
         opacity: Opacity,
     },
+    SetLocked {
+        object: ObjectId,
+        locked: bool,
+    },
+    SetGrayscale {
+        object: ObjectId,
+        grayscale: bool,
+    },
     SetImageFiltering {
         object: ObjectId,
         filtering: ImageFiltering,
@@ -171,6 +179,8 @@ impl Command {
                 | Self::SetTransform { .. }
                 | Self::SetCrop { .. }
                 | Self::SetOpacity { .. }
+                | Self::SetLocked { .. }
+                | Self::SetGrayscale { .. }
                 | Self::SetImageFiltering { .. }
                 | Self::SetZOrder { .. }
                 | Self::AddGroup(_)
@@ -460,6 +470,23 @@ impl Document {
                     }
                     _ => return Err(CommandError::WrongObjectKind(object)),
                 }
+            }
+            SetLocked { object, locked } => {
+                let target = self
+                    .objects
+                    .get_mut(&object)
+                    .ok_or(CommandError::MissingObject(object))?;
+                replace(&mut target.locked, locked).map(|locked| SetLocked { object, locked })
+            }
+            SetGrayscale { object, grayscale } => {
+                let target = self
+                    .objects
+                    .get_mut(&object)
+                    .ok_or(CommandError::MissingObject(object))?
+                    .image_mut()
+                    .ok_or(CommandError::WrongObjectKind(object))?;
+                replace(&mut target.grayscale, grayscale)
+                    .map(|grayscale| SetGrayscale { object, grayscale })
             }
             SetImageFiltering { object, filtering } => {
                 let target = self

@@ -219,6 +219,8 @@ pub fn product_keymap() -> Result<Keymap, BindingError> {
         (KeyCode::F2, Modifiers::NONE, Action::RenameFrame),
         (KeyCode::Space, Modifiers::NONE, Action::FocusFrame),
         (KeyCode::PageDown, Modifiers::NONE, Action::NextFrame),
+        (KeyCode::PageDown, ctrl, Action::NextToolbarSet),
+        (KeyCode::PageUp, ctrl, Action::PreviousToolbarSet),
         (KeyCode::PageUp, Modifiers::NONE, Action::PreviousFrame),
         (KeyCode::ArrowLeft, ctrl, Action::Layout(Layout::Left)),
         (KeyCode::ArrowRight, ctrl, Action::Layout(Layout::Right)),
@@ -294,6 +296,17 @@ pub fn product_keymap() -> Result<Keymap, BindingError> {
         map.bind(Binding {
             control: PhysicalControl::Key(winit::keyboard::PhysicalKey::Code(code)),
             modifiers: ModifierMatch::Exact(Modifiers::NONE),
+            trigger: Trigger::Press,
+            action,
+        })?;
+    }
+    for (code, action) in [
+        (KeyCode::NumpadAdd, Action::ContextCoarseIncrease),
+        (KeyCode::NumpadSubtract, Action::ContextCoarseDecrease),
+    ] {
+        map.bind(Binding {
+            control: PhysicalControl::Key(winit::keyboard::PhysicalKey::Code(code)),
+            modifiers: ModifierMatch::Exact(shift),
             trigger: Trigger::Press,
             action,
         })?;

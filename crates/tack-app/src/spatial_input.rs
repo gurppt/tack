@@ -294,25 +294,76 @@ impl ImageInput {
         camera: &Camera,
         id: ObjectId,
     ) -> bool {
-        let Some(o) = editor.document().object(id) else {
-            return false;
-        };
-        let ObjectKind::Frame(name) = o.kind() else {
-            return false;
-        };
-        let Some(t) = self.images.preview_transform(editor.document(), id) else {
-            return false;
-        };
-        let editing = self.name_edit.as_ref().filter(|e| e.id == id);
-        let text = crate::feedback::edit_text(
-            editing.map_or(name.as_str(), |e| e.value.as_str()),
-            editing.is_some(),
-        );
-        crate::frame_ui::Label::new(t, camera, self.gizmo.frame_title_scale, &text)
-            .contains(self.cursor())
+        self.frame_labels(editor.document(), camera)
+            .into_iter()
+            .find(|(object, _)| *object == id)
+            .is_some_and(|(_, label)| label.contains(self.cursor()))
+    }
+    /// Bounded stable draw/hit layout, recomputed only on events. No world changes.
+    pub(crate) fn frame_labels(
+        &self,
+        doc: &tack_core::Document,
+        camera: &Camera,
+    ) -> Vec<(ObjectId, crate::frame_ui::Label)> {
+        let mut labels: Vec<(ObjectId, crate::frame_ui::Label)> = Vec::new();
+        if doc.frame_count() == 0 {
+            return labels;
+        }
+        for id in doc.object_order() {
+            let Some(o) = doc.object(*id) else {
+                continue;
+            };
+            let ObjectKind::Frame(name) = o.kind() else {
+                continue;
+            };
+            let Some(t) = self.images.preview_transform(doc, *id) else {
+                continue;
+            };
+            if !t.bounds().intersects(camera.viewport()) {
+                continue;
+            }
+            let editing = self.name_edit.as_ref().filter(|e| e.id == *id);
+            let text = crate::feedback::edit_text(
+                editing.map_or(name.as_str(), |e| e.value.as_str()),
+                editing.is_some(),
+            );
+            let mut label =
+                crate::frame_ui::Label::new(t, camera, self.gizmo.frame_title_scale, &text);
+            let mut obstacles: Vec<_> = labels
+                .iter()
+                .filter(|(_, other)| label.rect[0] < other.rect[2] && label.rect[2] > other.rect[0])
+                .map(|(_, other)| other.rect)
+                .collect();
+            // Sweep downward-to-upward once: displaced labels never return to a cleared interval.
+            obstacles.sort_by(|a, b| b[3].total_cmp(&a[3]));
+            for other in obstacles {
+                if label.rect[1] < other[3] && label.rect[3] > other[1] {
+                    let height = label.rect[3] - label.rect[1];
+                    label.rect[3] = other[1] - 2. * camera.ui_scale();
+                    label.rect[1] = label.rect[3] - height;
+                }
+            }
+            labels.push((*id, label));
+            if labels.len() == 128 {
+                break;
+            }
+        }
+        labels
     }
     pub(crate) fn frame_hit(&self, editor: &DocumentEditor, camera: &Camera) -> Option<ObjectId> {
         if editor.document().frame_count() == 0 || self.images.selection.annotations_locked {
+            return None;
+        }
+        let labels = self.frame_labels(editor.document(), camera);
+        self.frame_hit_with_labels(editor, camera, &labels)
+    }
+    pub(crate) fn frame_hit_with_labels(
+        &self,
+        editor: &DocumentEditor,
+        camera: &Camera,
+        labels: &[(ObjectId, crate::frame_ui::Label)],
+    ) -> Option<ObjectId> {
+        if self.images.selection.annotations_locked {
             return None;
         }
         let p = self.cursor();
@@ -323,7 +374,7 @@ impl ImageInput {
             .rev()
             .find_map(|id| {
                 let o = editor.document().object(*id)?;
-                if !matches!(o.kind(), ObjectKind::Frame(_)) {
+                if o.locked() || !matches!(o.kind(), ObjectKind::Frame(_)) {
                     return None;
                 }
                 let t = self.images.preview_transform(editor.document(), *id)?;
@@ -339,23 +390,56 @@ impl ImageInput {
                         || (p[0] - hi[0]).abs() < r
                         || (p[1] - lo[1]).abs() < r
                         || (p[1] - hi[1]).abs() < r);
-                let text = self
-                    .name_edit
-                    .as_ref()
-                    .filter(|e| e.id == *id)
-                    .map(|e| e.value.as_str())
-                    .unwrap_or_else(|| match o.kind() {
-                        ObjectKind::Frame(name) => name.as_str(),
-                        _ => "",
-                    });
-                let text = crate::feedback::edit_text(
-                    text,
-                    self.name_edit.as_ref().is_some_and(|e| e.id == *id),
-                );
-                let label =
-                    crate::frame_ui::Label::new(t, camera, self.gizmo.frame_title_scale, &text)
-                        .contains(p);
+                let label = labels
+                    .iter()
+                    .find(|(object, _)| object == id)
+                    .is_some_and(|(_, label)| label.contains(p));
                 (border || label).then_some(*id)
             })
+    }
+}
+
+#[cfg(test)]
+mod label_tests {
+    use super::*;
+    use tack_core::*;
+    #[test]
+    fn extreme_zoom_collision_layout_is_bounded_stable_and_used_for_hits()
+    -> Result<(), tack_assets::AssetError> {
+        let mut doc = Document::new(DocumentId::new(1)?, DocumentLimits::default());
+        for i in 1..=150 {
+            doc.apply(Command::AddObject {
+                object: DocumentObject::frame(
+                    ObjectId::new(i)?,
+                    format!("Frame {i}"),
+                    Transform::new([i as f64, 0.], [500., 500.], 0., [false; 2])?,
+                )?,
+                index: doc.object_order().len(),
+            })?;
+        }
+        let e = DocumentEditor::new(doc, 10);
+        for size in [[800, 600], [1024, 768]] {
+            let mut c = Camera::new(size);
+            c.set_view([0., 0.], 0.001)?;
+            let mut input = ImageInput::new()?;
+            let labels = input.frame_labels(e.document(), &c);
+            assert_eq!(labels.len(), 128);
+            let again = input.frame_labels(e.document(), &c);
+            for (i, (id, a)) in labels.iter().enumerate() {
+                assert_eq!(a.rect, again[i].1.rect);
+                assert!(a.rect[2] - a.rect[0] >= 50. && a.rect[3] - a.rect[1] == 18.);
+                for (_, b) in &labels[..i] {
+                    assert!(
+                        a.rect[2] <= b.rect[0]
+                            || a.rect[0] >= b.rect[2]
+                            || a.rect[3] <= b.rect[1]
+                            || a.rect[1] >= b.rect[3]
+                    );
+                }
+                input.cursor = [a.rect[0] + 5., a.rect[1] + 5.];
+                assert!(input.frame_title_hit(&e, &c, *id));
+            }
+        }
+        Ok(())
     }
 }

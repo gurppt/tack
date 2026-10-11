@@ -109,10 +109,23 @@ impl ImageInput {
         if event.phase == ActionPhase::Invoke
             && matches!(
                 event.action,
-                Action::ContextIncrease | Action::ContextDecrease
+                Action::ContextIncrease
+                    | Action::ContextDecrease
+                    | Action::ContextCoarseIncrease
+                    | Action::ContextCoarseDecrease
             )
         {
-            self.context_adjust(event.action == Action::ContextIncrease, editor)?;
+            self.context_adjust(
+                matches!(
+                    event.action,
+                    Action::ContextIncrease | Action::ContextCoarseIncrease
+                ),
+                matches!(
+                    event.action,
+                    Action::ContextCoarseIncrease | Action::ContextCoarseDecrease
+                ),
+                editor,
+            )?;
             return Ok(true);
         }
         match event.action {
@@ -395,6 +408,58 @@ impl ImageInput {
             }
         }
         match event {
+            WindowEvent::CursorMoved { position, .. } => {
+                self.cursor = [position.x, position.y];
+                if let Some((initial, start, handle)) = self.annotation.box_resize
+                    && let Some(edit) = &mut self.annotation.edit
+                {
+                    let pointer = camera.screen_to_world(self.cursor);
+                    let delta = std::array::from_fn(|i| pointer[i] - start[i]);
+                    let next = crate::annotation_geometry::resize_note_box(
+                        initial,
+                        delta,
+                        crate::image_geometry::HANDLE_DIRECTIONS[handle],
+                        false,
+                    )?;
+                    let direction = crate::image_geometry::HANDLE_DIRECTIONS[handle];
+                    let size = edit.constrain_box(next.size(), direction, initial.size());
+                    let correction = crate::image_geometry::rotate(
+                        std::array::from_fn(|i| (size[i] - next.size()[i]) * direction[i] * 0.5),
+                        next.rotation(),
+                    );
+                    let center = std::array::from_fn(|i| next.center()[i] + correction[i]);
+                    edit.transform = Transform::new(center, size, next.rotation(), next.flips())?;
+                }
+            }
+            WindowEvent::MouseInput {
+                state: ElementState::Pressed,
+                button: winit::event::MouseButton::Left,
+                ..
+            } => {
+                if let Some(edit) = &self.annotation.edit {
+                    if let Some(crate::image_gizmo::GizmoHit::Resize(handle)) =
+                        self.gizmo
+                            .hit(edit.transform, camera, self.cursor, true, false)
+                    {
+                        self.annotation.box_resize =
+                            Some((edit.transform, camera.screen_to_world(self.cursor), handle));
+                    } else if !crate::image_geometry::hit(
+                        edit.transform,
+                        camera.screen_to_world(self.cursor),
+                    ) {
+                        self.commit_drafts(editor)?;
+                        self.annotation.tools.reset_pointer();
+                        self.reset_modal_inputs();
+                    }
+                }
+            }
+            WindowEvent::MouseInput {
+                state: ElementState::Released,
+                button: winit::event::MouseButton::Left,
+                ..
+            } => {
+                self.annotation.box_resize = None;
+            }
             WindowEvent::Focused(false) | WindowEvent::Occluded(true) => {
                 let draft = self.annotation.edit.take();
                 self.physical(PhysicalEvent::FocusLost, editor, camera)?;
@@ -496,6 +561,12 @@ impl ImageInput {
                 }
             }
             _ => {}
+        }
+        if let Some(edit) = &mut self.annotation.edit {
+            edit.ensure_text_fits()?;
+        }
+        if self.annotation.edit.is_none() {
+            self.annotation.box_resize = None;
         }
         Ok(())
     }

@@ -122,6 +122,7 @@ impl App {
                 embedded: true,
                 position: center,
                 sampling: tack_core::ImageFiltering::Nearest,
+                viewport: [self.camera.viewport().width, self.camera.viewport().height],
                 mouse_easter_zoom: Some(zoom),
                 work: self.work.join("imports"),
                 spool: self.local.spool.clone(),

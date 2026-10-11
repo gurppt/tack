@@ -7,6 +7,52 @@ impl LocalUi {
         keymap: &mut Keymap,
         p: &mut Preferences,
     ) -> Option<UiResult> {
+        if self.toolbar_set_name.is_some() {
+            if let WindowEvent::KeyboardInput { event, .. } = event {
+                if event.state != ElementState::Pressed {
+                    return None;
+                }
+                if event.physical_key == PhysicalKey::Code(KeyCode::Escape) {
+                    self.toolbar_set_name = None;
+                    return None;
+                }
+                if event.physical_key == PhysicalKey::Code(KeyCode::Enter) {
+                    let name = self.toolbar_set_name.clone()?;
+                    match p.rename_toolbar_set(&name) {
+                        Ok(()) => {
+                            self.toolbar_set_name = None;
+                            self.message = format!("Toolbar: {}", p.toolbar_set_name());
+                            return Some(UiResult::PreferencesChanged);
+                        }
+                        Err(e) => {
+                            self.message = e.to_string();
+                            return None;
+                        }
+                    }
+                }
+                if let Some(name) = &mut self.toolbar_set_name {
+                    if event.physical_key == PhysicalKey::Code(KeyCode::Backspace) {
+                        if self.toolbar_name_replace {
+                            name.clear();
+                        } else {
+                            name.pop();
+                        }
+                        self.toolbar_name_replace = false;
+                    } else if let Some(text) = &event.text
+                        && !text.chars().any(char::is_control)
+                    {
+                        if self.toolbar_name_replace {
+                            name.clear();
+                        }
+                        if name.len() + text.len() <= 128 {
+                            name.push_str(text);
+                            self.toolbar_name_replace = false;
+                        }
+                    }
+                }
+            }
+            return None;
+        }
         let point = self.cursor.map(|v| v / self.layout[0]);
         let hit = self
             .hits

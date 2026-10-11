@@ -33,6 +33,7 @@ struct Vertex {
     position: [f32; 2],
     uv: [f32; 2],
     opacity: f32,
+    grayscale: f32,
 }
 
 struct Texture {
@@ -78,6 +79,9 @@ trait CanvasImage {
     fn quad(&self) -> ([[f64; 2]; 4], [[f32; 2]; 4], f32);
     fn key(&self) -> Option<TextureKey>;
     fn nearest(&self) -> bool;
+    fn grayscale(&self) -> bool {
+        false
+    }
 }
 impl CanvasImage for DrawImage {
     fn quad(&self) -> ([[f64; 2]; 4], [[f32; 2]; 4], f32) {
@@ -132,6 +136,9 @@ impl CanvasImage for DrawProductImage {
     }
     fn nearest(&self) -> bool {
         self.data.filtering == ImageFiltering::Nearest
+    }
+    fn grayscale(&self) -> bool {
+        self.data.grayscale
     }
 }
 
@@ -279,7 +286,7 @@ impl Gpu {
                 buffers: &[wgpu::VertexBufferLayout {
                     array_stride: std::mem::size_of::<Vertex>() as u64,
                     step_mode: wgpu::VertexStepMode::Vertex,
-                    attributes: &wgpu::vertex_attr_array![0 => Float32x2, 1 => Float32x2, 2 => Float32],
+                    attributes: &wgpu::vertex_attr_array![0 => Float32x2, 1 => Float32x2, 2 => Float32, 3 => Float32],
                 }],
             },
             fragment: Some(wgpu::FragmentState {
@@ -678,6 +685,7 @@ impl Gpu {
                     position: camera.world_to_clip(points[i]),
                     uv: uvs[i],
                     opacity,
+                    grayscale: u8::from(image.grayscale()) as f32,
                 });
             }
         }

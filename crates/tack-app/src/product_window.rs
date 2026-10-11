@@ -520,6 +520,23 @@ impl App {
         }
         let supply_ms = supply_start.elapsed().as_secs_f64() * 1000.;
         if let Some(editor) = &self.editor {
+            self.input.gizmo.missing_sources.clear();
+            if let Some(assets) = &self.assets {
+                self.input.gizmo.missing_sources.extend(
+                    assets
+                        .states
+                        .iter()
+                        .filter(|(_, state)| {
+                            matches!(
+                                state,
+                                SourceState::Missing
+                                    | SourceState::Foreign
+                                    | SourceState::Unavailable
+                            )
+                        })
+                        .map(|(id, _)| *id),
+                );
+            }
             self.input.build_overlay(editor, &self.camera);
             if let Some(shared) = &self.shared {
                 shared
@@ -1350,6 +1367,13 @@ impl App {
                         }
                     }
                     Err(error) => self.interaction_error = Some(error.to_string()),
+                }
+                if self.local.profile.grid != self.input.grid_visible
+                    || self.local.profile.snapping != self.input.snap.enabled
+                {
+                    self.local.profile.grid = self.input.grid_visible;
+                    self.local.profile.snapping = self.input.snap.enabled;
+                    self.local.profile_pending = true;
                 }
                 self.dirty = true;
             }

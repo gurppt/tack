@@ -26,35 +26,81 @@ impl LocalUi {
         let [_, _, width, height] = shell.rect;
         let palette = p.theme.palette();
         let mut budget = 900;
-        self.layout = [s, width, height, 76.];
-        self.visible = ((height - 146.) / 22.).floor().clamp(1., 12.) as usize;
+        self.layout = [s, width, height, 124.];
+        self.visible = ((height - 194.) / 22.).floor().clamp(1., 12.) as usize;
         self.icon_count = 0;
         shell.paint(g, c, palette);
         g.ui_text(
             c,
             [24. * s, 20. * s],
             width - 24.,
-            "Edit Toolbar",
+            &format!(
+                "Edit Toolbar: {}",
+                crate::feedback::edit_text(
+                    self.toolbar_set_name
+                        .as_deref()
+                        .unwrap_or(p.toolbar_set_name()),
+                    self.toolbar_set_name.is_some() && self.caret.visible
+                )
+            ),
             palette.accent_primary,
             &mut budget,
         );
-        let title = format!(
-            "{} / {} of 32",
-            p.toolbar.placement.label(),
-            p.toolbar.actions.len()
-        );
-        g.ui_text(
-            c,
-            [24. * s, 40. * s],
-            width - 24.,
-            &title,
-            palette.text_secondary,
-            &mut budget,
-        );
+        self.hits.clear();
+        let set_buttons = [
+            ("Previous", Command::ToolbarSetPrevious),
+            ("Next", Command::ToolbarSetNext),
+            ("New", Command::ToolbarSetNew),
+            ("Rename", Command::ToolbarSetRename),
+            ("Duplicate", Command::ToolbarSetDuplicate),
+            ("Delete", Command::ToolbarSetDelete),
+            ("Import Profile", Command::ToolbarImportProfile),
+            ("Export Profile", Command::ToolbarExportProfile),
+        ];
+        for (i, (label, command)) in set_buttons.into_iter().enumerate() {
+            let x = 24. + (i % 4) as f64 * (width - 32.) / 4.;
+            let y = 42. + (i / 4) as f64 * 24.;
+            let x2 = x + (width - 32.) / 4. - 4.;
+            let enabled = match command {
+                Command::ToolbarSetDelete => p.toolbar_sets.len() > 1,
+                Command::ToolbarSetNew | Command::ToolbarSetDuplicate => {
+                    p.toolbar_sets.len() < crate::toolbar_sets::MAX_SETS
+                }
+                _ => true,
+            };
+            self.hits.push(Hit {
+                rect: [x, y, x2, y + 20.],
+                command,
+                enabled,
+            });
+            g.pixel_rect(
+                c,
+                [x * s, y * s],
+                [x2 * s, (y + 20.) * s],
+                if self.focus == Some(command) {
+                    palette.accent_primary
+                } else {
+                    palette.selection
+                },
+                None,
+            );
+            g.ui_text(
+                c,
+                [(x + 2.) * s, (y + 2.) * s],
+                x2 - x - 4.,
+                label,
+                if enabled {
+                    palette.text_primary
+                } else {
+                    palette.text_disabled
+                },
+                &mut budget,
+            );
+        }
         let mid = (width + 24.) / 2.;
         g.ui_text(
             c,
-            [24. * s, 58. * s],
+            [24. * s, 106. * s],
             mid - 24.,
             "Available",
             palette.accent_secondary,
@@ -62,7 +108,7 @@ impl LocalUi {
         );
         g.ui_text(
             c,
-            [(mid + 8.) * s, 58. * s],
+            [(mid + 8.) * s, 106. * s],
             width - mid - 8.,
             "Order",
             palette.accent_secondary,
@@ -96,7 +142,7 @@ impl LocalUi {
             let x = if right { mid + 8. } else { 24. };
             let available = if right { width - x } else { mid - x - 8. };
             for (index, item) in list.iter().enumerate().skip(first).take(self.visible) {
-                let y = 76. + (index - first) as f64 * 22.;
+                let y = 124. + (index - first) as f64 * 22.;
                 let selected = self.toolbar_order == right && index == self.selected;
                 if selected {
                     g.pixel_rect(
@@ -144,7 +190,12 @@ impl LocalUi {
                 g,
                 c,
                 palette,
-                [x - 4., 76., x + available, 76. + self.visible as f64 * 22.],
+                [
+                    x - 4.,
+                    124.,
+                    x + available,
+                    124. + self.visible as f64 * 22.,
+                ],
                 (first, self.visible, list.len()),
             );
         }
@@ -161,7 +212,6 @@ impl LocalUi {
             palette.accent_attention,
             &mut budget,
         );
-        self.hits.clear();
         let labels = [
             ("Add", Command::ToolbarToggle),
             ("Remove", Command::ToolbarRemove),
@@ -237,6 +287,34 @@ impl LocalUi {
         self.focus = None;
         self.reveal_row = true;
         match cmd {
+            Command::ToolbarImportProfile => return Some(UiResult::Action(Action::ImportProfile)),
+            Command::ToolbarExportProfile => return Some(UiResult::Action(Action::ExportProfile)),
+            Command::ToolbarSetRename => {
+                self.toolbar_set_name = Some(p.toolbar_set_name().into());
+                self.toolbar_name_replace = true;
+                return None;
+            }
+            Command::ToolbarSetNext
+            | Command::ToolbarSetPrevious
+            | Command::ToolbarSetNew
+            | Command::ToolbarSetDuplicate
+            | Command::ToolbarSetDelete => {
+                let result = match cmd {
+                    Command::ToolbarSetNext => p.cycle_toolbar_set(true),
+                    Command::ToolbarSetPrevious => p.cycle_toolbar_set(false),
+                    Command::ToolbarSetNew => p.new_toolbar_set(false),
+                    Command::ToolbarSetDuplicate => p.new_toolbar_set(true),
+                    _ => p.delete_toolbar_set(),
+                };
+                if let Err(error) = result {
+                    self.message = error.to_string();
+                    return None;
+                }
+                self.toolbar_column(true);
+                self.selected = 0;
+                self.first = 0;
+                self.message = format!("Toolbar: {}", p.toolbar_set_name());
+            }
             Command::ToolbarRemove => {
                 if let Some(i) = position {
                     p.toolbar.actions.remove(i);
@@ -296,6 +374,7 @@ impl LocalUi {
             }
             _ => return None,
         }
+        p.sync_active_set();
         Some(UiResult::PreferencesChanged)
     }
     pub(super) fn toolbar_count() -> usize {
