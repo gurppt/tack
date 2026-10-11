@@ -32,7 +32,7 @@ Built in Rust, with a native GPU-rendered canvas. Boards are saved locally as
 - **Edit with confidence.** Undo and redo board edits, save your work, and recover
   completed recovery snapshots after an interrupted session.
 - **Choose how images are stored.** Embed originals for portable boards or link
-  to external files. Refresh changed files, switch between Linked and Embedded, relink missing sources when files move, and inspect dimensions, encoded size and source status from Image → Source → Image information.
+  to external files. Linked files refresh when opening a board or returning to Tack. Switch between Linked and Embedded, relink missing sources when files move, and inspect dimensions, encoded size and source status from Image → Source → Image information.
 - **Make the workspace yours.** Flat Very Dark, Neutral Gray and Light themes,
   crisp bitmap UI, custom pixel cursors, toolbar scaling and editable shortcuts. Right-click keeps application and contextual commands together.
 - **Share a board on your LAN.** File → Share Board → Share from this computer

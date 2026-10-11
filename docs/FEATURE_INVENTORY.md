@@ -349,3 +349,12 @@ Embedded origins; schemas 1–7 remain readable. LAN protocol major 4 is require
 for the new object flags; update every collaborating client/server together.
 See [2A9 report](MISSION_2A9_ALPHA_UX_CORRECTIVE_REPORT.md) and
 [portable profile report](PROFILE_EXPORT_IMPORT_ADDENDUM_REPORT.md).
+
+### Linked LOD corrective follow-up
+
+Linked sources revalidate once on board open and focus return, on the finite local
+worker, with no watcher or recurring stat/redraw. Changed sources update as one
+Undo batch, retaining object geometry/crop/style; Embedded sources stay pinned.
+Whole-image persistent LOD keys include descriptor identity and fingerprint,
+preventing transient revision reuse from resurrecting old pixels after reopening.
+See [corrective report](LINKED_LOD_REFRESH_CORRECTIVE_REPORT.md).

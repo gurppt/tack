@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "checks": 12,
+  "binary_sha256": "02e8df108185e022c8a34827a2c203c23ca7f9fb7aabf6be379cd5fbb14e8b0f",
+  "build_info": {
+    "channel": "dev",
+    "git_sha": "11c6b3259a2b8dce63e3aaad9bd8765b73cc406d",
+    "network": true,
+    "protocol_major": 4,
+    "updater": true,
+    "version": "0.1.0-dev.1"
+  },
+  "scope": "Owned Xvfb/software Vulkan; persistent cache warmed before revision reuse. No user windows/files."
+}

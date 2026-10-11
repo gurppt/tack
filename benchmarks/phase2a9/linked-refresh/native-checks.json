@@ -1,0 +1,173 @@
+[
+  {
+    "name": "initial-red",
+    "observed": true,
+    "detail": [
+      230,
+      20,
+      21
+    ]
+  },
+  {
+    "name": "refresh-red-revision-2",
+    "observed": true,
+    "detail": [
+      230,
+      20,
+      21
+    ]
+  },
+  {
+    "name": "embedded-red-revision-3",
+    "observed": true,
+    "detail": [
+      230,
+      20,
+      21
+    ]
+  },
+  {
+    "name": "linked-red-revision-4",
+    "observed": true,
+    "detail": [
+      230,
+      20,
+      21
+    ]
+  },
+  {
+    "name": "undo restores original source geometry",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "open-refreshes-green-without-command",
+    "observed": true,
+    "detail": [
+      20,
+      230,
+      19
+    ]
+  },
+  {
+    "name": "automatic refresh preserves object geometry",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "embedded-green-despite-old-revision-3-cache",
+    "observed": true,
+    "detail": [
+      20,
+      230,
+      19
+    ]
+  },
+  {
+    "name": "linked-green-despite-old-revision-4-cache",
+    "observed": true,
+    "detail": [
+      20,
+      230,
+      19
+    ]
+  },
+  {
+    "name": "focus-refreshes-blue-without-command",
+    "observed": true,
+    "detail": [
+      20,
+      20,
+      230
+    ]
+  },
+  {
+    "name": "focus refresh preserves geometry",
+    "observed": true,
+    "detail": null
+  },
+  {
+    "name": "settled probe does not poll or redraw",
+    "observed": true,
+    "detail": {
+      "seconds": 2,
+      "rss_before": 202379264,
+      "rss_after": 202379264,
+      "threads": 11,
+      "tasks": [
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-0",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "llvmpipe-1",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack:disk$0",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "WSI swapchain q",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "WSI swapchain e",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        }
+      ],
+      "ticks": 0,
+      "cpu_percent_one_core": 0.0,
+      "socket_records": [
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 123309"
+        }
+      ],
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      }
+    }
+  }
+]

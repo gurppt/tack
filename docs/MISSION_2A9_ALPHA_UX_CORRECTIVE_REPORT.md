@@ -4,6 +4,10 @@ Implementation commit: `161f615993ab85c34fa3ca503aeed93ef0314bda`. Portable-prof
 release/tag is published by this phase. Independent review and physical Windows
 acceptance remain release gates.
 
+Follow-up: the subsequently reported stale Linked LOD case and automatic
+open/focus refresh are corrected in `11c6b32`. Current `bin/` builds use that
+newer implementation; see the [corrective report](LINKED_LOD_REFRESH_CORRECTIVE_REPORT.md).
+
 ## Delivered behavior
 
 Image side/corner/full-edge drags are proportional, preserving a single image's

@@ -1,0 +1,98 @@
+{
+  "passed": true,
+  "binary_sha256": "02e8df108185e022c8a34827a2c203c23ca7f9fb7aabf6be379cd5fbb14e8b0f",
+  "build_info": {
+    "channel": "dev",
+    "git_sha": "11c6b3259a2b8dce63e3aaad9bd8765b73cc406d",
+    "network": true,
+    "protocol_major": 4,
+    "updater": true,
+    "version": "0.1.0-dev.1"
+  },
+  "intrinsic": [
+    50000,
+    50000
+  ],
+  "full_rgba_bytes": 10000000000,
+  "max_gpu_bytes": 2179136,
+  "max_cpu_payload_bytes": 2179136,
+  "max_tiles_requested": 4,
+  "max_tiles_ready": 4,
+  "frames": 128,
+  "idle": {
+    "seconds": 3.0,
+    "rss_before": 120938496,
+    "rss_after": 120938496,
+    "threads": 10,
+    "tasks": [
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-0",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "llvmpipe-1",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack:disk$0",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "WSI swapchain q",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "WSI swapchain e",
+        "ticks": 0,
+        "voluntary_switches": 0
+      },
+      {
+        "name": "tack-product-di",
+        "ticks": 0,
+        "voluntary_switches": 0
+      }
+    ],
+    "ticks": 0,
+    "cpu_percent_one_core": 0.0,
+    "socket_records": [
+      {
+        "kind": "unix",
+        "record": "0000000000000000: 00000003 00000000 00000000 0001 03 113661"
+      }
+    ],
+    "io_delta": {
+      "rchar": 0,
+      "wchar": 0,
+      "syscr": 0,
+      "syscw": 0,
+      "read_bytes": 0,
+      "write_bytes": 0,
+      "cancelled_write_bytes": 0
+    }
+  },
+  "scope": "Software Vulkan, one supply worker; CPU payload and reported GPU residence exclude native decoder scratch and OS file cache."
+}

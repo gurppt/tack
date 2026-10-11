@@ -1,0 +1,14 @@
+{
+  "workspace_rust_passed": 452,
+  "additional_multi_source_batch_test_passed": 1,
+  "total_unique_rust_passed": 453,
+  "focused_source_transition_tests_passed": 5,
+  "python_passed": 31,
+  "fmt": true,
+  "clippy": true,
+  "docs": true,
+  "deny": "advisories ok, bans ok, licenses ok, sources ok",
+  "no_default_features_all_targets": true,
+  "icons_unchanged": 169,
+  "scope": "Workspace suite followed by one additional focused multi-source regression; production code unchanged between those checks."
+}
