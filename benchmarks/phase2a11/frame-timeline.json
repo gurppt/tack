@@ -1,0 +1,4766 @@
+{
+  "game-1024x768": [
+    {
+      "artwork_bytes": 26896,
+      "frame": 0,
+      "hidden": false,
+      "ms": 3298.4320359999997,
+      "presented": true,
+      "state": "SpawnDelay"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 9775.320805,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 9858.703404,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 9942.077873,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 10025.454992,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 10108.855442,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 10192.238571,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 10291.549576,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 10374.950326,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 10458.327625,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 10541.705685,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 10625.096224,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 10708.465954,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 10791.839983,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 10875.215122,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 10958.585702,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 11041.958650999999,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 11125.32551,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 11208.69517,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 11292.058648999999,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 11375.456317999999,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 11458.826968000001,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 11542.191287,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 11625.571047,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 11708.933276,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 11792.308144999999,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 11875.682294,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 11959.051474,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 12042.417173,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 12125.802872999999,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 12209.176122,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 12292.551340999999,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 12375.931981000002,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 12459.31098,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 12542.68824,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 12626.075319,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 12709.472309,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 12792.842078,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 12876.220117,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 12959.616227,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 13043.014556,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 13126.390304999999,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 13209.789215,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 13293.190334,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 13376.579274000002,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 13459.977813,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 13543.341583,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 13626.719672,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 13710.097531000001,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 13775.351677999999,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 13858.724886999998,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 13942.103016000001,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 4,
+      "hidden": false,
+      "ms": 14025.478936000001,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 5,
+      "hidden": false,
+      "ms": 14108.842356000001,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 6,
+      "hidden": false,
+      "ms": 14192.242385,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 7,
+      "hidden": false,
+      "ms": 14275.623544,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 8,
+      "hidden": false,
+      "ms": 14359.019543,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 9,
+      "hidden": false,
+      "ms": 14442.396235,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 10,
+      "hidden": false,
+      "ms": 14525.787244,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 11,
+      "hidden": true,
+      "ms": 14609.164804,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 12,
+      "hidden": true,
+      "ms": 14699.043705999999,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 13,
+      "hidden": true,
+      "ms": 14816.861035,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 14,
+      "hidden": true,
+      "ms": 14918.728598,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 15,
+      "hidden": true,
+      "ms": 15006.880245,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 15090.834175,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 15174.207794999998,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 15257.578054,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 15340.995015,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 15424.363014,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 15507.740214,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 15591.109934,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 15674.473123,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 15757.838852,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 15841.212282,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 15924.581521,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 16007.952540000002,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 16091.321859000001,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 16174.683539,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 16258.076748000001,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 16341.459168,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 16424.824486999998,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 16508.196186999998,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 16591.587016999998,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 16674.967236,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 16758.335124999998,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 16841.699774999997,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 16925.069134,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 17008.450553,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 17091.848103,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 17175.218273,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 17258.580882000002,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 17341.9533,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 17425.31568,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 17508.680009,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 17592.052708,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 17675.427295999998,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 17758.807175,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 17842.177604,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 17925.552413999998,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 18008.947944,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 18090.881827,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 18174.278135,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 3,
+      "hidden": true,
+      "ms": 18257.648294,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 4,
+      "hidden": true,
+      "ms": 18341.017283999998,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 5,
+      "hidden": true,
+      "ms": 18424.399393000003,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 6,
+      "hidden": true,
+      "ms": 18507.784193,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 7,
+      "hidden": true,
+      "ms": 18591.179681999998,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 8,
+      "hidden": true,
+      "ms": 18674.556371000002,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 9,
+      "hidden": true,
+      "ms": 18757.943611000002,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 10,
+      "hidden": true,
+      "ms": 18841.31149,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 11,
+      "hidden": true,
+      "ms": 18924.687339,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 12,
+      "hidden": true,
+      "ms": 19008.066579000002,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 19091.450838,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "PostExplosionWait"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 20091.479757999998,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "puffs": 0,
+      "state": "Finished"
+    }
+  ],
+  "game-800x600": [
+    {
+      "artwork_bytes": 26896,
+      "frame": 0,
+      "hidden": false,
+      "ms": 3280.183074,
+      "presented": true,
+      "state": "SpawnDelay"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 8982.508373,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 9065.853442,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 9149.221690999999,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 9232.586681,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 9315.95182,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 9399.343129,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 9482.727348999999,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 9566.372059000001,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 9649.740988,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 9733.114058,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 9816.513987,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 9899.915517,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 9983.312476,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 10066.691846,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 10150.095325,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 10233.473924,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 10316.870794,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 10400.256033,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 10483.661081999999,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 10567.057512,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 10650.459311,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 10733.844741,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 10817.244001000001,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 10900.63554,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 10984.012859,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 11067.423599,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 11150.834868,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 11234.261238000001,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 11317.641887,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 11401.050165999999,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 11484.422646,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 11567.793925,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 11651.184614,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 11734.599974,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 11817.984533,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 11901.369293,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 11984.762322,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 12068.163992,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 12151.552571,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 12234.947781,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 12318.36122,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 12401.753389,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 12485.142859,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 12568.515248000002,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 12651.900228,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 12735.277487,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 12818.666956,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 12902.053426,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Idle"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 12982.565905,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 2,
+      "hidden": false,
+      "ms": 13065.939425,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 3,
+      "hidden": false,
+      "ms": 13149.332134,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 4,
+      "hidden": false,
+      "ms": 13232.737493,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 5,
+      "hidden": false,
+      "ms": 13316.122253,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 6,
+      "hidden": false,
+      "ms": 13399.509462,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 7,
+      "hidden": false,
+      "ms": 13482.887181,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 8,
+      "hidden": false,
+      "ms": 13566.265211,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 9,
+      "hidden": false,
+      "ms": 13649.644970000001,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 0,
+      "at": [
+        436.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 10,
+      "hidden": false,
+      "ms": 13733.0437,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        436.0,
+        318.0
+      ],
+      "frame": 11,
+      "hidden": true,
+      "ms": 13816.413959,
+      "pointer": [
+        400.0,
+        300.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 12,
+      "hidden": true,
+      "ms": 13899.817969000002,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 13,
+      "hidden": true,
+      "ms": 13999.743945,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 14,
+      "hidden": true,
+      "ms": 14093.438231,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 15,
+      "hidden": true,
+      "ms": 14176.82111,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Attack"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 14260.211179,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 14343.611669,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 14427.001378,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 14510.371927,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 14593.764996999998,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 14677.137046,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 14760.537495999999,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 14843.937495,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 14927.308695000002,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 15010.687824,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 15094.063952999999,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 15177.445593,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 15260.828412,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 15344.231882,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 15427.610701000001,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 15510.98706,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 15594.363019999999,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 15677.752069,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 15761.151377999999,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 15844.554568,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 15927.958087,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 16011.341437,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 16094.727056,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 16178.101846000001,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 16261.485095000002,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 16344.863623999998,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 16428.267903999997,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 16511.642653,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 16595.021223,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 16678.404082,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 16761.775321,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 16845.186631,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 16928.56843,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 17011.9573,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 17095.349809,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 17178.730408,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Munch"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 17260.254151,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 2,
+      "hidden": true,
+      "ms": 17343.627140999997,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 3,
+      "hidden": true,
+      "ms": 17427.003660000002,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 4,
+      "hidden": true,
+      "ms": 17510.378469,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 5,
+      "hidden": true,
+      "ms": 17593.757919000003,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 6,
+      "hidden": true,
+      "ms": 17677.131478,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 7,
+      "hidden": true,
+      "ms": 17760.507857,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 8,
+      "hidden": true,
+      "ms": 17843.883507000002,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 9,
+      "hidden": true,
+      "ms": 17927.256326,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 10,
+      "hidden": true,
+      "ms": 18010.636636,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 11,
+      "hidden": true,
+      "ms": 18094.009405,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 12,
+      "hidden": true,
+      "ms": 18177.400915,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "Explosion"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": true,
+      "ms": 18260.784064,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "presented": true,
+      "puffs": 0,
+      "state": "PostExplosionWait"
+    },
+    {
+      "advances": 1,
+      "at": [
+        402.0,
+        318.0
+      ],
+      "dock": [
+        756.0,
+        448.0
+      ],
+      "frame": 1,
+      "hidden": false,
+      "ms": 19260.824265,
+      "pointer": [
+        720.0,
+        430.0
+      ],
+      "puffs": 0,
+      "state": "Finished"
+    }
+  ]
+}

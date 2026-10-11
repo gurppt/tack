@@ -1,0 +1,1565 @@
+{
+  "code_commit": "768b921a427a1f2082c67750a6bc5a92dbceccf2",
+  "scope": "Owned Xvfb X11 production windows on hardware NVIDIA Vulkan; automated, no physical/human Windows acceptance claim",
+  "checks": [
+    {
+      "name": "800x600 inactive zero CPU ticks and write IO",
+      "observed": true,
+      "detail": {
+        "seconds": 2.011740842004656,
+        "rss_before": 314281984,
+        "rss_after": 314281984,
+        "threads": 8,
+        "tasks": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 1
+          },
+          {
+            "name": "[vkcf] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "[vkrt] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 20
+          },
+          {
+            "name": "[vkps] Update",
+            "ticks": 0,
+            "voluntary_switches": 40
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 200
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "ticks": 0,
+        "cpu_percent_one_core": 0.0,
+        "socket_records": [
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 360723"
+          },
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 360725"
+          },
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 360726"
+          }
+        ],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "label": "800x600 inactive",
+        "main_ticks": 0
+      }
+    },
+    {
+      "name": "800x600 cheese custom cursor",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "800x600 frame 10 cheese visible",
+      "observed": true,
+      "detail": {
+        "Attack": {
+          "1": false,
+          "2": false,
+          "3": false,
+          "4": false,
+          "5": false,
+          "6": false,
+          "7": false,
+          "8": false,
+          "9": false,
+          "10": false,
+          "11": true,
+          "12": true,
+          "13": true,
+          "14": true,
+          "15": true
+        },
+        "Munch": {
+          "1": true,
+          "2": true
+        },
+        "Explosion": {
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true,
+          "10": true,
+          "11": true,
+          "12": true
+        },
+        "PostExplosionWait": {
+          "1": true
+        },
+        "Inactive": {
+          "0": false
+        }
+      }
+    },
+    {
+      "name": "800x600 frame 11 and subsequent cursor fully hidden",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "800x600 returns Tack pixel pointer and normal tool after wait",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "800x600 finished zero main-thread CPU ticks and writes",
+      "observed": true,
+      "detail": {
+        "seconds": 2.0116258329944685,
+        "rss_before": 318328832,
+        "rss_after": 318328832,
+        "threads": 8,
+        "tasks": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 1
+          },
+          {
+            "name": "[vkcf] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "[vkrt] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 20
+          },
+          {
+            "name": "[vkps] Update",
+            "ticks": 1,
+            "voluntary_switches": 10
+          },
+          {
+            "name": "tack",
+            "ticks": 1,
+            "voluntary_switches": 201
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "ticks": 2,
+        "cpu_percent_one_core": 0.9942206782176969,
+        "socket_records": [
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 360723"
+          },
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 360725"
+          },
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 360726"
+          }
+        ],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "label": "800x600 completed inactive",
+        "main_ticks": 0
+      }
+    },
+    {
+      "name": "800x600 lateral park with two display pixels gap",
+      "observed": true,
+      "detail": {
+        "mouse": [
+          436.0,
+          318.0
+        ],
+        "pointer": [
+          400.0,
+          300.0
+        ],
+        "gap": 2.0
+      }
+    },
+    {
+      "name": "800x600 all 15 attack and 12 explosion frames presented",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "800x600 attack lands horizontally on frozen cheese",
+      "observed": true,
+      "detail": {
+        "parked": [
+          436.0,
+          318.0
+        ],
+        "landed": [
+          402.0,
+          318.0
+        ]
+      }
+    },
+    {
+      "name": "800x600 one advance and stable final anchors",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "800x600 full 1 second hidden wait",
+      "observed": true,
+      "detail": 1000.0402009999998
+    },
+    {
+      "name": "800x600 releases assets, game and deadlines",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "Escape during SpawnDelay cancels",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "hidden before Escape",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "Escape while hidden restores pointer",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "Focus loss cancels and cannot restart",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "1024x768 inactive zero CPU ticks and write IO",
+      "observed": true,
+      "detail": {
+        "seconds": 2.0121121630072594,
+        "rss_before": 316571648,
+        "rss_after": 316571648,
+        "threads": 8,
+        "tasks": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 1
+          },
+          {
+            "name": "[vkcf] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "[vkrt] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 20
+          },
+          {
+            "name": "[vkps] Update",
+            "ticks": 0,
+            "voluntary_switches": 42
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 201
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "ticks": 0,
+        "cpu_percent_one_core": 0.0,
+        "socket_records": [
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 356252"
+          },
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 366293"
+          },
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 366292"
+          }
+        ],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "label": "1024x768 inactive",
+        "main_ticks": 0
+      }
+    },
+    {
+      "name": "1024x768 cheese custom cursor",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "1024x768 frame 10 cheese visible",
+      "observed": true,
+      "detail": {
+        "Attack": {
+          "1": false,
+          "2": false,
+          "3": false,
+          "4": false,
+          "5": false,
+          "6": false,
+          "7": false,
+          "8": false,
+          "9": false,
+          "10": false,
+          "11": true,
+          "12": true,
+          "13": true,
+          "14": true,
+          "15": true
+        },
+        "Munch": {
+          "1": true,
+          "2": true
+        },
+        "Explosion": {
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true,
+          "10": true,
+          "11": true,
+          "12": true
+        },
+        "PostExplosionWait": {
+          "1": true
+        },
+        "Inactive": {
+          "0": false
+        }
+      }
+    },
+    {
+      "name": "1024x768 frame 11 and subsequent cursor fully hidden",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "1024x768 returns Tack pixel pointer and normal tool after wait",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "1024x768 finished zero main-thread CPU ticks and writes",
+      "observed": true,
+      "detail": {
+        "seconds": 2.012035943000228,
+        "rss_before": 320647168,
+        "rss_after": 320647168,
+        "threads": 8,
+        "tasks": [
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 1
+          },
+          {
+            "name": "[vkcf] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "[vkrt] Analysis",
+            "ticks": 0,
+            "voluntary_switches": 20
+          },
+          {
+            "name": "[vkps] Update",
+            "ticks": 1,
+            "voluntary_switches": 11
+          },
+          {
+            "name": "tack",
+            "ticks": 0,
+            "voluntary_switches": 200
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          },
+          {
+            "name": "tack-product-di",
+            "ticks": 0,
+            "voluntary_switches": 0
+          }
+        ],
+        "ticks": 1,
+        "cpu_percent_one_core": 0.49700901391893604,
+        "socket_records": [
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 356252"
+          },
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 366293"
+          },
+          {
+            "kind": "unix",
+            "record": "0000000000000000: 00000003 00000000 00000000 0001 03 366292"
+          }
+        ],
+        "io_delta": {
+          "rchar": 0,
+          "wchar": 0,
+          "syscr": 0,
+          "syscw": 0,
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "cancelled_write_bytes": 0
+        },
+        "label": "1024x768 completed inactive",
+        "main_ticks": 0
+      }
+    },
+    {
+      "name": "1024x768 lateral park with two display pixels gap",
+      "observed": true,
+      "detail": {
+        "mouse": [
+          436.0,
+          318.0
+        ],
+        "pointer": [
+          400.0,
+          300.0
+        ],
+        "gap": 2.0
+      }
+    },
+    {
+      "name": "1024x768 all 15 attack and 12 explosion frames presented",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "1024x768 attack lands horizontally on frozen cheese",
+      "observed": true,
+      "detail": {
+        "parked": [
+          436.0,
+          318.0
+        ],
+        "landed": [
+          402.0,
+          318.0
+        ]
+      }
+    },
+    {
+      "name": "1024x768 one advance and stable final anchors",
+      "observed": true,
+      "detail": null
+    },
+    {
+      "name": "1024x768 full 1 second hidden wait",
+      "observed": true,
+      "detail": 1000.028919999997
+    },
+    {
+      "name": "1024x768 releases assets, game and deadlines",
+      "observed": true,
+      "detail": null
+    }
+  ],
+  "measurements": [
+    {
+      "seconds": 2.011740842004656,
+      "rss_before": 314281984,
+      "rss_after": 314281984,
+      "threads": 8,
+      "tasks": [
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 1
+        },
+        {
+          "name": "[vkcf] Analysis",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "[vkrt] Analysis",
+          "ticks": 0,
+          "voluntary_switches": 20
+        },
+        {
+          "name": "[vkps] Update",
+          "ticks": 0,
+          "voluntary_switches": 40
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 200
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        }
+      ],
+      "ticks": 0,
+      "cpu_percent_one_core": 0.0,
+      "socket_records": [
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 360723"
+        },
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 360725"
+        },
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 360726"
+        }
+      ],
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "label": "800x600 inactive",
+      "main_ticks": 0
+    },
+    {
+      "seconds": 1.7949905199930072,
+      "rss_before": 314384384,
+      "rss_after": 314818560,
+      "threads": 8,
+      "tasks": [
+        {
+          "name": "tack",
+          "ticks": 148,
+          "voluntary_switches": 25
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "[vkcf] Analysis",
+          "ticks": 0,
+          "voluntary_switches": 71
+        },
+        {
+          "name": "[vkrt] Analysis",
+          "ticks": 0,
+          "voluntary_switches": 18
+        },
+        {
+          "name": "[vkps] Update",
+          "ticks": 1,
+          "voluntary_switches": 222
+        },
+        {
+          "name": "tack",
+          "ticks": 1,
+          "voluntary_switches": 179
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        }
+      ],
+      "ticks": 150,
+      "cpu_percent_one_core": 83.56590095004198,
+      "socket_records": [
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 360723"
+        },
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 360725"
+        },
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 360726"
+        }
+      ],
+      "io_delta": {
+        "rchar": 528,
+        "wchar": 131796344,
+        "syscr": 171,
+        "syscw": 151,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "label": "800x600 chase"
+    },
+    {
+      "seconds": 1.0136085179983638,
+      "rss_before": 315092992,
+      "rss_after": 317333504,
+      "threads": 8,
+      "tasks": [
+        {
+          "name": "tack",
+          "ticks": 37,
+          "voluntary_switches": 16
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "[vkcf] Analysis",
+          "ticks": 0,
+          "voluntary_switches": 17
+        },
+        {
+          "name": "[vkrt] Analysis",
+          "ticks": 0,
+          "voluntary_switches": 10
+        },
+        {
+          "name": "[vkps] Update",
+          "ticks": 0,
+          "voluntary_switches": 144
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 101
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        }
+      ],
+      "ticks": 37,
+      "cpu_percent_one_core": 36.503244934312725,
+      "socket_records": [
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 360723"
+        },
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 360725"
+        },
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 360726"
+        }
+      ],
+      "io_delta": {
+        "rchar": 120,
+        "wchar": 31952632,
+        "syscr": 55,
+        "syscw": 43,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "label": "800x600 active idle",
+      "main_ticks": 37
+    },
+    {
+      "seconds": 2.0116258329944685,
+      "rss_before": 318328832,
+      "rss_after": 318328832,
+      "threads": 8,
+      "tasks": [
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 1
+        },
+        {
+          "name": "[vkcf] Analysis",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "[vkrt] Analysis",
+          "ticks": 0,
+          "voluntary_switches": 20
+        },
+        {
+          "name": "[vkps] Update",
+          "ticks": 1,
+          "voluntary_switches": 10
+        },
+        {
+          "name": "tack",
+          "ticks": 1,
+          "voluntary_switches": 201
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        }
+      ],
+      "ticks": 2,
+      "cpu_percent_one_core": 0.9942206782176969,
+      "socket_records": [
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 360723"
+        },
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 360725"
+        },
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 360726"
+        }
+      ],
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "label": "800x600 completed inactive",
+      "main_ticks": 0
+    },
+    {
+      "seconds": 2.0121121630072594,
+      "rss_before": 316571648,
+      "rss_after": 316571648,
+      "threads": 8,
+      "tasks": [
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 1
+        },
+        {
+          "name": "[vkcf] Analysis",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "[vkrt] Analysis",
+          "ticks": 0,
+          "voluntary_switches": 20
+        },
+        {
+          "name": "[vkps] Update",
+          "ticks": 0,
+          "voluntary_switches": 42
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 201
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        }
+      ],
+      "ticks": 0,
+      "cpu_percent_one_core": 0.0,
+      "socket_records": [
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 356252"
+        },
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 366293"
+        },
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 366292"
+        }
+      ],
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "label": "1024x768 inactive",
+      "main_ticks": 0
+    },
+    {
+      "seconds": 1.8002170779946027,
+      "rss_before": 316588032,
+      "rss_after": 317231104,
+      "threads": 8,
+      "tasks": [
+        {
+          "name": "tack",
+          "ticks": 178,
+          "voluntary_switches": 1
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "[vkcf] Analysis",
+          "ticks": 0,
+          "voluntary_switches": 52
+        },
+        {
+          "name": "[vkrt] Analysis",
+          "ticks": 0,
+          "voluntary_switches": 18
+        },
+        {
+          "name": "[vkps] Update",
+          "ticks": 1,
+          "voluntary_switches": 251
+        },
+        {
+          "name": "tack",
+          "ticks": 1,
+          "voluntary_switches": 179
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        }
+      ],
+      "ticks": 180,
+      "cpu_percent_one_core": 99.98794156564472,
+      "socket_records": [
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 356252"
+        },
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 366293"
+        },
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 366292"
+        }
+      ],
+      "io_delta": {
+        "rchar": 416,
+        "wchar": 163584352,
+        "syscr": 106,
+        "syscw": 121,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "label": "1024x768 chase"
+    },
+    {
+      "seconds": 1.0079485989990644,
+      "rss_before": 317440000,
+      "rss_after": 319655936,
+      "threads": 8,
+      "tasks": [
+        {
+          "name": "tack",
+          "ticks": 45,
+          "voluntary_switches": 11
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 1
+        },
+        {
+          "name": "[vkcf] Analysis",
+          "ticks": 0,
+          "voluntary_switches": 12
+        },
+        {
+          "name": "[vkrt] Analysis",
+          "ticks": 0,
+          "voluntary_switches": 11
+        },
+        {
+          "name": "[vkps] Update",
+          "ticks": 1,
+          "voluntary_switches": 144
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 101
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        }
+      ],
+      "ticks": 46,
+      "cpu_percent_one_core": 45.63724781767636,
+      "socket_records": [
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 356252"
+        },
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 366293"
+        },
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 366292"
+        }
+      ],
+      "io_delta": {
+        "rchar": 104,
+        "wchar": 37752440,
+        "syscr": 49,
+        "syscw": 37,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "label": "1024x768 active idle",
+      "main_ticks": 45
+    },
+    {
+      "seconds": 2.012035943000228,
+      "rss_before": 320647168,
+      "rss_after": 320647168,
+      "threads": 8,
+      "tasks": [
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 1
+        },
+        {
+          "name": "[vkcf] Analysis",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "[vkrt] Analysis",
+          "ticks": 0,
+          "voluntary_switches": 20
+        },
+        {
+          "name": "[vkps] Update",
+          "ticks": 1,
+          "voluntary_switches": 11
+        },
+        {
+          "name": "tack",
+          "ticks": 0,
+          "voluntary_switches": 200
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        },
+        {
+          "name": "tack-product-di",
+          "ticks": 0,
+          "voluntary_switches": 0
+        }
+      ],
+      "ticks": 1,
+      "cpu_percent_one_core": 0.49700901391893604,
+      "socket_records": [
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 356252"
+        },
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 366293"
+        },
+        {
+          "kind": "unix",
+          "record": "0000000000000000: 00000003 00000000 00000000 0001 03 366292"
+        }
+      ],
+      "io_delta": {
+        "rchar": 0,
+        "wchar": 0,
+        "syscr": 0,
+        "syscw": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "label": "1024x768 completed inactive",
+      "main_ticks": 0
+    }
+  ],
+  "reports": {
+    "game-1024x768": {
+      "adapter": "NVIDIA GeForce RTX 2060",
+      "backend": "Vulkan",
+      "window_size": [
+        1024,
+        768
+      ],
+      "redraw_count": 230,
+      "wait_count": 479,
+      "editing": {
+        "dirty": false,
+        "generation": 0,
+        "redo_entries": 0,
+        "save_completed": 0,
+        "selected": 0,
+        "undo_entries": 0
+      },
+      "mouse": {
+        "artwork_bytes": 0,
+        "cursor_hidden": false,
+        "deadline_active": false,
+        "effects": 0,
+        "game_active": false,
+        "spawn_requests": 0,
+        "tool": "Pointer",
+        "trace": []
+      },
+      "frame_cpu_median_ms": 0.253891,
+      "present_median_ms": 33.330681,
+      "redraws_in_completed_quiet_interval": 0
+    },
+    "game-800x600": {
+      "adapter": "NVIDIA GeForce RTX 2060",
+      "backend": "Vulkan",
+      "window_size": [
+        800,
+        600
+      ],
+      "redraw_count": 227,
+      "wait_count": 532,
+      "editing": {
+        "dirty": false,
+        "generation": 0,
+        "redo_entries": 0,
+        "save_completed": 0,
+        "selected": 0,
+        "undo_entries": 0
+      },
+      "mouse": {
+        "artwork_bytes": 0,
+        "cursor_hidden": false,
+        "deadline_active": false,
+        "effects": 0,
+        "game_active": false,
+        "spawn_requests": 0,
+        "tool": "Pointer",
+        "trace": []
+      },
+      "frame_cpu_median_ms": 0.207541,
+      "present_median_ms": 23.330671000000002,
+      "redraws_in_completed_quiet_interval": 0
+    }
+  },
+  "asset_copy": [
+    {
+      "source": "animated_mulot_run1.png",
+      "runtime": "animated_mulot_run1.png",
+      "sha256": "8d72924f36093f147e3fe23a5180be7df122c7b6660e1e4921a844b2aa14fd99"
+    },
+    {
+      "source": "animated_mulot_run2.png",
+      "runtime": "animated_mulot_run2.png",
+      "sha256": "f133df048fc43597b2c296ff3f0d16f0cc9aefd8e5ce7ab6a8567cb415abc896"
+    },
+    {
+      "source": "animated_mulot_run3.png",
+      "runtime": "animated_mulot_run3.png",
+      "sha256": "a93c38535e7f343064d4d324499fbb1f370f311935f7c484238cf975e806b4b0"
+    },
+    {
+      "source": "animated_mulot_idle1.png",
+      "runtime": "animated_mulot_idle1.png",
+      "sha256": "1b99ea0ee794c16852dbd8b67d40e8a57cd29ea851e4b45386262e8a94c9ab58"
+    },
+    {
+      "source": "animated_mulot_idle2.png",
+      "runtime": "animated_mulot_idle2.png",
+      "sha256": "04e55fe7067e49344fa69f0ef0d8c73b019d8b71cc857c5b9de4b4b667ed1ef7"
+    },
+    {
+      "source": "animated_mulot_idle3.png",
+      "runtime": "animated_mulot_idle3.png",
+      "sha256": "377a72103adc6bfefd4bc6e62267319d17e1d3de1405278b99ed437ddd10539b"
+    },
+    {
+      "source": "animated_mulot_attack1.png",
+      "runtime": "animated_mulot_attack1.png",
+      "sha256": "bb450f81921bb0bb90dbc46502e89e1d11d5113b19eae1b83e08e4749037a7e9"
+    },
+    {
+      "source": "animated_mulot_attack2.png",
+      "runtime": "animated_mulot_attack2.png",
+      "sha256": "30f94fff24a9efe804ceb2d9b134d6ce860aba17791931f1082f329e23ef1919"
+    },
+    {
+      "source": "animated_mulot_attack3.png",
+      "runtime": "animated_mulot_attack3.png",
+      "sha256": "911aeaacde7a50b98ce283a2e9bfce8b363c6c4a938db89940aa571ad217f079"
+    },
+    {
+      "source": "animated_mulot_attack4.png",
+      "runtime": "animated_mulot_attack4.png",
+      "sha256": "c021478e065195e2edc9baf3a27a9c2a4afddcf7efb82e8af15910b361f2c360"
+    },
+    {
+      "source": "animated_mulot_attack5.png",
+      "runtime": "animated_mulot_attack5.png",
+      "sha256": "5fb7695739b9c8a138062c5120bf4472bb6c8ee3c9351d9034325445dad03420"
+    },
+    {
+      "source": "animated_mulot_attack6.png",
+      "runtime": "animated_mulot_attack6.png",
+      "sha256": "a16d521a1871e44ac9495796b75f7e461c12a2b0bf56b19cade1823c853a39b4"
+    },
+    {
+      "source": "animated_mulot_attack7.png",
+      "runtime": "animated_mulot_attack7.png",
+      "sha256": "f6c56ee3407099b1ce2ae595dddfa32727682112d0b1a4c8f05e00528ec3d52a"
+    },
+    {
+      "source": "animated_mulot_attack8.png",
+      "runtime": "animated_mulot_attack8.png",
+      "sha256": "ea1b0c70a77cab64911940adf97bfc56fbd6aa6ac574a46ebf5b37276d2df941"
+    },
+    {
+      "source": "animated_mulot_attack9.png",
+      "runtime": "animated_mulot_attack9.png",
+      "sha256": "6681348aa21426e6b9fb50df1e6f1f9454e6ae0aad84a5cbd0b2d614b9f0baa6"
+    },
+    {
+      "source": "animated_mulot_attack10.png",
+      "runtime": "animated_mulot_attack10.png",
+      "sha256": "dc3eac485b19a7c9589dbcb1146266a93a812c9d1ac8f9485350af86d5bad59c"
+    },
+    {
+      "source": "animated_mulot_attack11.png",
+      "runtime": "animated_mulot_attack11.png",
+      "sha256": "055b5e0deb84f0349dc9e6a303c30990895d48cfd5ef8da210c8bcad9471ec97"
+    },
+    {
+      "source": "animated_mulot_attack12.png",
+      "runtime": "animated_mulot_attack12.png",
+      "sha256": "3ef57e6f98a45c0b215d2c61ee7ad85ca45ba3c7a1927194e18132e0e0b7f71e"
+    },
+    {
+      "source": "animated_mulot_attack13.png",
+      "runtime": "animated_mulot_attack13.png",
+      "sha256": "5a3f17a9eb2552b424397c1f3c7c29b637898468bd8701101577a34cc5da01e5"
+    },
+    {
+      "source": "animated_mulot_attack14.png",
+      "runtime": "animated_mulot_attack14.png",
+      "sha256": "c77cf3fd69a132c291cfe555e65eaccc3a3525138816fa77078ececc0bcc0a32"
+    },
+    {
+      "source": "animated_mulot_attack15.png",
+      "runtime": "animated_mulot_attack15.png",
+      "sha256": "30f94fff24a9efe804ceb2d9b134d6ce860aba17791931f1082f329e23ef1919"
+    },
+    {
+      "source": "animated_mulot_munch1.png",
+      "runtime": "animated_mulot_munch1.png",
+      "sha256": "a0cb299a359d5b06262c7be0756ab9b1f8f847b1b2e3e404e031f780767864b4"
+    },
+    {
+      "source": "animated_mulot_munch2.png",
+      "runtime": "animated_mulot_munch2.png",
+      "sha256": "21add95482b18b5a95ec2b6bd69d81e020ab13c0eaa57939bc41215840c91b7b"
+    },
+    {
+      "source": "explosion1.png",
+      "runtime": "explosion1.png",
+      "sha256": "ce0f64a7a6fba58048d6e855f1cb744db8ae75ce2ee579555f6fff7e0e23672a"
+    },
+    {
+      "source": "explosion2.png",
+      "runtime": "explosion2.png",
+      "sha256": "afcdf8f6cb95484b1d98ada3aaf055a421dcdc4f2d2bc85280774a97e07fa9a7"
+    },
+    {
+      "source": "explosion3.png",
+      "runtime": "explosion3.png",
+      "sha256": "973328a428b9afe916d6fda18572da2f7926bdd7e07a8e42a7ead51a30a85c88"
+    },
+    {
+      "source": "explosion4.png",
+      "runtime": "explosion4.png",
+      "sha256": "688aa56b15afcb6dfe8557bc912a230eefe78c95272f019765b865069308350a"
+    },
+    {
+      "source": "explosion5.png",
+      "runtime": "explosion5.png",
+      "sha256": "d43a82ef10fe401f2d582429dc10a3e36dbd90bc09e9fb9a68ae2a6948fdb747"
+    },
+    {
+      "source": "explosion6.png",
+      "runtime": "explosion6.png",
+      "sha256": "d6b580855f7c3adef1a7e315f33dd4a3d475455d41c6d6b7ec0db9b2095f7681"
+    },
+    {
+      "source": "explosion7.png",
+      "runtime": "explosion7.png",
+      "sha256": "c32238621a1a16ac2f76de229dbbf8fc0ce2027474154fc316e71a9191d94e82"
+    },
+    {
+      "source": "explosion8.png",
+      "runtime": "explosion8.png",
+      "sha256": "e1d95b777bfdd27a2a051e451ebe24429edf5b11a63081e6b8b1841e5b07a59b"
+    },
+    {
+      "source": "explosion9.png",
+      "runtime": "explosion9.png",
+      "sha256": "b4b4a8c249e024ba4f78a00e55e836b2a1cbc349d50f733fcbc07ef4312622c4"
+    },
+    {
+      "source": "explosion10.png",
+      "runtime": "explosion10.png",
+      "sha256": "63f6e93b77e9cc3df04f3599b8dfec7a23983c04a370343503b278b2e2393a67"
+    },
+    {
+      "source": "explosion11.png",
+      "runtime": "explosion11.png",
+      "sha256": "295679f0c16600e4acd61c09c620728a00db42fdc49c8016dacee1d0a1084d97"
+    },
+    {
+      "source": "explosion12.png",
+      "runtime": "explosion12.png",
+      "sha256": "2273b3f7eb3eb5bdcef3ec958e53063608e63ea830a07b0232d7548dcb74de26"
+    },
+    {
+      "source": "smoky_a1.png",
+      "runtime": "smoky_a1.png",
+      "sha256": "b8def00ad1d9fca148a098f0c4157b9df81301f9180109092589520844ebce03"
+    },
+    {
+      "source": "smoky_a2.png",
+      "runtime": "smoky_a2.png",
+      "sha256": "50dd59927f657b0acba53518ed09169d27e70982cb126eceeb7797df81040c24"
+    },
+    {
+      "source": "smoky_a3.png",
+      "runtime": "smoky_a3.png",
+      "sha256": "c3b3d51eb23b40b5e0468900c29f5e3c12fe0d9f7366547f3daa746c50c5c45d"
+    },
+    {
+      "source": "smoky_a4.png",
+      "runtime": "smoky_a4.png",
+      "sha256": "c3cdc213748bc698b0890beb4dc25403d3cd7397609bc6f4ad74fceab2d4d6b6"
+    },
+    {
+      "source": "smokyb1.png",
+      "runtime": "smoky_b1.png",
+      "sha256": "cd73ac1aa4907392717183b2daf08ce095669bcfac23dd43316e62a5ff7a83ba"
+    },
+    {
+      "source": "smokyb2.png",
+      "runtime": "smoky_b2.png",
+      "sha256": "4cbe7353f8632c075bb5dd660254bd69addb3709b2d9c6adfbcc03de989419e0"
+    },
+    {
+      "source": "smokyb3.png",
+      "runtime": "smoky_b3.png",
+      "sha256": "2be656ccbc9d4db9a10c86ad524a08063c3f9fba809ff3838095f24670a9ee15"
+    },
+    {
+      "source": "smokyb4.png",
+      "runtime": "smoky_b4.png",
+      "sha256": "c3cdc213748bc698b0890beb4dc25403d3cd7397609bc6f4ad74fceab2d4d6b6"
+    },
+    {
+      "source": "cheese_cursor.png",
+      "runtime": "cheese_cursor.png",
+      "sha256": "585b9d6002b661adf3c2575d0fe8d29289204ff6a3f6f2d56978653116fdbc7e"
+    }
+  ],
+  "editable_pngs_verified": 214,
+  "windows": {
+    "scope": "Linux Wine Windows CLI/decoder execution; no Windows desktop/physical LAN claim",
+    "executable_sha256": "967677a425befc1027c0c12409359098d1b4d2f7e34b9b1ed7933466c82a65e4",
+    "decoder_sha256": "572f30cb424c645a1fe68c56c943d254aa09ece4513d0539c88acd1873c4dab7",
+    "harness_sha256": "26dc1a392b86d5fb9eb952614a045507b233d7d4d79085706ff535752a3d10dd",
+    "seconds": 40.42292965500383,
+    "checks": [
+      {
+        "name": "Windows executable creates/reopens JPEG board",
+        "observed": true,
+        "detail": {
+          "created": {
+            "container_bytes_read": 4029,
+            "derived_bytes_written": 482,
+            "dirty_after_save": false,
+            "embedded": true,
+            "errors": 0,
+            "file_bytes": 1845,
+            "metadata_import_ms": 1.0574,
+            "metadata_source_bytes": 625,
+            "objects": 1,
+            "operation": "create",
+            "overview_generated": 1,
+            "overview_reused": 0,
+            "peak_pending": 1,
+            "preparation_ms": 5.4565,
+            "progress": [
+              {
+                "elapsed_ms": 0.0083,
+                "errors": 0,
+                "ready": 0
+              },
+              {
+                "elapsed_ms": 5.4559999999999995,
+                "errors": 0,
+                "ready": 1
+              }
+            ],
+            "save_ms": 5.773000000000001,
+            "source_bytes_read": 1535,
+            "total_ms": 17.921
+          },
+          "inspected": {
+            "assets": 1,
+            "bookmarks": [],
+            "discarded_overviews": 0,
+            "document_id": "707c471e6ed64c644c2a7eb333339578",
+            "embedded": 1,
+            "metadata_bytes": 453,
+            "metadata_ms": 1.0871,
+            "objects": 1,
+            "original_bytes_read": 0,
+            "overviews": 1,
+            "sources": 1
+          }
+        }
+      },
+      {
+        "name": "Windows JPEG decoder executes scalar",
+        "observed": true,
+        "detail": {
+          "size": [
+            160,
+            100
+          ],
+          "sha256": "ceb56b6024685595dd868860efb36c138ccd855328db259289d0870b9648aa65"
+        }
+      },
+      {
+        "name": "Windows JPEG decoder executes sse2",
+        "observed": true,
+        "detail": {
+          "size": [
+            160,
+            100
+          ],
+          "sha256": "ceb56b6024685595dd868860efb36c138ccd855328db259289d0870b9648aa65"
+        }
+      },
+      {
+        "name": "Windows JPEG decoder executes automatic-simd",
+        "observed": true,
+        "detail": {
+          "size": [
+            160,
+            100
+          ],
+          "sha256": "ceb56b6024685595dd868860efb36c138ccd855328db259289d0870b9648aa65"
+        }
+      },
+      {
+        "name": "scalar/SSE2/automatic SIMD decoder output matches",
+        "observed": true,
+        "detail": null
+      },
+      {
+        "name": "owned Wine scratch stays within documented 2 GiB exception",
+        "observed": true,
+        "detail": {
+          "bytes": 1696539835
+        }
+      }
+    ]
+  },
+  "binaries": {
+    "bin/tack": {
+      "sha256": "5eaa5713475511b2674d5544c8f2db93b216e6c5cc23453ac5d38bbe66d19fb3",
+      "bytes": 21225736
+    },
+    "bin/tack-windows-x86_64.zip": {
+      "sha256": "c31a3dfc79a7af58e8ae4ca50fcf09b40f4adfab4730e3bd5300860eee3dabbe",
+      "bytes": 14013327
+    }
+  }
+}
