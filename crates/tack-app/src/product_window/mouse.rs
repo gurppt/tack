@@ -89,7 +89,7 @@ impl App {
                 window.set_cursor_visible(true);
             }
             self.mouse_hidden = false;
-            window.set_cursor(winit::window::CursorIcon::Default);
+            self.cursors.set(window, tack_app::cursors::Kind::Pointer);
         }
         self.cursor_icon = tack_app::cursors::Kind::Pointer;
         self.dirty = true;
@@ -122,7 +122,7 @@ impl App {
             let changed = game.tick(now, self.camera.screen_size().map(f64::from));
             self.dirty |= changed;
             if changed && self.options.output.is_some() && self.mouse_trace.len() < 1024 {
-                self.mouse_trace.push(json!({"ms":self.started.elapsed().as_secs_f64()*1000.,"state":format!("{:?}",game.state),"frame":game.frame+1,"at":game.at,"hidden":game.hidden,"advances":game.advances,"puffs":game.puffs.len()}));
+                self.mouse_trace.push(json!({"ms":self.started.elapsed().as_secs_f64()*1000.,"state":format!("{:?}",game.state),"frame":game.frame+1,"at":game.at,"pointer":self.pointer,"dock":game.dock_target(),"hidden":game.hidden,"advances":game.advances,"puffs":game.puffs.len()}));
             }
             if changed && game.state == tack_app::mouse_game::State::Run {
                 paw = Some(game.at.map(|v| v / self.camera.ui_scale()));

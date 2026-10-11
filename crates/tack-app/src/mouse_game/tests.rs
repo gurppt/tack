@@ -70,7 +70,7 @@ fn late_clock_never_skips_attack_frame_eleven_or_explosion_frames() {
 fn anchored_jitter_accepted_but_accumulated_escape_cancels_dwell() {
     let now = Instant::now();
     let mut g = Game::new(now, [400., 300.], 0);
-    g.at = g.target;
+    g.at = g.dock_target();
     g.reference = g.target;
     g.dwell = Some(now);
     g.enter(State::Idle, now);
@@ -219,6 +219,7 @@ fn fixed_puffs_alternate_with_emission_orientation_and_expire() {
     assert_eq!(g.puffs[0].at, first);
     g.reference = g.at;
     g.target = g.at;
+    g.at = g.dock_target();
     g.dwell = Some(now);
     g.enter(State::Idle, now);
     for n in 1..=5 {
@@ -282,10 +283,93 @@ fn all_authored_sprite_cycles_use_twelve_frames_per_second() {
     let mut g = Game::new(now, [400., 300.], 0);
     g.enter(State::Idle, now);
     g.reference = g.target;
-    g.at = g.target;
+    g.at = g.dock_target();
     g.dwell = Some(now);
     for n in 1..=12 {
         g.tick(now + FRAME * n, [800., 600.]);
         assert_eq!(g.frame, n as usize % 3);
     }
+}
+#[test]
+fn lateral_dock_accounts_for_scaled_canvases_hotspot_and_edges() {
+    let now = Instant::now();
+    for point in [[400., 300.], [2., 300.], [798., 300.]] {
+        for right in [false, true] {
+            let mut g = Game::new(now, point, 0);
+            g.dock_right = right;
+            g.fit_side(800.);
+            let dock = g.dock_target();
+            let half = SPRITE_WIDTH / 2.;
+            let gap = if g.dock_right {
+                (dock[0] - half) - (point[0] + SPRITE_WIDTH - CHEESE_HOTSPOT)
+            } else {
+                (point[0] - CHEESE_HOTSPOT) - (dock[0] + half)
+            };
+            assert_eq!(gap, 2.);
+            assert_eq!(dock[1] - half, point[1] + half - CHEESE_HOTSPOT);
+            assert!(dock[0] - half >= 0. && dock[0] + half <= 800.);
+        }
+    }
+}
+#[test]
+fn approach_from_above_below_left_and_right_parks_laterally_facing_cheese() {
+    let now = Instant::now();
+    for seed in 0..4 {
+        let mut g = Game::new(now, [400., 300.], seed);
+        g.tick(now + SPAWN, [800., 600.]);
+        for n in 1..700 {
+            g.tick(now + SPAWN + STEP * n, [800., 600.]);
+            if g.state == State::Idle {
+                break;
+            }
+        }
+        assert_eq!(g.state, State::Idle);
+        assert_eq!(g.at, g.dock_target());
+        assert_eq!(g.at[1], 318.);
+        assert_eq!(g.flip, !g.dock_right);
+        assert_eq!((g.at[0] - 402.).abs(), 34.);
+    }
+}
+#[test]
+fn footprints_are_black_and_behind_smoke_and_character() -> Result<(), tack_assets::AssetError> {
+    use std::sync::atomic::AtomicBool;
+    let now = Instant::now();
+    let mut mouse = crate::mouse_tool::MouseTool::default();
+    mouse.load();
+    mouse.activate(true, now);
+    mouse.motion([200., 200.], now);
+    mouse.motion([256., 200.], now);
+    assert_eq!(mouse.effect_count(), 2);
+    let mut game = Game::new(now, [240., 200.], 0);
+    game.enter(State::Run, now);
+    game.puffs.push_back(Puff {
+        at: [230., 200.],
+        b: false,
+        flip: false,
+        frame: 0,
+        next: now + FRAME,
+    });
+    mouse.game = Some(Box::new(game));
+    mouse.artwork = Some(Box::new(artwork::Artwork::load(
+        &artwork::root(),
+        &AtomicBool::new(false),
+    )?));
+    let c = tack_core::Camera::new([800, 600]);
+    let mut full = crate::image_gizmo::ImageGizmo::default();
+    mouse.draw(&mut full, &c);
+    let mut foreground = crate::image_gizmo::ImageGizmo::default();
+    if let (Some(art), Some(game)) = (&mouse.artwork, &mouse.game) {
+        art.draw(game, &mut foreground, &c);
+    }
+    assert_eq!(full.quads.len(), 2 + foreground.quads.len());
+    assert!(full.quads[..2].iter().all(|q| q.color == [0., 0., 0., 1.]));
+    for (actual, expected) in full.quads[2..].iter().zip(&foreground.quads) {
+        assert_eq!(actual.color, expected.color);
+        assert_eq!(actual.bitmap, expected.bitmap);
+        assert_eq!(actual.points, expected.points);
+    }
+    // The first foreground mask is smoke grey, before the coloured character.
+    assert!(foreground.quads[0].color[3] < 1.);
+    assert!(foreground.quads.iter().any(|q| q.color[0] != q.color[1]));
+    Ok(())
 }

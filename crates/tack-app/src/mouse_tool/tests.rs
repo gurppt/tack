@@ -45,10 +45,10 @@ fn direction_mapping_gait_minimum_travel_bounds_and_expiry() {
     let mut m = MouseTool::default();
     m.activate(true, now);
     assert!(!m.motion([0.; 2], now));
-    assert!(!m.motion([17., 0.], now));
-    assert!(m.motion([18., 0.], now));
-    assert!(!m.motion([18., 0.], now));
-    assert!(m.motion([36., 0.], now));
+    assert!(!m.motion([SPACING - 1., 0.], now));
+    assert!(m.motion([SPACING, 0.], now));
+    assert!(!m.motion([SPACING, 0.], now));
+    assert!(m.motion([SPACING * 2., 0.], now));
     let feet: Vec<_> = m
         .effects
         .iter()
@@ -57,7 +57,10 @@ fn direction_mapping_gait_minimum_travel_bounds_and_expiry() {
             _ => None,
         })
         .collect();
-    assert_eq!(feet, vec![([10., -11.], 4), ([28., -5.], 5)]);
+    assert_eq!(
+        feet,
+        vec![([SPACING - 8., -11.], 4), ([SPACING * 2. - 8., -5.], 5)]
+    );
     m.motion([1e8, 0.], now);
     assert_eq!(m.effect_count(), LIMIT);
     assert!(m.click([100., 100.], now));

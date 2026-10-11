@@ -19,6 +19,11 @@ pub const SMOKE_FRAME: Duration = FRAME;
 pub const SMOKE_LIMIT: usize = 24;
 pub const MAX_SPEED: f64 = 360.;
 pub const JITTER: f64 = 3.5;
+// Authored 16px canvases at x2; native cheese hotspot (7,7) at x2.
+pub const PIXEL_SCALE: f64 = 2.;
+pub const SPRITE_WIDTH: f64 = 16. * PIXEL_SCALE;
+pub const CHEESE_HOTSPOT: f64 = 7. * PIXEL_SCALE;
+pub const SIDE_GAP: f64 = PIXEL_SCALE;
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum State {
     SpawnDelay,
@@ -48,6 +53,7 @@ pub struct Game {
     pub puffs: VecDeque<Puff>,
     pub advances: u32,
     target: [f64; 2],
+    dock_right: bool,
     saved: [f64; 2],
     reference: [f64; 2],
     dwell: Option<Instant>,
@@ -76,6 +82,7 @@ impl Game {
             puffs: VecDeque::with_capacity(SMOKE_LIMIT),
             advances: 0,
             target,
+            dock_right: false,
             saved: target,
             reference: target,
             dwell: None,
@@ -98,7 +105,7 @@ impl Game {
     }
     pub fn pointer(&mut self, at: [f64; 2]) {
         if at.into_iter().all(f64::is_finite) {
-            if self.state == State::Idle && distance(at, self.reference) > JITTER {
+            if self.state == State::Idle && at != self.target {
                 self.next = self.last;
             }
             self.target = at;
@@ -131,7 +138,9 @@ impl Game {
             2 => [t * w, -32.],
             _ => [t * w, h + 32.],
         };
-        self.flip = self.target[0] > self.at[0];
+        self.dock_right = self.at[0] > self.target[0];
+        self.fit_side(size[0]);
+        self.flip = self.dock_target()[0] > self.at[0];
         self.enter(State::Run, now);
     }
     /// One visible animation frame per wake; late events stretch instead of skipping art.
@@ -156,16 +165,12 @@ impl Game {
                     if self.frame == 10 {
                         self.hidden = true;
                         self.advances += 1;
-                        let d = [self.saved[0] - self.at[0], self.saved[1] - self.at[1]];
-                        let len = d[0].hypot(d[1]);
-                        let unit = if len > 0.001 {
-                            d.map(|v| v / len)
+                        // The saved cheese is lateral to the parked mouse: advance horizontally.
+                        self.at[0] += if self.saved[0] > self.at[0] {
+                            12.
                         } else {
-                            [if self.flip { 1. } else { -1. }, 0.]
+                            -12.
                         };
-                        for (i, v) in unit.into_iter().enumerate() {
-                            self.at[i] += v * 12.;
-                        }
                     }
                 } else {
                     self.enter(State::Munch, now);
@@ -197,6 +202,26 @@ impl Game {
         self.presented = false;
         true
     }
+    pub fn dock_target(&self) -> [f64; 2] {
+        let half = SPRITE_WIDTH / 2.;
+        let x = if self.dock_right {
+            SPRITE_WIDTH - CHEESE_HOTSPOT + SIDE_GAP + half
+        } else {
+            -CHEESE_HOTSPOT - SIDE_GAP - half
+        };
+        [
+            self.target[0] + x,
+            self.target[1] + SPRITE_WIDTH - CHEESE_HOTSPOT,
+        ]
+    }
+    fn fit_side(&mut self, width: f64) {
+        let [x, _] = self.dock_target();
+        if self.dock_right && x + SPRITE_WIDTH / 2. > width {
+            self.dock_right = false;
+        } else if !self.dock_right && x - SPRITE_WIDTH / 2. < 0. {
+            self.dock_right = true;
+        }
+    }
     fn chase(&mut self, now: Instant, size: [f64; 2]) {
         let dt = now
             .saturating_duration_since(self.last)
@@ -204,17 +229,20 @@ impl Game {
             .min(0.050);
         self.last = now;
         self.next = now + STEP;
+        self.fit_side(size[0]);
+        let dock = self.dock_target();
         if self.state == State::Idle {
-            if distance(self.target, self.reference) > JITTER
-                || distance(self.at, self.target) > 24.
-            {
+            if distance(self.target, self.reference) > JITTER || distance(self.at, dock) > 24. {
                 self.dwell = None;
                 self.enter(State::Run, now);
             } else if self
                 .dwell
                 .is_some_and(|at| now.saturating_duration_since(at) >= DWELL)
             {
-                self.saved = self.target;
+                self.saved = [
+                    self.target[0] + SPRITE_WIDTH / 2. - CHEESE_HOTSPOT,
+                    self.target[1],
+                ];
                 self.velocity = [0.; 2];
                 self.puffs.clear();
                 self.enter(State::Attack, now);
@@ -223,7 +251,7 @@ impl Game {
         }
         if self.state == State::Run {
             let previous = self.at;
-            let delta = [self.target[0] - self.at[0], self.target[1] - self.at[1]];
+            let delta = [dock[0] - self.at[0], dock[1] - self.at[1]];
             for (i, d) in delta.into_iter().enumerate() {
                 self.velocity[i] =
                     (self.velocity[i] + d.clamp(-160., 160.) * 9. * dt) * (-4.5 * dt).exp();
@@ -239,15 +267,21 @@ impl Game {
                 self.at[i] = (self.at[i] + v * dt).clamp(-64., size[i].clamp(1., 16384.) + 64.);
             }
             self.smoke(previous, now);
-            if distance(self.at, self.target) < 12.
+            if distance(self.at, dock) < 3.
                 && self.velocity[0].hypot(self.velocity[1]) < 24.
                 && now.saturating_duration_since(self.entered) >= Duration::from_millis(250)
             {
                 self.velocity = [0.; 2];
+                self.at = dock;
+                self.flip = !self.dock_right;
                 self.reference = self.target;
                 self.dwell = Some(now);
                 self.enter(State::Idle, now);
             }
+        }
+        if self.state == State::Idle {
+            self.at = dock;
+            self.flip = !self.dock_right;
         }
         let interval = FRAME;
         if now.saturating_duration_since(self.animation) >= interval {

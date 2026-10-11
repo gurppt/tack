@@ -8,7 +8,7 @@ use tack_assets::AssetError;
 use tack_core::{AssetId, Camera, Document, DocumentObject, ImageAsset, ImageFiltering, Transform};
 
 pub const LIMIT: usize = 64;
-pub const SPACING: f64 = 18.;
+pub const SPACING: f64 = 28.;
 pub const PAW_LIFETIME: Duration = Duration::from_millis(800);
 const PING_STEP: Duration = Duration::from_millis(120);
 pub const EASTER_WAIT: Duration = Duration::from_secs(600);
@@ -273,9 +273,6 @@ impl MouseTool {
         self.effects.len()
     }
     pub fn draw(&self, g: &mut ImageGizmo, c: &Camera) {
-        if let (Some(game), Some(art)) = (&self.game, &self.artwork) {
-            art.draw(game, g, c);
-        }
         let scale = c.ui_scale();
         for effect in &self.effects {
             match *effect {
@@ -308,6 +305,10 @@ impl MouseTool {
                     }
                 }
             }
+        }
+        // Painter order: footprints at the back, then smoke, then the character.
+        if let (Some(game), Some(art)) = (&self.game, &self.artwork) {
+            art.draw(game, g, c);
         }
     }
 }
@@ -348,17 +349,8 @@ fn load_sprite(path: &std::path::Path, flip_x: bool, flip_y: bool) -> Result<Spr
             sprite.bits[y / 2] |= 1 << ((y % 2) * 16 + 15 - x);
         }
     }
-    if let Some(color) = authored_color {
-        sprite.color = [0., 0., 0., 1.];
-        for (i, channel) in color.into_iter().enumerate() {
-            let s = f32::from(channel) / 255.;
-            sprite.color[i] = if s <= 0.04045 {
-                s / 12.92
-            } else {
-                ((s + 0.055) / 1.055).powf(2.4)
-            };
-        }
-    }
+    // Runtime tint only: preserve authored silhouette and the editable PNG bytes.
+    sprite.color = [0., 0., 0., 1.];
     Ok(sprite)
 }
 #[cfg(test)]

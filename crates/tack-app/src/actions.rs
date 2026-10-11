@@ -39,7 +39,7 @@ impl Tool {
             Self::Arrow => "Arrow",
             Self::Scribble => "Scribble",
             Self::Eraser => "Scribble eraser",
-            Self::Mouse => "Mouse (Mulot)",
+            Self::Mouse => "Mulot",
         }
     }
 }

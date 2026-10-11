@@ -30,6 +30,9 @@ def main():
  def phase():
   match=re.search(r'GAME (\w+) (\d+)',s.title());return (match.group(1),int(match.group(2))) if match else ('Inactive',0)
  def invisible():return not any(value>>24 for value in cursor.pixels()['pixels'])
+ def app_pointer():
+  icon=binary.parent/'gfx/cursors/cursor_pointer.png'
+  return cursor.pixels()==expected(icon if icon.exists() else repo/'gfx/cursors/cursor_pointer.png',[1,1])
  def measure(label,seconds):
   before=snapshot(s.process.pid);start=time.monotonic();time.sleep(seconds);after=snapshot(s.process.pid)
   value=delta(before,after,time.monotonic()-start);value['label']=label;value['main_ticks']=after['tasks'][str(s.process.pid)]['ticks']-before['tasks'][str(s.process.pid)]['ticks'];runs.append(value)
@@ -69,19 +72,22 @@ def main():
     time.sleep(.008)
    record(size+' frame 10 cheese visible',observed.get('Attack',{}).get(10) is False,observed)
    record(size+' frame 11 and subsequent cursor fully hidden',observed.get('Attack',{}).get(11) is True and all(v for stage in ['Munch','Explosion','PostExplosionWait'] for v in observed.get(stage,{}).values()))
-   record(size+' returns normal tool after wait',phase()[0]=='Inactive' and not invisible() and 'Pointer' in s.title())
+   record(size+' returns Tack pixel pointer and normal tool after wait',phase()[0]=='Inactive' and app_pointer() and 'Pointer' in s.title())
    time.sleep(.5);settled=measure(size+' completed inactive',2);record(size+' finished zero main-thread CPU ticks and writes',settled['main_ticks']==0 and settled['io_delta']['write_bytes']==0,settled)
    s.close();receipt=json.loads(s.report.read_text());trace=receipt['mouse']['trace'];attack=[r for r in trace if r['state']=='Attack'];explosion=[r for r in trace if r['state']=='Explosion']
+   idle=next(r for r in trace if r['state']=='Idle');mx,my=idle['at'];px,py=idle['pointer'];
+   gap=(px-14)-(mx+16) if mx<px else (mx-16)-(px+18)
+   record(size+' lateral park with two display pixels gap',abs(gap-2)<.01 and abs(my-16-(py+2))<.01,dict(mouse=idle['at'],pointer=idle['pointer'],gap=gap))
    record(size+' all 15 attack and 12 explosion frames presented', [r['frame'] for r in attack]==list(range(1,16)) and [r['frame'] for r in explosion]==list(range(1,13)) and all(r.get('presented') for r in attack+explosion))
    landing=attack[10]['at'];record(size+' one advance and stable final anchors',all(r['advances']==1 and r['at']==landing for r in trace if r['state'] in ['Munch','Explosion','PostExplosionWait']))
    postrow=next(r for r in trace if r['state']=='PostExplosionWait');finished=next(r for r in trace if r['state']=='Finished');record(size+' full 1 second hidden wait',finished['ms']-postrow['ms']>=1000,finished['ms']-postrow['ms'])
    record(size+' releases assets, game and deadlines',not receipt['mouse']['game_active'] and receipt['mouse']['artwork_bytes']==0 and not receipt['mouse']['deadline_active'])
    if size=='800x600':
     # Separate owned run: cancellation while hidden, then focus loss without toy restart.
-    s=Session(binary,root,'cancel',['open',board],env);time.sleep(.8);move(400,300);s.key('F1');wait(lambda:phase()[0]=='SpawnDelay','cancel asset install');s.key('Escape');record('Escape during SpawnDelay cancels',phase()[0]=='Inactive' and not invisible())
-    s.key('F1');wait(lambda:(phase()[0]=='Attack' and phase()[1]>=11) or phase()[0] in ('Munch','Explosion','PostExplosionWait'),'hidden attack',seconds=22);record('hidden before Escape',invisible());s.key('Escape');record('Escape while hidden restores pointer',phase()[0]=='Inactive' and not invisible())
+    s=Session(binary,root,'cancel',['open',board],env);time.sleep(.8);move(400,300);s.key('F1');wait(lambda:phase()[0]=='SpawnDelay','cancel asset install');s.key('Escape');record('Escape during SpawnDelay cancels',phase()[0]=='Inactive' and app_pointer())
+    s.key('F1');wait(lambda:(phase()[0]=='Attack' and phase()[1]>=11) or phase()[0] in ('Munch','Explosion','PostExplosionWait'),'hidden attack',seconds=22);record('hidden before Escape',invisible());s.key('Escape');record('Escape while hidden restores pointer',phase()[0]=='Inactive' and app_pointer())
     s.key('F1');wait(lambda:(phase()[0]=='Attack' and phase()[1]>=11) or phase()[0] in ('Munch','Explosion','PostExplosionWait'),'hidden focus-loss stage',seconds=22)
-    rootid=re.search(r'Window id: (0x[0-9a-f]+)',command('xwininfo','-root')).group(1);command('xdotool','windowfocus',rootid);time.sleep(.2);s.focus();record('Focus loss cancels and cannot restart',phase()[0]=='Inactive' and not invisible());s.close()
+    rootid=re.search(r'Window id: (0x[0-9a-f]+)',command('xwininfo','-root')).group(1);command('xdotool','windowfocus',rootid);time.sleep(.2);s.focus();record('Focus loss cancels and cannot restart',phase()[0]=='Inactive' and app_pointer());s.close()
   (root/'measurements.json').write_text(json.dumps(runs,indent=2)+'\n')
   print(json.dumps(dict(checks=len(checks),passed=all(x['observed'] for x in checks))),flush=True)
  finally:

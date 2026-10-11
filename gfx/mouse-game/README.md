@@ -31,3 +31,14 @@ preserves existing artist replacements. At activation the existing local worker
 loads 44 fixed PNGs (each capped at 64 KiB). At most 64 cached color masks per
 frame, 24 smoke puffs and 64 existing paw effects. No additional GPU texture,
 image codec, game framework or game worker is installed.
+
+Mulot parks horizontally beside the full cheese canvas: one source pixel gap
+(2 display pixels), taking the native (14,14) scaled cursor hotspot into account.
+Both 32px canvases share a vertical center. The side is retained during pursuit,
+with edge fallback; on parking it faces the cheese. Idle jitter preserves the
+anchored dwell reference while moving the dock along with the cheese. Attack
+frame 11 advances the frozen anchor horizontally by 12 display pixels once.
+
+Painter order is footprints, smoke, then Mulot. Footprints use the authored
+silhouette tinted black at runtime, spaced 28 logical pixels instead of 18.
+Completion and cancellation restore Tack's authored pixel Pointer cursor.
