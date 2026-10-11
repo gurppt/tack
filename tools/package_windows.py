@@ -29,6 +29,7 @@ def main():
     shutil.copy2(built/'tack-about-logo.png',package/'tack-about-logo.png')
     install_missing(root/'gfx/icons', package/'gfx/icons')
     install_missing(root/'gfx/cursors', package/'gfx/cursors')
+    install_missing(root/'gfx/mouse-game', package/'gfx/mouse-game')
     imports={}
     for p in package.glob('*.exe'):
         data=subprocess.check_output(['x86_64-w64-mingw32-objdump','-p',str(p)],text=True)

@@ -44,7 +44,7 @@ def package(binary_dir,platform,output,channel,runner=(),require_clean=True):
  shutil.copy2(decoder,folder/decoder.name)
  for name in ['tack-about.png','tack-about-logo.png','tack-icon-16.png','tack-icon-32.png','tack-icon-64.png','tack-icon-128.png','tack-icon-256.png','tack-icon.ico']:
   shutil.copy2(binary_dir/name,folder/name)
- for group in ['icons','cursors']:
+ for group in ['icons','cursors','mouse-game']:
   target=folder/'gfx'/group;target.mkdir(parents=True)
   for source in sorted((ROOT/'gfx'/group).glob('*.png')):shutil.copy2(source,target/source.name)
  notices=folder/'LICENSES';notices.mkdir()

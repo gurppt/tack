@@ -19,6 +19,10 @@ use std::{
 use tack_assets::AssetError;
 use tack_core::{ObjectId, Source};
 pub enum LocalUpdate {
+    MouseGame {
+        ticket: u64,
+        result: Result<Box<crate::mouse_game::artwork::Artwork>, String>,
+    },
     EmptyBoard(Result<OpenedBoard, String>),
     SharedReady(Result<Option<crate::hosting::ShareReady>, String>),
     SavedLocal(Result<OpenedBoard, String>),
@@ -84,6 +88,9 @@ impl OpenedBoard {
     }
 }
 pub enum Operation {
+    MouseGame {
+        ticket: u64,
+    },
     Update(crate::updates::Request),
     EmptyBoard(PathBuf),
     SaveLocal(crate::independent_copy::Request),
@@ -164,6 +171,7 @@ struct Active {
     handle: JoinHandle<()>,
     importing: bool,
     mutating: bool,
+    mouse_game: bool,
 }
 #[derive(Default)]
 pub struct LocalWorker {
@@ -173,6 +181,9 @@ pub struct LocalWorker {
 impl LocalWorker {
     pub fn active(&self) -> bool {
         self.active.is_some()
+    }
+    pub fn loading_mouse(&self) -> bool {
+        self.active.as_ref().is_some_and(|a| a.mouse_game)
     }
     pub fn importing(&self) -> bool {
         self.active.as_ref().is_some_and(|a| a.importing)
@@ -193,6 +204,7 @@ impl LocalWorker {
         if self.active() {
             return Err("another local operation is active; Escape cancels it".into());
         }
+        let mouse_game = matches!(operation, Operation::MouseGame { .. });
         let importing = matches!(operation, Operation::Import(_));
         let mutating = matches!(
             operation,
@@ -220,6 +232,17 @@ impl LocalWorker {
                 };
                 let result = (|| -> Result<(), AssetError> {
                     match operation {
+                        Operation::MouseGame { ticket } => {
+                            let result = crate::mouse_game::artwork::Artwork::load(
+                                &crate::mouse_game::artwork::root(),
+                                &stop,
+                            )
+                            .map(Box::new)
+                            .map_err(|e| e.to_string());
+                            if !stop.load(Ordering::Relaxed) {
+                                emit(LocalUpdate::MouseGame { ticket, result });
+                            }
+                        }
                         Operation::Update(request) => {
                             emit(LocalUpdate::Update(
                                 request.run(&stop).map_err(|e| e.to_string()),
@@ -463,6 +486,7 @@ impl LocalWorker {
             receiver,
             handle,
             importing,
+            mouse_game,
             mutating,
         });
         Ok(())
@@ -476,7 +500,8 @@ impl LocalWorker {
                         if active.cancel.load(Ordering::Relaxed)
                             && matches!(
                                 update,
-                                LocalUpdate::SourceTransition(_)
+                                LocalUpdate::MouseGame { .. }
+                                    | LocalUpdate::SourceTransition(_)
                                     | LocalUpdate::LinkedRefresh(_)
                                     | LocalUpdate::Relinked(_)
                                     | LocalUpdate::Update(_)

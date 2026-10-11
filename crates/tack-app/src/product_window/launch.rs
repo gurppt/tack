@@ -261,6 +261,8 @@ fn run_mode(
         context: None,
         pointer: [0.; 2],
         cursor_icon: Default::default(),
+        mouse_hidden: false,
+        mouse_trace: Vec::new(),
         cursors: Default::default(),
         mouse_pending: None,
         mouse_import_document: None,

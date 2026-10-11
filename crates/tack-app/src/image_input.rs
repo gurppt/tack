@@ -406,6 +406,12 @@ impl ImageInput {
             }
             self.finish_scribble(editor)?;
         }
+        if phase == ActionPhase::Invoke
+            && self.active_tool() == crate::actions::Tool::Mouse
+            && matches!(action,Action::SelectTool(tool) if tool!=crate::actions::Tool::Mouse)
+        {
+            self.annotation.tools.reset_pointer();
+        }
         if action == Action::SelectTool(crate::actions::Tool::Mouse) && phase == ActionPhase::Invoke
         {
             self.cancel_gesture();

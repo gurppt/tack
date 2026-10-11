@@ -3,6 +3,34 @@ use super::*;
 impl App {
     pub(in super::super) fn local_update(&mut self, update: LocalUpdate) -> Result<(), AssetError> {
         match update {
+            LocalUpdate::MouseGame { ticket, result } => {
+                if self.input.active_tool() == tack_app::actions::Tool::Mouse
+                    && ticket == self.mouse.ticket
+                {
+                    match result {
+                        Ok(art) => {
+                            self.mouse.artwork = Some(art);
+                            self.mouse.game = Some(Box::new(tack_app::mouse_game::Game::new(
+                                Instant::now(),
+                                self.pointer,
+                                ticket.wrapping_mul(0x9e3779b97f4a7c15)
+                                    ^ self.started.elapsed().as_nanos() as u64,
+                            )));
+                            if let Some(game) = &mut self.mouse.game {
+                                game.require_presentation();
+                            }
+                            if self.options.output.is_some() && self.mouse_trace.len() < 1024 {
+                                self.mouse_trace.push(json!({"ms":self.started.elapsed().as_secs_f64()*1000.,"state":"SpawnDelay","frame":0,"hidden":false,"artwork_bytes":self.mouse.artwork.as_ref().map_or(0,|a|a.mask_bytes())}));
+                            }
+                            self.dirty = true;
+                        }
+                        Err(error) => {
+                            self.abort_mouse();
+                            self.interaction_error = Some(error);
+                        }
+                    }
+                }
+            }
             LocalUpdate::Update(result) => self.update_response(result)?,
             LocalUpdate::EmptyBoard(result) => {
                 let opened = result.map_err(AssetError::from)?;

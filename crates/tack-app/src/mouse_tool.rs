@@ -105,6 +105,10 @@ impl Effect {
 }
 pub struct MouseTool {
     active: bool,
+    pub game: Option<Box<crate::mouse_game::Game>>,
+    pub artwork: Option<Box<crate::mouse_game::artwork::Artwork>>,
+    pub ticket: u64,
+    pub loading: bool,
     easter: Option<Instant>,
     wait: Duration,
     anchor: Option<[f64; 2]>,
@@ -123,6 +127,10 @@ impl MouseTool {
     pub fn new(wait: Duration) -> Self {
         Self {
             active: false,
+            game: None,
+            artwork: None,
+            ticket: 0,
+            loading: false,
             easter: None,
             wait,
             anchor: None,
@@ -157,6 +165,10 @@ impl MouseTool {
             return false;
         }
         self.active = active;
+        self.ticket = self.ticket.wrapping_add(1);
+        self.loading = false;
+        self.game = None;
+        self.artwork = None;
         self.easter = active.then_some(now + self.wait);
         self.anchor = None;
         self.remaining = SPACING;
@@ -254,12 +266,16 @@ impl MouseTool {
             .iter()
             .map(|e| e.deadline())
             .chain(self.easter)
+            .chain(self.game.as_ref().and_then(|g| g.deadline()))
             .min()
     }
     pub fn effect_count(&self) -> usize {
         self.effects.len()
     }
     pub fn draw(&self, g: &mut ImageGizmo, c: &Camera) {
+        if let (Some(game), Some(art)) = (&self.game, &self.artwork) {
+            art.draw(game, g, c);
+        }
         let scale = c.ui_scale();
         for effect in &self.effects {
             match *effect {

@@ -54,6 +54,9 @@ pub fn allowed(path: &Path) -> bool {
         && path.components().count() == 1
         && (s.ends_with(".png") || s.ends_with(".ico")))
         || (s.starts_with("gfx/cursors/") && s.ends_with(".png") && path.components().count() == 3)
+        || (s.starts_with("gfx/mouse-game/")
+            && s.ends_with(".png")
+            && path.components().count() == 3)
         || (s.starts_with("gfx/icons/") && s.ends_with(".png") && path.components().count() <= 4)
         || (s.starts_with("LICENSES/") && path.components().count() == 2)
 }
@@ -260,6 +263,8 @@ fn owned_files(directory: &Path, expected: &Manifest) -> Result<Vec<PathBuf>, Er
                             | "verified/gfx"
                             | "package/gfx/icons"
                             | "verified/gfx/icons"
+                            | "package/gfx/mouse-game"
+                            | "verified/gfx/mouse-game"
                             | "package/gfx/cursors"
                             | "verified/gfx/cursors"
                             | "package/gfx/icons/work_icons"
@@ -346,6 +351,11 @@ mod tests {
         archive(&zip, &["root/tack", "root/gfx/cursors/cursor_pointer.png"])?;
         let files = extract(&zip, &t.0.join("good"))?;
         assert_eq!(files.len(), 2);
+        assert!(allowed(
+            &Path::new("gfx")
+                .join("mouse-game")
+                .join("animated_mulot_run1.png")
+        ));
         assert_eq!(std::fs::read(t.0.join("good/tack"))?, b"fixture");
         assert!(allowed(&Path::new("gfx").join("icons").join("link.png")));
         assert!(allowed(
@@ -399,6 +409,9 @@ mod tests {
         std::fs::write(d.join("package.zip"), b"partial")?;
         std::fs::create_dir(d.join("verified"))?;
         std::fs::write(d.join("verified/tack"), b"half extraction")?;
+        let sprites = d.join("verified").join("gfx").join("mouse-game");
+        std::fs::create_dir_all(&sprites)?;
+        std::fs::write(sprites.join("animated_mulot_run1.png"), b"sprite")?;
         let nested = d.join("verified").join("gfx").join("icons");
         std::fs::create_dir_all(&nested)?;
         std::fs::write(nested.join("pointer.png"), b"recognized partial icon")?;

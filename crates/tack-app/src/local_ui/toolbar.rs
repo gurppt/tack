@@ -7,9 +7,15 @@ impl LocalUi {
             .chain(
                 Action::ALL
                     .into_iter()
-                    .filter(|a| crate::toolbar::eligible(*a))
+                    .filter(|a| {
+                        crate::toolbar::eligible(*a)
+                            && *a != Action::SelectTool(crate::actions::Tool::Mouse)
+                    })
                     .map(Item::Action),
             )
+            .chain(std::iter::once(Item::Action(Action::SelectTool(
+                crate::actions::Tool::Mouse,
+            ))))
             .collect()
     }
     pub(super) fn toolbar_column(&mut self, order: bool) {
@@ -175,6 +181,17 @@ impl LocalUi {
                         disabled: false,
                     };
                     self.icon_count += 1;
+                }
+                if !right && *item == Item::Action(Action::SelectTool(crate::actions::Tool::Mouse))
+                {
+                    g.ui_text(
+                        c,
+                        [(x + available - 58.) * s, (y + 2.) * s],
+                        52.,
+                        "EXTRAS",
+                        palette.text_disabled,
+                        &mut budget,
+                    );
                 }
                 let inset = if icon.is_some() { 20. } else { 0. };
                 g.ui_text(

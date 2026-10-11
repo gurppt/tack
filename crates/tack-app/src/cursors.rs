@@ -49,6 +49,7 @@ pub const TABLE: [(&str, u16, u16); 18] = [
 #[derive(Default)]
 pub struct Cache {
     handles: Vec<Option<CustomCursor>>,
+    mouse: Option<CustomCursor>,
 }
 impl Cache {
     pub fn load(event_loop: &ActiveEventLoop) -> Self {
@@ -59,6 +60,7 @@ impl Cache {
             std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../gfx/cursors")
         });
         Self {
+            mouse: None,
             handles: TABLE
                 .iter()
                 .map(|(name, x, y)| {
@@ -80,8 +82,29 @@ impl Cache {
                 .collect(),
         }
     }
+    pub fn install_mouse(
+        &mut self,
+        e: &ActiveEventLoop,
+        rgba: &[u8],
+    ) -> Result<bool, tack_assets::AssetError> {
+        if self.mouse.is_none() {
+            let source = CustomCursor::from_rgba(scaled_rgba(rgba.to_vec(), 2), 32, 32, 14, 14)?;
+            self.mouse = Some(e.create_custom_cursor(source));
+            return Ok(true);
+        }
+        Ok(false)
+    }
+    pub fn clear_mouse(&mut self) {
+        self.mouse = None;
+    }
     pub fn set(&self, window: &winit::window::Window, kind: Kind) {
-        if let Some(Some(handle)) = self.handles.get(kind as usize) {
+        if kind == Kind::Mouse {
+            if let Some(handle) = &self.mouse {
+                window.set_cursor(handle.clone());
+            } else {
+                window.set_cursor(CursorIcon::Default);
+            }
+        } else if let Some(Some(handle)) = self.handles.get(kind as usize) {
             window.set_cursor(handle.clone());
         } else {
             window.set_cursor(kind.fallback());

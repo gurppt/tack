@@ -26,6 +26,7 @@ fn fixture(install: &Path) -> Result<(std::path::PathBuf, Manifest), Error> {
         ("tack-about.png", b"about"),
         ("tack-about-logo.png", b"logo"),
         ("gfx/icons/pointer.png", b"default icon"),
+        ("gfx/mouse-game/animated_mulot_run1.png", b"default mouse"),
         ("BUILD.json", record.to_string().as_bytes()),
     ] {
         zip.start_file(

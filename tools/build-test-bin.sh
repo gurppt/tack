@@ -5,6 +5,7 @@ cd "$(dirname "$0")/.."
 # Runtime icons are editable user artwork. Seed missing files only.
 python3 tools/install_toolbar_icons.py gfx/icons bin/gfx/icons
 python3 tools/install_toolbar_icons.py gfx/cursors bin/gfx/cursors
+python3 tools/install_toolbar_icons.py gfx/mouse-game bin/gfx/mouse-game
 # Mark the previously installed executable as stale while building. A failed build
 # must not leave an older executable described as current.
 if [ -f bin/BUILD.txt ]; then

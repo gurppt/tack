@@ -92,6 +92,7 @@ pub fn rollback(install: &Path) -> Result<(), Error> {
             && destination.is_file()
             && !entry.path.starts_with("gfx/icons")
             && !entry.path.starts_with("gfx/cursors")
+            && !entry.path.starts_with("gfx/mouse-game")
         {
             std::fs::remove_file(destination)?;
         }

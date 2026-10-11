@@ -105,6 +105,8 @@ struct App {
     context: Option<Box<tack_app::context_menu::ContextMenu>>,
     pointer: [f64; 2],
     cursor_icon: tack_app::cursors::Kind,
+    mouse_hidden: bool,
+    mouse_trace: Vec<serde_json::Value>,
     cursors: tack_app::cursors::Cache,
     mouse: tack_app::mouse_tool::MouseTool,
     mouse_pending: Option<(tack_core::DocumentId, [f64; 2], f64)>,
@@ -688,6 +690,12 @@ impl App {
             w.pre_present_notify();
         }
         frame.present();
+        if let Some(game) = &mut self.mouse.game {
+            game.presented();
+            if let Some(record) = self.mouse_trace.last_mut().and_then(|r| r.as_object_mut()) {
+                record.insert("presented".into(), json!(true));
+            }
+        }
         let present_ms = present_start.elapsed().as_secs_f64() * 1000.;
         if self.options.output.is_some() && self.frames.len() < 7200 {
             self.frames.push(json!({"window_size":self.camera.screen_size(),"lod_trace":self.lod_trace.as_mut().and_then(|trace| trace.record(&self.camera, &self.draws, self.editor.as_ref().map(|e|e.document()), self.assets.as_ref(), gpu, overview_edge)),"annotations":self.annotations.as_ref().map(|a|json!({"primitives":a.primitives.len(),"glyphs":a.glyphs,"omitted":a.omitted,"layout_ms":a.layout_ms,"build_ms":a.build_ms})),"camera":self.camera.screen_to_world(self.camera.screen_size().map(|v|f64::from(v)/2.)),"zoom":self.camera.zoom(),"overview_edge":overview_edge,"detail_reserved":detail_reserved,"desired_detail":desired_count,"quality_resolved":resolved_count,"scene_ms":scene_ms,"query_ms":query_ms,"supply_ms":supply_ms,"detailed":detailed,"supply":self.assets.as_ref().map(|a| {let s=a.stats();json!({"pending":s.pending,"queued":s.queued,"cpu_bytes":s.cpu_bytes,"evictions":s.evictions,"source_bytes":s.source_bytes,"container_bytes":s.container_bytes,"decode_count":s.decode_count,"codec_requests":s.codec_requests,"region_jobs":s.region_jobs,"tile_outputs":s.tile_outputs,"tile_cache_hits":s.tile_cache_hits,"tile_cache_read_bytes":s.tile_cache_read_bytes,"tile_cache_write_bytes":s.tile_cache_write_bytes,"tile_disk_bytes":s.tile_disk_bytes,"decoded_bytes":s.decoded_bytes,"decode_ms":s.decode_ms,"discarded":s.discarded})}),"encode_ms":stats.encode_ms,"submit_ms":stats.submit_ms,"poll_ms":stats.poll_ms,"elapsed_ms":elapsed_ms,"cpu_ms":cpu_ms,"visible":logical_images,"tiles_requested":tile_counts[0],"tiles_ready":tile_counts[1],"recognizable":recognizable,"upload_cpu_ms":stats.upload_cpu_ms,"upload_bytes":stats.upload_bytes,"uploads":stats.uploads,"gpu_bytes":stats.gpu_bytes,"in_flight":stats.in_flight,"acquire_ms":acquire_ms,"present_ms":present_ms,"callback_ms":start.elapsed().as_secs_f64()*1000.}));
@@ -785,7 +793,7 @@ impl App {
             .unwrap_or_default();
         let mut report = json!({"about":{"requests":self.local.about_ticket,"image_gpu_bytes":gpu.map_or(0, |g| g.ui_image_bytes()),"version":tack_app::about::METADATA.version},"window_size":self.camera.screen_size(),"load_failed":self.load_failed,"local":{"operations":self.local.worker.operations,"recoveries":self.save.recoveries,"recovery_generation":self.save.recovery_generation,"recovery_bytes":self.save.recovery_bytes,"last_storage_worker_ms":self.save.last_worker_ms,"ui_scale":self.camera.ui_scale(),"discarded_asset_results":stats.discarded},"first_frame_ms":self.first_frame_ms,"gpu_setup_ms":self.gpu_setup_ms,"annotation_resources":gpu.map(|g|g.annotation_bytes()),"annotations":self.editor.as_ref().map(|e|e.document().annotation_count()).unwrap_or(0),"spatial":{"grid":self.input.grid_visible,"snapping":self.input.snap.enabled,"frames":self.editor.as_ref().map(|e|e.document().objects().filter(|o|matches!(o.kind(),tack_core::ObjectKind::Frame(_))).count()).unwrap_or(0),"groups":self.editor.as_ref().map(|e|e.document().groups().count()).unwrap_or(0)},"redraw_count":self.redraws,"wait_count":self.wakeups,"operation":"open","editing":self.editor.as_ref().map(|e|json!({"dirty":e.is_dirty(),"generation":e.generation(),"undo_entries":e.undo_len(),"redo_entries":e.redo_len(),"selected":self.input.images.selection.len(),"save_completed":self.save.completed})),"interaction":self.benchmark.as_ref().map(|b|json!({"scenario":b.name(),"input_ms":b.samples,"snap_query_ms":b.snap_queries,"commits":b.commits,"cancels":b.cancels,"invariants":b.invariants})),"native_startup_ms":self.native_startup_ms,"camera_clamped":self.camera_clamped,"navigation_end_pending":self.navigation_end_pending,"drain_ms":self.drain_ms,"chrome":{"toolbar_cells":self.chrome.toolbar.buttons[..self.chrome.toolbar.count].iter().map(|b|json!({"rect":b.rect,"action":b.action.map(|a|a.id())})).collect::<Vec<_>>(),"toolbar_bounds":self.chrome.toolbar.bounds,"selection_outline_count":self.input.gizmo.selection.len(),"caret_deadline_active":self.input.caret.deadline().is_some(),"toolbar_entries":self.chrome.toolbar.count,"placement":format!("{:?}",self.local.profile.toolbar.placement),"config_bytes":serde_json::to_vec(&self.local.profile.toolbar)?.len(),"icon_atlas_gpu_bytes":gpu.map(|g|g.ui_icon_bytes()).unwrap_or(0),"status_bar":self.local.profile.status_bar},"state_counts_scope":"requested sources only","recognizable_clock":"CPU submission before present","metadata_load_ms":self.metadata_ms,"metadata_bytes":self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"first_recognizable_ms":self.first_content_ms,"ordinary_view_80_percent_ms":self.useful_ms,"source_bytes_before_detail":stats.source_bytes,"container_bytes":stats.container_bytes+self.board.as_ref().map(|b|b.metadata_bytes_read).unwrap_or(0),"overview_reused":stats.reused,"overview_regenerated":stats.regenerated,"errors":stats.errors,"source_missing":counts(SourceState::Missing),"source_changed":counts(SourceState::Changed),"source_foreign":counts(SourceState::Foreign),"source_unavailable":counts(SourceState::Unavailable),"peak_pending":stats.peak_pending,"cpu_payload_bytes":stats.cpu_bytes,"adapter":gpu.map(|g|g.adapter_info.name.clone()),"backend":gpu.map(|g|format!("{:?}",g.adapter_info.backend)),"frames":self.frames,"gpu_samples":samples,"detail":"bounded projected 128/512/2048 display supply"});
         report["link_preview"] = json!({"units":self.input.link_preview.units,"lines":self.input.link_preview.lines,"vertices":self.input.link_preview.vertices,"simplified":self.input.link_preview.simplified});
-        report["mouse"] = json!({"effects":self.mouse.effect_count(),"deadline_active":self.mouse.deadline().is_some(),"spawn_requests":self.mouse.spawns});
+        report["mouse"] = json!({"trace":self.mouse_trace,"game_active":self.mouse.game.is_some(),"artwork_bytes":self.mouse.artwork.as_ref().map_or(0,|art|art.mask_bytes()),"cursor_hidden":self.mouse_hidden,"tool":format!("{:?}",self.input.active_tool()),"effects":self.mouse.effect_count(),"deadline_active":self.mouse.deadline().is_some(),"spawn_requests":self.mouse.spawns});
         report["chrome"]["status_text"] = json!(self.chrome.status);
 
         let supply_receipt = json!({"potato":self.options.potato,"present_mode":self.config.as_ref().map(|c|format!("{:?}",c.present_mode)),"event_samples_ms":self.event_samples,"wheel_samples_ms":self.wheel_samples,"codec_requests":stats.codec_requests,"region_jobs":stats.region_jobs,"tile_outputs":stats.tile_outputs,"tile_cache_hits":stats.tile_cache_hits,"tile_cache_read_bytes":stats.tile_cache_read_bytes,"tile_cache_write_bytes":stats.tile_cache_write_bytes,"tile_disk_bytes":stats.tile_disk_bytes,"decoded_bytes":stats.decoded_bytes,"cpu_payload_peak":stats.cpu_peak,"cpu_evictions":stats.evictions,"reprioritized":stats.reprioritized,"discarded":stats.discarded,"peak_queued":stats.peak_queued,"visibility_memo_bytes":self.visibility.bytes()});
@@ -827,6 +835,7 @@ impl ApplicationHandler<Event> for App {
         if self.window.is_none()
             && let Err(error) = self.initialize(e)
         {
+            self.abort_mouse();
             self.error = Some(error);
             e.exit();
         }
@@ -837,6 +846,7 @@ impl ApplicationHandler<Event> for App {
                 let result = (*result).and_then(|loaded| self.install_loaded(loaded, false));
                 if let Err(error) = result {
                     if self.options.seconds.is_some() {
+                        self.abort_mouse();
                         self.error = Some(error);
                         e.exit();
                     } else {
@@ -890,6 +900,7 @@ impl ApplicationHandler<Event> for App {
         }
         self.poll_local();
         self.settle_mouse();
+        self.mouse_cursor(e);
         if self
             .input
             .settle_link_feedback(Instant::now(), self.editor.as_ref())
@@ -987,6 +998,14 @@ impl ApplicationHandler<Event> for App {
                         _ => "Offline",
                     }
                 )
+            };
+            let title = if self.options.output.is_some() {
+                self.mouse.game.as_ref().map_or_else(
+                    || title.clone(),
+                    |g| format!("{title} · GAME {:?} {}", g.state, g.frame + 1),
+                )
+            } else {
+                title
             };
             if self.title != title {
                 window.set_title(&title);
@@ -1150,6 +1169,14 @@ impl ApplicationHandler<Event> for App {
             } else {
                 title
             };
+            let title = if self.options.output.is_some() {
+                self.mouse.game.as_ref().map_or_else(
+                    || title.clone(),
+                    |g| format!("{title} · GAME {:?} {}", g.state, g.frame + 1),
+                )
+            } else {
+                title
+            };
             if self.title != title {
                 window.set_title(&title);
                 self.title = title;
@@ -1164,6 +1191,7 @@ impl ApplicationHandler<Event> for App {
             && let Some(g) = &mut self.gpu
             && let Err(error) = g.begin_frame()
         {
+            self.abort_mouse();
             self.error = Some(error);
             e.exit();
             return;
@@ -1221,6 +1249,17 @@ pub use launch::{run, run_new, run_shared};
 
 impl App {
     fn handle_window_event(&mut self, e: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
+        if self.input.active_tool() == tack_app::actions::Tool::Mouse
+            && (matches!(
+                event,
+                WindowEvent::Focused(false)
+                    | WindowEvent::CloseRequested
+                    | WindowEvent::Occluded(true)
+            ) || matches!(&event,WindowEvent::KeyboardInput {event,..} if event.state==winit::event::ElementState::Pressed && event.physical_key==winit::keyboard::PhysicalKey::Code(winit::keyboard::KeyCode::Escape)))
+        {
+            self.abort_mouse();
+        }
+
         match &event {
             WindowEvent::ModifiersChanged(modifiers) => {
                 self.native_modifiers = modifiers.state().into();
@@ -1446,6 +1485,7 @@ impl App {
             Ok(())
         };
         if let Err(error) = result {
+            self.abort_mouse();
             self.error = Some(error);
             e.exit();
         }

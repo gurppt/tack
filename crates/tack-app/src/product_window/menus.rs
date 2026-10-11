@@ -214,6 +214,13 @@ impl App {
     pub(super) fn update_cursor(&mut self) {
         use tack_app::cursors::Kind;
         use winit::window::CursorIcon;
+        let hidden = self.mouse.game.as_ref().is_some_and(|g| g.hidden);
+        if hidden != self.mouse_hidden {
+            if let Some(window) = &self.window {
+                window.set_cursor_visible(!hidden);
+            }
+            self.mouse_hidden = hidden;
+        }
         let ui = self.context.is_some()
             || self.local.ui.is_some()
             || self.chrome.toolbar.contains_point(self.pointer)

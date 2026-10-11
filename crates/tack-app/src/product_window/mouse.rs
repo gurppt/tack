@@ -22,34 +22,122 @@ impl App {
                         0.
                     }
     }
-    pub(super) fn mouse_event(&mut self, event: &WindowEvent, consumed: bool) {
+    pub(super) fn mouse_event(&mut self, event: &WindowEvent, _consumed: bool) {
         let now = Instant::now();
+        self.sync_mouse(now);
+        if matches!(event, WindowEvent::CursorMoved { .. })
+            && let Some(game) = &mut self.mouse.game
+        {
+            game.pointer(self.pointer);
+        }
+    }
+    fn sync_mouse(&mut self, now: Instant) {
         self.dirty |= self
             .mouse
             .activate(self.input.active_tool() == Tool::Mouse, now);
-        if consumed || !self.mouse_canvas() {
-            self.mouse.leave_canvas();
+        if self.input.active_tool() != Tool::Mouse {
+            self.cursors.clear_mouse();
+            if matches!(
+                self.local.queued,
+                Some(tack_app::local_worker::Operation::MouseGame { .. })
+            ) {
+                self.local.queued = None;
+            }
+            if self.local.worker.loading_mouse() {
+                self.local.worker.cancel();
+            }
             return;
         }
-        let at = self.pointer.map(|v| v / self.camera.ui_scale());
-        match event {
-            WindowEvent::CursorMoved { .. } => self.dirty |= self.mouse.motion(at, now),
-            WindowEvent::MouseInput {
-                state: winit::event::ElementState::Pressed,
-                button: winit::event::MouseButton::Left,
-                ..
-            } => self.dirty |= self.mouse.click(at, now),
-            WindowEvent::CursorLeft { .. } | WindowEvent::Focused(false) => {
-                self.mouse.leave_canvas()
+        if !self.mouse.loading && self.mouse.artwork.is_none() {
+            self.mouse.loading = true;
+            if let Err(error) = self.operation(tack_app::local_worker::Operation::MouseGame {
+                ticket: self.mouse.ticket,
+            }) {
+                self.abort_mouse();
+                self.interaction_error = Some(error.to_string());
             }
-            _ => {}
+        }
+    }
+    pub(super) fn abort_mouse(&mut self) {
+        if self.input.active_tool() == Tool::Mouse {
+            self.input.cancel();
+            self.input.annotation.tools.reset_pointer();
+            if let Some(editor) = &mut self.editor {
+                let _ = self.input.dispatch(
+                    tack_app::actions::ActionEvent {
+                        action: tack_app::actions::Action::SelectTool(Tool::Pointer),
+                        phase: tack_app::actions::ActionPhase::Invoke,
+                    },
+                    editor,
+                    &mut self.camera,
+                );
+            }
+        }
+        self.dirty |= self.mouse.activate(false, Instant::now());
+        self.cursors.clear_mouse();
+        if self.local.worker.loading_mouse() {
+            self.local.worker.cancel();
+        }
+        if matches!(
+            self.local.queued,
+            Some(tack_app::local_worker::Operation::MouseGame { .. })
+        ) {
+            self.local.queued = None;
+        }
+        if let Some(window) = &self.window {
+            if self.mouse_hidden {
+                window.set_cursor_visible(true);
+            }
+            self.mouse_hidden = false;
+            window.set_cursor(winit::window::CursorIcon::Default);
+        }
+        self.cursor_icon = tack_app::cursors::Kind::Pointer;
+        self.dirty = true;
+    }
+    pub(super) fn mouse_cursor(&mut self, e: &ActiveEventLoop) {
+        if let Some(art) = &self.mouse.artwork {
+            match self.cursors.install_mouse(e, &art.cheese) {
+                Err(error) => {
+                    self.abort_mouse();
+                    self.interaction_error = Some(error.to_string());
+                }
+                Ok(true) => {
+                    if let Some(window) = &self.window {
+                        self.cursors.set(window, self.cursor_icon);
+                    }
+                }
+                Ok(false) => {}
+            }
+        }
+        if self.mouse.game.is_some() {
+            self.update_cursor();
         }
     }
     pub(super) fn settle_mouse(&mut self) {
         let now = Instant::now();
-        self.dirty |= self
-            .mouse
-            .activate(self.input.active_tool() == Tool::Mouse, now);
+        self.sync_mouse(now);
+        let mut paw = None;
+        let mut finished = false;
+        if let Some(game) = &mut self.mouse.game {
+            let changed = game.tick(now, self.camera.screen_size().map(f64::from));
+            self.dirty |= changed;
+            if changed && self.options.output.is_some() && self.mouse_trace.len() < 1024 {
+                self.mouse_trace.push(json!({"ms":self.started.elapsed().as_secs_f64()*1000.,"state":format!("{:?}",game.state),"frame":game.frame+1,"at":game.at,"hidden":game.hidden,"advances":game.advances,"puffs":game.puffs.len()}));
+            }
+            if changed && game.state == tack_app::mouse_game::State::Run {
+                paw = Some(game.at.map(|v| v / self.camera.ui_scale()));
+            }
+            finished = game.state == tack_app::mouse_game::State::Finished;
+        }
+        if let Some(at) = paw {
+            self.dirty |= self.mouse.motion(at, now);
+        }
+        if finished {
+            self.abort_mouse();
+        }
+        if self.mouse.game.is_some() {
+            self.update_cursor();
+        }
         let (changed, fire) = self.mouse.settle(now);
         self.dirty |= changed;
         if fire && let Some(editor) = &self.editor {

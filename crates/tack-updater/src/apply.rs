@@ -62,7 +62,9 @@ pub fn apply(stage: &Path, install: &Path, pid: u32) -> Result<(), Error> {
     let files: Vec<_> = all
         .into_iter()
         .filter(|p| {
-            !(p.starts_with("gfx/icons") || p.starts_with("gfx/cursors"))
+            !(p.starts_with("gfx/icons")
+                || p.starts_with("gfx/cursors")
+                || p.starts_with("gfx/mouse-game"))
                 || !install.join(p).exists()
         })
         .collect();
