@@ -252,7 +252,7 @@ from edited widths, clearer arrowheads, Note Enter/Shift+Enter, annotation selec
 filter (F8), shared metadata-only Duplicate, Frame palette colors/wrapped 2× titles,
 and semantic z-order defaults. The centered docked toolbar has an explicit saved
 offset, remembered visibility placement and two-column editor. Keymap supports
-shortcut double-click capture, reassignment that unbinds a collision, Normal/Hold
+shortcut double-click capture, reassignment that unbinds a collision, onClick/Hold
 tool mode, separate keymap/preferences exports and local B → 0–9 camera slots.
 Existing custom keymaps retain their bindings; Reset adopts changed defaults.
 
