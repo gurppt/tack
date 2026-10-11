@@ -6,6 +6,7 @@ impl App {
         self.pointer[0] >= 0.
             && self.pointer[1] >= 0.
             && self.pointer[0] < f64::from(self.camera.screen_size()[0])
+            && !(self.chrome.desktop.visible && self.pointer[1] < 24. * self.camera.ui_scale())
             && self.context.is_none()
             && self.local.ui.is_none()
             && !self.chrome.toolbar.contains_point(self.pointer)

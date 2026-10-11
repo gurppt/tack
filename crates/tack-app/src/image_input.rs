@@ -215,6 +215,37 @@ impl ImageInput {
             self.images.crop_mode = false;
         }
     }
+    /// Window move must never steal an object, including locked images and frame tabs.
+    pub fn empty_canvas_at(
+        &self,
+        doc: &tack_core::Document,
+        camera: &Camera,
+        point: [f64; 2],
+    ) -> bool {
+        let world = camera.screen_to_world(point);
+        !doc.objects().any(|o| match o.kind() {
+            tack_core::ObjectKind::Image(_) => crate::image_geometry::hit(o.transform(), world),
+            tack_core::ObjectKind::Annotation(a) => crate::annotation_geometry::hit(
+                a,
+                o.transform(),
+                world,
+                6. * self.gizmo.scale / camera.zoom(),
+            ),
+            tack_core::ObjectKind::Frame(name) => {
+                crate::frame_ui::Label::new(
+                    o.transform(),
+                    camera,
+                    self.gizmo.frame_title_scale,
+                    name,
+                )
+                .contains(point)
+                    || self
+                        .gizmo
+                        .hit(o.transform(), camera, point, false, false)
+                        .is_some()
+            }
+        })
+    }
     pub fn active(&self) -> bool {
         self.images.active()
             || self.marquee.is_some()

@@ -91,7 +91,11 @@ fn context_resolution_and_real_available_commands_are_specific() -> R {
         );
         assert_eq!(rows[app_rows.len()].command, MenuCommand::Heading);
         if kind == ContextKind::Canvas {
-            assert_eq!(rows.len(), 17);
+            assert_eq!(rows.len(), app_rows.len() + 8);
+            assert!(
+                rows.iter()
+                    .any(|row| row.command == MenuCommand::Submenu(Group::Window))
+            );
             assert!(contains(Action::LinkToFrame));
             assert!(contains(Action::ImportImages));
             assert!(contains(Action::Preferences));

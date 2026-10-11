@@ -53,6 +53,11 @@ impl App {
                 self.input.grid_visible,
                 self.input.snap.enabled,
             )
+            .with_window(
+                !self.wayland(),
+                self.local.profile.always_on_top,
+                self.local.profile.native_title_bar,
+            )
             .with_shared(self.shared.is_some() || self.offline.is_some())
             .with_hosted(self.host.is_some())
             .with_missing_source(self.input.images.selection.ids().any(|id| {
@@ -65,6 +70,8 @@ impl App {
         )
     }
     fn prepare_menu(&mut self) -> Result<(), AssetError> {
+        self.chrome.desktop.right_start = None;
+        self.chrome.desktop.pressed = None;
         self.release_about();
         if let Some(editor) = &mut self.editor {
             self.input.suspend_for_menu(editor, &mut self.camera)?;
@@ -93,6 +100,25 @@ impl App {
             )));
             if let Some(menu) = &mut self.context {
                 menu.set_modifiers(self.input.modifiers());
+            }
+        }
+        self.dirty = true;
+        Ok(())
+    }
+    pub(super) fn open_context_menu(&mut self) -> Result<(), AssetError> {
+        self.prepare_menu()?;
+        if let Some(editor) = &self.editor {
+            self.input.context_selection(editor, &self.camera);
+            if let Some(context) = self.menu_context() {
+                self.context = Some(Box::new(ContextMenu::new(
+                    context,
+                    self.pointer,
+                    &self.camera,
+                    &self.input.keymap,
+                )));
+                if let Some(menu) = &mut self.context {
+                    menu.set_modifiers(self.input.modifiers());
+                }
             }
         }
         self.dirty = true;
@@ -131,22 +157,7 @@ impl App {
             {
                 return Ok(false);
             }
-            self.prepare_menu()?;
-            if let Some(editor) = &self.editor {
-                self.input.context_selection(editor, &self.camera);
-                if let Some(context) = self.menu_context() {
-                    self.context = Some(Box::new(ContextMenu::new(
-                        context,
-                        self.pointer,
-                        &self.camera,
-                        &self.input.keymap,
-                    )));
-                    if let Some(menu) = &mut self.context {
-                        menu.set_modifiers(self.input.modifiers());
-                    }
-                }
-            }
-            self.dirty = true;
+            self.open_context_menu()?;
             return Ok(true);
         }
         let Some(menu) = &mut self.context else {

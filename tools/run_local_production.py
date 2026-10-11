@@ -89,11 +89,17 @@ class Session:
         self.pickers.append({'key': key, 'geometry': geometry, 'capture': capture.name})
         (self.root / f'{self.name}-pickers.json').write_text(json.dumps(self.pickers, indent=2) + '\n')
         command('xdotool', 'windowfocus', '--sync', window)
-        self.key('ctrl+l', 'ctrl+a')
+        self.key('ctrl+l')
+        # GTK creates the location entry asynchronously (especially folder pickers).
+        time.sleep(.2)
+        self.key('ctrl+a', 'BackSpace')
         if selects_file is None:
             selects_file = key in ('ctrl+i', 'ctrl+shift+r', 'ctrl+o')
-        self.text(str(path.parent) + '/' if selects_file else str(path))
-        self.key('Return')
+        value = str(path.parent) + '/' if selects_file else str(path)
+        # Paste one entry update; per-character GTK completion can leave a stale suffix.
+        subprocess.run(['xclip', '-selection', 'clipboard'], input=value.encode(), check=True, timeout=3)
+        self.key('ctrl+v')
+        self.key('alt+o' if path.is_dir() and not selects_file else 'Return')
         time.sleep(.6)
         if selects_file and dialog():
             # GTK's location entry navigates a directory. Select the actual
@@ -103,7 +109,7 @@ class Session:
             time.sleep(.6)
             if dialog():
                 command('xdotool', 'mousemove', '--window', window, '250', '94')
-                command('xdotool', 'click', '--repeat', '2', '--delay', '120', '1')
+                command('xdotool', 'click', '--repeat', '1' if path.is_dir() else '2', '--delay', '120', '1')
         if dialog():
             self.key('alt+o')
         wait(lambda: not dialog(), 'picker accepted', seconds=20)

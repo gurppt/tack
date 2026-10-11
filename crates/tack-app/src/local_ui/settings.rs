@@ -532,6 +532,33 @@ impl LocalUi {
                 ("Export Profile...".into(), String::new()),
                 ("Import Profile...".into(), String::new()),
                 ("Export Preferences...".into(), String::new()),
+                (
+                    "Grid style".into(),
+                    if profile.grid_lines {
+                        "Lines >"
+                    } else {
+                        "Dots >"
+                    }
+                    .into(),
+                ),
+                (
+                    "Native title bar".into(),
+                    if profile.native_title_bar {
+                        "[x] On"
+                    } else {
+                        "[ ] Off"
+                    }
+                    .into(),
+                ),
+                (
+                    "Export by Frame".into(),
+                    if profile.export_by_frame {
+                        "[x] On"
+                    } else {
+                        "[ ] Off"
+                    }
+                    .into(),
+                ),
                 ("Close".into(), String::new()),
             ],
             _ => Vec::new(),

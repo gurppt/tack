@@ -34,6 +34,10 @@ fn full_environment_roundtrip_and_keymap_only_exports_stay_separate() -> R {
     let r = Root::new()?;
     let mut p = Preferences::defaults()?;
     p.grid = true;
+    p.grid_lines = true;
+    p.always_on_top = true;
+    p.native_title_bar = true;
+    p.export_by_frame = true;
     p.snapping = true;
     p.embedded_import = false;
     p.sampling = "Nearest".into();
@@ -72,6 +76,12 @@ fn full_environment_roundtrip_and_keymap_only_exports_stay_separate() -> R {
     assert_eq!(actual.toolbar_set_name(), "DRAW");
     assert_eq!(actual.toolbar_sets.len(), 2);
     assert!(actual.snapping && actual.grid);
+    assert!(
+        actual.grid_lines
+            && actual.always_on_top
+            && actual.native_title_bar
+            && actual.export_by_frame
+    );
     assert!(!fs::read_to_string(&file)?.contains("private-board"));
     assert!(!fs::read_to_string(&file)?.contains(r.0.to_string_lossy().as_ref()));
     preferences::export_keymap(&r.0.join("keys"), &p)?;
@@ -235,5 +245,37 @@ fn older_default_profile_gets_new_shortcuts_but_named_custom_keymaps_are_preserv
     p.keyset.name = "CUSTOM".into();
     preferences::write(&r.0.join("custom.json"), &p)?;
     assert_eq!(preferences::read(&r.0.join("custom.json"))?.keymap, old);
+    Ok(())
+}
+
+#[test]
+fn desktop_preferences_migrate_merge_and_adopt_without_losing_other_window_edits() -> R {
+    let base = Preferences::defaults()?;
+    let mut legacy = serde_json::to_value(&base)?;
+    for field in [
+        "grid_lines",
+        "native_title_bar",
+        "always_on_top",
+        "export_by_frame",
+    ] {
+        legacy.as_object_mut().ok_or("profile")?.remove(field);
+    }
+    let migrated: Preferences = serde_json::from_value(legacy)?;
+    assert_eq!(migrated, base);
+    let mut desired = base.clone();
+    desired.grid_lines = true;
+    desired.export_by_frame = true;
+    let mut current = base.clone();
+    current.always_on_top = true;
+    current.native_title_bar = true;
+    let saved = preferences::merge_settings(&base, &desired, &current)?;
+    assert!(
+        saved.grid_lines && saved.export_by_frame && saved.always_on_top && saved.native_title_bar
+    );
+    let mut local = desired.clone();
+    local.export_by_frame = false; // Changed while publication was in flight.
+    preferences::adopt_saved(&mut local, &desired, &saved);
+    assert!(local.grid_lines && local.always_on_top && local.native_title_bar);
+    assert!(!local.export_by_frame);
     Ok(())
 }

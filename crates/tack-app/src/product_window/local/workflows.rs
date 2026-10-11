@@ -16,6 +16,7 @@ impl App {
         let scale = self.window.as_ref().map_or(1., |w| w.scale_factor());
         self.camera.set_ui_scale(scale);
         self.input.gizmo.set_scale(scale);
+        self.desktop_preferences();
         self.chrome_layout();
         self.chrome.last_hover = None;
         self.chrome.last_state = "";
@@ -142,6 +143,9 @@ impl App {
             | SourceInfo
             | JoinSharedBoard
             | CopySharedBoardAddress => self.daily_action(action)?,
+            ToggleAlwaysOnTop | ToggleNativeTitleBar | MinimizeWindow | MaximizeWindow => {
+                self.desktop_action(action)?
+            }
             ApplicationMenu => self.open_application_menu()?,
             About => {
                 self.local.about_ticket = self
@@ -201,6 +205,46 @@ impl App {
                 path: None,
                 new: true,
             })?,
+            ExportBoardSnapshot => {
+                if self.shared.is_some() {
+                    return Err("Save to Local before exporting a shared board snapshot".into());
+                }
+                let request = tack_app::board_snapshot::Request::new(
+                    self.editor
+                        .as_ref()
+                        .ok_or("Document unavailable")?
+                        .document(),
+                    &self.input.images.selection,
+                    &self.options.path,
+                    self.board.as_ref().ok_or("Board unavailable")?,
+                    &self.local.originals,
+                    &self.local.profile,
+                )?;
+                self.operation(Operation::ExportSnapshot {
+                    request: Box::new(request),
+                    work: self.work.join("helpers"),
+                })?;
+            }
+            ExportSelectedSources | ExportAllSources => {
+                if self.shared.is_some() {
+                    return Err("Save to Local before exporting shared originals".into());
+                }
+                let request = tack_app::source_batch_export::Request::new(
+                    self.editor
+                        .as_ref()
+                        .ok_or("Document unavailable")?
+                        .document(),
+                    (action == ExportSelectedSources).then_some(&self.input.images.selection),
+                    &self.options.path,
+                    self.board.as_ref().ok_or("Board unavailable")?,
+                    &self.local.originals,
+                    self.local.profile.export_by_frame,
+                )?;
+                self.operation(Operation::ExportSources {
+                    request,
+                    work: self.work.join("helpers"),
+                })?;
+            }
             SaveOriginalAs => {
                 if self.shared.is_some() {
                     return Err("Shared Save Original As is not available yet; use the documented local snapshot API".into());

@@ -164,6 +164,7 @@ fn grid_parameters_preserve_world_origin_zoom_and_fractional_dpi() -> Result<(),
     let grid = tack_render::GridView {
         spacing: 4096.,
         dpi: 1.25,
+        lines: false,
     };
     let params = grid.parameters(&c);
     assert!(params[0] >= 0. && params[0] < params[2]);
@@ -212,6 +213,7 @@ fn procedural_grid_hidden_path_and_bitmap_labels_are_crisp() -> Result<(), Asset
         Some(tack_render::GridView {
             spacing: 32.,
             dpi: 1.,
+            lines: false,
         }),
     )?;
     assert_ne!(pixel(&hidden, 0, 0), pixel(&visible, 0, 0));
@@ -889,6 +891,74 @@ fn dashed_line_keeps_hard_four_on_four_off_in_one_quad() -> Result<(), AssetErro
         assert_eq!(red, (x - 8) % 8 < 4, "pixel {x}");
         assert_ne!(pixel(&pixels, x, 19), [255, 0, 0, 255]);
         assert_ne!(pixel(&pixels, x, 21), [255, 0, 0, 255]);
+    }
+    Ok(())
+}
+
+#[test]
+#[ignore = "explicit native GPU dots/lines/major phase readback"]
+fn lines_are_procedural_quiet_and_major_subdivisions_remain_world_anchored()
+-> Result<(), AssetError> {
+    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::from_env_or_default());
+    let mut gpu = pollster::block_on(Gpu::new(
+        &instance,
+        None,
+        wgpu::TextureFormat::Rgba8UnormSrgb,
+        1024 * 1024,
+    ))?;
+    let mut d = data();
+    d.opacity = Opacity::new(0.)?;
+    let key = ProductKey {
+        asset: Some(d.asset_id),
+        source: SourceId::new(1)?,
+        revision: 1,
+        lod: Lod::Thumbnail,
+        edge: 128,
+    };
+    gpu.begin_frame()?;
+    assert!(gpu.upload_product(
+        key,
+        &Decoded {
+            width: 1,
+            height: 1,
+            rgba: vec![255; 4]
+        }
+    ));
+    for fill in [
+        [0.008, 0.010, 0.014, 1.],
+        [0.035, 0.040, 0.050, 1.],
+        [0.69, 0.70, 0.71, 1.],
+    ] {
+        gpu.set_background(tack_render::Background {
+            fill,
+            grid: [0.24, 0.26, 0.28, 1.],
+        });
+        let dots = pixels_spatial(
+            &mut gpu,
+            d,
+            key,
+            &[],
+            Some(tack_render::GridView {
+                spacing: 8.,
+                dpi: 1.,
+                lines: false,
+            }),
+        )?;
+        let lines = pixels_spatial(
+            &mut gpu,
+            d,
+            key,
+            &[],
+            Some(tack_render::GridView {
+                spacing: 8.,
+                dpi: 1.,
+                lines: true,
+            }),
+        )?;
+        assert_ne!(pixel(&dots, 8, 3), pixel(&lines, 8, 3));
+        assert_eq!(pixel(&dots, 3, 3), pixel(&lines, 3, 3));
+        assert_ne!(pixel(&lines, 8, 3), pixel(&lines, 40, 3));
+        assert_eq!(pixel(&lines, 0, 3), pixel(&lines, 40, 3));
     }
     Ok(())
 }

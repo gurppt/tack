@@ -109,6 +109,14 @@ pub enum Operation {
     },
     Pick(Action, Picker, PathBuf, native_files::PickOptions),
     OpenBoard(PathBuf),
+    ExportSnapshot {
+        request: Box<crate::board_snapshot::Request>,
+        work: PathBuf,
+    },
+    ExportSources {
+        request: crate::source_batch_export::Request,
+        work: PathBuf,
+    },
     ExportOriginal {
         request: crate::source_export::OriginalExport,
         work: PathBuf,
@@ -309,6 +317,12 @@ impl LocalWorker {
                                     result.map_err(|error| error.to_string()),
                                 ));
                             }
+                        }
+                        Operation::ExportSnapshot { request, work } => {
+                            request.pick_and_save(&work, &stop)?
+                        }
+                        Operation::ExportSources { request, work } => {
+                            request.pick_and_save(&work, &stop)?
                         }
                         Operation::ExportOriginal { request, work } => {
                             request.pick_and_save(&work, &stop)?;

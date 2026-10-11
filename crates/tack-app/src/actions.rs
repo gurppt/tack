@@ -114,6 +114,14 @@ pub enum Action {
     Paste,
     RelinkSource,
     SaveOriginalAs,
+    ToggleAlwaysOnTop,
+    ToggleNativeTitleBar,
+    MinimizeWindow,
+    MaximizeWindow,
+    ExportSelectedSources,
+    ExportAllSources,
+    ExportBoardSnapshot,
+
     Preferences,
     KeymapEditor,
     RecentBoards,
@@ -219,7 +227,7 @@ impl Action {
         }
     }
     /// Enumerable action catalog, including currently unassigned actions.
-    pub const ALL: [Self; 144] = [
+    pub const ALL: [Self; 151] = [
         Self::SelectTool(Tool::Mouse),
         Self::TemporaryTool(Tool::Mouse),
         Self::SelectTool(Tool::Pointer),
@@ -331,6 +339,13 @@ impl Action {
         Self::Paste,
         Self::RelinkSource,
         Self::SaveOriginalAs,
+        Self::ToggleAlwaysOnTop,
+        Self::ToggleNativeTitleBar,
+        Self::MinimizeWindow,
+        Self::MaximizeWindow,
+        Self::ExportSelectedSources,
+        Self::ExportAllSources,
+        Self::ExportBoardSnapshot,
         Self::Preferences,
         Self::KeymapEditor,
         Self::RecentBoards,
@@ -397,6 +412,13 @@ impl Action {
                 | Self::ToggleSourceStorage
                 | Self::RelinkSource
                 | Self::SaveOriginalAs
+                | Self::ToggleAlwaysOnTop
+                | Self::ToggleNativeTitleBar
+                | Self::MinimizeWindow
+                | Self::MaximizeWindow
+                | Self::ExportSelectedSources
+                | Self::ExportAllSources
+                | Self::ExportBoardSnapshot
                 | Self::Preferences
                 | Self::KeymapEditor
                 | Self::RecentBoards
@@ -587,6 +609,14 @@ impl Action {
             Self::Paste => "Paste",
             Self::RelinkSource => "Relink selected source",
             Self::SaveOriginalAs => "Save Original As...",
+            Self::ToggleAlwaysOnTop => "Always on Top",
+            Self::ToggleNativeTitleBar => "Native title bar",
+            Self::MinimizeWindow => "Minimize window",
+            Self::MaximizeWindow => "Maximize / Restore window",
+            Self::ExportSelectedSources => "Export Selected Sources...",
+            Self::ExportAllSources => "Export All Sources...",
+            Self::ExportBoardSnapshot => "Export Board Snapshot...",
+
             Self::Preferences => "Preferences",
             Self::KeymapEditor => "Edit keymap",
             Self::RecentBoards => "Recent boards",

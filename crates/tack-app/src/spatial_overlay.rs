@@ -56,7 +56,7 @@ impl ImageGizmo {
             *budget -= 1;
         }
     }
-    fn frame_label(
+    pub(crate) fn frame_label(
         &mut self,
         camera: &Camera,
         layout: &crate::frame_ui::Label,

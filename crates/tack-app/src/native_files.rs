@@ -19,6 +19,8 @@ pub enum Picker {
     ExportProfile,
     ImportProfile,
     ExportOriginal,
+    ExportSources,
+    ExportSnapshot,
 }
 /// Resident descriptors only; folder accessibility is checked on the picker worker.
 #[derive(Clone, Default)]
@@ -144,6 +146,7 @@ pub fn pick_with_options(
 ) -> Result<Vec<PathBuf>, AssetError> {
     let directory = usable_directory(options.directory.as_deref());
     let suggested_name = options.suggested_name.clone().or_else(|| match kind {
+        Picker::ExportSnapshot => Some("Tack Snapshot.png".into()),
         Picker::Save => Some("Untitled.tack".into()),
         Picker::ExportProfile => Some("profile.tackprofile".into()),
         Picker::ExportPreferences => Some("preferences.json".into()),
@@ -155,6 +158,9 @@ pub fn pick_with_options(
         let mut command = Command::new("zenity");
         command.args(["--file-selection", "--title=Tack"]);
         match kind {
+            Picker::ExportSources => {
+                command.arg("--directory");
+            }
             Picker::Import => {
                 command.args([
                     "--multiple",
@@ -166,7 +172,8 @@ pub fn pick_with_options(
             | Picker::ExportKeymap
             | Picker::ExportPreferences
             | Picker::ExportProfile
-            | Picker::ExportOriginal => {
+            | Picker::ExportOriginal
+            | Picker::ExportSnapshot => {
                 command.args(["--save", "--confirm-overwrite"]);
             }
             Picker::Relink => {
@@ -270,7 +277,15 @@ pub fn pick_with_options(
 #[cfg(windows)]
 const WINDOWS_PICKER: &str = r#"[Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false)
 Add-Type -AssemblyName System.Windows.Forms
-if ($args[0] -eq 'Save' -or $args[0] -eq 'ExportProfile' -or $args[0] -eq 'ExportPreferences' -or $args[0] -eq 'ExportKeymap' -or $args[0] -eq 'ExportOriginal') { $d = New-Object System.Windows.Forms.SaveFileDialog } else { $d = New-Object System.Windows.Forms.OpenFileDialog }
+if ($args[0] -eq 'ExportSources') {
+ $f = New-Object System.Windows.Forms.FolderBrowserDialog
+ $f.Description = 'Export Tack sources into a new folder'
+ if ($args[1]) { $f.SelectedPath = $args[1] }
+ if ($f.ShowDialog() -ne [System.Windows.Forms.DialogResult]::OK) { $f.Dispose(); exit 42 }
+ [Console]::WriteLine($f.SelectedPath)
+ $f.Dispose(); exit 0
+}
+if ($args[0] -eq 'Save' -or $args[0] -eq 'ExportProfile' -or $args[0] -eq 'ExportPreferences' -or $args[0] -eq 'ExportKeymap' -or $args[0] -eq 'ExportOriginal' -or $args[0] -eq 'ExportSnapshot') { $d = New-Object System.Windows.Forms.SaveFileDialog } else { $d = New-Object System.Windows.Forms.OpenFileDialog }
 $d.Title = 'Tack'
 $d.AddExtension = $false
 if ($args[1]) { $d.InitialDirectory = $args[1] }
@@ -278,6 +293,7 @@ if ($args[2]) { $d.FileName = $args[2] }
 if ($args[0] -eq 'Open' -or $args[0] -eq 'Save') { $d.Filter = 'Tack boards (*.tack)|*.tack' }
 if ($args[0] -eq 'ImportKeymap') { $d.Filter = 'Tack keymaps (*.tackey)|*.tackey|Legacy Tack preferences (*.json)|*.json' }
 if ($args[0] -eq 'ExportProfile' -or $args[0] -eq 'ImportProfile') { $d.Filter = 'Tack profiles (*.tackprofile)|*.tackprofile' }
+if ($args[0] -eq 'ExportSnapshot') { $d.Filter = 'PNG image (*.png)|*.png' }
 if ($args[0] -eq 'ExportPreferences') { $d.Filter = 'Tack preferences (*.json)|*.json' }
 if ($args[0] -eq 'ExportKeymap') { $d.Filter = 'Tack keymaps (*.tackey)|*.tackey' }
 if ($args[0] -eq 'Import' -or $args[0] -eq 'Relink') { $d.Filter = 'Images (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg' }

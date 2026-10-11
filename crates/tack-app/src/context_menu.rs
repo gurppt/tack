@@ -35,6 +35,9 @@ pub struct Context {
     selection_kind: ContextKind,
     shared: bool,
     hosted: bool,
+    top_supported: bool,
+    always_on_top: bool,
+    native_title_bar: bool,
     pub generation: u64,
     undo: bool,
     redo: bool,
@@ -122,6 +125,9 @@ impl Context {
             all_flippable: ids().all(|id|doc.object(id).is_some_and(|o|o.can_flip())),
             shared: false,
             hosted: false,
+            top_supported: true,
+            always_on_top: false,
+            native_title_bar: false,
             generation: editor.generation(),
             undo: editor.undo_len() > 0,
             redo: editor.redo_len() > 0,
@@ -147,6 +153,12 @@ impl Context {
             annotation_fill: first_id.and_then(|id| doc.object(id)).is_some_and(|o| matches!(o.kind(), ObjectKind::Annotation(a) if matches!(a.kind(), AnnotationKind::Rect))),
         }
     }
+    pub fn with_window(mut self, top_supported: bool, top: bool, native: bool) -> Self {
+        self.top_supported = top_supported;
+        self.always_on_top = top;
+        self.native_title_bar = native;
+        self
+    }
     pub fn with_missing_source(mut self, missing: bool) -> Self {
         if missing {
             self.source_color = Some(crate::source_info::missing_color());
@@ -166,6 +178,10 @@ impl Context {
             return false;
         }
         match action {
+            Action::ToggleAlwaysOnTop => self.top_supported,
+            Action::ExportSelectedSources => self.any && !self.shared,
+            Action::ExportAllSources => self.has_objects && !self.shared,
+            Action::ExportBoardSnapshot => self.has_objects && !self.shared,
             Action::MergeScribbles => self.all_scribbles && self.multiple_scribbles,
             Action::SelectTool(Tool::Eraser) => true,
             Action::LinkToFrame => self.has_frames && self.frame_linkable,
@@ -220,6 +236,8 @@ impl Context {
         match action {
             Action::Filtering(f) => self.filtering == Some(f),
             Action::Opacity(alpha) => self.opacity == Some(alpha.value()),
+            Action::ToggleAlwaysOnTop => self.always_on_top,
+            Action::ToggleNativeTitleBar => self.native_title_bar,
             Action::ToggleGrid => self.grid,
             Action::ToggleSnapping => self.snapping,
             _ => false,
@@ -239,6 +257,7 @@ pub enum Group {
     Edit,
     View,
     Tools,
+    Window,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Command {
@@ -496,6 +515,12 @@ fn context_items_all(context: Context, submenu: Option<Group>, keymap: &Keymap) 
                 a("Save Original As...", SaveOriginalAs),
                 a("Copy source path", CopySourcePath),
             ],
+            Group::Window => vec![
+                a("Always on Top", ToggleAlwaysOnTop),
+                a("Native title bar", ToggleNativeTitleBar),
+                a("Minimize", MinimizeWindow),
+                a("Maximize / Restore", MaximizeWindow),
+            ],
             Group::File => vec![
                 a("New board", NewBoard),
                 a("Close board", CloseBoard),
@@ -504,6 +529,9 @@ fn context_items_all(context: Context, submenu: Option<Group>, keymap: &Keymap) 
                 a("Save", Save),
                 a("Save As...", SaveAs),
                 a("Save to Local...", SaveToLocal),
+                a("Export Selected Sources...", ExportSelectedSources),
+                a("Export All Sources...", ExportAllSources),
+                a("Export Board Snapshot...", ExportBoardSnapshot),
                 a("Recent boards", RecentBoards),
                 a("Share Board...", ShareBoard),
                 a("Stop Sharing", StopSharing),
@@ -554,6 +582,7 @@ fn context_items_all(context: Context, submenu: Option<Group>, keymap: &Keymap) 
             group("Edit", Group::Edit, true),
             group("View", Group::View, true),
             group("Tools", Group::Tools, true),
+            group("Window", Group::Window, true),
             a("Preferences...", Preferences),
             a("Keymap...", KeymapEditor),
             a("Update...", CheckForUpdates),

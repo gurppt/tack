@@ -312,7 +312,7 @@ impl LocalUi {
             | Panel::UpdateOffer
             | Panel::UpdateReady => self.daily_rows().len(),
             Panel::Menu | Panel::Keymap => self.actions(keymap).len(),
-            Panel::Preferences => 13,
+            Panel::Preferences => 16,
             Panel::Recent => profile.recent.len(),
             Panel::Close => 3,
             Panel::Recovery => 2,
@@ -635,6 +635,9 @@ impl LocalUi {
                     9 => return Some(UiResult::Action(Action::ExportProfile)),
                     10 => return Some(UiResult::Action(Action::ImportProfile)),
                     11 => return Some(UiResult::Action(Action::ExportPreferences)),
+                    12 => profile.grid_lines = !profile.grid_lines,
+                    13 => profile.native_title_bar = !profile.native_title_bar,
+                    14 => profile.export_by_frame = !profile.export_by_frame,
                     _ => return self.back(),
                 }
                 Some(UiResult::PreferencesChanged)

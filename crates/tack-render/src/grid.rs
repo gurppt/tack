@@ -5,6 +5,7 @@ use wgpu::util::DeviceExt;
 pub struct GridView {
     pub spacing: f64,
     pub dpi: f64,
+    pub lines: bool,
 }
 impl GridView {
     pub fn parameters(self, camera: &Camera) -> [f32; 4] {
@@ -70,7 +71,7 @@ impl Grid {
         });
         let buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("grid parameters"),
-            contents: &[0; 64],
+            contents: &[0; 80],
             usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
         });
         let binding = device.create_bind_group(&wgpu::BindGroupDescriptor {
@@ -105,6 +106,14 @@ impl Grid {
                 if view.is_some() { 1. } else { 0. },
                 0.,
             ],
+            view.map_or([0.; 4], |v| {
+                let major = GridView {
+                    spacing: v.spacing * 5.,
+                    ..v
+                }
+                .parameters(camera);
+                [major[0], major[1], major[2], if v.lines { 1. } else { 0. }]
+            }),
         ];
         queue.write_buffer(&self.buffer, 0, bytemuck::cast_slice(&parameters));
     }

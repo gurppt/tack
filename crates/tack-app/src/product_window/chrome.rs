@@ -8,6 +8,7 @@ use winit::event::{ElementState, MouseButton};
 #[derive(Default)]
 pub(super) struct Chrome {
     pub toolbar: Toolbar,
+    pub desktop: tack_app::desktop::Chrome,
     pub atlas: Option<tack_assets::Decoded>,
     pub(super) status: String,
     pub(super) last_hover: Option<Action>,
@@ -417,6 +418,7 @@ pub(super) fn draw(
         }
     }
     gpu.set_ui_icons(&icons[..count])?;
+    super::desktop::draw(&chrome.desktop, g, &status_camera, p);
     let c = &status_camera;
     let scale = c.ui_scale();
     let [w, h] = c.screen_size().map(f64::from);

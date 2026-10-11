@@ -17,8 +17,9 @@ use tack_assets::AssetError;
 use tack_core::{Document, DocumentQuery, ObjectId, Source, SourceLocation};
 use tack_storage::{Payload, RangeReader, TackFile};
 
+#[derive(Clone)]
 pub struct OriginalExport {
-    source: Source,
+    pub(crate) source: Source,
     board_path: PathBuf,
     payload: Option<Payload>,
 }
@@ -60,7 +61,7 @@ impl OriginalExport {
             payload,
         })
     }
-    fn payload(&self) -> Result<Payload, AssetError> {
+    pub(crate) fn payload(&self) -> Result<Payload, AssetError> {
         if let Some(payload) = &self.payload {
             return Ok(payload.clone());
         }
@@ -93,7 +94,7 @@ impl OriginalExport {
             },
         })
     }
-    fn suggested_name(&self, payload: &Payload) -> Result<OsString, AssetError> {
+    pub(crate) fn suggested_name(&self, payload: &Payload) -> Result<OsString, AssetError> {
         if let SourceLocation::Linked(descriptor) = self.source.location()
             && let Some(path) = descriptor.to_native()
             && let Some(name) = path.file_name()
@@ -132,7 +133,7 @@ impl OriginalExport {
         copy_atomic(&payload, path, cancel, expected_crc)
     }
 }
-fn reader(payload: &Payload) -> Result<Box<dyn Read>, AssetError> {
+pub(crate) fn reader(payload: &Payload) -> Result<Box<dyn Read>, AssetError> {
     Ok(match payload {
         Payload::File(path) => Box::new(File::open(path)?),
         Payload::Stored { file, range } => Box::new(RangeReader::new(Arc::clone(file), *range)),

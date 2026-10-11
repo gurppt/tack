@@ -18,6 +18,7 @@ use winit::{
     window::{Window, WindowId},
 };
 mod chrome;
+mod desktop;
 mod hosting;
 mod huge;
 mod local;
@@ -613,6 +614,7 @@ impl App {
                 self.input.gizmo.scale,
             ),
             dpi: self.input.gizmo.scale,
+            lines: self.local.profile.grid_lines,
         });
         let annotated = self
             .editor
@@ -787,6 +789,16 @@ impl App {
         report["chrome"]["status_text"] = json!(self.chrome.status);
 
         let supply_receipt = json!({"potato":self.options.potato,"present_mode":self.config.as_ref().map(|c|format!("{:?}",c.present_mode)),"event_samples_ms":self.event_samples,"wheel_samples_ms":self.wheel_samples,"codec_requests":stats.codec_requests,"region_jobs":stats.region_jobs,"tile_outputs":stats.tile_outputs,"tile_cache_hits":stats.tile_cache_hits,"tile_cache_read_bytes":stats.tile_cache_read_bytes,"tile_cache_write_bytes":stats.tile_cache_write_bytes,"tile_disk_bytes":stats.tile_disk_bytes,"decoded_bytes":stats.decoded_bytes,"cpu_payload_peak":stats.cpu_peak,"cpu_evictions":stats.evictions,"reprioritized":stats.reprioritized,"discarded":stats.discarded,"peak_queued":stats.peak_queued,"visibility_memo_bytes":self.visibility.bytes()});
+        report["desktop"] = json!({
+            "hover_chrome": self.chrome.desktop.visible,
+            "native_title_bar": self.window.as_ref().map(|w| w.is_decorated()),
+            "native_title_bar_requested": self.local.profile.native_title_bar,
+            "always_on_top": self.chrome.desktop.applied.is_some_and(|(_, top)| top),
+            "always_on_top_requested": self.local.profile.always_on_top,
+            "always_on_top_supported": !self.wayland(),
+            "wayland": self.wayland(),
+            "grid_lines": self.local.profile.grid_lines,
+        });
         if let Some(shared) = &self.shared {
             let canonical = self
                 .editor
@@ -1321,7 +1333,13 @@ impl App {
                     if used {
                         Ok(true)
                     } else {
-                        self.chrome_event(&event)
+                        self.desktop_event(e, &event).and_then(|used| {
+                            if used {
+                                Ok(true)
+                            } else {
+                                self.chrome_event(&event)
+                            }
+                        })
                     }
                 })
                 .and_then(|used| {

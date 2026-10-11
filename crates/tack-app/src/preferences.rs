@@ -146,6 +146,14 @@ pub struct Preferences {
     pub update_channel: tack_update::Channel,
     pub grid: bool,
     #[serde(default)]
+    pub grid_lines: bool,
+    #[serde(default)]
+    pub native_title_bar: bool,
+    #[serde(default)]
+    pub always_on_top: bool,
+    #[serde(default)]
+    pub export_by_frame: bool,
+    #[serde(default)]
     pub snapping: bool,
     pub sampling: String,
     pub embedded_import: bool,
@@ -180,6 +188,10 @@ impl Preferences {
             status_bar: true,
             update_channel: Default::default(),
             grid: false,
+            grid_lines: false,
+            native_title_bar: false,
+            always_on_top: false,
+            export_by_frame: false,
             snapping: false,
             sampling: "Smooth".into(),
             embedded_import: true,
@@ -568,6 +580,10 @@ pub fn merge_settings(
         status_bar,
         update_channel,
         grid,
+        grid_lines,
+        native_title_bar,
+        always_on_top,
+        export_by_frame,
         sampling,
         embedded_import,
         ui_scale,
@@ -606,6 +622,10 @@ pub fn adopt_saved(local: &mut Preferences, submitted: &Preferences, saved: &Pre
         status_bar,
         update_channel,
         grid,
+        grid_lines,
+        native_title_bar,
+        always_on_top,
+        export_by_frame,
         sampling,
         embedded_import,
         ui_scale,
