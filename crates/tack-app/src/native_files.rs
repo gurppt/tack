@@ -268,7 +268,7 @@ pub fn pick_with_options(
             }
         }
         let _ = work;
-        return validate_paths(kind, result?);
+        validate_paths(kind, result?)
     }
     #[cfg(not(any(target_os = "linux", windows)))]
     {
