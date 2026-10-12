@@ -6,8 +6,9 @@ ROOT=Path(__file__).resolve().parents[1]
 def digest(p):
  with p.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--binary-dir',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--platform',choices=['linux','windows'],required=True);a=p.parse_args()
- output=a.output.resolve();output.mkdir(parents=True,exist_ok=True);folder=output/f'Tack-DEV-DIAG-WINLAN-01-{a.platform}-x64';folder.mkdir(exist_ok=False)
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--binary-dir',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--platform',choices=['linux','windows'],required=True);p.add_argument('--mission',default='DEV-DIAG-WINLAN-01');p.add_argument('--label',default='FORENSIC / INSTRUMENTATION ONLY / NOT A RELEASE');p.add_argument('--readme',type=Path);a=p.parse_args();
+ if not a.mission or any(c not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-' for c in a.mission):p.error('mission must be an uppercase filename token')
+ output=a.output.resolve();output.mkdir(parents=True,exist_ok=True);folder=output/f'Tack-{a.mission}-{a.platform}-x64';folder.mkdir(exist_ok=False)
  ext='.exe' if a.platform=='windows' else '';stripper='x86_64-w64-mingw32-strip' if ext else 'strip'
  for src,dst in [('tack-app','tack'),('tack-server','tack-server'),('tack-updater','tack-updater'),('tack-diagnostics','tack-diagnostics')]:
   shutil.copy2(a.binary_dir/(src+ext),folder/(dst+ext));subprocess.run([stripper,'--strip-all',str(folder/(dst+ext))],check=True)
@@ -26,6 +27,7 @@ def main():
   if f.suffix==('.cmd' if ext else '.sh') or f.suffix=='.txt':
    shutil.copy2(f,folder/f.name)
    if f.suffix=='.sh':(folder/f.name).chmod(0o755)
+ if a.readme:shutil.copy2(a.readme,folder/'README_DIAGNOSTICS.txt')
  if not ext:
   (folder/'lib').mkdir();shutil.copy2((ROOT/'target/native/libXi-1.8.3/lib/libXi.so.6').resolve(),folder/'lib/libXi.so.6');shutil.copy2(ROOT/'target/native/libXi-1.8.3/COPYING',notices/'libXi-COPYING')
  imports={}
@@ -34,7 +36,7 @@ def main():
    text=subprocess.check_output(['x86_64-w64-mingw32-objdump','-p',str(f)],text=True);dll=[line.split(':',1)[1].strip() for line in text.splitlines() if 'DLL Name:' in line];imports[f.name]=dll
    if any(n.lower().startswith(('libgcc','libstdc++','libwinpthread','turbojpeg')) for n in dll):raise RuntimeError('Unbundled runtime DLL')
  diff=subprocess.check_output(['git','diff','HEAD','--binary'],cwd=ROOT)
- (folder/'BUILD.json').write_text(json.dumps(dict(mission='DEV-DIAG-WINLAN-01',label='FORENSIC / INSTRUMENTATION ONLY / NOT A RELEASE',base_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),dirty=bool(diff),patch_sha256=hashlib.sha256(diff).hexdigest(),utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),platform=a.platform,physical_windows_test='UNTESTED',imports=imports,native={k:provenance.get(k) for k in ["version","target","source_sha256","decoder_sha256"]},simd_required=True,nasm_used=bool(provenance.get("nasm")),files={str(f.relative_to(folder)):dict(bytes=f.stat().st_size,sha256=digest(f)) for f in folder.rglob('*') if f.is_file()}),indent=2)+'\n')
+ (folder/'BUILD.json').write_text(json.dumps(dict(mission=a.mission,label=a.label,base_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),dirty=bool(diff),patch_sha256=hashlib.sha256(diff).hexdigest(),utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),platform=a.platform,physical_windows_test='UNTESTED',imports=imports,native={k:provenance.get(k) for k in ["version","target","source_sha256","decoder_sha256"]},simd_required=True,nasm_used=bool(provenance.get("nasm")),files={str(f.relative_to(folder)):dict(bytes=f.stat().st_size,sha256=digest(f)) for f in folder.rglob('*') if f.is_file()}),indent=2)+'\n')
  archive=output/(folder.name+'.zip')
  with zipfile.ZipFile(archive,'x',zipfile.ZIP_DEFLATED,compresslevel=6) as z:
   for f in sorted(folder.rglob('*')):

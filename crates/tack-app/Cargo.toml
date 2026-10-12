@@ -34,3 +34,6 @@ workspace = true
 [[bin]]
 name = "tack-diagnostics"
 path = "src/diagnostics_main.rs"
+
+[target.'cfg(windows)'.dependencies]
+tack-windows-dialogs.workspace = true

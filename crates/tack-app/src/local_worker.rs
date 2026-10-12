@@ -201,6 +201,14 @@ impl LocalWorker {
         operation: Operation,
         notify: impl Fn() + Send + 'static,
     ) -> Result<(), AssetError> {
+        self.start_with_parent(operation, None, notify)
+    }
+    pub fn start_with_parent(
+        &mut self,
+        operation: Operation,
+        parent: Option<Arc<winit::window::Window>>,
+        notify: impl Fn() + Send + 'static,
+    ) -> Result<(), AssetError> {
         if self.active() {
             return Err("another local operation is active; Escape cancels it".into());
         }
@@ -223,6 +231,8 @@ impl LocalWorker {
         let handle = std::thread::Builder::new()
             .name("tack-local-operation".into())
             .spawn(move || {
+                // Retain the HWND owner until COM/dialog/cancel guard has returned.
+                let _picker_parent = native_files::PickerParent::new(parent.as_deref());
                 let emit = |update| {
                     let sent = tx.send(update).is_ok();
                     if sent {

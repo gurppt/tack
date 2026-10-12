@@ -218,9 +218,11 @@ impl App {
             other => other,
         };
         let proxy = self.proxy.clone();
-        self.local.worker.start(operation, move || {
-            let _ = proxy.send_event(Event::LocalReady);
-        })
+        self.local
+            .worker
+            .start_with_parent(operation, self.window.clone(), move || {
+                let _ = proxy.send_event(Event::LocalReady);
+            })
     }
     pub(super) fn poll_local(&mut self) {
         if self.load_failed {

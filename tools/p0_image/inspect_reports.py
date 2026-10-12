@@ -16,7 +16,7 @@ for path in sorted(a.reports.glob('report-*.zip')):
             picked = []
             for e in events:
                 category, event, fields = e.get('category'), e.get('event'), e.get('fields', {})
-                if category in ('filepicker', 'import', 'launcher') or event in ('return_ok', 'operation_error'):
+                if category in ('filepicker', 'import', 'launcher') or (category == 'ui' and event == 'action') or event in ('return_ok', 'operation_error', 'process_exit'):
                     picked.append({k: e[k] for k in ('utc','category','event','fields','session') if k in e})
             logs[key] = {'records': len(events), 'process': events[0].get('process'), 'session': events[0].get('session'), 'timeline': picked}
     archives.append(entry)

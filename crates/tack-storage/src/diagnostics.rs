@@ -184,11 +184,11 @@ fn has_reserve(root: &Path) -> bool {
         .args(["-Pk", "--"])
         .arg(root)
         .output();
-    #[cfg(windows)] let output = std::process::Command::new("powershell.exe")
-        .args(["-NoProfile", "-NonInteractive", "-Command", "([System.IO.DriveInfo]::new([System.IO.Path]::GetPathRoot($env:TACK_DIAGNOSTICS_DIR))).AvailableFreeSpace"]).env("TACK_DIAGNOSTICS_DIR", root).output();
+    #[cfg(windows)]
+    return tack_windows_dialogs::available_bytes(root).is_ok_and(|free| free >= RESERVE);
     #[cfg(not(any(unix, windows)))]
     return false;
-    #[cfg(any(unix, windows))]
+    #[cfg(unix)]
     {
         let Ok(output) = output else {
             return false;
@@ -204,8 +204,6 @@ fn has_reserve(root: &Path) -> bool {
             .and_then(|l| l.split_whitespace().nth(3))
             .and_then(|s| s.parse::<u64>().ok())
             .map(|n| n * 1024);
-        #[cfg(windows)]
-        let free = text.trim().parse::<u64>().ok();
         free.is_some_and(|n| n >= RESERVE)
     }
 }

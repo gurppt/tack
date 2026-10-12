@@ -246,29 +246,36 @@ pub fn pick_with_options(
         command
     };
     #[cfg(windows)]
-    let command = {
-        let script = work.join("tack-file-picker.ps1");
-        tack_storage::create_private_directory(work, true)?;
-        std::fs::write(&script, WINDOWS_PICKER)?;
-        let mut command = Command::new("powershell.exe");
-        command
-            .args(["-NoProfile", "-NonInteractive", "-STA", "-File"])
-            .arg(script)
-            .arg(format!("{kind:?}"))
-            .arg(directory.as_deref().unwrap_or(Path::new("")))
-            .arg(
-                suggested_name
-                    .as_deref()
-                    .unwrap_or(std::ffi::OsStr::new("")),
-            );
-        command
-    };
+    {
+        let (save, folder, multiple, filters) = windows_policy(kind);
+        let result = tack_windows_dialogs::pick(
+            tack_windows_dialogs::Request {
+                save,
+                folder,
+                multiple,
+                filters,
+                directory: directory.as_deref(),
+                name: suggested_name.as_deref(),
+                owner: PICKER_PARENT.with(|p| p.get()),
+                max_files: crate::local_import::MAX_IMPORT_FILES,
+            },
+            cancel,
+        );
+        if tack_storage::diagnostics::enabled() {
+            match &result {
+                Ok(paths) => _diagnostic.note("native_result", serde_json::json!({"backend":"COM", "count":paths.len(), "cancelled":paths.is_empty()})),
+                Err(error) => _diagnostic.note("native_error", serde_json::json!({"backend":"COM", "stage":error.stage,"category":error.category(),"hresult":format!("0x{:08X}",error.code as u32)})),
+            }
+        }
+        let _ = work;
+        return validate_paths(kind, result?);
+    }
     #[cfg(not(any(target_os = "linux", windows)))]
     {
         let _ = (kind, work, cancel, directory, suggested_name);
         return Err("native picker unavailable on this platform; use command-line paths".into());
     }
-    #[cfg(any(target_os = "linux", windows))]
+    #[cfg(target_os = "linux")]
     {
         #[cfg(target_os = "linux")]
         let bytes = crate::clipboard::capture_with_cancel(
@@ -277,15 +284,6 @@ pub fn pick_with_options(
             64 * 1024,
             Duration::from_secs(300),
             Some(1),
-        )?;
-        #[cfg(windows)]
-        let bytes = capture_with_cancel(
-            command,
-            work,
-            cancel,
-            64 * 1024,
-            Duration::from_secs(300),
-            Some(42),
         )?;
         let _ = work;
         let text = std::str::from_utf8(&bytes)?;
@@ -297,52 +295,94 @@ pub fn pick_with_options(
         if tack_storage::diagnostics::enabled() {
             _diagnostic.note("selected_paths",serde_json::json!({"count":paths.len(),"paths":paths.iter().take(16).map(|p|tack_storage::diagnostics::path_info(p)).collect::<Vec<_>>()}));
         }
-        if paths.is_empty() {
-            return Ok(paths);
-        }
-        if paths.len() > crate::local_import::MAX_IMPORT_FILES {
-            return Err("picker returned no paths or too many paths".into());
-        }
-        for path in &paths {
-            tack_core::LinkedPath::native(path)?;
-            if !path.is_absolute() {
-                return Err("picker requires absolute local paths".into());
-            }
-        }
-        if !matches!(kind, Picker::Import) && paths.len() != 1 {
-            return Err("picker requires exactly one path".into());
-        }
-        Ok(paths)
+        validate_paths(kind, paths)
     }
 }
-#[cfg(windows)]
-const WINDOWS_PICKER: &str = r#"[Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false)
-Add-Type -AssemblyName System.Windows.Forms
-if ($args[0] -eq 'ExportSources') {
- $f = New-Object System.Windows.Forms.FolderBrowserDialog
- $f.Description = 'Export Tack sources into a new folder'
- if ($args[1]) { $f.SelectedPath = $args[1] }
- if ($f.ShowDialog() -ne [System.Windows.Forms.DialogResult]::OK) { $f.Dispose(); exit 42 }
- [Console]::WriteLine($f.SelectedPath)
- $f.Dispose(); exit 0
+fn validate_paths(kind: Picker, paths: Vec<PathBuf>) -> Result<Vec<PathBuf>, AssetError> {
+    if paths.is_empty() {
+        return Ok(paths);
+    }
+    if paths.len() > crate::local_import::MAX_IMPORT_FILES {
+        return Err("picker returned no paths or too many paths".into());
+    }
+    for path in &paths {
+        tack_core::LinkedPath::native(path)?;
+        if !path.is_absolute() {
+            return Err("picker requires absolute local paths".into());
+        }
+    }
+    if !matches!(kind, Picker::Import) && paths.len() != 1 {
+        return Err("picker requires exactly one path".into());
+    }
+    Ok(paths)
 }
-if ($args[0] -eq 'Save' -or $args[0] -eq 'ExportProfile' -or $args[0] -eq 'ExportPreferences' -or $args[0] -eq 'ExportKeymap' -or $args[0] -eq 'ExportOriginal' -or $args[0] -eq 'ExportSnapshot') { $d = New-Object System.Windows.Forms.SaveFileDialog } else { $d = New-Object System.Windows.Forms.OpenFileDialog }
-$d.Title = 'Tack'
-$d.AddExtension = $false
-if ($args[1]) { $d.InitialDirectory = $args[1] }
-if ($args[2]) { $d.FileName = $args[2] }
-if ($args[0] -eq 'Open' -or $args[0] -eq 'Save') { $d.Filter = 'Tack boards (*.tack)|*.tack' }
-if ($args[0] -eq 'ImportKeymap') { $d.Filter = 'Tack keymaps (*.tackey)|*.tackey|Legacy Tack preferences (*.json)|*.json' }
-if ($args[0] -eq 'ExportProfile' -or $args[0] -eq 'ImportProfile') { $d.Filter = 'Tack profiles (*.tackprofile)|*.tackprofile' }
-if ($args[0] -eq 'ExportSnapshot') { $d.Filter = 'PNG image (*.png)|*.png' }
-if ($args[0] -eq 'ExportPreferences') { $d.Filter = 'Tack preferences (*.json)|*.json' }
-if ($args[0] -eq 'ExportKeymap') { $d.Filter = 'Tack keymaps (*.tackey)|*.tackey' }
-if ($args[0] -eq 'Import' -or $args[0] -eq 'Relink') { $d.Filter = 'Images (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg' }
-if ($args[0] -eq 'Import') { $d.Multiselect = $true }
-if ($d.ShowDialog() -ne [System.Windows.Forms.DialogResult]::OK) { exit 42 }
-foreach ($p in $d.FileNames) { [Console]::WriteLine($p) }
-$d.Dispose()
-"#;
+#[cfg(windows)]
+fn windows_policy(kind: Picker) -> (bool, bool, bool, &'static [(&'static str, &'static str)]) {
+    let save = matches!(
+        kind,
+        Picker::Save
+            | Picker::ExportKeymap
+            | Picker::ExportPreferences
+            | Picker::ExportProfile
+            | Picker::ExportOriginal
+            | Picker::ExportSnapshot
+    );
+    let filters: &[(&str, &str)] = match kind {
+        Picker::Save | Picker::Open => &[("Tack boards", "*.tack")],
+        Picker::Import | Picker::Relink => &[("Images", "*.png;*.jpg;*.jpeg")],
+        Picker::ImportKeymap => &[
+            ("Tack keymaps", "*.tackey"),
+            ("Legacy Tack preferences", "*.json"),
+        ],
+        Picker::ExportKeymap => &[("Tack keymaps", "*.tackey")],
+        Picker::ExportProfile | Picker::ImportProfile => &[("Tack profiles", "*.tackprofile")],
+        Picker::ExportPreferences => &[("Tack preferences", "*.json")],
+        Picker::ExportSnapshot => &[("PNG image", "*.png")],
+        _ => &[],
+    };
+    (
+        save,
+        matches!(kind, Picker::ExportSources),
+        matches!(kind, Picker::Import),
+        filters,
+    )
+}
+#[cfg(windows)]
+thread_local! { static PICKER_PARENT: std::cell::Cell<Option<usize>> = const { std::cell::Cell::new(None) }; }
+/// Scoped to the explicit worker. The worker retains its parent Arc<Window>.
+pub(crate) struct PickerParent {
+    #[cfg(windows)]
+    previous: Option<usize>,
+}
+impl PickerParent {
+    pub(crate) fn new(parent: Option<&winit::window::Window>) -> Self {
+        #[cfg(windows)]
+        {
+            use winit::raw_window_handle::{HasWindowHandle, RawWindowHandle};
+            let owner =
+                parent
+                    .and_then(|w| w.window_handle().ok())
+                    .and_then(|h| match h.as_raw() {
+                        RawWindowHandle::Win32(h) => Some(h.hwnd.get() as usize),
+                        _ => None,
+                    });
+            Self {
+                previous: PICKER_PARENT.with(|p| p.replace(owner)),
+            }
+        }
+        #[cfg(not(windows))]
+        {
+            let _ = parent;
+            Self {}
+        }
+    }
+}
+impl Drop for PickerParent {
+    fn drop(&mut self) {
+        #[cfg(windows)]
+        PICKER_PARENT.with(|p| p.set(self.previous));
+    }
+}
 
 /// Text/reference retrieval is bounded before Rust allocation; no shell interpolation.
 pub fn clipboard_text(work: &Path, cancel: &AtomicBool) -> Result<String, AssetError> {

@@ -7,7 +7,7 @@ use std::{
     process::{Command, Stdio},
 };
 use tack_storage::diagnostics as diag;
-const MARKER: &str = "Tack DEV-DIAG-WINLAN-01 owned diagnostics\n";
+const MARKER: &str = "Tack P0-WIN-IMAGE-CORE-02-B owned diagnostics\n";
 fn base() -> Result<PathBuf, Box<dyn std::error::Error>> {
     if let Some(root) = env::var_os("TACK_DIAGNOSTICS_HOME") {
         return Ok(std::path::absolute(root)?);
@@ -22,7 +22,7 @@ fn base() -> Result<PathBuf, Box<dyn std::error::Error>> {
     .ok_or("diagnostic home unavailable")?;
     Ok(PathBuf::from(root)
         .join("TackDiagnostics")
-        .join("DEV-DIAG-WINLAN-01"))
+        .join("P0-WIN-IMAGE-CORE-02-B"))
 }
 fn owned(root: &Path) -> std::io::Result<()> {
     tack_storage::create_private_directory(root, true)?;
@@ -209,7 +209,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     // the explicit initializer below; child settings use Command::env only.
     let _session = diag::Session::start_at(
         "tack-diagnostics",
-        json!({"mission":"DEV-DIAG-WINLAN-01","git_sha":env!("TACK_GIT_SHA")}),
+        json!({"mission":"P0-WIN-IMAGE-CORE-02-B","git_sha":env!("TACK_GIT_SHA")}),
         &logs,
     )?;
     let executable =
@@ -230,7 +230,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 diag::event(
                     "system",
                     "powershell",
-                    json!({"versions":values,"exit_code":output.status.code(),"sta_picker":true}),
+                    json!({"versions":values,"exit_code":output.status.code(),"picker_backend":"COM", "powershell_required_for_picker":false}),
                 );
             }
             Err(error) => diag::event("system", "powershell_error", diag::error_info(&error)),

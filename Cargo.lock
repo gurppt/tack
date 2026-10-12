@@ -1904,6 +1904,7 @@ dependencies = [
  "tack-shared",
  "tack-storage",
  "tack-update",
+ "tack-windows-dialogs",
  "tracing",
  "tracing-subscriber",
  "wgpu",
@@ -1976,6 +1977,7 @@ dependencies = [
  "serde_json",
  "sha2",
  "tack-core",
+ "tack-windows-dialogs",
 ]
 
 [[package]]
@@ -1999,6 +2001,13 @@ dependencies = [
  "tack-update",
  "ureq",
  "zip",
+]
+
+[[package]]
+name = "tack-windows-dialogs"
+version = "0.1.0-dev.2"
+dependencies = [
+ "windows",
 ]
 
 [[package]]

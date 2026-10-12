@@ -14,3 +14,6 @@ sha2.workspace = true
 
 [lints]
 workspace = true
+
+[target.'cfg(windows)'.dependencies]
+tack-windows-dialogs.workspace = true
