@@ -226,7 +226,12 @@ impl App {
                     .jump(&mut self.camera)?;
                 self.local.ui = None;
             }
+            UiResult::AddBookmark => {
+                self.local_bookmark_edit()?;
+                self.daily_panel(Panel::BookmarkName, DailyPanel::default());
+            }
             UiResult::RenameBookmark(id) => {
+                self.local_bookmark_edit()?;
                 let doc = self
                     .editor
                     .as_ref()

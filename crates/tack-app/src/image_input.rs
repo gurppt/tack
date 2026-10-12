@@ -368,6 +368,10 @@ impl ImageInput {
                 return Ok(false);
             }
             if action.mutates_selection()
+                && !matches!(
+                    action,
+                    Action::ActualSize | Action::ResetCrop | Action::ToggleGrayscale
+                )
                 && self
                     .images
                     .selection

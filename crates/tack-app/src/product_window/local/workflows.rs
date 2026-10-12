@@ -370,7 +370,8 @@ impl App {
                     self.local.profile_changed = true;
                     self.local.ui = None;
                 }
-                UiResult::JumpBookmark(_)
+                UiResult::AddBookmark
+                | UiResult::JumpBookmark(_)
                 | UiResult::SaveBookmark(..)
                 | UiResult::RenameBookmark(_)
                 | UiResult::DeleteBookmark(_)

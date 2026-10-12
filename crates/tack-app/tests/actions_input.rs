@@ -112,7 +112,7 @@ fn temporary_rotate_overlap_repeat_release_and_focus_restore_without_document_ed
         &mut map,
         key(KeyCode::KeyR),
         Trigger::Hold,
-        Action::TemporaryTool(Tool::RotateView),
+        Action::TemporaryTool(Tool::Text),
     )?;
     bind(
         &mut map,
@@ -135,7 +135,7 @@ fn temporary_rotate_overlap_repeat_release_and_focus_restore_without_document_ed
     for event in events.drain(..) {
         interaction.apply(event)?;
     }
-    assert_eq!(interaction.tool(), Tool::RotateView);
+    assert_eq!(interaction.tool(), Tool::Text);
     state.handle(
         button(key(KeyCode::KeyR), ElementState::Released),
         &map,
@@ -174,8 +174,8 @@ fn temporary_rotate_overlap_repeat_release_and_focus_restore_without_document_ed
     assert_eq!(interaction.tool(), Tool::Pan);
     // Release R out of stack order, after modifiers and keymap were changed.
     state.handle(PhysicalEvent::Modifiers(Modifiers::ALT), &map, |_| {})?;
-    map.unassign(Action::TemporaryTool(Tool::RotateView));
-    assert!(state.is_action_held(&map, Action::TemporaryTool(Tool::RotateView)));
+    map.unassign(Action::TemporaryTool(Tool::Text));
+    assert!(state.is_action_held(&map, Action::TemporaryTool(Tool::Text)));
     state.handle(
         button(key(KeyCode::KeyR), ElementState::Released),
         &map,
@@ -185,16 +185,16 @@ fn temporary_rotate_overlap_repeat_release_and_focus_restore_without_document_ed
         interaction.apply(event)?;
     }
     assert_eq!(interaction.tool(), Tool::Pan);
-    assert!(!state.is_action_held(&map, Action::TemporaryTool(Tool::RotateView)));
+    assert!(!state.is_action_held(&map, Action::TemporaryTool(Tool::Text)));
     interaction.apply(ActionEvent {
-        action: Action::SelectTool(Tool::RotateView),
+        action: Action::SelectTool(Tool::Text),
         phase: ActionPhase::Invoke,
     })?;
     state.handle(PhysicalEvent::FocusLost, &map, |e| events.push(e))?;
     for event in events.drain(..) {
         interaction.apply(event)?;
     }
-    assert_eq!(interaction.tool(), Tool::RotateView);
+    assert_eq!(interaction.tool(), Tool::Text);
     assert_eq!(state.held_len(), 0);
     // Fresh Space hold/release restores the selected base exactly.
     state.handle(
@@ -213,7 +213,7 @@ fn temporary_rotate_overlap_repeat_release_and_focus_restore_without_document_ed
     for event in events.drain(..) {
         interaction.apply(event)?;
     }
-    assert_eq!(interaction.tool(), Tool::RotateView);
+    assert_eq!(interaction.tool(), Tool::Text);
     Ok(())
 }
 

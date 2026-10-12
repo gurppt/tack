@@ -44,6 +44,7 @@ pub mod selection_commands;
 
 pub mod supply_plan;
 
+pub mod display_budget;
 pub mod visibility;
 
 pub mod ui_theme;

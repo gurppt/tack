@@ -44,7 +44,7 @@ inputs and cancels unfinished one-shot creation. Completed/cancelled one-shot
 creation clears the existing temporary-tool overrides. Modal reset additionally
 clears held-input state; discarded release tokens cannot leave orphan overrides.
 Nested experimental Pan/Text on a Pan base is covered for commit/cancel/focus.
-Temporary Pan/RotateView remain experimental, not a new dedicated gesture system.
+Temporary Pan remains experimental, not a new dedicated gesture system.
 
 Tidy, equal-size mode, persistent auto-layout and Phase 2 are deferred. Numeric
 costs and native evidence are recorded in [the phase report](../MISSION_1I_REPORT.md).

@@ -76,6 +76,9 @@ impl LocalUi {
             return Some(Some(UiResult::Dismiss));
         }
         if self.panel == Panel::Bookmarks {
+            if key == PhysicalKey::Code(KeyCode::Insert) && !data.shared && !event.repeat {
+                return Some(Some(UiResult::AddBookmark));
+            }
             if key == PhysicalKey::Code(KeyCode::F2) {
                 return Some(self.daily_command(true));
             }
@@ -158,6 +161,14 @@ impl LocalUi {
             | Panel::UpdateOffer
             | Panel::UpdateReady => data.rows.clone(),
             Panel::Sharing => data.rows.clone(),
+            Panel::Bookmarks if data.bookmarks.is_empty() => vec![
+                if data.shared {
+                    "No camera bookmarks; shared board is read-only here"
+                } else {
+                    "No bookmarks yet; Add current view or press Insert"
+                }
+                .into(),
+            ],
             Panel::Bookmarks => data.bookmarks.iter().map(|b| b.name().to_owned()).collect(),
             Panel::BookmarkName | Panel::Join | Panel::Server => vec![
                 crate::feedback::edit_text(&data.text, self.text_editing() && self.caret.visible)

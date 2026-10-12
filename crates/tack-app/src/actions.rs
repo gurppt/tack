@@ -6,7 +6,6 @@ pub enum Tool {
     #[default]
     Pointer,
     Pan,
-    RotateView,
     Text,
     Rectangle,
     Line,
@@ -32,7 +31,6 @@ impl Tool {
         match self {
             Self::Pointer => "Pointer",
             Self::Pan => "Pan",
-            Self::RotateView => "Rotate view",
             Self::Text => "Text",
             Self::Rectangle => "Rectangle",
             Self::Line => "Line",
@@ -227,15 +225,13 @@ impl Action {
         }
     }
     /// Enumerable action catalog, including currently unassigned actions.
-    pub const ALL: [Self; 151] = [
+    pub const ALL: [Self; 149] = [
         Self::SelectTool(Tool::Mouse),
         Self::TemporaryTool(Tool::Mouse),
         Self::SelectTool(Tool::Pointer),
         Self::SelectTool(Tool::Pan),
-        Self::SelectTool(Tool::RotateView),
         Self::TemporaryTool(Tool::Pointer),
         Self::TemporaryTool(Tool::Pan),
-        Self::TemporaryTool(Tool::RotateView),
         Self::Undo,
         Self::Redo,
         Self::PanView,
@@ -515,10 +511,8 @@ impl Action {
             Self::ContextDecrease => "Context decrease",
             Self::SelectTool(Tool::Pointer) => "Pointer tool",
             Self::SelectTool(Tool::Pan) => "Pan tool",
-            Self::SelectTool(Tool::RotateView) => "Rotate view tool",
             Self::TemporaryTool(Tool::Pointer) => "Temporary pointer tool",
             Self::TemporaryTool(Tool::Pan) => "Temporary pan tool",
-            Self::TemporaryTool(Tool::RotateView) => "Temporary rotate view tool",
             Self::Undo => "Undo",
             Self::Redo => "Redo",
             Self::PanView => "Pan view",

@@ -5,6 +5,13 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 MAX_ARCHIVE=128*1024*1024
 
+def protocol_major():
+ shared=re.search(r'pub const PROTOCOL_MAJOR: u16 = (\d+);',(ROOT/'crates/tack-shared/src/lib.rs').read_text())
+ update=re.search(r'pub const PROTOCOL_MAJOR: u32 = (\d+);',(ROOT/'crates/tack-update/src/lib.rs').read_text())
+ if not shared or not update or shared.group(1)!=update.group(1):raise ValueError('Shared/update protocol identity mismatch')
+ return int(shared.group(1))
+
+
 def digest(path):
  h=hashlib.sha256()
  with path.open('rb') as f:
@@ -12,7 +19,7 @@ def digest(path):
  return h.hexdigest()
 
 def validate_identity(record):
- if record.get('schema')!=1 or record.get('protocol_major')!=3:raise ValueError('Manifest schema/protocol mismatch')
+ if record.get('schema')!=1 or record.get('protocol_major')!=protocol_major():raise ValueError('Manifest schema/protocol mismatch')
  if not re.fullmatch(r'[0-9a-f]{40}',record.get('git_sha','')):raise ValueError('Invalid commit identity')
  version=record.get('version',''); channel=record.get('channel')
  number=r'(?:0|[1-9][0-9]*)'
@@ -25,7 +32,7 @@ def package(binary_dir,platform,output,channel,runner=(),require_clean=True):
  sha=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
  dirty=bool(subprocess.check_output(['git','diff','HEAD','--name-only'],cwd=ROOT))
  if require_clean and dirty:raise ValueError('Release packaging requires committed tracked source')
- validate_identity(dict(schema=1,protocol_major=3,git_sha=sha,version=version,channel=channel))
+ validate_identity(dict(schema=1,protocol_major=protocol_major(),git_sha=sha,version=version,channel=channel))
  output.mkdir(parents=True,exist_ok=True)
  folder=output/('tack-'+platform)
  if folder.exists():raise ValueError('Package exists; immutable candidate output must be fresh')
@@ -35,7 +42,7 @@ def package(binary_dir,platform,output,channel,runner=(),require_clean=True):
  for source,target in [('tack-app','tack'),('tack-server','tack-server'),('tack-updater','tack-updater')]:
   executable=binary_dir/(source+ext)
   data=json.loads(subprocess.check_output([*runner,str(executable),'--build-info'],timeout=30))
-  if any(data.get(k)!=v for k,v in [('version',version),('git_sha',sha),('channel',channel),('protocol_major',3)]):raise ValueError('Compiled package identity mismatch: '+source)
+  if any(data.get(k)!=v for k,v in [('version',version),('git_sha',sha),('channel',channel),('protocol_major',protocol_major())]):raise ValueError('Compiled package identity mismatch: '+source)
   identity[source]=data
   shutil.copy2(executable,folder/(target+ext))
   stripper=shutil.which('x86_64-w64-mingw32-strip') if ext and os.name!='nt' else shutil.which('strip') if not ext else None

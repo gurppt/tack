@@ -85,7 +85,9 @@ impl LocalUi {
             ));
             self.panel_offset = self.modal.map_or([0.; 2], |m| m.offset());
         }
-        let top = if height < 100. {
+        let top = if self.panel == Panel::Bookmarks && height >= 180. {
+            80.
+        } else if height < 100. {
             34.
         } else if height < 240. {
             46.
@@ -106,7 +108,7 @@ impl LocalUi {
             Panel::Sharing => "Share Board",
             Panel::Server => "Advanced: Tack server IP:port",
             Panel::Toolbar => "Edit Toolbar",
-            Panel::Bookmarks => "Camera bookmarks - Enter jumps",
+            Panel::Bookmarks => "Camera bookmarks (saved with board)",
             Panel::BookmarkName => "Bookmark name - Ctrl+A replaces",
             Panel::Info => "Information",
             Panel::Join => "Join Shared Board - paste invite",
@@ -123,7 +125,7 @@ impl LocalUi {
             Panel::Recovery => "Newer recovery available - normal save is unchanged",
             Panel::Error => "Tack - local operation error",
             Panel::About => "About Tack",
-            Panel::ViewCapture => "Capture local camera view",
+            Panel::ViewCapture => "Quick view shortcuts (local)",
         };
         gizmo.ui_text(
             camera,
@@ -133,6 +135,34 @@ impl LocalUi {
             palette.accent_primary,
             &mut budget,
         );
+        if self.panel == Panel::Bookmarks && height >= 180. {
+            let enabled = self.daily.as_ref().is_some_and(|d| !d.shared);
+            let rect = [24., 44., width - 24., 66.];
+            self.hits.push(Hit {
+                rect,
+                command: Command::AddBookmark,
+                enabled,
+            });
+            gizmo.pixel_rect(
+                camera,
+                [rect[0] * scale, rect[1] * scale],
+                [rect[2] * scale, rect[3] * scale],
+                palette.selection,
+                None,
+            );
+            gizmo.ui_text(
+                camera,
+                [28. * scale, 47. * scale],
+                width - 56.,
+                "Add current view... (Insert)",
+                if enabled {
+                    palette.accent_primary
+                } else {
+                    palette.text_disabled
+                },
+                &mut budget,
+            );
+        }
         let rows: Vec<String> = match self.panel {
             Panel::Toolbar => Vec::new(),
             Panel::Sharing | Panel::Server => self.daily_rows(),
@@ -245,6 +275,8 @@ impl LocalUi {
                 let x2 = x + (width - 32.) / commands.len() as f64 - 4.;
                 let enabled = !(self.panel == Panel::UpdateChecking
                     && *command == Command::ConfirmDaily)
+                    && (*command != Command::AddBookmark
+                        || self.daily.as_ref().is_some_and(|d| !d.shared))
                     && (!matches!(command, Command::RenameBookmark | Command::DeleteBookmark)
                         || self
                             .daily
@@ -313,7 +345,11 @@ impl LocalUi {
             }
         }
         let hint = if self.panel == Panel::Bookmarks {
-            "Enter jumps; F2 rename; Del delete; Escape close"
+            if self.daily.as_ref().is_some_and(|d| d.shared) {
+                "Shared: jump only; editing unavailable"
+            } else {
+                "Ins add; Enter jump; F2 rename; Del delete"
+            }
         } else {
             "Up/Down scroll; Enter confirm; Escape close"
         };

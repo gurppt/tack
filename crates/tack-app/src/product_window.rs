@@ -222,6 +222,7 @@ impl App {
         }
         let cpu_start = Instant::now();
         self.draws.clear();
+        let mut display_limit = tack_app::display_budget::Limit::default();
         let mut recognizable = 0;
         let mut near = Vec::new();
         if let Some(editor) = &self.editor {
@@ -276,6 +277,7 @@ impl App {
                 } else {
                     usize::MAX
                 }));
+            let mut admission = tack_app::display_budget::Images::new(&mut self.draws);
             for mut data in candidates
                 .filter_map(|id| document.object_render_data(id))
                 .map(|d| self.input.images.preview(d))
@@ -289,14 +291,14 @@ impl App {
                 }
                 let bounds = data.transform.bounds();
                 if bounds.intersects(viewport) {
-                    self.draws.push(DrawProductImage { data, key: None });
-                    if self.draws.len() > 10000 {
-                        return Err("viewport exceeds current 10000-object renderer limit".into());
-                    }
+                    admission.push(DrawProductImage { data, key: None }, |id| {
+                        selected && self.input.images.selection.contains(id)
+                    });
                 } else if near.len() < 16 && bounds.intersects(vicinity) {
                     near.push(data);
                 }
             }
+            display_limit = admission.finish();
         }
         let query_ms = cpu_start.elapsed().as_secs_f64() * 1000.;
         let logical_images = self.draws.len();
@@ -304,6 +306,7 @@ impl App {
             shared.request_visible(editor, &self.draws);
         }
         let mut tile_counts = [0usize; 2];
+        let mut tile_limited = false;
         let supply_start = Instant::now();
         self.supply_pending = false;
         let mut detailed = 0;
@@ -371,7 +374,19 @@ impl App {
             overview_edge = plan.overview_edge;
             detail_reserved = plan.detail_reserved;
             let mut demands = Vec::with_capacity(self.draws.len() * 2 + near.len());
-            for draw in &self.draws {
+            // Specialize only a homogeneous visible asset set. Mixed boards
+            // retain singleton work: no per-object run predicate or hash cache.
+            let run_size = if self.draws.first().is_some_and(|first| {
+                self.draws
+                    .iter()
+                    .all(|draw| draw.data.asset_id == first.data.asset_id)
+            }) {
+                self.draws.len().max(1)
+            } else {
+                1
+            };
+            for run in self.draws.chunks(run_size) {
+                let draw = &run[0];
                 let s = document
                     .asset(draw.data.asset_id)
                     .and_then(|a| document.source(a.source_id()))
@@ -393,10 +408,22 @@ impl App {
                     asset: draw.data.asset_id,
                     lod: Lod::Thumbnail,
                     edge: plan.overview_edge,
-                    priority: tack_app::supply_plan::preview_priority(
-                        draw.data.transform,
-                        self.camera.zoom(),
-                    ),
+                    priority: if run.len() == 1 {
+                        tack_app::supply_plan::preview_priority(
+                            draw.data.transform,
+                            self.camera.zoom(),
+                        )
+                    } else {
+                        run.iter()
+                            .map(|draw| {
+                                tack_app::supply_plan::preview_priority(
+                                    draw.data.transform,
+                                    self.camera.zoom(),
+                                )
+                            })
+                            .min()
+                            .unwrap_or(1)
+                    },
                     resident: gpu.contains_product(key(Lod::Thumbnail)),
                 });
                 if desired != Lod::Thumbnail {
@@ -456,7 +483,8 @@ impl App {
             assets.replace_view(&demands, document, &self.local.originals);
             assets.poll();
             assets.schedule();
-            for draw in &mut self.draws {
+            for run in self.draws.chunks(run_size) {
+                let draw = &run[0];
                 let s = document
                     .asset(draw.data.asset_id)
                     .and_then(|a| document.source(a.source_id()))
@@ -488,14 +516,15 @@ impl App {
             }
             // Select and account only after all uploads/evictions. Earlier draws
             // must not advertise quality that later insertions have removed.
-            for draw in &mut self.draws {
+            for run in self.draws.chunks_mut(run_size) {
+                let asset_id = run[0].data.asset_id;
                 let s = document
-                    .asset(draw.data.asset_id)
+                    .asset(asset_id)
                     .and_then(|a| document.source(a.source_id()))
                     .ok_or("render source reference")?;
                 let desired = plan.lods[&s.id()];
                 let key = |lod| ProductKey {
-                    asset: (lod == Lod::Thumbnail).then_some(draw.data.asset_id),
+                    asset: (lod == Lod::Thumbnail).then_some(asset_id),
                     source: s.id(),
                     revision: s.revision(),
                     lod,
@@ -505,21 +534,41 @@ impl App {
                         lod.edge()
                     },
                 };
-                draw.key = tack_app::supply_plan::displayed_lod(desired, |lod| {
+                let displayed = tack_app::supply_plan::displayed_lod(desired, |lod| {
                     gpu.contains_product(key(lod))
                 })
                 .map(key);
-                recognizable += usize::from(draw.key.is_some());
-                detailed += usize::from(draw.key.is_some_and(|k| k.lod != Lod::Thumbnail));
-                desired_count += usize::from(desired != Lod::Thumbnail);
-                resolved_count += usize::from(draw.key.is_some_and(|k| k.lod >= desired));
+                recognizable += run.len() * usize::from(displayed.is_some());
+                detailed +=
+                    run.len() * usize::from(displayed.is_some_and(|k| k.lod != Lod::Thumbnail));
+                desired_count += run.len() * usize::from(desired != Lod::Thumbnail);
+                resolved_count +=
+                    run.len() * usize::from(displayed.is_some_and(|k| k.lod >= desired));
                 self.supply_pending |= !gpu.contains_product(key(desired))
-                    && !assets.failed_rep(draw.data.asset_id, desired, key(desired).edge);
+                    && !assets.failed_rep(asset_id, desired, key(desired).edge);
+                for draw in run {
+                    draw.key = displayed;
+                }
             }
             if let Some(tiles) = &mut tiles {
                 self.supply_pending |= tiles.display(&mut self.draws, assets, gpu);
                 tile_counts = [tiles.requested, tiles.ready];
+                tile_limited = tiles.quad_limited;
             }
+        }
+        let warning = display_limit.warning(tile_limited);
+        if self.chrome.display_limit != warning {
+            self.chrome.display_limit = warning;
+            self.chrome.toolbar.layout(
+                &self.local.profile.toolbar,
+                self.camera.screen_size(),
+                self.camera.ui_scale(),
+                self.local.profile.status_bar
+                    || self.shared.is_some()
+                    || self.offline.is_some()
+                    || self.chrome.transient
+                    || self.chrome.display_limit.is_some(),
+            );
         }
         let supply_ms = supply_start.elapsed().as_secs_f64() * 1000.;
         if let Some(editor) = &self.editor {
@@ -698,7 +747,7 @@ impl App {
         }
         let present_ms = present_start.elapsed().as_secs_f64() * 1000.;
         if self.options.output.is_some() && self.frames.len() < 7200 {
-            self.frames.push(json!({"window_size":self.camera.screen_size(),"lod_trace":self.lod_trace.as_mut().and_then(|trace| trace.record(&self.camera, &self.draws, self.editor.as_ref().map(|e|e.document()), self.assets.as_ref(), gpu, overview_edge)),"annotations":self.annotations.as_ref().map(|a|json!({"primitives":a.primitives.len(),"glyphs":a.glyphs,"omitted":a.omitted,"layout_ms":a.layout_ms,"build_ms":a.build_ms})),"camera":self.camera.screen_to_world(self.camera.screen_size().map(|v|f64::from(v)/2.)),"zoom":self.camera.zoom(),"overview_edge":overview_edge,"detail_reserved":detail_reserved,"desired_detail":desired_count,"quality_resolved":resolved_count,"scene_ms":scene_ms,"query_ms":query_ms,"supply_ms":supply_ms,"detailed":detailed,"supply":self.assets.as_ref().map(|a| {let s=a.stats();json!({"pending":s.pending,"queued":s.queued,"cpu_bytes":s.cpu_bytes,"evictions":s.evictions,"source_bytes":s.source_bytes,"container_bytes":s.container_bytes,"decode_count":s.decode_count,"codec_requests":s.codec_requests,"region_jobs":s.region_jobs,"tile_outputs":s.tile_outputs,"tile_cache_hits":s.tile_cache_hits,"tile_cache_read_bytes":s.tile_cache_read_bytes,"tile_cache_write_bytes":s.tile_cache_write_bytes,"tile_disk_bytes":s.tile_disk_bytes,"decoded_bytes":s.decoded_bytes,"decode_ms":s.decode_ms,"discarded":s.discarded})}),"encode_ms":stats.encode_ms,"submit_ms":stats.submit_ms,"poll_ms":stats.poll_ms,"elapsed_ms":elapsed_ms,"cpu_ms":cpu_ms,"visible":logical_images,"tiles_requested":tile_counts[0],"tiles_ready":tile_counts[1],"recognizable":recognizable,"upload_cpu_ms":stats.upload_cpu_ms,"upload_bytes":stats.upload_bytes,"uploads":stats.uploads,"gpu_bytes":stats.gpu_bytes,"in_flight":stats.in_flight,"acquire_ms":acquire_ms,"present_ms":present_ms,"callback_ms":start.elapsed().as_secs_f64()*1000.}));
+            self.frames.push(json!({"window_size":self.camera.screen_size(),"lod_trace":self.lod_trace.as_mut().and_then(|trace| trace.record(&self.camera, &self.draws, self.editor.as_ref().map(|e|e.document()), self.assets.as_ref(), gpu, overview_edge)),"annotations":self.annotations.as_ref().map(|a|json!({"primitives":a.primitives.len(),"glyphs":a.glyphs,"omitted":a.omitted,"layout_ms":a.layout_ms,"build_ms":a.build_ms})),"camera":self.camera.screen_to_world(self.camera.screen_size().map(|v|f64::from(v)/2.)),"zoom":self.camera.zoom(),"overview_edge":overview_edge,"detail_reserved":detail_reserved,"desired_detail":desired_count,"quality_resolved":resolved_count,"scene_ms":scene_ms,"query_ms":query_ms,"supply_ms":supply_ms,"detailed":detailed,"supply":self.assets.as_ref().map(|a| {let s=a.stats();json!({"pending":s.pending,"queued":s.queued,"cpu_bytes":s.cpu_bytes,"evictions":s.evictions,"source_bytes":s.source_bytes,"container_bytes":s.container_bytes,"decode_count":s.decode_count,"codec_requests":s.codec_requests,"region_jobs":s.region_jobs,"tile_outputs":s.tile_outputs,"tile_cache_hits":s.tile_cache_hits,"tile_cache_read_bytes":s.tile_cache_read_bytes,"tile_cache_write_bytes":s.tile_cache_write_bytes,"tile_disk_bytes":s.tile_disk_bytes,"decoded_bytes":s.decoded_bytes,"decode_ms":s.decode_ms,"discarded":s.discarded})}),"encode_ms":stats.encode_ms,"submit_ms":stats.submit_ms,"poll_ms":stats.poll_ms,"elapsed_ms":elapsed_ms,"cpu_ms":cpu_ms,"visible":logical_images,"visible_total":display_limit.visible,"display_omitted":display_limit.omitted,"selected_omitted":display_limit.selected_omitted,"render_quads":self.draws.len(),"tile_detail_limited":tile_limited,"tiles_requested":tile_counts[0],"tiles_ready":tile_counts[1],"recognizable":recognizable,"upload_cpu_ms":stats.upload_cpu_ms,"upload_bytes":stats.upload_bytes,"uploads":stats.uploads,"gpu_bytes":stats.gpu_bytes,"in_flight":stats.in_flight,"acquire_ms":acquire_ms,"present_ms":present_ms,"callback_ms":start.elapsed().as_secs_f64()*1000.}));
             if let Some(frame) = self.frames.last_mut() {
                 let preview = self.input.link_preview;
                 frame["link_preview"] = json!({"units":preview.units,"lines":preview.lines,"vertices":preview.vertices,"simplified":preview.simplified});

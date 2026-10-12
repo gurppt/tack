@@ -11,12 +11,21 @@ pub(super) struct Chrome {
     pub desktop: tack_app::desktop::Chrome,
     pub atlas: Option<tack_assets::Decoded>,
     pub(super) status: String,
+    pub(super) display_limit: Option<String>,
     pub(super) last_hover: Option<Action>,
     pub(super) disabled: u32,
     pub(super) last_state: &'static str,
     pub(super) last_tool: tack_app::actions::Tool,
     pub(super) last_edit: bool,
     pub(super) transient: bool,
+    pub(super) alignment: tack_app::toolbar_icons::AlignmentState,
+    pub(super) last_alignment: tack_app::toolbar_icons::AlignmentState,
+    pub(super) alignment_key: Option<(
+        tack_core::DocumentId,
+        u64,
+        u64,
+        Option<tack_core::TextAlignment>,
+    )>,
 }
 impl App {
     pub(super) fn chrome_layout(&mut self) {
@@ -27,7 +36,8 @@ impl App {
             self.local.profile.status_bar
                 || self.shared.is_some()
                 || self.offline.is_some()
-                || self.chrome.transient,
+                || self.chrome.transient
+                || self.chrome.display_limit.is_some(),
         );
         // Convert legacy pixel offsets once, against the first resident layout.
         let config = &mut self.local.profile.toolbar;
@@ -58,6 +68,34 @@ impl App {
         self.dirty = true;
     }
     pub(super) fn refresh_chrome(&mut self) {
+        if self.chrome.toolbar.buttons[..self.chrome.toolbar.count]
+            .iter()
+            .any(|b| {
+                b.action
+                    == Some(Action::AnnotationStyle(
+                        tack_app::annotation_tool::StyleAction::AlignText,
+                    ))
+            })
+            && let Some(editor) = &self.editor
+        {
+            let key = (
+                editor.document().id(),
+                editor.generation(),
+                self.input.images.selection.revision(),
+                self.input.annotation.edit.as_ref().map(|e| e.alignment),
+            );
+            if self.chrome.alignment_key != Some(key) {
+                self.chrome.alignment = tack_app::toolbar_icons::note_alignment(
+                    editor.document(),
+                    self.input.images.selection.ids(),
+                    self.input.annotation.edit.as_deref(),
+                );
+                self.chrome.alignment_key = Some(key);
+            }
+        } else {
+            self.chrome.alignment_key = None;
+            self.chrome.alignment = Default::default();
+        }
         let was_transient = self.chrome.transient;
         self.chrome.transient = !self.input.status.is_empty()
             || self.interaction_error.is_some()
@@ -94,6 +132,24 @@ impl App {
             && !ui.message.is_empty()
         {
             self.chrome.status = ui.message.clone();
+            self.chrome.last_state = "";
+            return;
+        }
+        if hovered
+            == Some(Action::AnnotationStyle(
+                tack_app::annotation_tool::StyleAction::AlignText,
+            ))
+            && self.save.last_error.is_none()
+            && self.interaction_error.is_none()
+        {
+            self.chrome.status = format!(
+                "{} [{}]",
+                self.chrome.alignment.label(),
+                tack_app::context_menu::shortcut(
+                    &self.input.keymap,
+                    Action::AnnotationStyle(tack_app::annotation_tool::StyleAction::AlignText)
+                )
+            );
             self.chrome.last_state = "";
             return;
         }
@@ -145,11 +201,13 @@ impl App {
         };
         let edit = self.input.annotation.edit.is_some() || self.input.name_edit.is_some();
         if hovered != self.chrome.last_hover
+            || self.chrome.alignment != self.chrome.last_alignment
             || state != self.chrome.last_state
             || self.chrome.last_tool != self.input.active_tool()
             || self.chrome.last_edit != edit
         {
             self.chrome.last_tool = self.input.active_tool();
+            self.chrome.last_alignment = self.chrome.alignment;
             self.chrome.last_edit = edit;
             self.chrome.last_hover = hovered;
             self.chrome.last_state = state;
@@ -161,7 +219,13 @@ impl App {
                     } else {
                         ""
                     },
-                    a.label(),
+                    if a == Action::AnnotationStyle(
+                        tack_app::annotation_tool::StyleAction::AlignText
+                    ) {
+                        self.chrome.alignment.label()
+                    } else {
+                        a.label()
+                    },
                     tack_app::context_menu::shortcut(&self.input.keymap, a)
                 )
             } else {
@@ -356,6 +420,8 @@ pub(super) fn draw(
     let scale = c.ui_scale().round().clamp(1., 4.);
     let mut icons = [tack_render::UiIcon::default(); 32];
     let mut count = 0;
+    // Toolbar cells stay above the revealed window strip, matching hit precedence.
+    super::desktop::draw(&chrome.desktop, g, &status_camera, p);
     if !popup {
         if chrome.toolbar.count > 0 {
             let r = chrome.toolbar.grip;
@@ -398,7 +464,14 @@ pub(super) fn draw(
                 }
                 icons[count] = tack_render::UiIcon {
                     rect: [r[0], r[1], 16. * scale, 16. * scale],
-                    index: tack_app::toolbar_icons::state_index(a, annotations_locked),
+                    index: if a
+                        == Action::AnnotationStyle(
+                            tack_app::annotation_tool::StyleAction::AlignText,
+                        ) {
+                        chrome.alignment.icon()
+                    } else {
+                        tack_app::toolbar_icons::state_index(a, annotations_locked)
+                    },
                     disabled: chrome.disabled & (1 << position) != 0,
                 };
                 count += 1;
@@ -418,18 +491,17 @@ pub(super) fn draw(
         }
     }
     gpu.set_ui_icons(&icons[..count])?;
-    super::desktop::draw(&chrome.desktop, g, &status_camera, p);
     let c = &status_camera;
     let scale = c.ui_scale();
     let [w, h] = c.screen_size().map(f64::from);
-    if p.status_bar || shared.is_some() || chrome.transient {
+    if p.status_bar || shared.is_some() || chrome.transient || chrome.display_limit.is_some() {
         g.pixel_rect(c, [0., h - 20. * scale], [w, h], palette.menu_bg, None);
         let mut budget = 180;
         g.ui_text(
             c,
             [18. * scale, h - 17. * scale],
             w / scale - 22.,
-            &chrome.status,
+            chrome.display_limit.as_deref().unwrap_or(&chrome.status),
             palette.text_secondary,
             &mut budget,
         );

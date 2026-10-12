@@ -13,9 +13,17 @@ use tack_core::{
 #[derive(Default)]
 pub struct SelectionState {
     ids: BTreeSet<ObjectId>,
+    revision: u64,
     pub annotations_locked: bool,
 }
 impl SelectionState {
+    /// Transient UI invalidation only; never serialized or used as authority.
+    pub fn revision(&self) -> u64 {
+        self.revision
+    }
+    fn changed(&mut self) {
+        self.revision = self.revision.wrapping_add(1);
+    }
     pub fn ids(&self) -> impl Iterator<Item = ObjectId> + '_ {
         self.ids.iter().copied()
     }
@@ -29,9 +37,13 @@ impl SelectionState {
         self.ids.contains(&id)
     }
     pub fn clear(&mut self) {
+        if !self.ids.is_empty() {
+            self.changed();
+        }
         self.ids.clear();
     }
     pub fn select_all(&mut self, doc: &Document) {
+        self.changed();
         self.ids = doc
             .object_order()
             .iter()
@@ -43,6 +55,7 @@ impl SelectionState {
             .collect();
     }
     pub fn select(&mut self, id: Option<ObjectId>, toggle: bool) {
+        self.changed();
         if toggle {
             if let Some(id) = id
                 && !self.ids.remove(&id)
@@ -57,6 +70,7 @@ impl SelectionState {
         }
     }
     pub fn select_object(&mut self, doc: &Document, id: Option<ObjectId>, toggle: bool) {
+        self.changed();
         if !toggle {
             self.clear();
         }
@@ -79,19 +93,28 @@ impl SelectionState {
         }
     }
     pub fn expand_groups(&mut self, doc: &Document) {
+        let before = self.len();
         for group in doc.groups() {
             if group.members().iter().any(|id| self.contains(*id)) {
                 self.ids.extend(group.members());
             }
         }
+        if self.len() != before {
+            self.changed();
+        }
     }
     pub fn prune(&mut self, doc: &Document) {
+        let before = self.len();
         self.ids.retain(|id| {
             doc.object(*id).is_some()
                 && (!self.annotations_locked || doc.object_render_data(*id).is_some())
         });
+        if self.len() != before {
+            self.changed();
+        }
     }
     pub fn marquee(&mut self, doc: &Document, r: WorldRect, additive: bool) {
+        self.changed();
         if !additive {
             self.clear();
         }

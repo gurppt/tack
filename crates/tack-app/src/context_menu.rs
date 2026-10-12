@@ -43,6 +43,9 @@ pub struct Context {
     redo: bool,
     any: bool,
     all_images: bool,
+    has_annotations: bool,
+    editable_images: bool,
+    grayscale: bool,
     all_flippable: bool,
     group: bool,
     ungroup: bool,
@@ -77,6 +80,14 @@ impl Context {
         let count = ids().count();
         let first_id = ids().next();
         let all_images = count > 0 && ids().all(|id| doc.object_render_data(id).is_some());
+        let editable_images = ids().any(|id| {
+            doc.object(id).is_some_and(|o| !o.locked()) && doc.object_render_data(id).is_some()
+        });
+        let grayscale = editable_images
+            && ids()
+                .filter(|id| doc.object(*id).is_some_and(|o| !o.locked()))
+                .filter_map(|id| doc.object_render_data(id))
+                .all(|d| d.grayscale);
         let kind = if count > 1 {
             ContextKind::Multiple
         } else {
@@ -133,6 +144,12 @@ impl Context {
             redo: editor.redo_len() > 0,
             any: count > 0,
             all_images,
+            has_annotations: ids().any(|id| {
+                doc.object(id)
+                    .is_some_and(|o| matches!(o.kind(), ObjectKind::Annotation(_)))
+            }),
+            editable_images,
+            grayscale,
             group: all_images && multiple_units,
             ungroup,
             align: multiple_units,
@@ -197,6 +214,10 @@ impl Context {
             Action::Undo => self.undo,
             Action::Redo => self.redo,
             Action::SelectAll => self.has_objects,
+            Action::ContextIncrease
+            | Action::ContextDecrease
+            | Action::ContextCoarseIncrease
+            | Action::ContextCoarseDecrease => self.has_annotations,
             Action::NextFrame | Action::PreviousFrame => self.has_frames,
             Action::AnnotationStyle(StyleAction::Fill) => self.annotation_fill,
             Action::DeleteSelection | Action::Order(_) => {
@@ -207,7 +228,9 @@ impl Context {
                         _ => true,
                     }
             }
-            Action::ResetCrop | Action::ActualSize | Action::ToggleGrayscale => self.all_images,
+            Action::ResetCrop | Action::ActualSize | Action::ToggleGrayscale => {
+                self.all_images && self.editable_images
+            }
             Action::ToggleLockSelection => self.any,
             Action::SelectLockedObjects => true,
             Action::RefreshSource => self.all_images && self.source_origin,
@@ -234,6 +257,7 @@ impl Context {
     }
     fn checked(self, action: Action) -> bool {
         match action {
+            Action::ToggleGrayscale => self.grayscale,
             Action::Filtering(f) => self.filtering == Some(f),
             Action::Opacity(alpha) => self.opacity == Some(alpha.value()),
             Action::ToggleAlwaysOnTop => self.always_on_top,
@@ -246,6 +270,8 @@ impl Context {
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Group {
+    Images,
+    Adjustments,
     Sampling,
     Opacity,
     Order,
@@ -419,6 +445,26 @@ fn context_items_all(context: Context, submenu: Option<Group>, keymap: &Keymap) 
     let a = |label, command| action(label, command, context, keymap);
     if let Some(g) = submenu {
         return match g {
+            Group::Images => vec![
+                a("Actual Size / 1:1", ActualSize),
+                a("Grayscale", ToggleGrayscale),
+                a("Reset Crop", ResetCrop),
+                a("Flip horizontal", FlipHorizontal),
+                a("Flip vertical", FlipVertical),
+                a("Sampling: Default", Filtering(ImageFiltering::Default)),
+                a("Sampling: Smooth", Filtering(ImageFiltering::Smooth)),
+                a("Sampling: Nearest", Filtering(ImageFiltering::Nearest)),
+                a("Opacity: 100%", Opacity(Alpha::Full)),
+                a("Opacity: 75%", Opacity(Alpha::ThreeQuarters)),
+                a("Opacity: 50%", Opacity(Alpha::Half)),
+                a("Opacity: 25%", Opacity(Alpha::Quarter)),
+            ],
+            Group::Adjustments => vec![
+                a("Increase property", ContextIncrease),
+                a("Decrease property", ContextDecrease),
+                a("Increase property (coarse)", ContextCoarseIncrease),
+                a("Decrease property (coarse)", ContextCoarseDecrease),
+            ],
             Group::Sampling => [
                 ("Nearest", ImageFiltering::Nearest),
                 ("Smooth", ImageFiltering::Smooth),
@@ -556,7 +602,7 @@ fn context_items_all(context: Context, submenu: Option<Group>, keymap: &Keymap) 
                 a("Focus frame", FocusFrame),
                 a("Next frame", NextFrame),
                 a("Previous frame", PreviousFrame),
-                a("Add bookmark...", AddCameraBookmark),
+                a("Assign view shortcut...", AddCameraBookmark),
                 a("Camera bookmarks...", CameraBookmarks),
             ],
             Group::Tools => vec![
@@ -633,7 +679,12 @@ fn context_items_all(context: Context, submenu: Option<Group>, keymap: &Keymap) 
             a("Select Linked Objects", SelectLinkedObjects),
         ]),
         ContextKind::Annotation => v.push(group("Style", Group::Style, true)),
-        ContextKind::Multiple => v.push(group("Arrange", Group::Arrange, context.any)),
+        ContextKind::Multiple => {
+            if context.all_images {
+                v.push(group("Image", Group::Images, true));
+            }
+            v.push(group("Arrange", Group::Arrange, context.any));
+        }
         _ => {}
     }
     if context.kind != ContextKind::Image && context.any && context.all_flippable {
@@ -642,6 +693,12 @@ fn context_items_all(context: Context, submenu: Option<Group>, keymap: &Keymap) 
             a("Flip vertical", FlipVertical),
         ]);
     }
+    if context.has_annotations {
+        v.push(group("Adjust property", Group::Adjustments, true));
+    }
+    if context.selection_kind != ContextKind::Multiple && context.any {
+        v.push(a("Snap selection to grid", Layout(Arrangement::SnapToGrid)));
+    }
     v.push(group(
         "Order",
         Group::Order,
@@ -649,6 +706,7 @@ fn context_items_all(context: Context, submenu: Option<Group>, keymap: &Keymap) 
     ));
     if context.all_scribbles {
         v.push(a("Scribble eraser", SelectTool(Tool::Eraser)));
+        v.push(a("Finish Scribble", FinishScribble));
     }
     if context.all_scribbles && context.multiple_scribbles {
         v.push(a("Merge Scribbles", MergeScribbles));

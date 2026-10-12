@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.0-dev.2 — portable development release
+
+- Reduced toolbar catalog while keeping commands in menus/keymap; optional note alignment with explicit left/center/right/mixed icons.
+- Visible creation of named camera bookmarks, distinct from local view shortcuts.
+- Larger top-edge window strip, accessible toolbar buttons, and note Enter handling during IME composition.
+- Multi-image Actual Size/grayscale/crop controls and explicit locked-selection behavior.
+- Nonfatal image-render saturation: bounded, signaled presentation with the complete board still editable, saveable and recoverable.
+- Lower supply cost for many visible instances of one asset; consecutive compatible GPU draws batch without reordering alpha or annotation interleaves.
+- Portable Linux/Windows x64 archives include the pinned libjpeg-turbo SIMD decoder, authored graphics and the optional LAN server/updater.
+- Update manifest identity aligned with the current LAN major 4; old major 3 peers require an upgrade.
+
+Pre-alpha test release. Physical Windows and multi-machine LAN acceptance remain pending. See the UI Cleanup, 2A12B, 2A12C1 and 2A12C2 reports under `docs/` for exact measurements, workload limits and test coverage.
+
 ## 0.1.0-dev.1 — unpublished integration
 
 Phase 2A8 foundation delivered on `dev`; physical alpha acceptance remains pending.

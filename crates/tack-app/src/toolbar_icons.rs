@@ -10,7 +10,7 @@ use std::{
     path::{Path, PathBuf},
 };
 use tack_assets::{AssetError, Decoded};
-pub const NAMES: [&str; 37] = [
+pub const NAMES: [&str; 40] = [
     "pointer",
     "pan",
     "text",
@@ -44,10 +44,13 @@ pub const NAMES: [&str; 37] = [
     "send_backward",
     "cycle_color",
     "cycle_image_sampling",
-    "rotate_view_tool",
+    "text_align_left",
     "toggle_snap",
     "unlink",
     "mulot_icone",
+    "text_align_center",
+    "text_align_right",
+    "text_align_mixed",
 ];
 pub const ATLAS_WIDTH: usize = 128;
 pub const ATLAS_HEIGHT: usize = NAMES.len().div_ceil(8) * 16;
@@ -84,7 +87,7 @@ pub fn index(a: Action) -> usize {
         Action::Order(Order::Backward) => 30,
         Action::AnnotationStyle(StyleAction::Color) => 31,
         Action::CycleFiltering => 32,
-        Action::SelectTool(Tool::RotateView) | Action::TemporaryTool(Tool::RotateView) => 33,
+        Action::AnnotationStyle(StyleAction::AlignText) => 33,
         Action::ToggleSnapping => 34,
         Action::UnlinkFromFrame => 35,
         Action::SelectTool(Tool::Mouse) | Action::TemporaryTool(Tool::Mouse) => 36,
@@ -173,4 +176,67 @@ pub fn state_index(action: Action, annotation_locked: bool) -> usize {
     } else {
         index(action)
     }
+}
+
+/// Computed on input/selection redraws, never by an independent polling loop.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum AlignmentState {
+    Left,
+    Center,
+    Right,
+    Mixed,
+    #[default]
+    None,
+}
+impl AlignmentState {
+    pub fn label(self) -> &'static str {
+        match self {
+            Self::Left => "Text alignment: Left",
+            Self::Center => "Text alignment: Center",
+            Self::Right => "Text alignment: Right",
+            Self::Mixed => "Text alignment: Mixed",
+            Self::None => "Text alignment: no note selected",
+        }
+    }
+    pub fn icon(self) -> usize {
+        match self {
+            Self::Left => 33,
+            Self::Center => 37,
+            Self::Right => 38,
+            Self::Mixed | Self::None => 39,
+        }
+    }
+}
+pub fn note_alignment(
+    document: &tack_core::Document,
+    selection: impl Iterator<Item = tack_core::ObjectId>,
+    edit: Option<&crate::annotation_tool::NoteEdit>,
+) -> AlignmentState {
+    use tack_core::{AnnotationKind, ObjectKind, TextAlignment};
+    let state = |a| match a {
+        TextAlignment::Left => AlignmentState::Left,
+        TextAlignment::Center => AlignmentState::Center,
+        TextAlignment::Right => AlignmentState::Right,
+    };
+    if let Some(edit) = edit {
+        return state(edit.alignment);
+    }
+    let mut result = AlignmentState::None;
+    for id in selection {
+        let Some(object) = document.object(id) else {
+            continue;
+        };
+        let ObjectKind::Annotation(annotation) = object.kind() else {
+            continue;
+        };
+        let AnnotationKind::Text(text) = annotation.kind() else {
+            continue;
+        };
+        let next = state(text.alignment());
+        if result != AlignmentState::None && result != next {
+            return AlignmentState::Mixed;
+        }
+        result = next;
+    }
+    result
 }

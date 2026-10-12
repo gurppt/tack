@@ -157,6 +157,59 @@ pub fn eligible(a: Action) -> bool {
                 | Action::CancelInteraction
                 | Action::ApplicationMenu
                 | Action::StopSharing
+                | Action::SelectAll
+                | Action::DeleteSelection
+                | Action::Opacity(_)
+                | Action::Filtering(_)
+                | Action::ContextCoarseIncrease
+                | Action::ContextCoarseDecrease
+                | Action::ContextIncrease
+                | Action::ContextDecrease
+                | Action::Layout(crate::spatial_layout::Layout::SnapToGrid)
+                | Action::FinishScribble
+                | Action::RenameFrame
+                | Action::AnnotationStyle(
+                    crate::annotation_tool::StyleAction::Fill
+                        | crate::annotation_tool::StyleAction::Wider
+                        | crate::annotation_tool::StyleAction::Narrower
+                        | crate::annotation_tool::StyleAction::LargerText
+                        | crate::annotation_tool::StyleAction::SmallerText
+                        | crate::annotation_tool::StyleAction::OpacityUp
+                        | crate::annotation_tool::StyleAction::OpacityDown
+                )
+                | Action::OpenSource
+                | Action::RevealSource
+                | Action::CopySourcePath
+                | Action::RelinkSource
+                | Action::SaveOriginalAs
+                | Action::SourceInfo
+                | Action::About
+                | Action::CheckForUpdates
+                | Action::NewBoard
+                | Action::CloseBoard
+                | Action::ImportImages
+                | Action::SaveAs
+                | Action::SaveToLocal
+                | Action::Paste
+                | Action::ExportSelectedSources
+                | Action::ExportAllSources
+                | Action::Preferences
+                | Action::KeymapEditor
+                | Action::RecentBoards
+                | Action::ImportKeymap
+                | Action::ExportKeymap
+                | Action::SaveKeymap
+                | Action::ExportPreferences
+                | Action::ExportProfile
+                | Action::ImportProfile
+                | Action::ToggleAlwaysOnTop
+                | Action::ToggleNativeTitleBar
+                | Action::MinimizeWindow
+                | Action::MaximizeWindow
+                | Action::ToggleToolbar
+                | Action::EditToolbar
+                | Action::ToggleStatusBar
+                | Action::AddCameraBookmark
         )
 }
 #[derive(Clone, Copy, Debug, Default)]

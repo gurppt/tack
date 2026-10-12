@@ -9,8 +9,7 @@ pub struct Chrome {
 }
 impl Chrome {
     pub fn hover(&mut self, point: [f64; 2], scale: f64, compact: bool) -> bool {
-        let next =
-            compact && point[1] >= 0. && point[1] < if self.visible { 24. } else { 4. } * scale;
+        let next = compact && point[1] >= 0. && point[1] < 24. * scale;
         let changed = self.visible != next;
         self.visible = next;
         changed
@@ -42,8 +41,8 @@ mod tests {
     #[test]
     fn reveal_hide_threshold_and_buttons() {
         let mut chrome = Chrome::default();
-        assert!(!chrome.hover([50., 10.], 2., true));
-        assert!(chrome.hover([50., 4.], 2., true));
+        assert!(chrome.hover([50., 10.], 2., true));
+        assert!(!chrome.hover([50., 4.], 2., true));
         assert!(!chrome.hover([50., 40.], 2., true));
         assert_eq!(chrome.button([20., 20.], 800., 2.), Some(0));
         assert_eq!(chrome.button([680., 20.], 800., 2.), Some(1));
@@ -53,5 +52,21 @@ mod tests {
         assert!(chrome.hover([50., 50.], 2., true));
         assert!(chrome.hover([50., 4.], 2., true));
         assert!(chrome.hover([50., 4.], 2., false));
+    }
+}
+#[cfg(test)]
+mod strip_tests {
+    use super::*;
+    #[test]
+    fn full_strip_boundary_is_identical_on_reveal_and_retain_at_each_scale() {
+        for scale in [1., 2.] {
+            let mut c = Chrome::default();
+            assert!(c.hover([100., 24. * scale - 0.01], scale, true));
+            assert!(!c.hover([100., 12. * scale], scale, true));
+            assert!(c.hover([100., 24. * scale], scale, true));
+            assert!(c.hover([100., 12. * scale], scale, true));
+            assert!(c.hover([100., 12. * scale], scale, false));
+            assert!(!c.visible);
+        }
     }
 }

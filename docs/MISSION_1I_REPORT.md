@@ -56,7 +56,8 @@ while the draft owns input. Freehand/Scribble stays active for repeated strokes;
 Escape/V returns Pointer. Cancellation does not commit partial objects or add
 history. Existing temporary overrides are cleared on modal reset/one-shot
 completion; nested experimental Pan/Text commit/cancel/focus paths are tested.
-Pan/RotateView tool modes remain experimental, without a second tool stack.
+Historical phase 1I state: Pan/view-rotation modes were experimental. View rotation
+was subsequently removed by UI Cleanup; image rotation and pan remain.
 
 Multi-selection → right-click → Arrange has Grid and Snap first, then the
 retained six align, two distribute and two pack operations. The flat 12-row child

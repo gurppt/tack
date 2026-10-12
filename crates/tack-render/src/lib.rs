@@ -3,7 +3,8 @@ mod gpu;
 mod timing;
 
 pub use gpu::{
-    DrawImage, DrawProductImage, Gpu, MAX_UPLOADS, ProductKey, RenderStats, product_quad,
+    DrawImage, DrawProductImage, Gpu, MAX_IMAGE_QUADS, MAX_UPLOADS, ProductKey, RenderStats,
+    product_quad,
 };
 pub use timing::GpuSample;
 

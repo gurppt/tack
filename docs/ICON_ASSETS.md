@@ -5,7 +5,7 @@ The defaults in `gfx/icons/` and `gfx/cursors/` include the author's October 10,
 no redrawing, recoloring or regeneration was performed. About uses the supplied
 75 × 35 logo in `gfx/logo_tack_about.png`.
 
-Toolbar, keymap previews and action cells share the same symbol table. The 37
+Toolbar, keymap previews and action cells share the same symbol table. The 40
 symbols occupy a single nearest-filtered 128 × 80 RGBA atlas loaded once at
 startup. The extra atlas row costs 8 KiB; the draw bound remains 32 visible quads.
 Each symbol must be 16 × 16, at most 16 KiB, with alpha 0 or 255. Invalid/missing
@@ -20,7 +20,8 @@ files use an in-memory placeholder and never rewrite artwork.
 | `bring_forward`, `send_backward` | One step forward/backward in stacking order |
 | `cycle_color` | Cycle annotation color |
 | `cycle_image_sampling` | Cycle image filtering |
-| `rotate_view_tool` | Rotate view tool, including temporary tool |
+| `text_align_left`, `text_align_center`, `text_align_right` | Current note alignment (optional toolbar action) |
+| `text_align_mixed` | Mixed alignment or no selected note |
 | `toggle_snap` | Toggle snapping |
 | `unlink` | Unlink from Frame |
 
@@ -71,3 +72,8 @@ Mouse/Temporary Mouse actions share atlas slot 36; no default toolbar or keymap
 entry is added. The atlas remains 128 × 80. Paws use startup-cached binary masks,
 with mirrors of the authored orientations; original files are never generated
 or rewritten. Import hashes: [artwork receipt](../benchmarks/mouse-polish/artwork-import.json).
+
+UI cleanup adds four new hard-pixel PNGs without changing existing authored PNGs.
+The removed view-rotation slot 33 now holds note alignment Left; Center/Right/Mixed
+use slots 37/38/39. The atlas remains 128 × 80, loaded once. Alignment state updates
+on document/selection/edit changes only while the optional button is present.

@@ -11,6 +11,7 @@ pub(super) struct Tiles {
     regions: Vec<Region>,
     pub requested: usize,
     pub ready: usize,
+    pub quad_limited: bool,
 }
 pub(super) struct TilePolicy {
     pub reserved: usize,
@@ -40,7 +41,9 @@ impl Tiles {
             .min(assets.limits().cpu_bytes / 4)
             / (TILE_EDGE as usize + 2).pow(2)
             / 4;
-        slots = slots.min(64).min(10000usize.saturating_sub(draws.len()));
+        let quad_slots = tack_render::MAX_IMAGE_QUADS.saturating_sub(draws.len());
+        let quad_constrained = quad_slots < slots.min(64);
+        slots = slots.min(64).min(quad_slots);
         let mut eligible = draws
             .iter()
             .filter(|draw| {
@@ -54,6 +57,7 @@ impl Tiles {
             regions: Vec::new(),
             requested: 0,
             ready: 0,
+            quad_limited: quad_constrained && eligible > 0,
         };
         for (index, draw) in draws.iter().enumerate() {
             if slots == 0 {
@@ -163,7 +167,9 @@ impl Tiles {
             .filter(|r| r.draw.key.is_some_and(|k| gpu.contains_product(k)))
             .count();
         let mut pending = false;
-        let mut output = Vec::with_capacity(draws.len() + self.regions.len());
+        let mut output = Vec::with_capacity(
+            (draws.len() + self.regions.len()).min(tack_render::MAX_IMAGE_QUADS),
+        );
         let mut first = 0;
         for (index, draw) in draws.iter().enumerate() {
             let end = first
@@ -172,7 +178,14 @@ impl Tiles {
                     .take_while(|r| r.index == index)
                     .count();
             let group = &self.regions[first..end];
-            if !group.is_empty()
+            let fits = tack_app::display_budget::tile_group_fits(
+                output.len(),
+                group.len(),
+                draws.len() - index - 1,
+            );
+            self.quad_limited |= !group.is_empty() && !fits;
+            if fits
+                && !group.is_empty()
                 && group
                     .iter()
                     .all(|r| r.draw.key.is_some_and(|k| gpu.contains_product(k)))
@@ -180,12 +193,13 @@ impl Tiles {
                 output.extend(group.iter().map(|r| r.draw));
             } else {
                 output.push(*draw);
-                pending |= group.iter().any(|r| {
-                    r.draw.key.is_some_and(|k| {
-                        !gpu.contains_product(k)
-                            && !assets.failed_rep(r.draw.data.asset_id, k.lod, k.edge)
-                    })
-                });
+                pending |= fits
+                    && group.iter().any(|r| {
+                        r.draw.key.is_some_and(|k| {
+                            !gpu.contains_product(k)
+                                && !assets.failed_rep(r.draw.data.asset_id, k.lod, k.edge)
+                        })
+                    });
             }
             first = end;
         }
@@ -314,6 +328,102 @@ fn tile_draw(mut data: ImageRenderData, size: [u32; 2], tile: Tile) -> Option<Im
 mod tests {
     #![allow(clippy::unwrap_used)]
     use super::*;
+    #[test]
+    #[ignore = "requires Vulkan adapter; run explicitly on an isolated backend"]
+    fn final_tile_expansion_falls_back_atomically_before_vertex_cap() -> Result<(), AssetError> {
+        let root = std::env::temp_dir().join(format!(
+            "tack-tile-cap-{}",
+            tack_storage::new_document_id()?.value()
+        ));
+        std::fs::create_dir(&root)?;
+        let result = (|| {
+            let path = root.join("board.tack");
+            let doc =
+                tack_core::Document::new(tack_storage::new_document_id()?, Default::default());
+            tack_storage::save(&path, &doc, vec![])?;
+            let mut assets =
+                ProductAssets::new(Arc::new(TackFile::open(&path)?), &path, root.join("cache"))?;
+            let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::from_env_or_default());
+            let mut gpu = pollster::block_on(Gpu::new(
+                &instance,
+                None,
+                wgpu::TextureFormat::Rgba8UnormSrgb,
+                1024 * 1024,
+            ))?;
+            gpu.begin_frame()?;
+            let original = DrawProductImage {
+                data: data([true, false], 0.3, Crop::FULL),
+                key: None,
+            };
+            let mut regions = Vec::new();
+            for i in 0..3 {
+                let key = ProductKey {
+                    asset: None,
+                    source: tack_core::SourceId::new(1)?,
+                    revision: 0,
+                    lod: Lod::Detail,
+                    edge: 300 + i,
+                };
+                assert!(gpu.upload_product(
+                    key,
+                    &tack_assets::Decoded {
+                        width: 16,
+                        height: 16,
+                        rgba: vec![127; 1024]
+                    }
+                ));
+                regions.push(Region {
+                    index: 0,
+                    draw: DrawProductImage {
+                        key: Some(key),
+                        ..original
+                    },
+                });
+            }
+            let mut tiles = Tiles {
+                regions,
+                requested: 3,
+                ready: 0,
+                quad_limited: false,
+            };
+            let mut draws = vec![original; tack_render::MAX_IMAGE_QUADS - 1];
+            assert!(!tiles.display(&mut draws, &assets, &gpu));
+            assert!(tiles.quad_limited);
+            assert_eq!(draws.len(), tack_render::MAX_IMAGE_QUADS - 1);
+            assert!(draws[0].key.is_none());
+            // Two tiles fit exactly alongside all remaining overview quads.
+            tiles.regions.pop();
+            tiles.quad_limited = false;
+            assert!(!tiles.display(&mut draws, &assets, &gpu));
+            assert!(!tiles.quad_limited);
+            assert_eq!(draws.len(), tack_render::MAX_IMAGE_QUADS);
+            assert!(draws[0].key.is_some() && draws[1].key.is_some());
+            let target = gpu.device.create_texture(&wgpu::TextureDescriptor {
+                label: None,
+                size: wgpu::Extent3d {
+                    width: 8,
+                    height: 8,
+                    depth_or_array_layers: 1,
+                },
+                mip_level_count: 1,
+                sample_count: 1,
+                dimension: wgpu::TextureDimension::D2,
+                format: gpu.format,
+                usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+                view_formats: &[],
+            });
+            gpu.render_product(
+                &target.create_view(&Default::default()),
+                &Camera::new([8, 8]),
+                &draws,
+            )?;
+            gpu.device.poll(wgpu::PollType::wait_indefinitely())?;
+            assets.suspend();
+            Ok::<(), AssetError>(())
+        })();
+        let _ = std::fs::remove_dir_all(root);
+        result
+    }
     fn data(flips: [bool; 2], angle: f64, crop: Crop) -> ImageRenderData {
         ImageRenderData {
             grayscale: false,

@@ -225,6 +225,15 @@ impl ImageInput {
                     }
                 }
                 editor.execute(Command::Batch(commands))?;
+                if action == StyleAction::AlignText {
+                    self.status = crate::toolbar_icons::note_alignment(
+                        editor.document(),
+                        self.images.selection.ids(),
+                        self.annotation.edit.as_deref(),
+                    )
+                    .label()
+                    .into();
+                }
                 if self.images.selection.is_empty() {
                     self.annotation.style = next_style(self.annotation.style, action)?;
                 }
@@ -502,28 +511,13 @@ impl ImageInput {
                         self.annotation.tools.reset_pointer();
                         self.reset_modal_inputs();
                     }
-                    PhysicalKey::Code(KeyCode::Enter)
-                        if !self
-                            .state
-                            .modifiers()
-                            .contains(crate::input::Modifiers::SHIFT) =>
-                    {
-                        if let Some(edit) = self.annotation.edit.clone() {
-                            let id = edit.id;
-                            let is_new = edit.is_new;
-                            edit.finish(editor)?;
-                            self.annotation.edit = None;
-                            if is_new {
-                                self.annotation.tools.complete_creation(Tool::Text);
-                            }
-                            self.images.selection.select(Some(id), false);
-                        }
-                        self.reset_modal_inputs();
-                    }
                     PhysicalKey::Code(KeyCode::Enter) => {
-                        if let Some(e) = &mut self.annotation.edit {
-                            e.insert("\n");
-                        }
+                        self.note_enter(
+                            editor,
+                            self.state
+                                .modifiers()
+                                .contains(crate::input::Modifiers::SHIFT),
+                        )?;
                     }
                     PhysicalKey::Code(KeyCode::Backspace) => {
                         if let Some(e) = &mut self.annotation.edit {
@@ -568,6 +562,74 @@ impl ImageInput {
         if self.annotation.edit.is_none() {
             self.annotation.box_resize = None;
         }
+        Ok(())
+    }
+
+    fn note_enter(&mut self, editor: &mut DocumentEditor, newline: bool) -> Result<(), AssetError> {
+        // Enter belongs to the IME while a preedit is pending, including Shift+Enter.
+        let Some(edit) = &mut self.annotation.edit else {
+            return Ok(());
+        };
+        if edit.composing {
+            return Ok(());
+        }
+        if newline {
+            edit.insert("\n");
+            return Ok(());
+        }
+        let id = edit.id;
+        let is_new = edit.is_new;
+        edit.clone().finish(editor)?;
+        self.annotation.edit = None;
+        if is_new {
+            self.annotation.tools.complete_creation(Tool::Text);
+        }
+        self.images.selection.select(Some(id), false);
+        self.reset_modal_inputs();
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+mod note_enter_tests {
+    use super::*;
+    #[test]
+    fn enter_respects_ime_composition_newline_and_one_commit() -> Result<(), AssetError> {
+        let mut editor = DocumentEditor::new(
+            Document::new(DocumentId::new(911)?, DocumentLimits::default()),
+            16,
+        );
+        let mut input = ImageInput::new()?;
+        input.annotation.edit = Some(Box::new(NoteEdit {
+            id: ObjectId::new(1)?,
+            value: "note".into(),
+            size: 16.,
+            alignment: TextAlignment::Left,
+            transform: Transform::new([0.; 2], [100.; 2], 0., [false; 2])?,
+            style: input.annotation.style,
+            generation: 0,
+            is_new: true,
+            replace: false,
+            composing: true,
+        }));
+        input.note_enter(&mut editor, false)?;
+        input.note_enter(&mut editor, true)?;
+        assert_eq!(editor.undo_len(), 0);
+        assert_eq!(input.annotation.edit.as_ref().ok_or("edit")?.value, "note");
+        input.annotation.edit.as_mut().ok_or("edit")?.composing = false;
+        input.note_enter(&mut editor, true)?;
+        assert_eq!(
+            input.annotation.edit.as_ref().ok_or("edit")?.value,
+            "note\n"
+        );
+        input.note_enter(&mut editor, false)?;
+        input.note_enter(&mut editor, false)?;
+        assert!(input.annotation.edit.is_none());
+        assert_eq!(editor.undo_len(), 1);
+        editor.undo()?;
+        assert_eq!(editor.document().annotation_count(), 0);
+        editor.redo()?;
+        assert_eq!(editor.document().annotation_count(), 1);
         Ok(())
     }
 }

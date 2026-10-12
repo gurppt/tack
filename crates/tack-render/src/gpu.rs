@@ -16,7 +16,8 @@ mod ui_icons;
 mod ui_image;
 pub use ui_icons::UiIcon;
 
-const MAX_OBJECTS: usize = 10000;
+/// Maximum final image quads, including tiles, in one canvas submission.
+pub const MAX_IMAGE_QUADS: usize = 10000;
 pub const UPLOAD_BUDGET_BYTES: usize = 16 * 1024 * 1024;
 pub const MAX_UPLOADS: usize = 8;
 const MAX_IN_FLIGHT: usize = 3;
@@ -82,6 +83,36 @@ trait CanvasImage {
     fn grayscale(&self) -> bool {
         false
     }
+}
+/// Only contiguous image vertices with identical binding/sampler state merge.
+/// An annotation or a non-contiguous index ends the run, preserving alpha order.
+fn image_run_end<I: CanvasImage>(
+    images: &[I],
+    order: Option<&[crate::CanvasDraw]>,
+    command: usize,
+    index: usize,
+) -> (usize, usize) {
+    let image = &images[index];
+    let key = image.key();
+    let nearest = image.nearest();
+    let mut next = command + 1;
+    let mut end = index + 1;
+    while next < order.map_or(images.len(), <[_]>::len) {
+        let candidate = match order.map(|order| order[next]) {
+            Some(crate::CanvasDraw::Annotations { .. }) => break,
+            Some(crate::CanvasDraw::Image(index)) => index,
+            None => next,
+        };
+        if candidate != end
+            || images[candidate].nearest() != nearest
+            || images[candidate].key() != key
+        {
+            break;
+        }
+        end += 1;
+        next += 1;
+    }
+    (next, end)
 }
 impl CanvasImage for DrawImage {
     fn quad(&self) -> ([[f64; 2]; 4], [[f32; 2]; 4], f32) {
@@ -319,7 +350,7 @@ impl Gpu {
         );
         let buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("visible quads"),
-            contents: &vec![0; MAX_OBJECTS * 6 * std::mem::size_of::<Vertex>()],
+            contents: &vec![0; MAX_IMAGE_QUADS * 6 * std::mem::size_of::<Vertex>()],
             usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
         });
         let timings = features
@@ -343,7 +374,7 @@ impl Gpu {
             textures: ByteCache::new(budget_bytes / 2),
             thumbnails: ByteCache::new(budget_bytes - budget_bytes / 2),
             placeholder,
-            vertices: Vec::with_capacity(MAX_OBJECTS * 6),
+            vertices: Vec::with_capacity(MAX_IMAGE_QUADS * 6),
             buffer,
             in_flight: Arc::new(AtomicUsize::new(0)),
             completed: Arc::new(AtomicUsize::new(0)),
@@ -648,7 +679,7 @@ impl Gpu {
             borders.prepare(&self.device, &self.queue, camera, selection)?;
         }
         if let Some(scene) = scene {
-            if scene.order.len() > crate::MAX_ANNOTATION_PRIMITIVES + MAX_OBJECTS
+            if scene.order.len() > crate::MAX_ANNOTATION_PRIMITIVES + MAX_IMAGE_QUADS
                 || scene.primitives.len() > crate::MAX_ANNOTATION_PRIMITIVES
                 || scene.order.iter().any(|d| match *d {
                     crate::CanvasDraw::Image(i) => i >= images.len(),
@@ -674,7 +705,7 @@ impl Gpu {
             .grid
             .get_or_insert_with(|| crate::grid::Grid::new(&self.device, self.format));
         background.prepare(&self.queue, camera, grid, self.background);
-        if images.len() > MAX_OBJECTS {
+        if images.len() > MAX_IMAGE_QUADS {
             return Err("too many visible objects".into());
         }
         self.vertices.clear();
@@ -729,13 +760,15 @@ impl Gpu {
             pass.set_pipeline(&self.pipeline);
             pass.set_vertex_buffer(0, self.buffer.slice(..));
             let draws = scene.map_or(images.len(), |s| s.order.len());
-            for draw in 0..draws {
+            let mut draw = 0;
+            while draw < draws {
                 let index = if let Some(scene) = scene {
                     match scene.order[draw] {
                         crate::CanvasDraw::Annotations { start, end } => {
                             if let Some(annotations) = &self.annotations {
                                 annotations.draw(&mut pass, start, end);
                             }
+                            draw += 1;
                             continue;
                         }
                         crate::CanvasDraw::Image(i) => i,
@@ -743,6 +776,7 @@ impl Gpu {
                 } else {
                     draw
                 };
+                let (next, end) = image_run_end(images, scene.map(|s| s.order), draw, index);
                 let image = &images[index];
                 pass.set_pipeline(&self.pipeline);
                 pass.set_vertex_buffer(0, self.buffer.slice(..));
@@ -766,7 +800,8 @@ impl Gpu {
                     &[],
                 );
                 let first = index as u32 * 6;
-                pass.draw(first..first + 6, 0..1);
+                pass.draw(first..end as u32 * 6, 0..1);
+                draw = next;
             }
             if let Some(selection) = &self.selection {
                 selection.draw(&mut pass);
@@ -839,5 +874,84 @@ impl Gpu {
 
     pub fn has_pending_timings(&self) -> bool {
         self.timings.as_ref().is_some_and(Timings::pending)
+    }
+}
+
+#[cfg(test)]
+mod run_tests {
+    use super::*;
+    use crate::CanvasDraw;
+    struct Image {
+        key: Option<TextureKey>,
+        nearest: bool,
+    }
+    impl CanvasImage for Image {
+        fn quad(&self) -> ([[f64; 2]; 4], [[f32; 2]; 4], f32) {
+            ([[0.; 2]; 4], [[0.; 2]; 4], 1.)
+        }
+        fn key(&self) -> Option<TextureKey> {
+            self.key
+        }
+        fn nearest(&self) -> bool {
+            self.nearest
+        }
+    }
+    fn image(source: u128, nearest: bool) -> Result<Image, AssetError> {
+        Ok(Image {
+            key: Some(TextureKey::Product(ProductKey {
+                asset: None,
+                source: SourceId::new(source)?,
+                revision: 1,
+                lod: Lod::Detail,
+                edge: 2048,
+            })),
+            nearest,
+        })
+    }
+    #[test]
+    fn runs_preserve_nonadjacent_textures_samplers_and_annotation_barriers()
+    -> Result<(), AssetError> {
+        let images = [
+            image(1, false)?,
+            image(1, false)?,
+            image(2, false)?,
+            image(2, false)?,
+            image(1, false)?,
+            image(1, true)?,
+        ];
+        assert_eq!(image_run_end(&images, None, 0, 0), (2, 2));
+        assert_eq!(image_run_end(&images, None, 2, 2), (4, 4));
+        assert_eq!(image_run_end(&images, None, 4, 4), (5, 5));
+        assert_eq!(image_run_end(&images, None, 5, 5), (6, 6));
+        let same = [
+            image(1, false)?,
+            image(1, false)?,
+            image(1, false)?,
+            image(1, false)?,
+        ];
+        assert_eq!(image_run_end(&same, None, 0, 0), (4, 4));
+        let order = [
+            CanvasDraw::Image(0),
+            CanvasDraw::Image(1),
+            CanvasDraw::Annotations { start: 0, end: 1 },
+            CanvasDraw::Image(2),
+            CanvasDraw::Image(3),
+        ];
+        assert_eq!(image_run_end(&same, Some(&order), 0, 0), (2, 2));
+        assert_eq!(image_run_end(&same, Some(&order), 3, 2), (5, 4));
+        let reordered = [CanvasDraw::Image(0), CanvasDraw::Image(2)];
+        assert_eq!(image_run_end(&same, Some(&reordered), 0, 0), (1, 1));
+        let missing = [
+            Image {
+                key: None,
+                nearest: false,
+            },
+            Image {
+                key: None,
+                nearest: false,
+            },
+        ];
+        assert_eq!(image_run_end(&missing, None, 0, 0), (2, 2));
+        Ok(())
     }
 }

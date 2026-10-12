@@ -27,8 +27,15 @@ impl ImageInput {
             .images
             .selection
             .ids()
+            .filter(|id| doc.object(*id).is_some_and(|o| !o.locked()))
             .filter_map(|id| doc.object_render_data(id))
             .all(|d| d.grayscale);
+        let skipped_locked = self
+            .images
+            .selection
+            .ids()
+            .filter(|id| doc.object(*id).is_some_and(|o| o.locked()))
+            .count();
         let mut edits = Vec::new();
         for id in self.images.selection.ids() {
             let Some(o) = doc.object(id) else {
@@ -79,8 +86,19 @@ impl ImageInput {
                 _ => {}
             }
         }
+        if edits.is_empty() {
+            self.status = "Unlock an image before editing; no editable images selected".into();
+            return Ok(());
+        }
         editor.execute(Command::Batch(edits))?;
-        self.status = action.label().into();
+        self.status = if skipped_locked > 0 && action != Action::ToggleLockSelection {
+            format!(
+                "{}; {skipped_locked} locked images unchanged",
+                action.label()
+            )
+        } else {
+            action.label().into()
+        };
         Ok(())
     }
 }

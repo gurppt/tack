@@ -66,3 +66,43 @@ fn native_form_buttons_confirm_and_cancel_without_hidden_action() -> R {
     assert!(matches!(ui.daily_activate(), Some(UiResult::Dismiss)));
     Ok(())
 }
+#[test]
+fn empty_bookmark_list_exposes_creation_and_shared_form_has_no_edit_path() -> R {
+    let mut profile = Preferences::defaults()?;
+    let mut keymap = profile.keymap()?;
+    for size in [[800, 600], [1024, 768]] {
+        for scale in [1., 2.] {
+            for shared in [false, true] {
+                let mut ui = LocalUi::daily(
+                    Panel::Bookmarks,
+                    DailyPanel {
+                        shared,
+                        ..Default::default()
+                    },
+                );
+                let mut c = Camera::new(size);
+                c.set_ui_scale(scale);
+                let mut g = ImageGizmo::default();
+                ui.draw(&mut g, &c, &keymap, &profile);
+                let add = ui
+                    .hits
+                    .iter()
+                    .find(|h| h.command == Command::AddBookmark)
+                    .ok_or("visible add button")?;
+                assert_eq!(add.enabled, !shared);
+                assert!(!ui.daily_rows().is_empty());
+                assert_eq!(
+                    matches!(
+                        ui.command(Command::AddBookmark, &mut keymap, &mut profile),
+                        Some(UiResult::AddBookmark)
+                    ),
+                    !shared
+                );
+                assert!(ui.daily_command(true).is_none());
+                assert!(ui.daily_command(false).is_none());
+                assert!(ui.daily_activate().is_none());
+            }
+        }
+    }
+    Ok(())
+}

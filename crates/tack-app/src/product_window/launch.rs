@@ -232,7 +232,7 @@ fn run_mode(
         load_failed: false,
         save: ImageSave::default(),
         benchmark,
-        draws: Vec::with_capacity(10000),
+        draws: Vec::with_capacity(tack_render::MAX_IMAGE_QUADS),
         error: None,
         dirty: true,
         drawable: true,

@@ -57,6 +57,7 @@ pub enum UiResult {
     UpdateChannel,
     AssignCameraSlot(u8),
     JumpBookmark(tack_core::BookmarkId),
+    AddBookmark,
     SaveBookmark(Option<tack_core::BookmarkId>, String),
     RenameBookmark(tack_core::BookmarkId),
     DeleteBookmark(tack_core::BookmarkId),
@@ -93,6 +94,7 @@ enum Command {
     ToolbarImportProfile,
     ToolbarExportProfile,
     RenameBookmark,
+    AddBookmark,
     DeleteBookmark,
     ConfirmDaily,
     UpdateCheck,
@@ -440,6 +442,11 @@ impl LocalUi {
             | Command::ToolbarImportProfile
             | Command::ToolbarExportProfile => None,
             Command::RenameBookmark => self.daily_command(true),
+            Command::AddBookmark => self
+                .daily
+                .as_ref()
+                .filter(|d| !d.shared)
+                .map(|_| UiResult::AddBookmark),
             Command::DeleteBookmark => self.daily_command(false),
             Command::UpdateCheck => Some(UiResult::UpdateCheck),
             Command::UpdateChannel => Some(UiResult::UpdateChannel),

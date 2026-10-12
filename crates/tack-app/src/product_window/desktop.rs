@@ -128,14 +128,22 @@ impl App {
                     return Ok(true);
                 }
                 if *state == ElementState::Pressed && compact {
-                    if let Some(hit) = hit {
-                        self.chrome.desktop.pressed = Some(hit);
-                        return Ok(true);
-                    }
+                    // Edge resize, then visible toolbar/grip, then window chrome.
+                    // Objects underneath the strip cannot start a canvas drag.
                     if let Some(edge) = resize_edge(self.pointer, self.camera.screen_size(), scale)
                     {
                         self.input.cancel();
                         window.drag_resize_window(edge)?;
+                        return Ok(true);
+                    }
+                    if self.context.is_none()
+                        && self.local.ui.is_none()
+                        && self.chrome.toolbar.contains(self.pointer)
+                    {
+                        return Ok(false);
+                    }
+                    if let Some(hit) = hit {
+                        self.chrome.desktop.pressed = Some(hit);
                         return Ok(true);
                     }
                     if self.chrome.desktop.visible && self.pointer[1] < 24. * scale {

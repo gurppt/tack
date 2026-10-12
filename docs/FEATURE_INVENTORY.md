@@ -28,7 +28,7 @@ selection, tool choice, camera and text drafts. Menu paths are one submenu deep.
 
 | Feature / semantic action | Status | Object type | Invocation / default shortcut | Other UI | Context menu | Undoable? | Persisted? | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Add camera bookmark (`AddCameraBookmark`) | implemented | local camera slots | B | Tack → View → Add bookmark | shared Tack menu | No | Local profile | Centered shortcut capture, Enter confirms collision reassignment, Escape cancels; at most 64 local views, works on shared boards without a shared revision. |
+| Assign view shortcut (`AddCameraBookmark`) | implemented | local camera slots | B | Tack → View → Assign view shortcut | shared Tack menu | No | Local profile | Centered shortcut capture, Enter confirms collision reassignment, Escape cancels; at most 64 local views, works on shared boards without a shared revision. |
 | Camera bookmarks (`CameraBookmarks`) | implemented | camera / bookmark metadata | — | Tack → View → Camera bookmarks | shared Tack menu | jump No; rename/delete Yes | Board metadata, camera session | Enter/click jumps; F2/visible Rename and Delete buttons. Shared snapshots allow jump, not editing. |
 | Duplicate selection (`DuplicateSelection`) | implemented | images, notes, all supported annotations, frames | Ctrl+D | Tack → Edit | shared Tack menu | Yes, one transaction | Board | Fresh object/group IDs, same image assets/sources/originals; one adaptive grid-step offset. Shared metadata-only through authority, with conflict/lease checks. |
 | Image information (`SourceInfo`) | implemented | one selected image | — | Image → Source | Image information | No | temporary panel | Existing metadata and observed status only; no filesystem access, codec probing or decode requests. |
@@ -42,10 +42,8 @@ selection, tool choice, camera and text drafts. Menu paths are one submenu deep.
 | Pointer tool (`SelectTool(Pointer)`) | implemented | selection | V | Tack → Tools | No | No | session | Direct canvas selection/manipulation. |
 | Mouse / Mulot (`SelectTool(Mouse)`, `TemporaryTool(Mouse)`) | implemented | local transient paws/ping; ordinary image after deadline | — | Keymap / Edit Toolbar catalog only | No | paws/ping No; generated image one step | image Board; effects session | Custom cursor, eight directions; 64 effects maximum. One 600-second deadline per continuous activation, cancelled on tool exit. No new LAN messages. |
 | Pan tool (`SelectTool(Pan)`) | implemented | camera | — | toolbar / keymap | No | No | session | Left drag uses existing camera pan, no document mutation. |
-| Rotate view tool (`SelectTool(RotateView)`) | experimental | tool state | — | keymap catalog only | No | No | session | Generic Interaction state exists; native pointer pipeline does not implement a complete dedicated pan/rotate-view tool. |
 | Temporary pointer tool (`TemporaryTool(Pointer)`) | experimental | tool state | — | keymap hold binding only | No | No | session | Generic held-tool restoration tested; no default binding or menu; complete native tool combinations not validated. |
 | Temporary pan tool (`TemporaryTool(Pan)`) | implemented | tool state | — | keymap catalog only | No | No | session | Mouse or keyboard Hold begins temporary Pan, uses the initiating pointer press, and restores the previous tool on release/focus loss. |
-| Temporary rotate view tool (`TemporaryTool(RotateView)`) | experimental | tool state | — | keymap catalog only | No | No | session | Generic Interaction state exists; native pointer pipeline does not implement a complete dedicated pan/rotate-view tool. |
 | Undo (`Undo`) | implemented | document | Ctrl+Z | Tack → Edit | all object menus | history operation | Board result; history session | Text drafts have no local undo buffer; Ctrl+Z is consumed while editing. |
 | Redo (`Redo`) | implemented | document | Ctrl+Shift+Z | Tack → Edit | all object menus | history operation | Board result; history session | Ctrl+Y is an additional Redo alias. |
 | Pan view (`PanView`) | implemented | camera | Middle drag / Alt+Shift+left drag | canvas gesture / handles | No | No | session | Alt+left pans away from handles. |
@@ -191,7 +189,7 @@ The repository's broader “128 MB / Pentium III” direction is a UI design tar
 This inventory makes no claim that current wgpu/native process RSS satisfies it.
 
 One-shot completion clears the existing temporary-tool stack. Modal entry
-additionally resets held-input state. Temporary Pan/RotateView remain experimental; there is no
+additionally resets held-input state. Temporary Pan remains experimental; there is no
 second restoration stack. Nested Pan/Text commit/cancel/focus paths have
 owner tests, but complete native experimental combinations are not claimed.
 
