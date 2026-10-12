@@ -166,6 +166,8 @@ pub enum Operation {
     },
 }
 struct Active {
+    #[cfg(windows)]
+    native_picker: bool,
     cancel: Arc<AtomicBool>,
     receiver: Receiver<LocalUpdate>,
     handle: JoinHandle<()>,
@@ -179,6 +181,12 @@ pub struct LocalWorker {
     pub operations: u64,
 }
 impl LocalWorker {
+    #[cfg(windows)]
+    pub fn native_picker_active(&self) -> bool {
+        self.active
+            .as_ref()
+            .is_some_and(|active| active.native_picker)
+    }
     pub fn active(&self) -> bool {
         self.active.is_some()
     }
@@ -212,6 +220,16 @@ impl LocalWorker {
         if self.active() {
             return Err("another local operation is active; Escape cancels it".into());
         }
+        #[cfg(windows)]
+        let native_picker = matches!(
+            operation,
+            Operation::Pick(..)
+                | Operation::ExportSnapshot { .. }
+                | Operation::ExportSources { .. }
+                | Operation::ExportOriginal { .. }
+        );
+        #[cfg(windows)]
+        let parent = if native_picker { parent } else { None };
         let mouse_game = matches!(operation, Operation::MouseGame { .. });
         let importing = matches!(operation, Operation::Import(_));
         let mutating = matches!(
@@ -494,6 +512,8 @@ impl LocalWorker {
             })?;
         self.operations += 1;
         self.active = Some(Active {
+            #[cfg(windows)]
+            native_picker,
             cancel,
             receiver,
             handle,
@@ -509,7 +529,15 @@ impl LocalWorker {
             for _ in 0..4 {
                 match active.receiver.try_recv() {
                     Ok(update) => {
-                        if active.cancel.load(Ordering::Relaxed)
+                        let cancelled = active.cancel.load(Ordering::Relaxed);
+                        #[cfg(windows)]
+                        if cancelled
+                            && active.native_picker
+                            && matches!(update, LocalUpdate::Picked(..))
+                        {
+                            continue;
+                        }
+                        if cancelled
                             && matches!(
                                 update,
                                 LocalUpdate::MouseGame { .. }

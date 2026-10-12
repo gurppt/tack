@@ -4,6 +4,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mode = std::env::args()
         .nth(1)
         .unwrap_or_else(|| "cancel-open".into());
+    if mode == "owner-cancel-pump" || mode == "owner-cancel-block" {
+        return owner_probe(mode == "owner-cancel-block");
+    }
     if mode == "repeat-cancel" {
         for _ in 0..3 {
             exercise("cancel-open")?;
@@ -77,4 +80,111 @@ fn exercise(mode: &str) -> Result<(), Box<dyn std::error::Error>> {
 #[cfg(not(windows))]
 fn main() {
     println!("Windows-only integration probe");
+}
+
+#[cfg(windows)]
+fn owner_probe(block_owner: bool) -> Result<(), Box<dyn std::error::Error>> {
+    use std::{
+        sync::{
+            Arc,
+            atomic::{AtomicBool, Ordering},
+        },
+        time::{Duration, Instant},
+    };
+    use windows::Win32::UI::Input::KeyboardAndMouse::IsWindowEnabled;
+    use windows::{
+        Win32::{
+            Foundation::HWND,
+            UI::WindowsAndMessaging::{
+                CW_USEDEFAULT, CreateWindowExW, DestroyWindow, DispatchMessageW, MSG, PM_REMOVE,
+                PeekMessageW, SW_SHOW, ShowWindow, TranslateMessage, WINDOW_EX_STYLE,
+                WS_OVERLAPPEDWINDOW,
+            },
+        },
+        core::w,
+    };
+    // SAFETY: built-in STATIC class, terminated static strings and null optional
+    // owner/menu/instance/data; window is destroyed on this creating UI thread.
+    let hwnd = unsafe {
+        CreateWindowExW(
+            WINDOW_EX_STYLE::default(),
+            w!("STATIC"),
+            w!("Tack owned probe"),
+            WS_OVERLAPPEDWINDOW,
+            CW_USEDEFAULT,
+            CW_USEDEFAULT,
+            640,
+            480,
+            None,
+            None,
+            None,
+            None,
+        )?
+    };
+    // SAFETY: live owned handle, no lifetime transfer.
+    unsafe {
+        let _ = ShowWindow(hwnd, SW_SHOW);
+    }
+    let owner = hwnd.0 as usize;
+    let stop = Arc::new(AtomicBool::new(false));
+    let stop_worker = Arc::clone(&stop);
+    let worker = std::thread::spawn(move || {
+        tack_windows_dialogs::pick(
+            tack_windows_dialogs::Request {
+                save: false,
+                folder: false,
+                multiple: false,
+                filters: &[],
+                directory: None,
+                name: None,
+                owner: Some(owner),
+                max_files: 1,
+            },
+            &stop_worker,
+        )
+    });
+    let started = Instant::now();
+    let mut cancelled = false;
+    while !worker.is_finished() {
+        // SAFETY: dispatch only this owned process/thread's messages, on its UI
+        // thread. Native modal WM_ENABLE sends must be serviced before joining.
+        unsafe {
+            let mut msg = MSG::default();
+            while PeekMessageW(&mut msg, None, 0, 0, PM_REMOVE).as_bool() {
+                let _ = TranslateMessage(&msg);
+                DispatchMessageW(&msg);
+            }
+            if !cancelled && !IsWindowEnabled(hwnd).as_bool() {
+                cancelled = true;
+                stop.store(true, Ordering::Relaxed);
+                println!("owner_disabled=true cancel_requested=true block_owner={block_owner}");
+                if block_owner {
+                    // Explicit failing control, run only under owned timeout:
+                    // reproduce UI teardown joining before pumping WM_ENABLE.
+                    let _ = worker.join();
+                    return Err("blocking control unexpectedly completed".into());
+                }
+            }
+        }
+        if started.elapsed() > Duration::from_secs(8) {
+            return Err("owned dialog cancellation deadline".into());
+        }
+        std::thread::sleep(Duration::from_millis(2));
+    }
+    let paths = worker.join().map_err(|_| "owned probe worker failed")??;
+    // SAFETY: worker/COM finished before inspecting and destroying the owner.
+    unsafe {
+        if !IsWindowEnabled(hwnd).as_bool() {
+            return Err("owner stayed disabled".into());
+        }
+        DestroyWindow(HWND(owner as *mut _))?;
+    }
+    if !cancelled || !paths.is_empty() {
+        return Err("owned dialog did not exercise cancellation".into());
+    }
+    println!(
+        "owner_enabled=true result=ok elapsed_ms={:.3}",
+        started.elapsed().as_secs_f64() * 1000.
+    );
+    Ok(())
 }

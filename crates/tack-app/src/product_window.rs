@@ -74,6 +74,8 @@ struct App {
     input: ImageInput,
     editor: Option<DocumentEditor>,
     load_failed: bool,
+    #[cfg(windows)]
+    native_exit_pending: bool,
     save: ImageSave,
     benchmark: Option<ImageBenchmark>,
     draws: Vec<DrawProductImage>,
@@ -115,6 +117,20 @@ struct App {
     lod_trace: Option<tack_app::lod_diagnostics::LodDiagnostics>,
 }
 impl App {
+    fn request_exit(&mut self, e: &ActiveEventLoop) {
+        #[cfg(windows)]
+        if self.local.worker.native_picker_active() {
+            // COM Show(owner) sends synchronous WM_ENABLE to the owner. Keep
+            // its UI message pump alive until the cancelled dialog returns;
+            // joining in App teardown first deadlocks that cross-thread send.
+            self.native_exit_pending = true;
+            self.local.worker.cancel();
+            self.local.queued = None;
+            e.set_control_flow(ControlFlow::Wait);
+            return;
+        }
+        e.exit();
+    }
     fn initialize(&mut self, event_loop: &ActiveEventLoop) -> Result<(), AssetError> {
         let window = Arc::new(
             event_loop.create_window(
@@ -913,7 +929,7 @@ impl ApplicationHandler<Event> for App {
         {
             self.abort_mouse();
             self.error = Some(error);
-            e.exit();
+            self.request_exit(e);
         }
     }
     fn user_event(&mut self, e: &ActiveEventLoop, event: Event) {
@@ -924,7 +940,7 @@ impl ApplicationHandler<Event> for App {
                     if self.options.seconds.is_some() {
                         self.abort_mouse();
                         self.error = Some(error);
-                        e.exit();
+                        self.request_exit(e);
                     } else {
                         self.fail_load();
                         self.editor = tack_storage::new_document_id().ok().map(|id| {
@@ -965,6 +981,18 @@ impl ApplicationHandler<Event> for App {
     }
 
     fn about_to_wait(&mut self, e: &ActiveEventLoop) {
+        #[cfg(windows)]
+        if self.native_exit_pending {
+            // Drain only; an already-chosen result must not start a save/import
+            // after shutdown was requested. No poll timer or extra worker.
+            let _ = self.local.worker.poll();
+            if self.local.worker.native_picker_active() {
+                e.set_control_flow(ControlFlow::Wait);
+            } else {
+                e.exit();
+            }
+            return;
+        }
         self.wakeups += 1;
         self.poll_shared();
         self.sync_leases();
@@ -1030,7 +1058,7 @@ impl ApplicationHandler<Event> for App {
                     self.panel(tack_app::local_ui::Panel::Connecting);
                 }
             } else {
-                e.exit();
+                self.request_exit(e);
                 return;
             }
         }
@@ -1039,7 +1067,7 @@ impl ApplicationHandler<Event> for App {
             .seconds
             .is_some_and(|s| self.started.elapsed().as_secs_f64() >= s)
         {
-            e.exit();
+            self.request_exit(e);
             return;
         }
         if let Some(a) = &mut self.assets {
@@ -1279,7 +1307,7 @@ impl ApplicationHandler<Event> for App {
         {
             self.abort_mouse();
             self.error = Some(error);
-            e.exit();
+            self.request_exit(e);
             return;
         }
         let active = (self.dirty
@@ -1335,6 +1363,10 @@ pub use launch::{run, run_new, run_shared};
 
 impl App {
     fn handle_window_event(&mut self, e: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
+        #[cfg(windows)]
+        if self.native_exit_pending {
+            return;
+        }
         if self.input.active_tool() == tack_app::actions::Tool::Mouse
             && (matches!(
                 event,
@@ -1403,7 +1435,7 @@ impl App {
                 return;
             }
             if self.load_failed {
-                e.exit();
+                self.request_exit(e);
                 return;
             }
             if let Some(editor) = &mut self.editor
@@ -1419,7 +1451,7 @@ impl App {
             {
                 self.panel(tack_app::local_ui::Panel::Close);
             } else {
-                e.exit();
+                self.request_exit(e);
             }
             return;
         }
@@ -1573,7 +1605,7 @@ impl App {
         if let Err(error) = result {
             self.abort_mouse();
             self.error = Some(error);
-            e.exit();
+            self.request_exit(e);
         }
     }
 }

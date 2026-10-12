@@ -229,6 +229,8 @@ fn run_mode(
         input: ImageInput::new()?,
         editor: None,
         load_failed: false,
+        #[cfg(windows)]
+        native_exit_pending: false,
         save: ImageSave::default(),
         benchmark,
         draws: Vec::with_capacity(tack_render::MAX_IMAGE_QUADS),

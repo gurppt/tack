@@ -225,6 +225,11 @@ impl App {
             })
     }
     pub(super) fn poll_local(&mut self) {
+        #[cfg(windows)]
+        if self.native_exit_pending {
+            let _ = self.local.worker.poll();
+            return;
+        }
         if self.load_failed {
             // Drain canceled workers without applying any late document result.
             let _ = self.local.worker.poll();
