@@ -36,7 +36,7 @@ pub fn is_cancel(code: i32) -> bool {
 #[cfg(windows)]
 mod native;
 #[cfg(windows)]
-pub use native::{Request, available_bytes, pick};
+pub use native::{Request, pick};
 #[cfg(test)]
 mod tests {
     use super::*;

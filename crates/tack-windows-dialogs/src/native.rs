@@ -272,23 +272,6 @@ pub fn pick(r: Request<'_>, cancel: &AtomicBool) -> Result<Vec<PathBuf>, DialogE
     }
     Ok(paths)
 }
-/// Diagnostic-only disk quota query, independent of PowerShell availability.
-pub fn available_bytes(directory: &Path) -> Result<u64, DialogError> {
-    let directory = wide(directory.as_os_str())?;
-    let mut available = 0;
-    // SAFETY: terminated path remains live; writable u64 output, unused outputs
-    // are None. Function validates the path and returns an HRESULT on failure.
-    at("free disk space", unsafe {
-        windows::Win32::Storage::FileSystem::GetDiskFreeSpaceExW(
-            PCWSTR(directory.as_ptr()),
-            Some(&mut available),
-            None,
-            None,
-        )
-    })?;
-    Ok(available)
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;

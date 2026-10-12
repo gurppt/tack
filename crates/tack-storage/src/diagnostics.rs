@@ -185,7 +185,7 @@ fn has_reserve(root: &Path) -> bool {
         .arg(root)
         .output();
     #[cfg(windows)]
-    return tack_windows_dialogs::available_bytes(root).is_ok_and(|free| free >= RESERVE);
+    return tack_windows_io::available_bytes(root).is_ok_and(|free| free >= RESERVE);
     #[cfg(not(any(unix, windows)))]
     return false;
     #[cfg(unix)]

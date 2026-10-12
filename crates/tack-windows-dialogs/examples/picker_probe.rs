@@ -70,7 +70,7 @@ fn exercise(mode: &str) -> Result<(), Box<dyn std::error::Error>> {
     }
     println!(
         "available_disk_bytes={}",
-        tack_windows_dialogs::available_bytes(&dir)?
+        tack_windows_io::available_bytes(&dir)?
     );
     Ok(())
 }

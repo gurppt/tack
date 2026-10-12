@@ -1977,7 +1977,7 @@ dependencies = [
  "serde_json",
  "sha2",
  "tack-core",
- "tack-windows-dialogs",
+ "tack-windows-io",
 ]
 
 [[package]]
@@ -2007,7 +2007,15 @@ dependencies = [
 name = "tack-windows-dialogs"
 version = "0.1.0-dev.2"
 dependencies = [
+ "tack-windows-io",
  "windows",
+]
+
+[[package]]
+name = "tack-windows-io"
+version = "0.1.0-dev.2"
+dependencies = [
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
