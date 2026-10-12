@@ -6,13 +6,13 @@ from run_local_production import Session, wait
 from run_phase2a_local_regression import snapshot, delta
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('--package',type=Path,required=True);p.add_argument('--fixtures',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--save-probe',type=Path,required=True);p.add_argument('--profile-template',type=Path,required=True);a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('--package',type=Path,required=True);p.add_argument('--fixtures',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--save-probe',type=Path,required=True);p.add_argument('--profile-template',type=Path,required=True);p.add_argument('--native-only',action='store_true');a=p.parse_args()
  root=a.output.resolve();root.mkdir(exist_ok=False);fixtures=a.fixtures.resolve();package=a.package.resolve();binary=package/'tack';repo=Path(__file__).resolve().parents[1]
  assert (fixtures/'OWNER_DIAG_FIXTURES').read_text()=='DEV-DIAG-WINLAN-01 disposable fixtures\n'
  if shutil.disk_usage(root).free<10*1024**3:raise RuntimeError('10 GiB reserve')
  env=dict(os.environ,TACK_PROFILE_DIR=str(root/'profile'),TACK_DEV_DIAGNOSTICS='1',TACK_DIAGNOSTICS_DIR=str(root/'logs'));env.pop('TACK_ICON_DIR',None)
  boards={};saves={}
- for fmt in ['jpeg','png']:
+ for fmt in ([] if a.native_only else ['jpeg','png']):
   sources=sorted(fixtures.glob('*.jpg' if fmt=='jpeg' else '*.png'))[:2]
   for mode in ['linked','embedded']:
    board=fixtures/f'{fmt}-{mode}.tack';boards[fmt,mode]=board
@@ -48,8 +48,12 @@ def main():
   wait(lambda:subprocess.run(['xdpyinfo'],env=env,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0,'owned X display')
   for fmt,tiles,diag in [('jpeg',False,True),('png',False,True),('png',True,True),('jpeg',False,False)]:
    name=f'{fmt}-tiles-{tiles}-diag-{diag}';runenv=dict(env,TACK_DEV_DIAGNOSTICS='1' if diag else '0')
-   args=['open',boards[fmt,'embedded'],'--lod-debug']+(['--huge-tiles'] if tiles else [])
-   session=Session(binary,root,name,args,runenv);time.sleep(2);session.key('Escape','ctrl+a','F5');session.save(boards[fmt,'embedded']);time.sleep(6)
+   # ActualSize is a toggle; each case must start with virgin display geometry.
+   case_board=fixtures/(name+'-virgin.tack')
+   sources=sorted(fixtures.glob('*.jpg' if fmt=='jpeg' else '*.png'))[:2]
+   subprocess.run([str(binary),'create',str(case_board),'--embedded',*map(str,sources)],env=runenv,capture_output=True,text=True,check=True,timeout=90)
+   args=['open',case_board,'--lod-debug']+(['--huge-tiles'] if tiles else [])
+   session=Session(binary,root,name,args,runenv);time.sleep(2);session.key('Escape','ctrl+a','F5');session.save(case_board);time.sleep(6)
    before=snapshot(session.process.pid);time.sleep(3);after=snapshot(session.process.pid);idle=delta(before,after,3)
    session.close();report=json.loads(session.report.read_text());session=None
    fs=report['frames'];receipts.append(dict(name=name,idle=idle,frames=len(fs),errors=report['errors'],max_tiles_requested=max(f['tiles_requested'] for f in fs),max_tiles_ready=max(f['tiles_ready'] for f in fs),last_lod=next((f['lod_trace'] for f in reversed(fs) if f.get('lod_trace')),None),max_gpu_bytes=max(f['gpu_bytes'] for f in fs),max_cpu_payload=max(f['supply']['cpu_bytes'] for f in fs if f['supply'])))

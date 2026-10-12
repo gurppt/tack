@@ -40,9 +40,11 @@ impl LodDiagnostics {
         {
             // Existing --lod-debug receipts retain their developer IDs; exported DEV logs hash them.
             for field in ["source", "asset"] {
-                if let Some(value) = snapshot[field].as_str() {
+                if let Some(value) = snapshot[field].as_str()
+                    && let Ok(id) = u128::from_str_radix(value, 16)
+                {
                     snapshot[field] =
-                        json!(tack_storage::diagnostics::fingerprint(value.as_bytes()));
+                        json!(tack_storage::diagnostics::fingerprint(&id.to_le_bytes()));
                 }
             }
             tack_storage::diagnostics::event(

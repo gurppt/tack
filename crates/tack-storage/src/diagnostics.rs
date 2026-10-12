@@ -304,7 +304,15 @@ pub fn error_info(error: &(dyn Error + 'static)) -> Value {
         }
         let message = e.to_string();
         let io = e.downcast_ref::<std::io::Error>();
-        chain.push(json!({"message_id":fingerprint(message.as_bytes()),"reason":reason(&message),
+        let known_message = match e.downcast_ref::<crate::StorageError>() {
+            Some(
+                crate::StorageError::Invalid(s)
+                | crate::StorageError::Unsupported(s)
+                | crate::StorageError::Corrupt(s),
+            ) => Some(*s),
+            _ => None,
+        };
+        chain.push(json!({"message_id":fingerprint(message.as_bytes()),"known_message":known_message,"reason":reason(&message),
             "os_error":io.and_then(|e|e.raw_os_error()),"io_kind":io.map(|e|format!("{:?}",e.kind())),
             "os_message":io.filter(|e|e.raw_os_error().is_some()).map(std::string::ToString::to_string)}));
         current = e.source();
