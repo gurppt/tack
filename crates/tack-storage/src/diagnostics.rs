@@ -275,11 +275,20 @@ pub fn fingerprint(bytes: &[u8]) -> String {
 }
 pub fn path_info(path: &Path) -> Value {
     let text = path.to_string_lossy();
-    let class = if text.starts_with("\\\\") || text.starts_with("//") {
+    let lower = text.to_ascii_lowercase();
+    let class = if lower.starts_with(r"\\?\unc\")
+        || (lower.starts_with(r"\\") && !lower.starts_with(r"\\?\"))
+        || lower.starts_with("//")
+    {
         "unc"
-    } else if text.to_ascii_lowercase().contains("onedrive") {
+    } else if lower.contains("onedrive") {
         "onedrive-candidate"
-    } else if path.is_absolute() {
+    } else if lower.contains("raster-cache-v1") {
+        "cache"
+    } else if path.is_absolute()
+        || lower.starts_with(r"\\?\")
+        || lower.as_bytes().get(1) == Some(&b':')
+    {
         "local-absolute"
     } else {
         "relative"
@@ -347,7 +356,7 @@ pub fn drain_stderr(
             Err(e)=>{ event(category,"stderr_read_error",json!({"attempt":attempt,"error":error_info(&e)}));break;}
         }}
         let text=String::from_utf8_lossy(&prefix);
-        event(category,"child_stderr",json!({"attempt":attempt,"bytes":total,"captured_bytes":prefix.len(),"truncated":total>prefix.len() as u64,"message_id":fingerprint(&prefix),"reason":reason(&text),"engine_tokens":text.split(|c:char|!c.is_ascii_alphanumeric()&&c!='_'&&c!='.').filter(|s|s.len()<128 && (s.ends_with("Exception") || s.starts_with("0x") || *s=="UnauthorizedAccess" || *s=="PSSecurityException")).take(16).collect::<Vec<_>>() }));
+        event(category,if total>0{"child_stderr_error"}else{"child_stderr"},json!({"attempt":attempt,"bytes":total,"captured_bytes":prefix.len(),"truncated":total>prefix.len() as u64,"message_id":fingerprint(&prefix),"reason":reason(&text),"engine_tokens":text.split(|c:char|!c.is_ascii_alphanumeric()&&c!='_'&&c!='.').filter(|s|s.len()<128 && (s.ends_with("Exception") || s.starts_with("0x") || *s=="UnauthorizedAccess" || *s=="PSSecurityException")).take(16).collect::<Vec<_>>() }));
     })
 }
 pub fn binary_info(path: &Path) -> Value {
@@ -461,6 +470,21 @@ mod tests {
         assert!(!text.contains("artwork"));
         let e = std::io::Error::from_raw_os_error(13);
         assert_eq!(error_info(&e)["chain"][0]["os_error"], 13);
+    }
+    #[test]
+    fn windows_path_classes_are_not_confused_by_verbatim_prefix() {
+        assert_eq!(
+            path_info(Path::new(r"\\?\C:\Users\Private\board.tack"))["class"],
+            "local-absolute"
+        );
+        assert_eq!(
+            path_info(Path::new(r"\\?\UNC\host\share\board.tack"))["class"],
+            "unc"
+        );
+        assert_eq!(
+            path_info(Path::new(r"\\host\share\board.tack"))["class"],
+            "unc"
+        );
     }
     #[test]
     fn utc_is_stable() {
