@@ -1973,6 +1973,8 @@ version = "0.1.0-dev.2"
 dependencies = [
  "crc32fast",
  "getrandom 0.3.4",
+ "serde_json",
+ "sha2",
  "tack-core",
 ]
 

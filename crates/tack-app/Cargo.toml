@@ -1,5 +1,6 @@
 [package]
 name = "tack-app"
+default-run = "tack-app"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -29,3 +30,7 @@ tracing.workspace = true
 
 [lints]
 workspace = true
+
+[[bin]]
+name = "tack-diagnostics"
+path = "src/diagnostics_main.rs"

@@ -62,6 +62,7 @@ pub(crate) fn pin_copy(
     cancel: &AtomicBool,
     bytes: &mut u64,
 ) -> Result<Payload, AssetError> {
+    let _diagnostic = tack_storage::diagnostics::Operation::new("asset/codec", "pin_original_copy");
     if spool.is_none() {
         let path = work.join("originals.spool");
         let mut options = OpenOptions::new();
@@ -137,6 +138,10 @@ impl ImportRequest {
         cancel: &AtomicBool,
         mut emit: impl FnMut(ImportUpdate) -> bool,
     ) -> Result<(), AssetError> {
+        let _diagnostic = tack_storage::diagnostics::Operation::new(
+            "asset/codec",
+            "import_headers_and_embed_copy",
+        );
         if self.paths.is_empty()
             || self.paths.len() > MAX_IMPORT_FILES
             || !self.position.into_iter().all(f64::is_finite)

@@ -230,6 +230,8 @@ impl LocalWorker {
                     }
                     sent
                 };
+                let diagnostic =
+                    tack_storage::diagnostics::Operation::new("worker", "local_operation");
                 let result = (|| -> Result<(), AssetError> {
                     match operation {
                         Operation::MouseGame { ticket } => {
@@ -238,14 +240,14 @@ impl LocalWorker {
                                 &stop,
                             )
                             .map(Box::new)
-                            .map_err(|e| e.to_string());
+                            .map_err(diagnostic_error);
                             if !stop.load(Ordering::Relaxed) {
                                 emit(LocalUpdate::MouseGame { ticket, result });
                             }
                         }
                         Operation::Update(request) => {
                             emit(LocalUpdate::Update(
-                                request.run(&stop).map_err(|e| e.to_string()),
+                                request.run(&stop).map_err(diagnostic_error),
                             ));
                         }
                         Operation::EmptyBoard(root) => {
@@ -269,16 +271,16 @@ impl LocalWorker {
                                     warning: None,
                                 })
                             })();
-                            emit(LocalUpdate::EmptyBoard(result.map_err(|e| e.to_string())));
+                            emit(LocalUpdate::EmptyBoard(result.map_err(diagnostic_error)));
                         }
                         Operation::SaveLocal(request) => {
                             emit(LocalUpdate::SavedLocal(
-                                request.run(&stop).map_err(|e| e.to_string()),
+                                request.run(&stop).map_err(diagnostic_error),
                             ));
                         }
                         Operation::Share(request, work) => {
                             emit(LocalUpdate::SharedReady(
-                                request.run(&work, &stop).map_err(|e| e.to_string()),
+                                request.run(&work, &stop).map_err(diagnostic_error),
                             ));
                         }
                         Operation::Host {
@@ -290,18 +292,18 @@ impl LocalWorker {
                                 crate::hosting::Hosted::start(
                                     &profile, &snapshot, descriptor, &stop,
                                 )
-                                .map_err(|e| e.to_string()),
+                                .map_err(diagnostic_error),
                             ));
                         }
                         Operation::StopHost(host) => {
                             emit(LocalUpdate::HostStopped(
-                                host.stop().map_err(|e| e.to_string()),
+                                host.stop().map_err(diagnostic_error),
                             ));
                         }
                         Operation::Join { address, work } => {
                             emit(LocalUpdate::Joined(
                                 crate::join_launch::launch(&address, &work, &stop)
-                                    .map_err(|e| e.to_string()),
+                                    .map_err(diagnostic_error),
                             ));
                         }
                         Operation::JoinReceipt { path, message } => {
@@ -314,13 +316,12 @@ impl LocalWorker {
                         Operation::PasteAddress(work) => {
                             emit(LocalUpdate::AddressText(
                                 crate::native_files::clipboard_text(&work, &stop)
-                                    .map_err(|e| e.to_string()),
+                                    .map_err(diagnostic_error),
                             ));
                         }
                         Operation::About { ticket } => {
                             if !stop.load(Ordering::Relaxed) {
-                                let result =
-                                    crate::about::load_artwork().map_err(|e| e.to_string());
+                                let result = crate::about::load_artwork().map_err(diagnostic_error);
                                 if !stop.load(Ordering::Relaxed) {
                                     emit(LocalUpdate::About { ticket, result });
                                 }
@@ -330,7 +331,7 @@ impl LocalWorker {
                             emit(LocalUpdate::Picked(
                                 action,
                                 native_files::pick_with_options(picker, &work, &stop, &options)
-                                    .map_err(|e| e.to_string()),
+                                    .map_err(diagnostic_error),
                             ));
                         }
                         Operation::OpenBoard(path) => {
@@ -360,7 +361,7 @@ impl LocalWorker {
                         }
                         Operation::SourceTransition(request) => {
                             emit(LocalUpdate::SourceTransition(
-                                request.run(&stop).map_err(|e| e.to_string()),
+                                request.run(&stop).map_err(diagnostic_error),
                             ));
                         }
                         Operation::LinkedRefresh(request) => {
@@ -368,7 +369,7 @@ impl LocalWorker {
                         }
                         Operation::Relink(source, path) => {
                             emit(LocalUpdate::Relinked(
-                                RelinkReady::read(source, &path).map_err(|e| e.to_string()),
+                                RelinkReady::read(source, &path).map_err(diagnostic_error),
                             ));
                         }
                         Operation::Clipboard { work, ticket } => {
@@ -380,7 +381,7 @@ impl LocalWorker {
                             let (received, ack) = mpsc::sync_channel(1);
                             let published = emit(LocalUpdate::Clipboard {
                                 ticket,
-                                result: result.map_err(|e| e.to_string()),
+                                result: result.map_err(diagnostic_error),
                                 received,
                             });
                             while published && !stop.load(Ordering::Relaxed) {
@@ -408,7 +409,7 @@ impl LocalWorker {
                                     &baseline,
                                     board.as_deref(),
                                 )
-                                .map_err(|e| e.to_string()),
+                                .map_err(diagnostic_error),
                             ));
                         }
                         Operation::Keymap {
@@ -442,7 +443,7 @@ impl LocalWorker {
                             };
                             emit(LocalUpdate::Keymap(
                                 action,
-                                result.map_err(|e| e.to_string()),
+                                result.map_err(diagnostic_error),
                             ));
                         }
                         Operation::Launch { path, new } => {
@@ -461,23 +462,24 @@ impl LocalWorker {
                                 board.verify_originals()?;
                                 Ok(board)
                             })();
-                            emit(LocalUpdate::Restored(result.map_err(|e| e.to_string())));
+                            emit(LocalUpdate::Restored(result.map_err(diagnostic_error)));
                         }
                         Operation::RetireSeed { lease, id } => {
                             lease.retire_empty_seed(id)?;
                         }
                         Operation::DiscardRecovery { lease, id } => {
                             emit(LocalUpdate::Discarded(
-                                lease.discard_recovery(id).map_err(|e| e.to_string()),
+                                lease.discard_recovery(id).map_err(diagnostic_error),
                             ));
                         }
                     }
                     Ok(())
                 })();
+                drop(diagnostic);
                 emit(LocalUpdate::Done(if stop.load(Ordering::Relaxed) {
                     Ok(())
                 } else {
-                    result.map_err(|e| e.to_string())
+                    result.map_err(diagnostic_error)
                 }));
             })?;
         self.operations += 1;
@@ -582,4 +584,16 @@ pub fn untitled_lease(root: &std::path::Path) -> Result<Arc<tack_storage::BoardL
         }
     }
     Err("16 retained Untitled boards; open Recent boards to recover/save them".into())
+}
+
+fn diagnostic_error<E: Into<AssetError>>(error: E) -> String {
+    let error: AssetError = error.into();
+    if tack_storage::diagnostics::enabled() {
+        tack_storage::diagnostics::event(
+            "worker",
+            "operation_error",
+            serde_json::json!({"error":tack_storage::diagnostics::error_info(error.as_ref())}),
+        );
+    }
+    error.to_string()
 }

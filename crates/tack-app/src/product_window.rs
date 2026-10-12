@@ -752,6 +752,27 @@ impl App {
             }
         }
         let present_ms = present_start.elapsed().as_secs_f64() * 1000.;
+        if tack_storage::diagnostics::enabled() {
+            if self.redraws == 1 {
+                tack_storage::diagnostics::event(
+                    "gpu/upload",
+                    "first_frame",
+                    json!({"backend":format!("{:?}",gpu.adapter_info.backend),"adapter":gpu.adapter_info.name,"driver":gpu.adapter_info.driver,"driver_info":gpu.adapter_info.driver_info,"startup_ms":elapsed_ms,"png_tiles_opt_in":self.options.huge_tiles,"tile_counts":tile_counts,"overview_edge":overview_edge}),
+                );
+            }
+            if let Some(trace) = &mut self.lod_trace {
+                trace.dev_record(
+                    &self.camera,
+                    &self.draws,
+                    self.editor.as_ref().map(|e| e.document()),
+                    self.assets.as_ref(),
+                    gpu,
+                    overview_edge,
+                    self.redraws,
+                    self.supply_pending,
+                );
+            }
+        }
         if self.options.output.is_some() && self.frames.len() < 7200 {
             self.frames.push(json!({"window_size":self.camera.screen_size(),"lod_trace":self.lod_trace.as_mut().and_then(|trace| trace.record(&self.camera, &self.draws, self.editor.as_ref().map(|e|e.document()), self.assets.as_ref(), gpu, overview_edge)),"annotations":self.annotations.as_ref().map(|a|json!({"primitives":a.primitives.len(),"glyphs":a.glyphs,"omitted":a.omitted,"layout_ms":a.layout_ms,"build_ms":a.build_ms})),"camera":self.camera.screen_to_world(self.camera.screen_size().map(|v|f64::from(v)/2.)),"zoom":self.camera.zoom(),"overview_edge":overview_edge,"detail_reserved":detail_reserved,"desired_detail":desired_count,"quality_resolved":resolved_count,"scene_ms":scene_ms,"query_ms":query_ms,"supply_ms":supply_ms,"detailed":detailed,"supply":self.assets.as_ref().map(|a| {let s=a.stats();json!({"pending":s.pending,"queued":s.queued,"cpu_bytes":s.cpu_bytes,"evictions":s.evictions,"source_bytes":s.source_bytes,"container_bytes":s.container_bytes,"decode_count":s.decode_count,"codec_requests":s.codec_requests,"region_jobs":s.region_jobs,"tile_outputs":s.tile_outputs,"tile_cache_hits":s.tile_cache_hits,"tile_cache_read_bytes":s.tile_cache_read_bytes,"tile_cache_write_bytes":s.tile_cache_write_bytes,"tile_disk_bytes":s.tile_disk_bytes,"decoded_bytes":s.decoded_bytes,"decode_ms":s.decode_ms,"discarded":s.discarded})}),"encode_ms":stats.encode_ms,"submit_ms":stats.submit_ms,"poll_ms":stats.poll_ms,"elapsed_ms":elapsed_ms,"cpu_ms":cpu_ms,"visible":logical_images,"visible_total":display_limit.visible,"display_omitted":display_limit.omitted,"display_warning":self.chrome.display_limit,"selected_omitted":display_limit.selected_omitted,"render_quads":self.draws.len(),"tile_detail_limited":tile_limited,"tiles_requested":tile_counts[0],"tiles_ready":tile_counts[1],"recognizable":recognizable,"upload_cpu_ms":stats.upload_cpu_ms,"upload_bytes":stats.upload_bytes,"uploads":stats.uploads,"gpu_bytes":stats.gpu_bytes,"in_flight":stats.in_flight,"acquire_ms":acquire_ms,"present_ms":present_ms,"callback_ms":start.elapsed().as_secs_f64()*1000.}));
             if let Some(frame) = self.frames.last_mut() {
@@ -1062,6 +1083,11 @@ impl ApplicationHandler<Event> for App {
             } else {
                 title
             };
+            let title = if tack_storage::diagnostics::enabled() {
+                format!("{title} · DEV DIAGNOSTICS")
+            } else {
+                title
+            };
             if self.title != title {
                 window.set_title(&title);
                 self.title = title;
@@ -1229,6 +1255,11 @@ impl ApplicationHandler<Event> for App {
                     || title.clone(),
                     |g| format!("{title} · GAME {:?} {}", g.state, g.frame + 1),
                 )
+            } else {
+                title
+            };
+            let title = if tack_storage::diagnostics::enabled() {
+                format!("{title} · DEV DIAGNOSTICS")
             } else {
                 title
             };

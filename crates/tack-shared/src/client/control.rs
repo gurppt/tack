@@ -195,6 +195,19 @@ fn consume(
     requests: &SyncSender<Request>,
     message: Message,
 ) -> Result<()> {
+    if tack_storage::diagnostics::enabled() {
+        let kind = match &message {
+            Message::Accepted { .. } => "accepted",
+            Message::Refused { .. } => "refused",
+            Message::Snapshot { .. } => "snapshot",
+            _ => "control",
+        };
+        tack_storage::diagnostics::event(
+            "shared-client",
+            "received",
+            serde_json::json!({"kind":kind,"revision":current.load(Ordering::Relaxed)}),
+        );
+    }
     match message {
         Message::LeaseSnapshot { leases } => {
             context.emit(ClientEvent::LeaseSnapshot { leases });

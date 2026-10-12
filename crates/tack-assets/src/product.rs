@@ -279,11 +279,14 @@ impl ProductAssets {
                         cache.prepare();
                     }
                     while let Ok(job) = rx.recv() {
+                        let diagnostic=tack_storage::diagnostics::Operation::new("asset/codec","decode_batch");
+                        if tack_storage::diagnostics::enabled(){diagnostic.note("requests",serde_json::json!({"count":job.jobs.len(),"jpeg":job.jpeg,"requests":job.jobs.iter().take(16).map(|j|serde_json::json!({"source":tack_storage::diagnostics::fingerprint(&j.source.id().value().to_le_bytes()),"revision":j.source.revision(),"tier":format!("{:?}",j.lod),"edge":j.edge,"size":j.asset.pixel_size(),"storage":match j.source.location(){SourceLocation::Embedded=>"embedded",SourceLocation::Linked(_)=>"linked"}})).collect::<Vec<_>>()}));}
                         let start = Instant::now();
                         let mut outcomes = tiles::load_batch(job, &base, &dir, &disk, &tiles);
                         if let Some(first) = outcomes.first_mut() {
                             first.decode_ms = start.elapsed().as_secs_f64() * 1000.;
                         }
+                        if tack_storage::diagnostics::enabled(){for o in &outcomes {diagnostic.note(if o.result.is_ok(){"decoded"}else{"codec_error"},serde_json::json!({"source":tack_storage::diagnostics::fingerprint(&o.key.source.value().to_le_bytes()),"revision":o.key.revision,"tier":format!("{:?}",o.key.lod),"edge":o.key.edge,"state":format!("{:?}",o.state),"duration_ms":o.decode_ms,"source_bytes":o.source_bytes,"container_bytes":o.container_bytes,"cancelled":o.cancelled,"pixels":o.result.as_ref().ok().map(|p|[p.width,p.height]),"error":o.result.as_ref().err().map(|e|tack_storage::diagnostics::error_info(e.as_ref()))}));}}
                         if done_tx.send(outcomes).is_err() {
                             break;
                         }

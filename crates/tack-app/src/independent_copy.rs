@@ -24,6 +24,7 @@ pub struct Request {
 }
 impl Request {
     pub fn run(self, cancel: &AtomicBool) -> Result<OpenedBoard, AssetError> {
+        let _diagnostic = tack_storage::diagnostics::Operation::new("save", "save_to_local");
         let target = std::path::absolute(crate::file_names::board(&self.target))?;
         if fs::symlink_metadata(&target).is_ok() || crate::sharing::sidecar(&target).exists() {
             return Err("Choose a new local filename".into());

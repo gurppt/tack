@@ -165,6 +165,13 @@ pub(crate) fn publish(
     mut inputs: Vec<BlobInput>,
     mut hook: impl FnMut(SaveStage) -> Result<()>,
 ) -> Result<()> {
+    let diagnostic = crate::diagnostics::Operation::new("storage", "publish");
+    if crate::diagnostics::enabled() {
+        diagnostic.note(
+            "target",
+            serde_json::json!({"path":crate::diagnostics::path_info(path.as_ref())}),
+        );
+    }
     if inputs.len() > MAX_RECORDS * 2 {
         return Err(StorageError::Invalid("payload count"));
     }
@@ -226,7 +233,20 @@ pub(crate) fn publish(
     {
         return Err(StorageError::Invalid("embedded original completeness"));
     }
-    let domain = codec::encode_document(doc)?;
+    if crate::diagnostics::enabled() {
+        let original_bytes: u64 = inputs
+            .iter()
+            .filter(|i| i.original)
+            .map(|i| i.entry.range.len)
+            .sum();
+        let overview_bytes: u64 = inputs
+            .iter()
+            .filter(|i| !i.original)
+            .map(|i| i.entry.range.len)
+            .sum();
+        diagnostic.note("payload_totals",serde_json::json!({"original_bytes":original_bytes,"overview_bytes":overview_bytes,"originals":originals.len(),"overviews":overviews.len()}));
+    }
+    let domain = diagnostic.stage("metadata_encode", || codec::encode_document(doc))?;
     let auth_len = domain
         .len()
         .checked_add(originals.len() * 64)
@@ -268,19 +288,22 @@ pub(crate) fn publish(
         Err(e) if e.kind() == std::io::ErrorKind::NotFound => None,
         Err(e) => return Err(e.into()),
     };
-    let mut file = options.open(&temporary_path)?;
+    let mut file = diagnostic.stage("temporary_create", || options.open(&temporary_path))?;
     let temporary = Temporary(temporary_path);
     hook(SaveStage::TemporaryCreated)?;
     file.seek(SeekFrom::Start(
         (HEADER_BYTES + auth_len + derived_len) as u64,
     ))?;
     let mut buffer = vec![0u8; 128 * 1024];
+    let copying = crate::diagnostics::Operation::new("storage", "payload_copy");
     for (index, i) in inputs.iter_mut().enumerate() {
+        let payload_start = crate::diagnostics::enabled().then(std::time::Instant::now);
+        let mut crc_us = 0u64;
         let before = match &i.payload {
             Payload::File(p) => Some(std::fs::metadata(p)?),
             _ => None,
         };
-        let mut reader = i.payload.reader()?;
+        let mut reader = diagnostic.stage("input_open", || i.payload.reader())?;
         let mut remaining = i.entry.range.len;
         let mut hash = crc32fast::Hasher::new();
         while remaining > 0 {
@@ -290,7 +313,13 @@ pub(crate) fn publish(
                 return Err(StorageError::Corrupt("short original/overview input"));
             }
             file.write_all(&buffer[..n])?;
-            hash.update(&buffer[..n]);
+            if crate::diagnostics::enabled() {
+                let start = std::time::Instant::now();
+                hash.update(&buffer[..n]);
+                crc_us += start.elapsed().as_micros() as u64;
+            } else {
+                hash.update(&buffer[..n]);
+            }
             remaining -= n as u64;
         }
         let crc = hash.finalize();
@@ -314,7 +343,11 @@ pub(crate) fn publish(
         }
         i.entry.range.crc32 = crc;
         hook(SaveStage::PayloadCopied(index))?;
+        if let Some(start) = payload_start {
+            diagnostic.note("payload_copied",serde_json::json!({"index":index,"role":if i.original{"original"}else{"overview"},"bytes":i.entry.range.len,"duration_us":start.elapsed().as_micros() as u64,"crc_us":crc_us,"from_stored":matches!(i.payload,Payload::Stored{..})}));
+        }
     }
+    drop(copying);
     let mut auth = domain;
     let mut derived = Vec::with_capacity(derived_len);
     for i in inputs {
@@ -343,24 +376,29 @@ pub(crate) fn publish(
         header.extend((n as u32).to_le_bytes());
     }
     header.extend([0; 12]);
-    file.seek(SeekFrom::Start(0))?;
-    file.write_all(&header)?;
-    file.write_all(&auth)?;
-    file.write_all(&derived)?;
+    diagnostic.stage("metadata_write", || -> Result<()> {
+        file.seek(SeekFrom::Start(0))?;
+        file.write_all(&header)?;
+        file.write_all(&auth)?;
+        file.write_all(&derived)?;
+        Ok(())
+    })?;
     hook(SaveStage::MetadataWritten)?;
     if let Some(permissions) = existing_permissions {
         file.set_permissions(permissions)?;
     }
-    file.sync_all()?;
+    diagnostic.stage("file_sync", || file.sync_all())?;
     hook(SaveStage::FileSynced)?;
     drop(file);
     // Never remove the target first. Failure leaves its prior valid generation.
-    std::fs::rename(&temporary.0, path)?;
+    diagnostic.stage("rename", || std::fs::rename(&temporary.0, path))?;
     // Process-crash consistency is tested. Directory fsync strengthens Unix durability
     // but no simulated power-loss guarantee is claimed; post-publication error is I/O.
     #[cfg(unix)]
-    File::open(parent)
-        .and_then(|f| f.sync_all())
-        .map_err(StorageError::PublishedButNotDirectorySynced)?;
+    diagnostic.stage("parent_sync", || {
+        File::open(parent)
+            .and_then(|f| f.sync_all())
+            .map_err(StorageError::PublishedButNotDirectorySynced)
+    })?;
     Ok(())
 }

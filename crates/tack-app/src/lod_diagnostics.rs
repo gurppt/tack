@@ -8,8 +8,50 @@ pub struct LodDiagnostics {
     source: Option<SourceId>,
     camera: Option<([f64; 2], f64)>,
     epoch: u64,
+    dev_sample: Option<std::time::Instant>,
+    dev_pending: Option<bool>,
 }
 impl LodDiagnostics {
+    #[allow(clippy::too_many_arguments)]
+    pub fn dev_record(
+        &mut self,
+        camera: &Camera,
+        draws: &[DrawProductImage],
+        document: Option<&Document>,
+        assets: Option<&ProductAssets>,
+        gpu: &Gpu,
+        overview_edge: u32,
+        frame: u64,
+        pending: bool,
+    ) {
+        if !tack_storage::diagnostics::enabled() {
+            return;
+        }
+        let settled = self.dev_pending.replace(pending) == Some(true) && !pending;
+        if !settled
+            && self
+                .dev_sample
+                .is_some_and(|t| t.elapsed() < std::time::Duration::from_millis(250))
+        {
+            return;
+        }
+        self.dev_sample = Some(std::time::Instant::now());
+        if let Some(mut snapshot) = self.record(camera, draws, document, assets, gpu, overview_edge)
+        {
+            // Existing --lod-debug receipts retain their developer IDs; exported DEV logs hash them.
+            for field in ["source", "asset"] {
+                if let Some(value) = snapshot[field].as_str() {
+                    snapshot[field] =
+                        json!(tack_storage::diagnostics::fingerprint(value.as_bytes()));
+                }
+            }
+            tack_storage::diagnostics::event(
+                "lod",
+                "post_present",
+                json!({"frame":frame,"snapshot":snapshot,"stats":assets.map(|a|{let s=a.stats();json!({"queued":s.queued,"pending":s.pending,"cpu_bytes":s.cpu_bytes,"evictions":s.evictions,"errors":s.errors,"discarded":s.discarded,"tile_outputs":s.tile_outputs,"source_bytes":s.source_bytes,"container_bytes":s.container_bytes})}),"gpu":{"upload_bytes":gpu.stats().upload_bytes,"uploads":gpu.stats().uploads,"bytes":gpu.stats().gpu_bytes}}),
+            );
+        }
+    }
     #[allow(clippy::too_many_arguments)]
     pub fn record(
         &mut self,
@@ -84,7 +126,7 @@ impl LodDiagnostics {
         let size = draw.data.transform.size().map(|v| v * camera.zoom());
         Some(
             json!({"source":format!("{:032x}",source.value()),"asset":format!("{:032x}",draw.data.asset_id.value()),
-            "revision":s.revision(),"source_size":document.asset(draw.data.asset_id)?.pixel_size(),"filtering":format!("{:?}",draw.data.filtering),"camera_epoch":self.epoch,"projected_size":size,"projected_edge":size.into_iter().fold(0.,f64::max),
+            "revision":s.revision(),"storage":match s.location(){tack_core::SourceLocation::Embedded=>"embedded",tack_core::SourceLocation::Linked(_)=>"linked"},"source_size":document.asset(draw.data.asset_id)?.pixel_size(),"filtering":format!("{:?}",draw.data.filtering),"camera_epoch":self.epoch,"projected_size":size,"projected_edge":size.into_iter().fold(0.,f64::max),
             "desired":format!("{desired:?}"),"displayed":draw.key.map(|k|format!("{:?}",k.lod)),
             "selection_reason":"finest-valid-resident/post-upload",
             "ownership":"source/revision/tier, no camera-epoch ownership", "tiers":tiers}),

@@ -72,7 +72,11 @@ pub fn serve(config: ServerConfig) -> Result<()> {
     if !config.root.exists() {
         tack_storage::create_private_directory(&config.root, true).map_err(|e| e.to_string())?;
     }
-    let _ownership = tack_storage::lock_sidecar(&config.root.join("authority.lock"))
+    let diagnostic = tack_storage::diagnostics::Operation::new("server", "startup");
+    let _ownership = diagnostic
+        .stage("root_lock", || {
+            tack_storage::lock_sidecar(&config.root.join("authority.lock"))
+        })
         .map_err(|e| e.to_string())?;
     let boards_root = config.root.join("boards");
     if !boards_root.exists() {
@@ -88,7 +92,12 @@ pub fn serve(config: ServerConfig) -> Result<()> {
     }));
     let active = Arc::new(AtomicUsize::new(0));
     let ids = AtomicUsize::new(1);
-    let listener = TcpListener::bind(&config.listen).map_err(|e| e.to_string())?;
+    if tack_storage::diagnostics::enabled() {
+        diagnostic.note("listen_requested",serde_json::json!({"port":config.listen.rsplit(':').next(),"listener_class":if config.listen.starts_with("0.0.0.0:"){"wildcard-ipv4"}else if config.listen.starts_with("127.0.0.1:"){"loopback-ipv4"}else{"redacted"},"root":tack_storage::diagnostics::path_info(&config.root)}));
+    }
+    let listener = diagnostic
+        .stage("bind", || TcpListener::bind(&config.listen))
+        .map_err(|e| e.to_string())?;
     println!(
         "tack-server trusted LAN only; protocol={} listen={} root={} asset_quota={}",
         tack_shared::PROTOCOL_MAJOR,
@@ -117,10 +126,20 @@ pub fn serve(config: ServerConfig) -> Result<()> {
                 } else {
                     0
                 };
+                if tack_storage::diagnostics::enabled() {
+                    tack_storage::diagnostics::event(
+                        "server",
+                        "managed_shutdown",
+                        serde_json::json!({"exit_code":code}),
+                    );
+                    tack_storage::diagnostics::flush();
+                }
                 std::process::exit(code);
             })
             .map_err(|e| e.to_string())?;
-        std::fs::write(&ready, b"ready").map_err(|e| e.to_string())?;
+        diagnostic
+            .stage("ready_write", || std::fs::write(&ready, b"ready"))
+            .map_err(|e| e.to_string())?;
     }
     for socket in listener.incoming() {
         let socket = match socket {
@@ -231,6 +250,21 @@ fn connection(
                     return Err(e.to_string());
                 }
             };
+            if tack_storage::diagnostics::enabled() {
+                let kind = match &message {
+                    Message::Hello { .. } => "hello",
+                    Message::Publish { .. } => "publish",
+                    Message::Edit { .. } => "edit",
+                    Message::Undo { .. } => "undo",
+                    Message::Redo { .. } => "redo",
+                    _ => "control/asset",
+                };
+                tack_storage::diagnostics::event(
+                    "server",
+                    "received",
+                    serde_json::json!({"connection":id,"kind":kind}),
+                );
+            }
             if matches!(
                 &message,
                 Message::AssetBegin { .. }
@@ -520,6 +554,13 @@ fn apply(
     }
 }
 fn accepted(board: WireId, change: Change) -> Message {
+    if tack_storage::diagnostics::enabled() {
+        tack_storage::diagnostics::event(
+            "server",
+            "accepted",
+            serde_json::json!({"revision":change.revision}),
+        );
+    }
     Message::Accepted {
         board,
         revision: change.revision,
@@ -547,6 +588,13 @@ pub(super) fn refusal(
     code: RefusalCode,
     reason: &str,
 ) -> Message {
+    if tack_storage::diagnostics::enabled() {
+        tack_storage::diagnostics::event(
+            "server",
+            "refused",
+            serde_json::json!({"revision":revision,"code":format!("{:?}",code),"reason_id":tack_storage::diagnostics::fingerprint(reason.as_bytes())}),
+        );
+    }
     Message::Refused {
         operation,
         revision,

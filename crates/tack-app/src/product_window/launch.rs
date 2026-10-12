@@ -115,8 +115,7 @@ fn run_mode(
     if options.lod_debug && options.output.is_none() {
         return Err("--lod-debug requires --output REPORT".into());
     }
-    let lod_trace = options
-        .lod_debug
+    let lod_trace = (options.lod_debug || tack_storage::diagnostics::enabled())
         .then(tack_app::lod_diagnostics::LodDiagnostics::default);
     let benchmark = options
         .interaction

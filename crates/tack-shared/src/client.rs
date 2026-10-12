@@ -166,6 +166,13 @@ impl Context {
         }
     }
     fn state(&self, state: ConnectionState) {
+        if tack_storage::diagnostics::enabled() {
+            tack_storage::diagnostics::event(
+                "shared-client",
+                "state",
+                serde_json::json!({"state":format!("{:?}",state)}),
+            );
+        }
         if matches!(
             state,
             ConnectionState::Disconnected

@@ -95,6 +95,29 @@ impl Options {
 }
 
 fn main() -> Result<(), AssetError> {
+    let _diagnostics = tack_storage::diagnostics::Session::start(
+        "tack",
+        serde_json::json!({
+            "mission":"DEV-DIAG-WINLAN-01", "version":env!("CARGO_PKG_VERSION"),
+            "git_sha":env!("TACK_GIT_SHA"),"channel":env!("TACK_BUILD_CHANNEL"),
+            "protocol_major":tack_shared::PROTOCOL_MAJOR,"network":cfg!(feature="network"),"updater":cfg!(feature="updater")
+        }),
+    )?;
+    let result = run_main();
+    if tack_storage::diagnostics::enabled() {
+        tack_storage::diagnostics::event(
+            "app",
+            if result.is_ok() {
+                "return_ok"
+            } else {
+                "return_error"
+            },
+            serde_json::json!({"error":result.as_ref().err().map(|e|tack_storage::diagnostics::error_info(e.as_ref()))}),
+        );
+    }
+    result
+}
+fn run_main() -> Result<(), AssetError> {
     if std::env::args_os()
         .nth(1)
         .is_some_and(|a| a == "--build-info")

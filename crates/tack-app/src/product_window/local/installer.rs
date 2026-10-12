@@ -19,7 +19,7 @@ impl App {
             limits,
             Some(self.local.root.join("raster-cache-v1")),
         )?;
-        if self.options.lod_debug {
+        if self.options.lod_debug || tack_storage::diagnostics::enabled() {
             assets.enable_lod_diagnostics();
         }
         let mut camera = self.camera;

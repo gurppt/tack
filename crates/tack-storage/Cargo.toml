@@ -9,6 +9,8 @@ publish.workspace = true
 tack-core.workspace = true
 getrandom.workspace = true
 crc32fast.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
 
 [lints]
 workspace = true

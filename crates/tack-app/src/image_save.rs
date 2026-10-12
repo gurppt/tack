@@ -71,7 +71,9 @@ impl ImageSave {
         if self.active() {
             return Ok(false);
         }
+        let diagnostic = tack_storage::diagnostics::Operation::new("save", "snapshot_clone");
         let document = editor.document().clone();
+        drop(diagnostic);
         let generation = editor.generation();
         let prepared = prepared.clone();
         let (tx, rx) = mpsc::sync_channel(1);
@@ -105,7 +107,9 @@ impl ImageSave {
         if self.active() {
             return Ok(false);
         }
+        let diagnostic = tack_storage::diagnostics::Operation::new("save", "snapshot_clone");
         let document = editor.document().clone();
+        drop(diagnostic);
         let generation = editor.generation();
         let prepared = prepared.clone();
         let originals = originals.clone();
@@ -153,7 +157,10 @@ impl ImageSave {
             return Ok(false);
         }
         let path = crate::file_names::board(path);
+        let diagnostic =
+            tack_storage::diagnostics::Operation::new("save", "save_as_snapshot_clone");
         let mut document = editor.document().clone();
+        drop(diagnostic);
         let generation = editor.generation();
         let revision_floor = editor.next_source_revision();
         let prepared = prepared.clone();
@@ -215,6 +222,21 @@ impl ImageSave {
     }
     fn acknowledge(&mut self, completion: SaveCompletion, editor: &mut DocumentEditor) {
         self.last_worker_ms = completion.elapsed_ms;
+        if tack_storage::diagnostics::enabled() {
+            tack_storage::diagnostics::event(
+                if completion.recovery {
+                    "recovery"
+                } else {
+                    "save"
+                },
+                if completion.result.is_ok() {
+                    "acknowledge"
+                } else {
+                    "acknowledge_error"
+                },
+                serde_json::json!({"generation":completion.generation,"current_generation":editor.generation(),"recovery":completion.recovery,"worker_ms":completion.elapsed_ms,"error":completion.result.as_ref().err().map(|e|tack_storage::diagnostics::error_info(e.as_ref()))}),
+            );
+        }
         match completion.result {
             Ok(()) => {
                 if completion.recovery {
@@ -230,6 +252,13 @@ impl ImageSave {
                 self.last_error = None;
             }
             Err(error) => self.last_error = Some(error.to_string()),
+        }
+        if tack_storage::diagnostics::enabled() {
+            tack_storage::diagnostics::event(
+                "save",
+                "ack_state",
+                serde_json::json!({"dirty":editor.is_dirty(),"generation":editor.generation(),"completed":self.completed,"recovery_completed":self.recoveries,"failed":self.last_error.is_some()}),
+            );
         }
     }
     /// Completion polling never waits or joins on the event/render thread.
@@ -284,6 +313,7 @@ pub fn snapshot_inputs(
     prepared: &BTreeMap<tack_core::AssetId, PreparedOverview>,
     originals: &Originals,
 ) -> Result<Vec<BlobInput>, AssetError> {
+    let _diagnostic = tack_storage::diagnostics::Operation::new("save", "snapshot_inputs");
     let mut inputs = Vec::with_capacity(board.originals.len() + board.overviews.len());
     for source in document.sources() {
         if !matches!(source.location(), tack_core::SourceLocation::Embedded) {

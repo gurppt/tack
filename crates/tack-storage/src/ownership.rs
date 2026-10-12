@@ -62,7 +62,8 @@ impl BoardLease {
             .to_os_string();
         lock_name.push(".tack-lock");
         let lock_path = path.with_file_name(lock_name);
-        let lock = lock_sidecar(&lock_path)?;
+        let diagnostic = crate::diagnostics::Operation::new("save", "lease_acquire");
+        let lock = diagnostic.stage("lock_sidecar", || lock_sidecar(&lock_path))?;
         let expected = Mutex::new(FileStamp::read(&path)?);
         Ok(Self {
             path,
@@ -96,7 +97,8 @@ impl BoardLease {
         if FileStamp::read(&self.path)? != *expected {
             return Err(StorageError::Invalid("board changed while opening"));
         }
-        let board = TackFile::open(&self.path)?;
+        let diagnostic = crate::diagnostics::Operation::new("save", "reopen");
+        let board = diagnostic.stage("reopen_metadata", || TackFile::open(&self.path))?;
         if FileStamp::read(&self.path)? != *expected {
             return Err(StorageError::Invalid("board changed while opening"));
         }
@@ -112,15 +114,18 @@ impl BoardLease {
                 "board changed outside Tack; use Save As",
             ));
         }
-        let result = crate::save::publish(&self.path, doc, inputs, |stage| {
-            if matches!(stage, crate::SaveStage::FileSynced)
-                && FileStamp::read(&self.path)? != *expected
-            {
-                return Err(StorageError::Invalid(
-                    "board changed outside Tack; use Save As",
-                ));
-            }
-            Ok(())
+        let diagnostic = crate::diagnostics::Operation::new("save", "owned_save");
+        let result = diagnostic.stage("publish", || {
+            crate::save::publish(&self.path, doc, inputs, |stage| {
+                if matches!(stage, crate::SaveStage::FileSynced)
+                    && FileStamp::read(&self.path)? != *expected
+                {
+                    return Err(StorageError::Invalid(
+                        "board changed outside Tack; use Save As",
+                    ));
+                }
+                Ok(())
+            })
         });
         if result.is_ok() || matches!(result, Err(StorageError::PublishedButNotDirectorySynced(_)))
         {

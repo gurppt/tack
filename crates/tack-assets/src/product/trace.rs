@@ -10,8 +10,22 @@ impl Trace {
     pub(super) fn started(&mut self, key: Key) {
         self.next += 1;
         self.active.insert(key, self.next);
+        if tack_storage::diagnostics::enabled() {
+            tack_storage::diagnostics::event(
+                "lod",
+                "dispatch",
+                serde_json::json!({"generation":self.next,"source":tack_storage::diagnostics::fingerprint(&key.source.value().to_le_bytes()),"revision":key.revision,"tier":format!("{:?}",key.lod),"edge":key.edge}),
+            );
+        }
     }
     pub(super) fn completed(&mut self, key: Key, accepted: bool) {
+        if tack_storage::diagnostics::enabled() {
+            tack_storage::diagnostics::event(
+                "lod",
+                "publication",
+                serde_json::json!({"generation":self.active.get(&key),"source":tack_storage::diagnostics::fingerprint(&key.source.value().to_le_bytes()),"revision":key.revision,"tier":format!("{:?}",key.lod),"edge":key.edge,"accepted":accepted}),
+            );
+        }
         if self.last.len() == 16 {
             self.last.pop_front();
         }

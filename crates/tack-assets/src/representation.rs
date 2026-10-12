@@ -32,6 +32,13 @@ fn sniff<R: Read + Seek>(source: &mut R) -> Result<Format, AssetError> {
     } else {
         Format::Other
     };
+    if tack_storage::diagnostics::enabled() {
+        tack_storage::diagnostics::event(
+            "asset/codec",
+            "format",
+            serde_json::json!({"format":match format{Format::Jpeg=>"jpeg",Format::Png=>"png",Format::Other=>"other"}}),
+        );
+    }
     source.seek(std::io::SeekFrom::Start(0))?;
     Ok(format)
 }

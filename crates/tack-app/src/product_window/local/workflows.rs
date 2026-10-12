@@ -61,6 +61,13 @@ impl App {
         Ok(())
     }
     pub(in super::super) fn local_action(&mut self, action: Action) -> Result<(), AssetError> {
+        if tack_storage::diagnostics::enabled() {
+            tack_storage::diagnostics::event(
+                "ui",
+                "action",
+                serde_json::json!({"action":action.id(),"shared":self.shared.is_some(),"offline":self.offline.is_some(),"untitled":self.local.untitled,"save_active":self.save.active()}),
+            );
+        }
         if !action.available() {
             return Err("Capability omitted from this build".into());
         }

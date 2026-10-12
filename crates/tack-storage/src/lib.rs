@@ -1,6 +1,7 @@
 //! Explicit bounded snapshot storage. All functions are worker/startup operations.
 mod annotation_codec;
 mod codec;
+pub mod diagnostics;
 mod metadata;
 pub use metadata::{decode_metadata, encode_metadata};
 mod ownership;

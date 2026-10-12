@@ -35,6 +35,7 @@ impl Hosted {
                 "This shared copy was hosted elsewhere. Use its invite or inspect offline.".into(),
             );
         }
+        let diagnostic = tack_storage::diagnostics::Operation::new("hosting", "start");
         let address = d.address()?;
         let mut server = std::env::current_exe()?;
         server.set_file_name(if cfg!(windows) {
@@ -71,13 +72,22 @@ impl Hosted {
                     }
                 }
             })?;
+        if tack_storage::diagnostics::enabled() {
+            diagnostic.note("binary", tack_storage::diagnostics::binary_info(&server));
+        }
         let mut command = Command::new(server);
+        if tack_storage::diagnostics::enabled() {
+            command.env(
+                "TACK_DIAGNOSTICS_PARENT",
+                tack_storage::diagnostics::correlation(diagnostic.id()),
+            );
+        }
         #[cfg(windows)]
         {
             use std::os::windows::process::CommandExt;
             command.creation_flags(0x08000000);
         }
-        let child = command
+        let mut child = command
             .arg("--root")
             .arg(&authority)
             .arg("--listen")
@@ -90,8 +100,32 @@ impl Hosted {
             .arg(&d.board)
             .stdin(Stdio::piped())
             .stdout(Stdio::null())
-            .stderr(Stdio::null())
-            .spawn()?;
+            .stderr(if tack_storage::diagnostics::enabled() {
+                Stdio::piped()
+            } else {
+                Stdio::null()
+            })
+            .spawn()
+            .inspect_err(|e| {
+                if tack_storage::diagnostics::enabled() {
+                    diagnostic.note("spawn_error", tack_storage::diagnostics::error_info(e));
+                }
+            })?;
+        if let Some(stderr) = child.stderr.take()
+            && let Err(e) =
+                tack_storage::diagnostics::drain_stderr(stderr, "hosting", diagnostic.id())
+        {
+            diagnostic.note(
+                "stderr_reader_error",
+                tack_storage::diagnostics::error_info(&e),
+            );
+        }
+        if tack_storage::diagnostics::enabled() {
+            diagnostic.note(
+                "child_spawned",
+                serde_json::json!({"pid":child.id(),"port":address.server.port()}),
+            );
+        }
         let mut host = Self {
             child: Some(child),
             reaper,
@@ -106,12 +140,21 @@ impl Hosted {
             }
             if let Ok(text) = std::fs::read_to_string(&receipt) {
                 if text == "ready" {
+                    if tack_storage::diagnostics::enabled() {
+                        diagnostic.note(
+                            "ready",
+                            serde_json::json!({"elapsed_ms":started.elapsed().as_secs_f64()*1000.}),
+                        );
+                    }
                     break;
                 }
                 host.abort();
                 return Err(text.into());
             }
             if let Some(status) = host.child.as_mut().ok_or("host stopped")?.try_wait()? {
+                if tack_storage::diagnostics::enabled() {
+                    diagnostic.note("child_exit_error",serde_json::json!({"exit_code":status.code(),"native_code_hex":status.code().map(|v|format!("0x{:08X}",v as u32)),"status":status.to_string()}));
+                }
                 return Err(format!("Could not start sharing ({status}). Another board may already use this computer's sharing address. See Advanced.").into());
             }
             if started.elapsed() > Duration::from_secs(10) {
@@ -252,10 +295,13 @@ impl ShareRequest {
         };
         descriptor.address()?;
         let lease = tack_storage::BoardLease::acquire_new(&self.target)?;
+        let _diagnostic = tack_storage::diagnostics::Operation::new("hosting", "shared_copy");
         let inputs =
             crate::image_save::snapshot_inputs(&self.board, &doc, &self.prepared, &self.originals)?;
         lease.save(&doc, inputs)?;
+        let sidecar = tack_storage::diagnostics::Operation::new("hosting", "sidecar");
         descriptor.write_new(&self.target)?;
+        drop(sidecar);
         drop(lease);
         let host = if let Some(address) = self.remote {
             let client = tack_shared::WireId::new(tack_storage::new_document_id()?.value())?;

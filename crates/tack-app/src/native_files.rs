@@ -68,12 +68,34 @@ fn capture_with_cancel(
     cancel_code: Option<i32>,
 ) -> Result<Vec<u8>, AssetError> {
     let _ = work;
+    let diagnostic = tack_storage::diagnostics::Operation::new("filepicker", "native_helper");
     let mut child = command
         .stdin(Stdio::null())
         .stdout(Stdio::piped())
-        .stderr(Stdio::null())
+        .stderr(if tack_storage::diagnostics::enabled() {
+            Stdio::piped()
+        } else {
+            Stdio::null()
+        })
         .spawn()
+        .inspect_err(|e| {
+            if tack_storage::diagnostics::enabled() {
+                diagnostic.note("spawn_error", tack_storage::diagnostics::error_info(e));
+            }
+        })
         .map_err(|_| "native file/clipboard helper unavailable on this host")?;
+    if let Some(stderr) = child.stderr.take()
+        && let Err(e) =
+            tack_storage::diagnostics::drain_stderr(stderr, "filepicker", diagnostic.id())
+    {
+        diagnostic.note(
+            "stderr_reader_error",
+            tack_storage::diagnostics::error_info(&e),
+        );
+    }
+    if tack_storage::diagnostics::enabled() {
+        diagnostic.note("spawned",serde_json::json!({"pid":child.id(),"cancel_code":cancel_code,"limit":limit,"timeout_ms":timeout.as_millis() as u64}));
+    }
     let mut pipe = child
         .stdout
         .take()
@@ -101,6 +123,9 @@ fn capture_with_cancel(
     let mut output = None;
     let result = loop {
         if cancel.load(Ordering::Relaxed) || started.elapsed() > timeout {
+            if tack_storage::diagnostics::enabled() {
+                diagnostic.note("cancel_or_timeout",serde_json::json!({"cancelled":cancel.load(Ordering::Relaxed),"timed_out":started.elapsed()>timeout}));
+            }
             break Err("native operation cancelled or timed out".into());
         }
         if output.is_none() {
@@ -116,9 +141,15 @@ fn capture_with_cancel(
         }
         match child.try_wait() {
             Ok(Some(status)) if cancel_code.is_some() && status.code() == cancel_code => {
+                if tack_storage::diagnostics::enabled() {
+                    diagnostic.note("cancelled", serde_json::json!({"code":status.code()}));
+                }
                 break Ok(Vec::new());
             }
             Ok(Some(status)) if !status.success() => {
+                if tack_storage::diagnostics::enabled() {
+                    diagnostic.note("exit_error",serde_json::json!({"code":status.code(),"native_code_hex":status.code().map(|v|format!("0x{:08X}",v as u32))}));
+                }
                 break Err("native operation cancelled or unavailable".into());
             }
             Ok(Some(_)) if output.is_some() => {
@@ -144,6 +175,13 @@ pub fn pick_with_options(
     cancel: &AtomicBool,
     options: &PickOptions,
 ) -> Result<Vec<PathBuf>, AssetError> {
+    let _diagnostic = tack_storage::diagnostics::Operation::new("filepicker", "pick");
+    if tack_storage::diagnostics::enabled() {
+        _diagnostic.note(
+            "request",
+            serde_json::json!({"kind":format!("{kind:?}"),"sta":cfg!(windows)}),
+        );
+    }
     let directory = usable_directory(options.directory.as_deref());
     let suggested_name = options.suggested_name.clone().or_else(|| match kind {
         Picker::ExportSnapshot => Some("Tack Snapshot.png".into()),
@@ -256,6 +294,9 @@ pub fn pick_with_options(
             .filter(|s| !s.is_empty())
             .map(PathBuf::from)
             .collect();
+        if tack_storage::diagnostics::enabled() {
+            _diagnostic.note("selected_paths",serde_json::json!({"count":paths.len(),"paths":paths.iter().take(16).map(|p|tack_storage::diagnostics::path_info(p)).collect::<Vec<_>>()}));
+        }
         if paths.is_empty() {
             return Ok(paths);
         }
