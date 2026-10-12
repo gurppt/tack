@@ -364,7 +364,7 @@ pub fn drain_stderr(
             Err(e)=>{ event(category,"stderr_read_error",json!({"attempt":attempt,"error":error_info(&e)}));break;}
         }}
         let text=String::from_utf8_lossy(&prefix);
-        event(category,if total>0{"child_stderr_error"}else{"child_stderr"},json!({"attempt":attempt,"bytes":total,"captured_bytes":prefix.len(),"truncated":total>prefix.len() as u64,"message_id":fingerprint(&prefix),"reason":reason(&text),"engine_tokens":text.split(|c:char|!c.is_ascii_alphanumeric()&&c!='_'&&c!='.').filter(|s|s.len()<128 && (s.ends_with("Exception") || s.starts_with("0x") || *s=="UnauthorizedAccess" || *s=="PSSecurityException")).take(16).collect::<Vec<_>>() }));
+        event(category,if total>0{"child_stderr_error"}else{"child_stderr"},json!({"attempt":attempt,"bytes":total,"captured_bytes":prefix.len(),"truncated":total>prefix.len() as u64,"message_id":fingerprint(&prefix),"reason":reason(&text),"engine_tokens":text.split(|c:char|!c.is_ascii_alphanumeric()&&c!='_'&&c!='.').filter(|s|s.len()<128 && (["PSSecurityException","UnauthorizedAccessException","System.Management.Automation.PSSecurityException","System.ComponentModel.Win32Exception","Win32Exception","IOException","FileNotFoundException","RuntimeException","UnauthorizedAccess"].contains(s))).take(16).collect::<Vec<_>>() }));
     })
 }
 pub fn binary_info(path: &Path) -> Value {
