@@ -37,10 +37,14 @@ fn exercise(mode: &str) -> Result<(), Box<dyn std::error::Error>> {
     };
     let started = Instant::now();
     let name = std::ffi::OsStr::new("essai é 東京.tack");
-    let dir = std::env::current_dir()?;
+    let dir = if mode == "cancel-save-verbatim" {
+        std::env::current_dir()?.canonicalize()?
+    } else {
+        std::env::current_dir()?
+    };
     let result = pick(
         Request {
-            save: mode == "cancel-save",
+            save: mode == "cancel-save" || mode == "cancel-save-verbatim",
             folder: mode == "cancel-folder",
             multiple: mode == "cancel-multiple",
             filters: &[("Tack boards", "*.tack")],

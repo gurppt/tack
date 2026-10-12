@@ -7,7 +7,7 @@ use std::{
     process::{Command, Stdio},
 };
 use tack_storage::diagnostics as diag;
-const MARKER: &str = "Tack P0-WIN-IMAGE-CORE-02-B owned diagnostics\n";
+const MARKER: &str = "Tack P0-WIN-IMAGE-CORE-02-B1 owned diagnostics\n";
 fn base() -> Result<PathBuf, Box<dyn std::error::Error>> {
     if let Some(root) = env::var_os("TACK_DIAGNOSTICS_HOME") {
         return Ok(std::path::absolute(root)?);
@@ -22,7 +22,7 @@ fn base() -> Result<PathBuf, Box<dyn std::error::Error>> {
     .ok_or("diagnostic home unavailable")?;
     Ok(PathBuf::from(root)
         .join("TackDiagnostics")
-        .join("P0-WIN-IMAGE-CORE-02-B"))
+        .join("P0-WIN-IMAGE-CORE-02-B1"))
 }
 fn owned(root: &Path) -> std::io::Result<()> {
     tack_storage::create_private_directory(root, true)?;
@@ -209,7 +209,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     // the explicit initializer below; child settings use Command::env only.
     let _session = diag::Session::start_at(
         "tack-diagnostics",
-        json!({"mission":"P0-WIN-IMAGE-CORE-02-B","git_sha":env!("TACK_GIT_SHA")}),
+        json!({"mission":"P0-WIN-IMAGE-CORE-02-B1","git_sha":env!("TACK_GIT_SHA")}),
         &logs,
     )?;
     let executable =

@@ -1,6 +1,6 @@
 # P0-WIN-IMAGE-CORE-02-B — private native Windows dialog candidate
 
-**State: implemented, cross-compiled; physical Win10 Gate B pending.** This is not a Windows+HD release. C–G remain gated; no JPEG/PNG cap, LOD policy, save format, LAN protocol, clipboard policy or production binary is changed by this patch.
+**State: implemented, cross-compiled; physical Win10 Gate B partially tested and still failing in the first B candidate.** First save and exports select successfully; saved-board Save As and Sharing fail at the initial-directory hint. See [the B1 corrective follow-up](STAGE_B_WIN10_FOLLOWUP.md) for the isolated reproduction/fix and latest test receipts. This is not a Windows+HD release. C–G remain gated; no JPEG/PNG cap, LOD policy, save format, LAN protocol, clipboard policy or production binary is changed by this patch.
 
 ## Smallest safe fix and boundaries
 

@@ -56,6 +56,75 @@ fn wide(value: &OsStr) -> Result<Vec<u16>, DialogError> {
     v.push(0);
     Ok(v)
 }
+fn ascii_eq(value: &[u16], ascii: &[u8]) -> bool {
+    value.len() == ascii.len()
+        && value
+            .iter()
+            .zip(ascii)
+            .all(|(&a, &b)| a <= 127 && (a as u8).eq_ignore_ascii_case(&b))
+}
+fn normal_component(value: &[u16]) -> bool {
+    if value.is_empty()
+        || matches!(value.last(), Some(32 | 46))
+        || value
+            .iter()
+            .any(|u| *u < 32 || matches!(*u, 34 | 42 | 47 | 58 | 60 | 62 | 63 | 124))
+    {
+        return false;
+    }
+    let base = value.split(|u| *u == 46).next().unwrap_or_default();
+    if base.last() == Some(&32)
+        || [
+            b"CON".as_slice(),
+            b"PRN",
+            b"AUX",
+            b"NUL",
+            b"CONIN$",
+            b"CONOUT$",
+        ]
+        .iter()
+        .any(|name| ascii_eq(base, name))
+    {
+        return false;
+    }
+    !(base.len() == 4
+        && (ascii_eq(&base[..3], b"COM") || ascii_eq(&base[..3], b"LPT"))
+        && (matches!(base[3], 49..=57 | 0xb9 | 0xb2 | 0xb3)))
+}
+fn shell_directory(value: &OsStr) -> Result<Vec<u16>, DialogError> {
+    let mut v = wide(value)?;
+    // Only convert equivalent DOS/UNC names for the Shell. Storage keeps the
+    // original canonical path. Never reinterpret device/volume namespaces,
+    // trailing dots/spaces, traversal or DOS device names as another folder.
+    let path = &v[..v.len() - 1];
+    let (start, unc) = if path.starts_with(&[92, 92, 63, 92]) {
+        if path.len() >= 7 && matches!(path[4], 65..=90 | 97..=122) && path[5..7] == [58, 92] {
+            (7, false)
+        } else if path.len() >= 8 && ascii_eq(&path[4..8], b"UNC\\") {
+            (8, true)
+        } else {
+            return Ok(v);
+        }
+    } else {
+        return Ok(v);
+    };
+    let tail = &path[start..];
+    let tail = tail.strip_suffix(&[92]).unwrap_or(tail);
+    if !tail.is_empty() && !tail.split(|u| *u == 92).all(normal_component) {
+        return Ok(v);
+    }
+    if unc && (tail.is_empty() || !tail.contains(&92)) {
+        return Ok(v);
+    }
+    let remove = if unc { 6 } else { 4 };
+    v.copy_within(remove.., 0);
+    v.truncate(v.len() - remove);
+    if unc {
+        v[0] = 92;
+        v[1] = 92;
+    }
+    Ok(v)
+}
 struct Apartment;
 impl Drop for Apartment {
     fn drop(&mut self) {
@@ -209,12 +278,12 @@ pub fn pick(r: Request<'_>, cancel: &AtomicBool) -> Result<Vec<PathBuf>, DialogE
             at("suggested name", dialog.SetFileName(PCWSTR(name.as_ptr())))?;
         }
         if let Some(dir) = r.directory {
-            let dir = wide(dir.as_os_str())?;
+            let dir = shell_directory(dir.as_os_str())?;
             let item: IShellItem = at(
-                "initial directory",
+                "parse initial directory",
                 SHCreateItemFromParsingName(PCWSTR(dir.as_ptr()), None),
             )?;
-            at("initial directory", dialog.SetFolder(&item))?;
+            at("set initial directory", dialog.SetFolder(&item))?;
         }
     }
     if cancel.load(Ordering::Relaxed) {
@@ -275,6 +344,54 @@ pub fn pick(r: Request<'_>, cancel: &AtomicBool) -> Result<Vec<PathBuf>, DialogE
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn canonical_dos_and_unc_hints_use_equivalent_shell_names() -> Result<(), DialogError> {
+        for (source, expected) in [
+            (r"\\?\C:\essai é\東京", r"C:\essai é\東京"),
+            (r"\\?\C:\", r"C:\"),
+            (r"\\?\UNC\server\share\é", r"\\server\share\é"),
+            (r"\\?\unc\server\share\", r"\\server\share\"),
+            (r"C:\essai é", r"C:\essai é"),
+        ] {
+            assert_eq!(
+                shell_directory(OsStr::new(source))?,
+                wide(OsStr::new(expected))?
+            );
+        }
+        let long = format!(r"\\?\C:\{}", "a\\".repeat(200));
+        assert_eq!(
+            shell_directory(OsStr::new(&long))?,
+            wide(OsStr::new(&long[4..]))?
+        );
+        let source = OsString::from_wide(&[92, 92, 63, 92, 67, 58, 92, 0xd800]);
+        assert_eq!(shell_directory(&source)?, vec![67, 58, 92, 0xd800, 0]);
+        Ok(())
+    }
+    #[test]
+    fn ambiguous_verbatim_hints_are_never_redirected() -> Result<(), DialogError> {
+        for source in [
+            r"\\?\Volume{123}\folder",
+            r"\\.\C:\folder",
+            r"\\?\C:relative",
+            r"\\?\C:\folder.",
+            r"\\?\C:\folder ",
+            r"\\?\C:\..\folder",
+            r"\\?\C:\NUL.txt",
+            r"\\?\C:\COM1",
+            r"\\?\C:\LPT¹",
+            r"\\?\C:\a:b",
+            r"\\?\C:\a\\b",
+            r"\\?\UNC\server",
+            r"\\?\UNC\server\share.\folder",
+        ] {
+            assert_eq!(
+                shell_directory(OsStr::new(source))?,
+                wide(OsStr::new(source))?
+            );
+        }
+        assert!(shell_directory(OsStr::new("bad\0path")).is_err());
+        Ok(())
+    }
     #[test]
     fn paths_preserve_unicode_and_reject_nul_before_ffi() {
         let s = OsStr::new("C:\\essai é\\東京.tack");

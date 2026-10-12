@@ -248,6 +248,12 @@ pub fn pick_with_options(
     #[cfg(windows)]
     {
         let (save, folder, multiple, filters) = windows_policy(kind);
+        if tack_storage::diagnostics::enabled() {
+            _diagnostic.note("initial_directory", serde_json::json!({
+                "path":directory.as_deref().map(tack_storage::diagnostics::path_info),
+                "verbatim":directory.as_ref().is_some_and(|p| p.as_os_str().to_string_lossy().starts_with(r"\\?\")),
+            }));
+        }
         let result = tack_windows_dialogs::pick(
             tack_windows_dialogs::Request {
                 save,

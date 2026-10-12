@@ -1,4 +1,4 @@
-Tack — P0-WIN-IMAGE-CORE-02-B — PRIVATE native-dialog candidate
+Tack — P0-WIN-IMAGE-CORE-02-B1 — PRIVATE native-dialog corrective candidate
 This tests Stage B ONLY. Large JPEG/PNG limits and import error UI are not fixed.
 Do not replace your usual installation or use your only production board copy.
 
@@ -10,12 +10,16 @@ Do not replace your usual installation or use your only production board copy.
    picker. The diagnostic disk quota now uses the Windows API directly.
 4. Create a disposable local board. Ctrl+S must open Save, with Untitled.tack
    proposed. Save into a folder with spaces/é/Unicode, reopen the file, Ctrl+S.
-5. File menu: Open, Import (select several small JPEG/PNGs), Save As, Save to
+5. AFTER this first save, retry Save As, then reopen and retry Save As again.
+   This specifically tests the canonical-directory failure in the previous B ZIP.
+   File menu: Open, Import (select several small JPEG/PNGs), Save As, Save to
    Local, Save Original As, Export selected/all sources (folder), Snapshot.
    Also try import/export keymap, preferences and profile if available.
 6. For each picker try Escape/Cancel at least twice, then success. Check that
    Tack gets focus back and the picker never remains hidden or blocks closure.
    Check overwrite confirmation, filters, proposed filenames, initial directory.
+   On a disposable unchanged board, also try closing Tack while a picker is open
+   (Alt+F4 or the native close button). Cancel it if needed, then check clean exit.
 7. Try a long local path (>260 characters), and network share if available.
    Note precisely which flow/length failed; existing Tack descriptor limits stay.
 8. Start Sharing to a NEW disposable filename; report any error AFTER the
@@ -25,7 +29,7 @@ Do not replace your usual installation or use your only production board copy.
    Nothing is uploaded automatically. No native crash dumps are enabled.
 
 Diagnostic profile/log root:
-%LOCALAPPDATA%\TackDiagnostics\P0-WIN-IMAGE-CORE-02-B
+%LOCALAPPDATA%\TackDiagnostics\P0-WIN-IMAGE-CORE-02-B1
 Your normal profile and the previous diagnostic sessions are separate.
 3 GiB free disk required. Logs are bounded/privacy-filtered (no pixels, notes,
 raw source paths, invites, clipboard contents). Normal tack.exe leaves logs off.
