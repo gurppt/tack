@@ -71,6 +71,30 @@ fn tile_expansion_reserves_complete_fallbacks_and_checks_overflow() {
     assert!(!tile_group_fits(usize::MAX, 1, 0));
 }
 #[test]
+fn saturated_status_keeps_storage_errors_and_selection_omissions_visible() {
+    let limit = tack_app::display_budget::Limit {
+        visible: 20000,
+        omitted: 10000,
+        selected_omitted: 7,
+    };
+    let message = limit.warning_with_error(false, Some("Save failed: board changed outside Tack"));
+    assert_eq!(
+        message.as_deref(),
+        Some(
+            "Display limit: 10000/20000 shown (7 selected omitted). Save failed: board changed outside Tack"
+        )
+    );
+    assert_eq!(
+        tack_app::display_budget::Limit::default().warning_with_error(true, Some("Save failed")),
+        Some("Tile detail limited. Save failed".into())
+    );
+    assert!(
+        tack_app::display_budget::Limit::default()
+            .warning_with_error(false, Some("Save failed"))
+            .is_none()
+    );
+}
+#[test]
 fn limited_draws_preserve_interleaved_annotation_order_and_document() -> R {
     let mut doc = Document::new(DocumentId::new(21)?, DocumentLimits::default());
     doc.apply(Command::AddSource(Source::linked(

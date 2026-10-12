@@ -34,6 +34,20 @@ pub struct Limit {
     pub selected_omitted: usize,
 }
 impl Limit {
+    /// Keep the presentation limit explicit without concealing a save/input error.
+    pub fn warning_with_error(self, tile_limited: bool, error: Option<&str>) -> Option<String> {
+        let warning = self.warning(tile_limited)?;
+        match error {
+            Some(error) if self.omitted > 0 => Some(format!(
+                "Display limit: {}/{} shown ({} selected omitted). {error}",
+                self.visible - self.omitted,
+                self.visible,
+                self.selected_omitted
+            )),
+            Some(error) => Some(format!("Tile detail limited. {error}")),
+            None => Some(warning),
+        }
+    }
     pub fn warning(self, tile_limited: bool) -> Option<String> {
         if self.omitted > 0 {
             Some(format!(

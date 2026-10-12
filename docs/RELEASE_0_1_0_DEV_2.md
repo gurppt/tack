@@ -12,7 +12,7 @@ L’ajustement du major dans tack-update est une correction d’identité de rel
 
 ## Validation de source
 
-490 tests Rust réussis, 0 échec, 21 ignorés spécialisés ; Clippy all-targets/all-features -D warnings, check local-minimal all-targets, rustfmt et diff check réussis. 31 tests Python réussis, dont contrôles du manifest/packaging. Les tests GPU et natifs P0/P1a/P1b sont documentés dans leurs rapports : pixels exacts, streaming/LOD/revisions, sauvegarde/recovery à saturation et repos sans redraw.
+491 tests Rust réussis, 0 échec, 21 ignorés spécialisés ; Clippy all-targets/all-features -D warnings, check local-minimal all-targets, rustfmt et diff check réussis. 31 tests Python réussis, dont contrôles du manifest/packaging. Les tests GPU et natifs P0/P1a/P1b sont documentés dans leurs rapports : pixels exacts, streaming/LOD/revisions, sauvegarde/recovery à saturation et repos sans redraw.
 
 Les builds finaux Linux/Windows sont effectués **après commit**, puis vérifiés en packaging. Le Windows GNU doit inclure le JPEG SIMD SSE2/AVX2 statique, sans dépendance aux DLL de runtime GCC/turbojpeg ; l’exécution CLI et les sorties scalar/SSE2/automatic du decoder sont contrôlées sous un Wine prefix privé. Wine et Xvfb ne constituent pas une acceptance du bureau Windows physique. Les reçus d’archives, imports, Wine, manifest et upload restent dans `benchmark-results/release-dev2/` et les checksums de publication dans les assets GitHub.
 
@@ -23,3 +23,5 @@ La release est une prérelease de test, pas une alpha de production. Tests Windo
 Pour garder la réserve de disque, seuls 105 anciens exécutables de tests (7,64 GiB) identifiés par les logs de cette session sont retirés avant les builds finaux. Les 68 executables de tests actuels sont conservés, ainsi que caches partagés, fichiers utilisateur et fixtures utiles. Aucun cargo clean global. Les grands JPEG/PNG sont réutilisés, sans copie dans les packages. Wine utilise une scratch privée, bornée et supprimée après ses contrôles ; aucun prefix Wine utilisateur n’est utilisé.
 
 Publication prévue : [Tack v0.1.0-dev.2](https://github.com/gurppt/tack/releases/tag/v0.1.0-dev.2). La publication n’est considérée achevée qu’après présence des deux archives, manifest et checksums vérifiés sur GitHub.
+
+Contrôle final de saturation + erreur de sauvegarde : le message de limite conserve le compte affiché/total et les sélectionnées omises, puis montre l’erreur au lieu de la masquer. Aucun ACK de sauvegarde réussi n’est annoncé sur une cible modifiée extérieurement. Le package Linux actuel exige glibc 2.39 ou ultérieur (ABI relevée dans le binaire) ; cette contrainte est indiquée dans les notes GitHub.
