@@ -2,6 +2,7 @@
 use std::{path::PathBuf, sync::atomic::AtomicBool, time::Instant};
 use tack_app::local_import::{ImportRequest, ImportUpdate};
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let expected_admit = std::env::args_os().any(|s| s == "--expect-admit");
     let root = std::env::args_os()
         .nth(1)
         .map(PathBuf::from)
@@ -53,7 +54,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 "{}",
                 serde_json::json!({"file":path.file_name().map(|name|name.to_string_lossy()),"embedded":embedded,"pixels":pixels,"encoded_bytes":encoded,"header_bytes":header_bytes,"admitted":admitted,"rejected":rejected,"reason":reason,"elapsed_ms":started.elapsed().as_secs_f64()*1000.})
             );
-            if admitted != 0 || rejected != 1 || code != "encoded-limit" {
+            if if expected_admit {
+                admitted != 1 || rejected != 0
+            } else {
+                admitted != 0 || rejected != 1 || code != "encoded-limit"
+            } {
                 return Err("unexpected first admission boundary".into());
             }
         }

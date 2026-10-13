@@ -6,6 +6,7 @@ fn exact_stage_category_and_limit_survive_without_private_error_text() {
         Facts {
             encoded_bytes: Some(87_000_000),
             pixels: Some([8000, 9000]),
+            encoded_limit: None,
         },
         &"image exceeds 64 MiB encoded-input limit".into(),
     );

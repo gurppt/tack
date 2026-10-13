@@ -1,4 +1,5 @@
 //! Bounded asynchronous display-image pipeline.
+mod admission;
 mod board;
 mod decode;
 mod diagnostic_metadata;
@@ -12,12 +13,13 @@ mod profile;
 mod representation;
 mod tile_disk;
 mod ui_image;
+pub use admission::{ImportPlan, image_import_plan, image_metadata};
 pub use diagnostic_metadata::{diagnostic_header, image_failure_kind};
 pub use product::{
     PreparedOverview, ProductAssetStats, ProductAssets, ProductDemand, RepTrace, SourceState,
     SupplyLimits,
 };
-pub use representation::{image_metadata, source_fingerprint};
+pub use representation::source_fingerprint;
 pub use ui_image::decode_ui_png;
 
 pub use board::{BenchmarkBoard, BenchmarkImage};

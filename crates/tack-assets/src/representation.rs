@@ -10,13 +10,15 @@ use std::{
 };
 use tack_core::SourceFingerprint;
 pub(crate) const ENCODED_LIMIT: u64 = 64 * 1024 * 1024;
+#[cfg(test)]
+use crate::image_metadata;
 #[derive(Clone, Copy, PartialEq, Eq)]
-enum Format {
+pub(crate) enum Format {
     Jpeg,
     Png,
     Other,
 }
-fn sniff<R: Read + Seek>(source: &mut R) -> Result<Format, AssetError> {
+pub(crate) fn sniff<R: Read + Seek>(source: &mut R) -> Result<Format, AssetError> {
     let mut first = [0; 2];
     source.read_exact(&mut first)?;
     let format = if first == [0xff, 0xd8] {
@@ -77,38 +79,6 @@ pub fn source_fingerprint(path: &Path) -> Result<SourceFingerprint, AssetError> 
         modified_nanos,
     })
 }
-pub fn image_metadata(path: &Path) -> Result<([u32; 2], u64), AssetError> {
-    let mut source = CountRead {
-        inner: BufReader::with_capacity(8192, File::open(path)?),
-        count: 0,
-    };
-    let format = sniff(&mut source)?;
-    let size = if format == Format::Jpeg {
-        let header = crate::jpeg_header::read(&mut source)?;
-        if !header.ordinary() {
-            header.require_streamed()?;
-        }
-        header.size
-    } else if format == Format::Png {
-        let remaining = crate::huge_image::PNG_ENCODED_LIMIT.saturating_sub(source.count);
-        crate::huge_image::png_dimensions(BudgetReader::with_limit(&mut source, remaining, None))?
-    } else {
-        let mut reader = ImageReader::new(BufReader::new(BudgetReader::new(&mut source)))
-            .with_guessed_format()?;
-        let mut limits = Limits::default();
-        limits.max_image_width = Some(6000);
-        limits.max_image_height = Some(4500);
-        limits.max_alloc = Some(192 * 1024 * 1024);
-        reader.limits(limits);
-        let (w, h) = reader.into_dimensions()?;
-        [w, h]
-    };
-    if format == Format::Other && (size[0] == 0 || size[1] == 0 || size[0] > 6000 || size[1] > 4500)
-    {
-        return Err("supported image dimensions are 1..6000 x 1..4500".into());
-    }
-    Ok((size, source.count))
-}
 pub(crate) struct CountRead<R> {
     pub inner: R,
     pub count: u64,
@@ -163,15 +133,30 @@ pub(crate) fn derive_linked_edge(
 ) -> Result<(image::RgbaImage, u32), AssetError> {
     derive_linked_edge_cancel(path, read, edge, None)
 }
+#[cfg(test)]
 pub(crate) fn derive_linked_edge_cancel(
     path: &Path,
     read: &mut u64,
     edge: u32,
     cancel: Option<&AtomicBool>,
 ) -> Result<(image::RgbaImage, u32), AssetError> {
+    derive_linked_edge_known(path, read, edge, cancel, None)
+}
+pub(crate) fn derive_linked_edge_known(
+    path: &Path,
+    read: &mut u64,
+    edge: u32,
+    cancel: Option<&AtomicBool>,
+    encoded: Option<u64>,
+) -> Result<(image::RgbaImage, u32), AssetError> {
     check_cancel(cancel)?;
+    let file = File::open(path)?;
+    let encoded = match encoded {
+        Some(n) => n,
+        None => file.metadata()?.len(),
+    };
     let mut reader = CountRead {
-        inner: BufReader::with_capacity(8192, File::open(path)?),
+        inner: BufReader::with_capacity(8192, file),
         count: 0,
     };
     let result = (|| {
@@ -179,7 +164,10 @@ pub(crate) fn derive_linked_edge_cancel(
             let mut header_reader =
                 BudgetReader::with_limit(&mut reader, crate::jpeg_header::ENCODED_LIMIT, cancel);
             let header = crate::jpeg_header::read(&mut header_reader)?;
-            if crate::huge_image::Tile::from_tag(edge).is_some() || !header.ordinary() {
+            if crate::huge_image::Tile::from_tag(edge).is_some()
+                || !header.ordinary()
+                || encoded > ENCODED_LIMIT
+            {
                 return Ok((
                     crate::jpeg_scanlines::derive(&mut header_reader, header, edge, cancel)?,
                     5,
@@ -205,10 +193,11 @@ pub(crate) fn derive_linked_edge_cancel(
             return Ok((pixels, 7));
         }
         let remaining = crate::huge_image::PNG_ENCODED_LIMIT.saturating_sub(reader.count);
-        derive_stream_edge_cancel(
+        derive_stream_edge_known(
             &mut BudgetReader::with_limit(&mut reader, remaining, cancel),
             edge,
             cancel,
+            Some(encoded),
         )
     })();
     *read = read
@@ -288,7 +277,19 @@ pub(crate) fn derive_stream_edge_cancel<R: Read + Seek + Send>(
     edge: u32,
     cancel: Option<&AtomicBool>,
 ) -> Result<(image::RgbaImage, u32), AssetError> {
+    derive_stream_edge_known(source, edge, cancel, None)
+}
+pub(crate) fn derive_stream_edge_known<R: Read + Seek + Send>(
+    source: &mut R,
+    edge: u32,
+    cancel: Option<&AtomicBool>,
+    encoded: Option<u64>,
+) -> Result<(image::RgbaImage, u32), AssetError> {
     check_cancel(cancel)?;
+    // Production callers pass their already-known fingerprint/range length.
+    // Legacy generic readers retain the bounded 64 MiB ordinary route and need
+    // only Start seeks; do not add mandatory End-seek/stat work to small images.
+    let force_streamed = encoded.is_some_and(|n| n > ENCODED_LIMIT);
     // One budget spans probing, metadata and decode, even after seeking back.
     let mut source = BufReader::with_capacity(
         8192,
@@ -296,7 +297,8 @@ pub(crate) fn derive_stream_edge_cancel<R: Read + Seek + Send>(
     );
     let format = sniff(&mut source)?;
     if format == Format::Png {
-        let (_size, precision_streamed) = crate::huge_image::png_layout(&mut source)?;
+        let (_size, precision_streamed) =
+            crate::huge_image::png_layout_mode(&mut source, force_streamed)?;
         source.seek(std::io::SeekFrom::Start(0))?;
         let streamed = crate::huge_image::Tile::from_tag(edge).is_some() || precision_streamed;
         if streamed {
@@ -310,7 +312,8 @@ pub(crate) fn derive_stream_edge_cancel<R: Read + Seek + Send>(
     }
     if format == Format::Jpeg {
         let header = crate::jpeg_header::read(&mut source)?;
-        if crate::huge_image::Tile::from_tag(edge).is_some() || !header.ordinary() {
+        if crate::huge_image::Tile::from_tag(edge).is_some() || !header.ordinary() || force_streamed
+        {
             return Ok((
                 crate::jpeg_scanlines::derive(&mut source, header, edge, cancel)?,
                 5,
@@ -352,16 +355,16 @@ pub(crate) fn derive_stream_edge_cancel<R: Read + Seek + Send>(
 }
 
 /// Bound cumulative parser reads including repeated seeks; storage originals can be larger.
-struct BudgetReader<'a, R> {
+pub(crate) struct BudgetReader<'a, R> {
     inner: R,
     remaining: u64,
     cancel: Option<&'a AtomicBool>,
 }
 impl<'a, R> BudgetReader<'a, R> {
-    fn new(inner: R) -> Self {
+    pub(crate) fn new(inner: R) -> Self {
         Self::with_limit(inner, ENCODED_LIMIT, None)
     }
-    fn with_limit(inner: R, remaining: u64, cancel: Option<&'a AtomicBool>) -> Self {
+    pub(crate) fn with_limit(inner: R, remaining: u64, cancel: Option<&'a AtomicBool>) -> Self {
         Self {
             inner,
             remaining,

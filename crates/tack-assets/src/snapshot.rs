@@ -12,18 +12,22 @@ pub fn decode(payload: &Payload, edge: u32, cancel: &AtomicBool) -> Result<Decod
     }
     let pixels = match payload {
         Payload::File(path) => {
-            crate::representation::derive_stream_edge_cancel(
-                &mut File::open(path)?,
+            let mut file = File::open(path)?;
+            let len = file.metadata()?.len();
+            crate::representation::derive_stream_edge_known(
+                &mut file,
                 edge,
                 Some(cancel),
+                Some(len),
             )?
             .0
         }
         Payload::Stored { file, range } => {
-            crate::representation::derive_stream_edge_cancel(
+            crate::representation::derive_stream_edge_known(
                 &mut RangeReader::new(Arc::clone(file), *range),
                 edge,
                 Some(cancel),
+                Some(range.len),
             )?
             .0
         }

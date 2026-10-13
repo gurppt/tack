@@ -6,7 +6,7 @@ use std::{
         atomic::{AtomicBool, Ordering},
     },
 };
-use tack_assets::{AssetError, image_metadata, source_fingerprint};
+use tack_assets::{AssetError, image_import_plan, source_fingerprint};
 use tack_core::*;
 use tack_storage::Payload;
 pub struct Request {
@@ -63,10 +63,15 @@ impl Request {
         };
         let path = path.canonicalize()?;
         let fingerprint = source_fingerprint(&path)?;
-        if fingerprint.size > crate::local_import::MAX_ENCODED_IMAGE {
-            return Err("Source exceeds 64 MiB encoded limit".into());
+        let plan = image_import_plan(&path, fingerprint.size)?;
+        if fingerprint.size > plan.max_encoded {
+            return Err(format!(
+                "Source exceeds decoder input limit ({} bytes)",
+                plan.max_encoded
+            )
+            .into());
         }
-        let (pixels, _) = image_metadata(&path)?;
+        let pixels = plan.pixels;
         let embedded = if self.toggle { linked } else { !linked };
         let original = if embedded {
             tack_storage::create_private_directory(&self.work, true)?;
@@ -76,6 +81,7 @@ impl Request {
                 &mut self.spool,
                 cancel,
                 &mut 0,
+                plan.max_encoded,
             )?)
         } else {
             None

@@ -13,6 +13,17 @@ pub enum Stage {
     Document,
 }
 impl Stage {
+    pub fn user_label(self) -> &'static str {
+        match self {
+            Self::Path => "Read source",
+            Self::Fingerprint => "Source information",
+            Self::Metadata => "Read header",
+            Self::Admission => "Original size",
+            Self::Staging => "Embed copy",
+            Self::SourceChanged => "Source update",
+            Self::Document => "Add image",
+        }
+    }
     pub fn label(self) -> &'static str {
         match self {
             Self::Path => "path/file-open",
@@ -57,6 +68,7 @@ impl Category {
 pub struct Facts {
     pub encoded_bytes: Option<u64>,
     pub pixels: Option<[u32; 2]>,
+    pub encoded_limit: Option<u64>,
 }
 #[derive(Debug)]
 pub struct Failure {
@@ -111,6 +123,19 @@ impl Failure {
         // absolute paths in its error text; retain its fingerprint in DEV logs.
         let text = error.to_string();
         (f.category, f.code, f.reason) = match text.as_str() {
+            "JPEG dimensions must be greater than zero" => (
+                Category::Malformed,
+                "jpeg-zero-axis",
+                "JPEG dimensions must be greater than zero",
+            ),
+            "image exceeds its decoder's encoded-input limit" => {
+                f.limit = facts.encoded_limit;
+                (
+                    Category::Budget,
+                    "encoded-limit",
+                    "Encoded original exceeds the bounded decoder's input limit",
+                )
+            }
             "image exceeds 64 MiB encoded-input limit" => {
                 f.limit = Some(super::MAX_ENCODED_IMAGE);
                 (
@@ -210,7 +235,7 @@ impl Failure {
             _ if tack_assets::image_failure_kind(error) == "unsupported-format" => (
                 Category::Variant,
                 "unsupported-format",
-                "Image format is not supported by the installed decoder",
+                "Unsupported image format",
             ),
             _ if tack_assets::image_failure_kind(error) == "decoder-resource-limit" => (
                 Category::Budget,
@@ -238,7 +263,10 @@ impl Failure {
             .facts
             .encoded_bytes
             .map_or(String::new(), |n| format!(" ({n} bytes)"));
-        format!("{}: {}{size}", self.stage.label(), self.reason)
+        let limit = self
+            .limit
+            .map_or(String::new(), |n| format!("; limit {n} bytes"));
+        format!("{}: {}{size}{limit}", self.stage.user_label(), self.reason)
     }
 }
 #[derive(Default)]

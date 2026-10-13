@@ -1,6 +1,6 @@
 //! Explicit validated replacement; identity/layout survive and source revision never recycles.
 use std::path::Path;
-use tack_assets::{AssetError, image_metadata, source_fingerprint};
+use tack_assets::{AssetError, image_import_plan, source_fingerprint};
 use tack_core::*;
 pub struct RelinkReady {
     pub previous: Source,
@@ -12,10 +12,15 @@ impl RelinkReady {
     pub fn read(previous: Source, path: &Path) -> Result<Self, AssetError> {
         let path = path.canonicalize()?;
         let fingerprint = source_fingerprint(&path)?;
-        if fingerprint.size > crate::local_import::MAX_ENCODED_IMAGE {
-            return Err("replacement exceeds 64 MiB encoded-input limit".into());
+        let plan = image_import_plan(&path, fingerprint.size)?;
+        if fingerprint.size > plan.max_encoded {
+            return Err(format!(
+                "Replacement exceeds decoder input limit ({} bytes)",
+                plan.max_encoded
+            )
+            .into());
         }
-        let (pixels, _) = image_metadata(&path)?;
+        let pixels = plan.pixels;
         if source_fingerprint(&path)? != fingerprint {
             return Err("replacement changed during admission".into());
         }

@@ -186,9 +186,15 @@ pub fn png_dimensions<R: Read + Seek>(source: R) -> Result<[u32; 2], AssetError>
     Ok(png_layout(source)?.0)
 }
 pub(crate) fn png_layout<R: Read + Seek>(source: R) -> Result<([u32; 2], bool), AssetError> {
-    let reader = decoder(source, false, None)?.read_info()?;
+    png_layout_mode(source, false)
+}
+pub(crate) fn png_layout_mode<R: Read + Seek>(
+    source: R,
+    force_streamed: bool,
+) -> Result<([u32; 2], bool), AssetError> {
+    let reader = decoder(source, force_streamed, None)?.read_info()?;
     let info = reader.info();
-    let streamed = streamed_layout(info)?;
+    let streamed = force_streamed || streamed_layout(info)?;
     if streamed && info.animation_control.is_some() {
         return Err("animated large/huge PNG is outside static streamed support".into());
     }

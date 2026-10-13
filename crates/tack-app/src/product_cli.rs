@@ -7,7 +7,9 @@ use std::{
     sync::Arc,
     time::{Duration, Instant},
 };
-use tack_assets::{AssetError, BenchmarkBoard, ProductAssets, image_metadata, source_fingerprint};
+use tack_assets::{
+    AssetError, BenchmarkBoard, ProductAssets, image_import_plan, source_fingerprint,
+};
 use tack_core::*;
 use tack_storage::{self as storage, BlobInput, Payload, TackFile};
 struct Workspace(PathBuf);
@@ -118,8 +120,16 @@ fn create(args: Vec<OsString>, started: Instant) -> Result<(), AssetError> {
     for (index, path) in paths.iter().enumerate() {
         let path = path.canonicalize()?;
         let fingerprint = source_fingerprint(&path)?;
-        let (pixels, read) = image_metadata(&path)?;
-        header_bytes += read;
+        let plan = image_import_plan(&path, fingerprint.size)?;
+        if fingerprint.size > plan.max_encoded {
+            return Err(format!(
+                "Source exceeds bounded decoder input limit ({} bytes)",
+                plan.max_encoded
+            )
+            .into());
+        }
+        let pixels = plan.pixels;
+        header_bytes += plan.header_reads;
         let source = storage::new_source_id()?;
         let asset = storage::new_asset_id()?;
         let object = storage::new_object_id()?;

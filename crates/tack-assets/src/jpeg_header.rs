@@ -92,7 +92,10 @@ pub fn read<R: Read>(source: &mut R) -> Result<Header, AssetError> {
                 u32::from(u16::from_be_bytes([payload[1], payload[2]])),
             ];
             let components = usize::from(payload[5]);
-            if size.contains(&0) || size.iter().any(|n| *n > CODEC_MAX_AXIS) {
+            if size.contains(&0) {
+                return Err("JPEG dimensions must be greater than zero".into());
+            }
+            if size.iter().any(|n| *n > CODEC_MAX_AXIS) {
                 return Err("JPEG dimensions exceed the codec's 65500-axis limit".into());
             }
             if ![1, 3].contains(&components) || payload.len() != 6 + 3 * components {

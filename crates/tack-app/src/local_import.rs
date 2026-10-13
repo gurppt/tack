@@ -9,7 +9,7 @@ use std::{
         atomic::{AtomicBool, Ordering},
     },
 };
-use tack_assets::{AssetError, image_metadata, source_fingerprint};
+use tack_assets::{AssetError, image_import_plan, source_fingerprint};
 use tack_core::*;
 use tack_storage::{BlobRange, Payload};
 pub const MAX_IMPORT_FILES: usize = 4096;
@@ -63,8 +63,9 @@ pub(crate) fn pin_copy(
     spool: &mut Option<Arc<File>>,
     cancel: &AtomicBool,
     bytes: &mut u64,
+    max_encoded: u64,
 ) -> Result<Payload, AssetError> {
-    pin_copy_progress(path, work, spool, cancel, bytes, &mut |_| true)
+    pin_copy_progress(path, work, spool, cancel, bytes, max_encoded, &mut |_| true)
 }
 fn pin_copy_progress(
     path: &Path,
@@ -72,6 +73,7 @@ fn pin_copy_progress(
     spool: &mut Option<Arc<File>>,
     cancel: &AtomicBool,
     bytes: &mut u64,
+    max_encoded: u64,
     progress: &mut dyn FnMut(u64) -> bool,
 ) -> Result<Payload, AssetError> {
     let _diagnostic = tack_storage::diagnostics::Operation::new("asset/codec", "pin_original_copy");
@@ -98,8 +100,8 @@ fn pin_copy_progress(
     if length == 0 {
         return Err("empty image original".into());
     }
-    if length > MAX_ENCODED_IMAGE {
-        return Err("image exceeds 64 MiB encoded-input limit".into());
+    if length > max_encoded {
+        return Err("image exceeds its decoder's encoded-input limit".into());
     }
     if length > MAX_IMPORT_BYTES.saturating_sub(*bytes) {
         return Err("embedded batch exceeds 2 GiB staging limit".into());
@@ -180,16 +182,16 @@ impl ImportRequest {
         let mut bytes = 0;
         let mut admitted = 0;
         let mut shared = BTreeMap::<PathBuf, (Source, ImageAsset)>::new();
+        if !emit(ImportUpdate::Progress {
+            completed: 0,
+            total,
+            bytes,
+        }) {
+            return Ok(());
+        }
         for (i, path) in self.paths.into_iter().enumerate() {
             if cancel.load(Ordering::Relaxed) {
                 break;
-            }
-            if !emit(ImportUpdate::Progress {
-                completed: i,
-                total,
-                bytes,
-            }) {
-                return Ok(());
             }
             let started = std::time::Instant::now();
             let mut stage = failure::Stage::Path;
@@ -200,11 +202,20 @@ impl ImportRequest {
                 let fingerprint = source_fingerprint(&path)?;
                 facts.encoded_bytes = Some(fingerprint.size);
                 stage = failure::Stage::Metadata;
-                let (pixels, _) = image_metadata(&path)?;
+                let plan = image_import_plan(&path, fingerprint.size)?;
+                if tack_storage::diagnostics::enabled() {
+                    _diagnostic.note("admission_plan",serde_json::json!({
+                        "path":tack_storage::diagnostics::path_info(&path),"encoded_bytes":fingerprint.size,
+                        "pixels":plan.pixels,"format":plan.format,"streamed":plan.streamed,
+                        "limit_bytes":plan.max_encoded,"header_reads":plan.header_reads,
+                    }));
+                }
+                let pixels = plan.pixels;
                 facts.pixels = Some(pixels);
+                facts.encoded_limit = Some(plan.max_encoded);
                 stage = failure::Stage::Admission;
-                if fingerprint.size > MAX_ENCODED_IMAGE {
-                    return Err("image exceeds 64 MiB encoded-input limit".into());
+                if fingerprint.size > plan.max_encoded {
+                    return Err("image exceeds its decoder's encoded-input limit".into());
                 }
                 let (source, asset, original) = if let Some((s, a)) = shared.get(&path) {
                     (s.clone(), *a, None)
@@ -218,6 +229,7 @@ impl ImportRequest {
                             &mut spool,
                             cancel,
                             &mut bytes,
+                            plan.max_encoded,
                             &mut |bytes| {
                                 emit(ImportUpdate::Progress {
                                     completed: i,

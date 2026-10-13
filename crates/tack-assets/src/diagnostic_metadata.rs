@@ -54,6 +54,12 @@ pub fn representation_failure_reason(error: &crate::AssetError) -> &'static str 
         "JPEG exceeds 64 MiB decode input budget" => {
             "JPEG exceeds the 64 MiB ordinary decode-input limit"
         }
+        "JPEG progressive/multiscan coefficient scratch exceeds 192 MiB bound" => {
+            "JPEG progressive/multiscan coefficient scratch exceeds 192 MiB"
+        }
+        "prototype JPEG source must be lossy RGB or grayscale" => {
+            "This JPEG precision/colorspace or coding variant is unsupported"
+        }
         "bounded huge JPEG requires 8-bit single-scan baseline RGB/grayscale; progressive/multiscan requires a coefficient-buffer strategy" => {
             "Large JPEG progressive/multiscan is unsupported by the bounded decoder"
         }

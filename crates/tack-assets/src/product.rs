@@ -984,11 +984,12 @@ fn load(job: Job, base: &Path, dir: &Path, disk: &Mutex<crate::decode::DiskCache
                 return Err("source missing or changed; explicit relink/revision required".into());
             }
             let before = representation::source_fingerprint(&path)?;
-            let (pixels, generator) = representation::derive_linked_edge_cancel(
+            let (pixels, generator) = representation::derive_linked_edge_known(
                 &path,
                 &mut outcome.source_bytes,
                 job.edge,
                 job.cancel.as_deref(),
+                Some(before.size),
             )?;
             if representation::source_fingerprint(&path)? != before {
                 return Err("source changed during derivation".into());
@@ -1009,10 +1010,18 @@ fn load(job: Job, base: &Path, dir: &Path, disk: &Mutex<crate::decode::DiskCache
                 },
                 count: 0,
             };
-            let result = representation::derive_stream_edge_cancel(
+            let encoded = match &job.original {
+                Some(Payload::Stored { range, .. }) => Some(range.len),
+                _ => board
+                    .originals
+                    .get(&source)
+                    .map(|original| original.range.len),
+            };
+            let result = representation::derive_stream_edge_known(
                 &mut reader,
                 job.edge,
                 job.cancel.as_deref(),
+                encoded,
             );
             outcome.container_bytes += reader.count;
             let (pixels, generator) = result?;
