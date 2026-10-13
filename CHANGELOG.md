@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.0-test.1 — isolated testing and ready-to-send reports
+
+Owner-authorized TEST prerelease on `testing`, not a stable release.
+
+- Select Test in Update after installing Dev.3; subsequent Test updates download and install through Tack, with restart/save guards and existing artwork/data preserved.
+- Includes the optional diagnostic launcher and double-click launch/export scripts, updated by the same updater.
+- Export creates a ready-to-send ZIP/STORE without compression or PowerShell, with captured structural logs, summary and checksum manifest. No automatic upload.
+- Carries the Windows native-dialog and bounded >64 MiB JPEG/PNG corrections from the bridge. Diagnostics stay off during normal launch.
+
+Install path from an existing Dev.2 build: Update on Dev → Dev.3 → Channel Test → Test.1. Very old Dev.1 installs with update protocol 3 need one initial compatible installation; do not overwrite their artwork/profiles.
+
+Known limits: large ≥1 GB inputs, giant progressive JPEG, GIF, native PNG tile promotion, incremental Embedded save and two-machine LAN routing remain gated. Linux/Wine/compiler tests do not establish physical Windows large-image/GPU acceptance. `.tack` container 1 and LAN/update major 4 stay unchanged.
+
 ## 0.1.0-dev.3 — updater bridge to isolated testing
 
 Owner-authorized pre-alpha bridge release from the `testing` branch.
