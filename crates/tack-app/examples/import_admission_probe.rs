@@ -20,6 +20,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let mut rejected = 0;
             let mut admitted = 0;
             let mut reason = String::new();
+            let mut code = "";
             let started = Instant::now();
             let request = ImportRequest {
                 temporary: None,
@@ -35,9 +36,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             request
                 .run(&AtomicBool::new(false), |event| {
                     match event {
-                        ImportUpdate::Failed { message, .. } => {
+                        ImportUpdate::Failed {
+                            message, failure, ..
+                        } => {
                             rejected += 1;
                             reason = message;
+                            code = failure.code;
                         }
                         ImportUpdate::Admitted(_) => admitted += 1,
                         _ => {}
@@ -49,10 +53,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 "{}",
                 serde_json::json!({"file":path.file_name().map(|name|name.to_string_lossy()),"embedded":embedded,"pixels":pixels,"encoded_bytes":encoded,"header_bytes":header_bytes,"admitted":admitted,"rejected":rejected,"reason":reason,"elapsed_ms":started.elapsed().as_secs_f64()*1000.})
             );
-            if admitted != 0
-                || rejected != 1
-                || reason != "image exceeds 64 MiB encoded-input limit"
-            {
+            if admitted != 0 || rejected != 1 || code != "encoded-limit" {
                 return Err("unexpected first admission boundary".into());
             }
         }

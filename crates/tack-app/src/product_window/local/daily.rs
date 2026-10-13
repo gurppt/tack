@@ -112,7 +112,7 @@ impl App {
                             })
                             .flatten()
                     });
-                let rows = tack_app::source_info::rows(
+                let mut rows = tack_app::source_info::rows(
                     doc,
                     id,
                     self.assets
@@ -120,6 +120,12 @@ impl App {
                         .and_then(|a| a.states.get(&source.id()).copied()),
                     bytes,
                 )?;
+                if let Some(reason) = doc
+                    .object_render_data(id)
+                    .and_then(|d| self.assets.as_ref()?.failure_reason(d.asset_id))
+                {
+                    rows.push(format!("Last decoder/preview failure: {reason}"));
+                }
                 let source_color = Some(tack_app::source_info::color(
                     source.location(),
                     self.assets

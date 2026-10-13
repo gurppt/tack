@@ -16,6 +16,7 @@ pub const MAX_IMPORT_FILES: usize = 4096;
 pub const MAX_ENCODED_IMAGE: u64 = 64 * 1024 * 1024;
 pub const MAX_IMPORT_BYTES: u64 = 2 * 1024 * 1024 * 1024;
 pub const MAX_SESSION_IMPORT_BYTES: u64 = 4 * 1024 * 1024 * 1024;
+pub mod failure;
 
 pub struct ImportRequest {
     /// Owned clipboard staging only; removed by the worker after original admission.
@@ -47,6 +48,7 @@ pub enum ImportUpdate {
     Failed {
         path: PathBuf,
         message: String,
+        failure: failure::Failure,
     },
     Finished {
         cancelled: bool,
@@ -61,6 +63,16 @@ pub(crate) fn pin_copy(
     spool: &mut Option<Arc<File>>,
     cancel: &AtomicBool,
     bytes: &mut u64,
+) -> Result<Payload, AssetError> {
+    pin_copy_progress(path, work, spool, cancel, bytes, &mut |_| true)
+}
+fn pin_copy_progress(
+    path: &Path,
+    work: &Path,
+    spool: &mut Option<Arc<File>>,
+    cancel: &AtomicBool,
+    bytes: &mut u64,
+    progress: &mut dyn FnMut(u64) -> bool,
 ) -> Result<Payload, AssetError> {
     let _diagnostic = tack_storage::diagnostics::Operation::new("asset/codec", "pin_original_copy");
     if spool.is_none() {
@@ -83,17 +95,24 @@ pub(crate) fn pin_copy(
     let offset = output.seek(SeekFrom::End(0))?;
     let mut input = File::open(path)?;
     let length = input.metadata()?.len();
-    if length == 0
-        || length > MAX_ENCODED_IMAGE
-        || length > MAX_IMPORT_BYTES.saturating_sub(*bytes)
-        || length > MAX_SESSION_IMPORT_BYTES.saturating_sub(offset)
-    {
-        return Err("embedded import exceeds 64 MiB/image, 2 GiB/batch or 4 GiB/session".into());
+    if length == 0 {
+        return Err("empty image original".into());
+    }
+    if length > MAX_ENCODED_IMAGE {
+        return Err("image exceeds 64 MiB encoded-input limit".into());
+    }
+    if length > MAX_IMPORT_BYTES.saturating_sub(*bytes) {
+        return Err("embedded batch exceeds 2 GiB staging limit".into());
+    }
+    if length > MAX_SESSION_IMPORT_BYTES.saturating_sub(offset) {
+        return Err("embedded session exceeds 4 GiB staging limit".into());
     }
     let copied = (|| -> Result<u32, AssetError> {
         let mut buffer = [0; 128 * 1024];
         let mut crc = crc32fast::Hasher::new();
         let mut count = 0;
+        let mut next_progress = 4 * 1024 * 1024;
+        let mut last_progress = std::time::Instant::now();
         loop {
             if cancel.load(Ordering::Relaxed) {
                 return Err("import cancelled".into());
@@ -108,6 +127,13 @@ pub(crate) fn pin_copy(
             }
             output.write_all(&buffer[..n])?;
             crc.update(&buffer[..n]);
+            if count >= next_progress && last_progress.elapsed().as_millis() >= 100 {
+                if !progress(*bytes + count) {
+                    return Err("import cancelled".into());
+                }
+                next_progress = count.saturating_add(4 * 1024 * 1024);
+                last_progress = std::time::Instant::now();
+            }
         }
         if count != length {
             return Err("source shortened during import".into());
@@ -158,10 +184,25 @@ impl ImportRequest {
             if cancel.load(Ordering::Relaxed) {
                 break;
             }
+            if !emit(ImportUpdate::Progress {
+                completed: i,
+                total,
+                bytes,
+            }) {
+                return Ok(());
+            }
+            let started = std::time::Instant::now();
+            let mut stage = failure::Stage::Path;
+            let mut facts = failure::Facts::default();
             let result = (|| -> Result<AdmittedImage, AssetError> {
                 let path = path.canonicalize()?;
+                stage = failure::Stage::Fingerprint;
                 let fingerprint = source_fingerprint(&path)?;
+                facts.encoded_bytes = Some(fingerprint.size);
+                stage = failure::Stage::Metadata;
                 let (pixels, _) = image_metadata(&path)?;
+                facts.pixels = Some(pixels);
+                stage = failure::Stage::Admission;
                 if fingerprint.size > MAX_ENCODED_IMAGE {
                     return Err("image exceeds 64 MiB encoded-input limit".into());
                 }
@@ -170,13 +211,29 @@ impl ImportRequest {
                 } else {
                     let id = tack_storage::new_source_id()?;
                     let original = if self.embedded {
-                        Some(pin_copy(&path, &self.work, &mut spool, cancel, &mut bytes)?)
+                        stage = failure::Stage::Staging;
+                        Some(pin_copy_progress(
+                            &path,
+                            &self.work,
+                            &mut spool,
+                            cancel,
+                            &mut bytes,
+                            &mut |bytes| {
+                                emit(ImportUpdate::Progress {
+                                    completed: i,
+                                    total,
+                                    bytes,
+                                })
+                            },
+                        )?)
                     } else {
                         None
                     };
+                    stage = failure::Stage::SourceChanged;
                     if source_fingerprint(&path)? != fingerprint {
                         return Err("source changed during import".into());
                     }
+                    stage = failure::Stage::Document;
                     let location = if self.embedded {
                         SourceLocation::Embedded
                     } else {
@@ -192,6 +249,7 @@ impl ImportRequest {
                     shared.insert(path, (source.clone(), asset));
                     (source, asset, original)
                 };
+                stage = failure::Stage::Document;
                 let size = placement_size(pixels, self.viewport);
                 let center = [
                     self.position[0] + (i % 8) as f64 * self.viewport[0] * 0.55,
@@ -223,9 +281,28 @@ impl ImportRequest {
                 }
                 Err(_) if cancel.load(Ordering::Relaxed) => break,
                 Err(error) => {
+                    let failure = failure::Failure::from_error(stage, facts, &error);
+                    if tack_storage::diagnostics::enabled() {
+                        tack_storage::diagnostics::event(
+                            "import",
+                            "failed",
+                            serde_json::json!({
+                                "path":tack_storage::diagnostics::path_info(&path),
+                                "stage":failure.stage.label(),"category":failure.category.label(),
+                                "code":failure.code,"os_code":failure.os_code,"encoded_bytes":facts.encoded_bytes,
+                                "pixels":facts.pixels,"limit_bytes":failure.limit,
+                                "elapsed_us":started.elapsed().as_micros().min(u128::from(u64::MAX)) as u64,
+                                "error_id":tack_storage::diagnostics::fingerprint(error.to_string().as_bytes()),
+                            "header":if matches!(stage, failure::Stage::Path | failure::Stage::Fingerprint) {
+                                serde_json::Value::Null
+                            } else { tack_assets::diagnostic_header(&path) },
+                            }),
+                        );
+                    }
                     if !emit(ImportUpdate::Failed {
                         path,
-                        message: error.to_string(),
+                        message: failure.description(),
+                        failure,
                     }) {
                         return Ok(());
                     }

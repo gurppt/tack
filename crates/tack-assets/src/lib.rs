@@ -1,6 +1,7 @@
 //! Bounded asynchronous display-image pipeline.
 mod board;
 mod decode;
+mod diagnostic_metadata;
 mod jpeg_header;
 mod jpeg_scanlines;
 mod loader;
@@ -11,6 +12,7 @@ mod profile;
 mod representation;
 mod tile_disk;
 mod ui_image;
+pub use diagnostic_metadata::{diagnostic_header, image_failure_kind};
 pub use product::{
     PreparedOverview, ProductAssetStats, ProductAssets, ProductDemand, RepTrace, SourceState,
     SupplyLimits,

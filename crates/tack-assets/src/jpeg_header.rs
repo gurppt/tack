@@ -13,6 +13,8 @@ pub struct Header {
     pub prefix: Vec<u8>,
     pub baseline_interleaved: bool,
     pub scratch_bound: u64,
+    pub frame_marker: u8,
+    pub precision: u8,
 }
 
 impl Header {
@@ -111,9 +113,16 @@ pub fn read<R: Read>(source: &mut R) -> Result<Header, AssetError> {
             if sampling > 10 {
                 return Err("JPEG MCU exceeds codec block limit".into());
             }
-            frame = Some((size, ids, marker == 0xc0 && payload[0] == 8));
+            frame = Some((
+                size,
+                ids,
+                marker == 0xc0 && payload[0] == 8,
+                marker,
+                payload[0],
+            ));
         } else if marker == 0xda {
-            let (size, ids, baseline) = frame.ok_or("JPEG SOS precedes frame")?;
+            let (size, ids, baseline, frame_marker, precision) =
+                frame.ok_or("JPEG SOS precedes frame")?;
             if payload.is_empty() {
                 return Err("invalid JPEG scan header".into());
             }
@@ -141,6 +150,8 @@ pub fn read<R: Read>(source: &mut R) -> Result<Header, AssetError> {
                 prefix,
                 baseline_interleaved,
                 scratch_bound,
+                frame_marker,
+                precision,
             });
         }
     }

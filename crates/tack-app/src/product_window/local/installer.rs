@@ -85,6 +85,7 @@ impl App {
             self.local.seed_remembered = false;
             self.local.import_status.clear();
             self.local.import_rejected = 0;
+            self.local.import_failures = None;
             self.local.recovery = RecoverySchedule::default();
             self.local.recovery_pending = false;
             self.local.ui = None;

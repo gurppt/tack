@@ -940,6 +940,44 @@ fn revision_change_rejects_delayed_pixels_then_admits_current_revision() {
     assert_eq!(assets.stats().pending, 0);
 }
 
+#[test]
+fn missing_representation_receipt_does_not_follow_a_repaired_revision() {
+    let mut f = Fixture::new(false);
+    f.seed();
+    let source_path = f.root.join("source.png");
+    let bytes = fs::read(&source_path).unwrap();
+    fs::remove_file(&source_path).unwrap();
+    let (_, mut assets) = f.load("seed.tack");
+    f.wait(&mut assets);
+    assert!(assets.failure_reason(f.asset).is_some());
+    fs::write(&source_path, bytes).unwrap();
+    let previous = f.document.source(f.source).unwrap();
+    let current = Source::from_descriptor(
+        f.source,
+        previous.location().clone(),
+        2,
+        Some(source_fingerprint(&source_path).unwrap()),
+    )
+    .unwrap();
+    f.document.apply(Command::SetSource(current)).unwrap();
+    assets.observe_current(f.asset, 2, f.source);
+    assert_eq!(assets.failure_reason(f.asset), None);
+    assets.replace_view(
+        &[tack_assets::ProductDemand {
+            asset: f.asset,
+            lod: Lod::Thumbnail,
+            edge: 128,
+            priority: 2,
+            resident: false,
+        }],
+        &f.document,
+        &Default::default(),
+    );
+    settle_view(&mut assets);
+    assert!(assets.get_rep(f.asset, 2, Lod::Thumbnail, 128).is_some());
+    assert_eq!(assets.failure_reason(f.asset), None);
+}
+
 fn tile_demand(asset: AssetId) -> [tack_assets::ProductDemand; 1] {
     [tack_assets::ProductDemand {
         asset,

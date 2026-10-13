@@ -176,6 +176,11 @@ struct WorkBatch {
     jobs: Vec<Job>,
     jpeg: bool,
 }
+type FailureReceipt = (AssetId, u64, &'static str);
+#[derive(Default)]
+struct FailureReceipts {
+    recent: std::collections::VecDeque<FailureReceipt>,
+}
 struct Worker {
     sender: SyncSender<WorkBatch>,
     receiver: Receiver<Vec<Outcome>>,
@@ -204,6 +209,8 @@ pub struct ProductAssets {
     // Keep local supply's fixed cost one pointer; allocate the map only shared.
     #[allow(clippy::box_collection)]
     shared_sources: Option<Box<SharedSourcePaths>>,
+    // At most sixteen lazy receipts, only after a representation actually fails.
+    failure_receipts: Option<Box<FailureReceipts>>,
 }
 type SharedSourcePaths = HashMap<(SourceId, u64), Option<PathBuf>>;
 impl ProductAssets {
@@ -286,7 +293,7 @@ impl ProductAssets {
                         if let Some(first) = outcomes.first_mut() {
                             first.decode_ms = start.elapsed().as_secs_f64() * 1000.;
                         }
-                        if tack_storage::diagnostics::enabled(){for o in &outcomes {diagnostic.note(if o.result.is_ok(){"decoded"}else{"codec_error"},serde_json::json!({"source":tack_storage::diagnostics::fingerprint(&o.key.source.value().to_le_bytes()),"revision":o.key.revision,"tier":format!("{:?}",o.key.lod),"edge":o.key.edge,"state":format!("{:?}",o.state),"duration_ms":o.decode_ms,"source_bytes":o.source_bytes,"container_bytes":o.container_bytes,"cancelled":o.cancelled,"pixels":o.result.as_ref().ok().map(|p|[p.width,p.height]),"error":o.result.as_ref().err().map(|e|tack_storage::diagnostics::error_info(e.as_ref()))}));}}
+                        if tack_storage::diagnostics::enabled(){for o in &outcomes {diagnostic.note(if o.result.is_ok(){"decoded"}else{"codec_error"},serde_json::json!({"source":tack_storage::diagnostics::fingerprint(&o.key.source.value().to_le_bytes()),"revision":o.key.revision,"tier":format!("{:?}",o.key.lod),"edge":o.key.edge,"state":format!("{:?}",o.state),"duration_ms":o.decode_ms,"source_bytes":o.source_bytes,"container_bytes":o.container_bytes,"cancelled":o.cancelled,"pixels":o.result.as_ref().ok().map(|p|[p.width,p.height]),"stage":"decoder/preview","code":o.result.as_ref().err().map(crate::image_failure_kind),"error":o.result.as_ref().err().map(|e|tack_storage::diagnostics::error_info(e.as_ref()))}));}}
                         if done_tx.send(outcomes).is_err() {
                             break;
                         }
@@ -324,6 +331,7 @@ impl ProductAssets {
             streamed_png: HashSet::new(),
             streamed_jpeg: HashSet::new(),
             shared_sources: None,
+            failure_receipts: None,
         })
     }
     pub fn limits(&self) -> SupplyLimits {
@@ -647,9 +655,21 @@ impl ProductAssets {
                         self.failed.insert(o.key);
                     }
                 }
-                Err(_) => {
+                Err(error) => {
                     self.stats.errors += 1;
                     self.failed.insert(o.key);
+                    let receipts = self.failure_receipts.get_or_insert_with(Default::default);
+                    receipts
+                        .recent
+                        .retain(|(id, revision, _)| *id != o.asset || *revision != o.key.revision);
+                    if receipts.recent.len() == 16 {
+                        receipts.recent.pop_front();
+                    }
+                    receipts.recent.push_back((
+                        o.asset,
+                        o.key.revision,
+                        crate::diagnostic_metadata::representation_failure_reason(&error),
+                    ));
                 }
             }
             if let Some(trace) = &mut self.trace {
@@ -668,6 +688,16 @@ impl ProductAssets {
     pub fn get(&mut self, id: AssetId) -> Option<&Arc<Decoded>> {
         let rev = *self.current.get(&id)?;
         self.get_current(id, rev)
+    }
+    pub fn failure_reason(&self, id: AssetId) -> Option<&'static str> {
+        let revision = *self.current.get(&id)?;
+        self.failure_receipts
+            .as_ref()?
+            .recent
+            .iter()
+            .rev()
+            .find(|(asset, rev, _)| *asset == id && *rev == revision)
+            .map(|(_, _, reason)| *reason)
     }
     pub fn observe_current(&mut self, id: AssetId, revision: u64, source: SourceId) {
         self.sources.insert(id, source);

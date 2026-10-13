@@ -3,6 +3,7 @@
 /target/
 /benchmark-data/
 /benchmark-results/
+/report/
 __pycache__/
 
 /bin/

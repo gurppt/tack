@@ -57,6 +57,7 @@ pub(super) struct LocalState {
     pub importing: bool,
     pub import_status: String,
     pub import_rejected: usize,
+    pub import_failures: Option<Box<tack_app::local_import::failure::FailureSummary>>,
     pub close_after_save: bool,
     pub close_after_discard: bool,
     pub close_ready: bool,
@@ -122,6 +123,7 @@ impl LocalState {
             importing: false,
             import_status: String::new(),
             import_rejected: 0,
+            import_failures: None,
             close_after_save: false,
             close_after_discard: false,
             close_ready: false,
@@ -159,6 +161,7 @@ impl App {
         self.local.saving_as = false;
         self.local.importing = false;
         self.local.import_status.clear();
+        self.local.import_failures = None;
         self.local.profile_pending = false;
         self.local.retire_seed = false;
         self.local.close_after_save = false;

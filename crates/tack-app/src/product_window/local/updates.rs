@@ -214,8 +214,16 @@ impl App {
                     bytes / 1024
                 )
             }
-            LocalUpdate::Imported(ImportUpdate::Failed { path, message }) => {
-                let _ = (path, message);
+            LocalUpdate::Imported(ImportUpdate::Failed {
+                path,
+                message,
+                failure,
+            }) => {
+                self.local
+                    .import_failures
+                    .get_or_insert_with(Default::default)
+                    .record(&path, &failure);
+                self.local.import_status = message;
                 self.local.import_rejected += 1;
             }
             LocalUpdate::Imported(ImportUpdate::Finished {
@@ -236,12 +244,22 @@ impl App {
                     )
                 } else if self.local.import_rejected > 0 {
                     format!(
-                        "Import: {admitted} admitted, {} rejected (unsupported, remote or unreadable files)",
+                        "Import: {admitted} admitted, {} failed; details available",
                         self.local.import_rejected
                     )
                 } else {
                     String::new()
                 };
+                if let Some(failures) = self.local.import_failures.take() {
+                    self.panel(Panel::Info);
+                    self.local.ui = Some(Box::new(LocalUi::daily(
+                        Panel::Info,
+                        tack_app::local_ui::DailyPanel {
+                            rows: failures.rows(admitted, cancelled),
+                            ..Default::default()
+                        },
+                    )));
+                }
             }
             LocalUpdate::SourceTransition(result) => {
                 if let Some(ready) = result.map_err(AssetError::from)? {
@@ -303,6 +321,12 @@ impl App {
                 Clipboard::Files { paths, rejected } => {
                     self.import_paths(paths, false)?;
                     self.local.import_rejected = rejected;
+                    if rejected > 0 {
+                        self.local
+                            .import_failures
+                            .get_or_insert_with(Default::default)
+                            .clipboard_rejected(rejected);
+                    }
                 }
                 Clipboard::Text(text) => {
                     if let Some((id, value)) = ticket {

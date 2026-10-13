@@ -56,6 +56,7 @@ impl App {
         };
         self.operation(Operation::Import(request))?;
         self.local.import_rejected = 0;
+        self.local.import_failures = None;
         self.local.importing = true;
         self.local.import_status = "Import pending · Escape cancels remaining files".into();
         Ok(())
