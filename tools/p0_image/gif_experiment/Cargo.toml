@@ -1,0 +1,13 @@
+[package]
+name="tack-gif-first-frame-probe"
+version="0.0.0"
+edition="2024"
+[workspace]
+[features]
+gif-preview = ["image/gif"]
+[dependencies]
+image={version="=0.25.10",default-features=false,features=["png"]}
+sha2="=0.10.9"
+[profile.release]
+debug=0
+incremental=false
