@@ -24,10 +24,10 @@ def validate_identity(record):
  version=record.get('version',''); channel=record.get('channel')
  number=r'(?:0|[1-9][0-9]*)'
  core=rf'{number}\.{number}\.{number}'
- pattern=core+rf'-dev\.{number}' if channel=='dev' else core if channel=='stable' else r'(?!)'
+ pattern=core+rf'-{channel}\.{number}' if channel in ('dev','test') else core if channel=='stable' else r'(?!)'
  if len(version)>64 or not re.fullmatch(pattern,version):raise ValueError('Version/channel mismatch')
 
-def package(binary_dir,platform,output,channel,runner=(),require_clean=True):
+def package(binary_dir,platform,output,channel,runner=(),require_clean=True,with_diagnostics=False):
  version=tomllib.loads((ROOT/'Cargo.toml').read_text())['workspace']['package']['version']
  sha=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
  dirty=bool(subprocess.check_output(['git','diff','HEAD','--name-only'],cwd=ROOT))
@@ -39,7 +39,9 @@ def package(binary_dir,platform,output,channel,runner=(),require_clean=True):
  folder.mkdir()
  ext='.exe' if platform=='windows-x86_64' else ''
  identity={}
- for source,target in [('tack-app','tack'),('tack-server','tack-server'),('tack-updater','tack-updater')]:
+ executables=[('tack-app','tack'),('tack-server','tack-server'),('tack-updater','tack-updater')]
+ if with_diagnostics:executables.append(('tack-diagnostics','tack-diagnostics'))
+ for source,target in executables:
   executable=binary_dir/(source+ext)
   data=json.loads(subprocess.check_output([*runner,str(executable),'--build-info'],timeout=30))
   if any(data.get(k)!=v for k,v in [('version',version),('git_sha',sha),('channel',channel),('protocol_major',protocol_major())]):raise ValueError('Compiled package identity mismatch: '+source)
@@ -47,6 +49,11 @@ def package(binary_dir,platform,output,channel,runner=(),require_clean=True):
   shutil.copy2(executable,folder/(target+ext))
   stripper=shutil.which('x86_64-w64-mingw32-strip') if ext and os.name!='nt' else shutil.which('strip') if not ext else None
   if stripper:subprocess.run([stripper,'--strip-all',str(folder/(target+ext))],check=True)
+ if with_diagnostics:
+  for source in (ROOT/'tools/diagnostics').iterdir():
+   if source.suffix==('.cmd' if ext else '.sh') or source.name=='README_DIAGNOSTICS.txt':
+    shutil.copy2(source,folder/source.name)
+    if source.suffix=='.sh':(folder/source.name).chmod(0o755)
  decoder=binary_dir/('tack-jpeg-decoder'+ext)
  shutil.copy2(decoder,folder/decoder.name)
  for name in ['tack-about.png','tack-about-logo.png','tack-icon-16.png','tack-icon-32.png','tack-icon-64.png','tack-icon-128.png','tack-icon-256.png','tack-icon.ico']:
@@ -68,7 +75,7 @@ def package(binary_dir,platform,output,channel,runner=(),require_clean=True):
   shutil.copy2(ROOT/'target/native/libXi-1.8.3/COPYING',notices/'libXi-COPYING')
  for source in (native/'notices').iterdir():
   if source.is_file():shutil.copy2(source,notices/source.name)
- (folder/'README.txt').write_text('Tack '+version+'\nPortable alpha: keep this folder together. Run tack'+ext+'.\nManual updates only. Boards and profiles stay outside release assets.\nEditable PNG icons/cursors survive updates. License to be defined. Trusted LAN only.\n',encoding='utf8')
+ (folder/'README.txt').write_text('Tack '+version+' — '+channel+'\nPre-alpha test build: keep this folder together. Run tack'+ext+'.\nUpdates: menu Update > Check > Download > Restart and Update (save board first).\nDev.3 is the compatibility bridge: select Test after installing it for test releases.\nTest builds are experimental; physical Windows large-image/LAN acceptance remains pending.\nBoards, profiles and existing editable artwork are preserved by the updater.\nLicense to be defined. Trusted LAN only. No background update polling.\n',encoding='utf8')
  record=dict(version=version,commit=sha,channel=channel,protocol_major=identity['tack-app']['protocol_major'],worktree_dirty=dirty,executables=identity,native=provenance)
  (folder/'BUILD.json').write_text(json.dumps(record,indent=2)+'\n')
  archive=output/('tack-'+platform+'.zip')
@@ -104,13 +111,16 @@ def merge(fragments,output):
  path=output/'update-manifest.json'
  if path.exists():raise ValueError('Manifest already exists')
  path.write_text(json.dumps(manifest,indent=2)+'\n')
+ sums=[f"{digest(output/a['name'])}  {a['name']}" for a in assets]
+ sums.append(f"{digest(path)}  {path.name}")
+ (output/'SHA256SUMS').write_text('\n'.join(sums)+'\n')
  return manifest
 
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--binary-dir',type=Path);p.add_argument('--platform',choices=['linux-x86_64','windows-x86_64']);p.add_argument('--output',type=Path,required=True);p.add_argument('--channel',choices=['dev','stable'],default='dev');p.add_argument('--runner',nargs='*',default=[]);p.add_argument('--allow-dirty-dry-run',action='store_true');p.add_argument('--merge',type=Path,nargs='*');a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--binary-dir',type=Path);p.add_argument('--platform',choices=['linux-x86_64','windows-x86_64']);p.add_argument('--output',type=Path,required=True);p.add_argument('--channel',choices=['dev','test','stable'],default='dev');p.add_argument('--with-diagnostics',action='store_true');p.add_argument('--runner',nargs='*',default=[]);p.add_argument('--allow-dirty-dry-run',action='store_true');p.add_argument('--merge',type=Path,nargs='*');a=p.parse_args()
  if a.merge:result=merge(a.merge,a.output)
  else:
   if not a.binary_dir or not a.platform:p.error('--binary-dir and --platform required')
-  result=package(a.binary_dir.resolve(),a.platform,a.output.resolve(),a.channel,a.runner,not a.allow_dirty_dry_run)
+  result=package(a.binary_dir.resolve(),a.platform,a.output.resolve(),a.channel,a.runner,not a.allow_dirty_dry_run,a.with_diagnostics)
  print(json.dumps(result))
 if __name__=='__main__':main()

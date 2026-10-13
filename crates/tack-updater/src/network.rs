@@ -80,10 +80,10 @@ pub fn check(channel: Channel, current: &str) -> Result<Response, Error> {
             let Ok(version) = semver_parse(tag) else {
                 continue;
             };
-            if !channel.accepts(&version) || version <= current {
+            if !channel.offers(&version, &current) {
                 continue;
             }
-            if r.get("prerelease").and_then(|v| v.as_bool()) != Some(channel == Channel::Dev) {
+            if r.get("prerelease").and_then(|v| v.as_bool()) != Some(channel != Channel::Stable) {
                 continue;
             }
             let expected = format!(

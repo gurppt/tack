@@ -13,20 +13,54 @@ pub const PROTOCOL_MAJOR: u32 = 4;
 pub enum Channel {
     #[default]
     Dev,
+    Test,
     Stable,
 }
 impl Channel {
     pub fn label(self) -> &'static str {
         match self {
             Self::Dev => "Dev",
+            Self::Test => "Test",
             Self::Stable => "Stable",
         }
     }
     pub fn accepts(self, version: &semver::Version) -> bool {
         match self {
-            Self::Dev => version.pre.as_str().starts_with("dev."),
+            Self::Dev | Self::Test => version
+                .pre
+                .as_str()
+                .strip_prefix(if self == Self::Test { "test." } else { "dev." })
+                .is_some_and(|number| {
+                    !number.is_empty() && number.bytes().all(|v| v.is_ascii_digit())
+                }),
             Self::Stable => version.pre.is_empty(),
         }
+    }
+    pub fn next(self) -> Self {
+        match self {
+            Self::Dev => Self::Test,
+            Self::Test => Self::Stable,
+            Self::Stable => Self::Dev,
+        }
+    }
+    pub fn for_build(channel: &str) -> Self {
+        match channel {
+            "test" => Self::Test,
+            "stable" => Self::Stable,
+            _ => Self::Dev,
+        }
+    }
+    /// A manually selected different channel may change prerelease tracks within
+    /// the same core version. It cannot offer an older major/minor/patch version.
+    pub fn offers(self, candidate: &semver::Version, current: &semver::Version) -> bool {
+        self.accepts(candidate)
+            && if self.accepts(current) {
+                candidate > current
+            } else {
+                let next = (candidate.major, candidate.minor, candidate.patch);
+                let installed = (current.major, current.minor, current.patch);
+                next > installed || next == installed && !current.pre.is_empty()
+            }
     }
 }
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -81,7 +115,10 @@ impl Manifest {
         Ok(())
     }
     pub fn newer_than(&self, current: &str) -> Result<bool, Error> {
-        Ok(semver::Version::parse(&self.version)? > semver::Version::parse(current)?)
+        Ok(self.channel.offers(
+            &semver::Version::parse(&self.version)?,
+            &semver::Version::parse(current)?,
+        ))
     }
     pub fn asset(&self, platform: &str) -> Result<&Asset, Error> {
         self.assets

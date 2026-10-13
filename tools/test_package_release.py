@@ -28,9 +28,11 @@ class ReleaseContracts(unittest.TestCase):
     def test_channel_identity_matches_rust_policy(self):
         release.validate_identity(self.identity())
         release.validate_identity(self.identity(version='0.1.0', channel='stable'))
+        release.validate_identity(self.identity(version='0.1.0-test.1', channel='test'))
         for changes in [dict(channel='stable'), dict(version='0.1.0-alpha.1', channel='stable'),
                         dict(version='0.1.0-dev.01'), dict(schema=9),
-                        dict(protocol_major=release.protocol_major()+1), dict(git_sha='not-a-commit')]:
+                        dict(protocol_major=release.protocol_major()+1), dict(git_sha='not-a-commit'),
+                        dict(version='0.1.0-test.1',channel='dev'),dict(channel='test')]:
             with self.subTest(changes=changes), self.assertRaises(ValueError):
                 release.validate_identity(self.identity(**changes))
 
@@ -41,6 +43,11 @@ class ReleaseContracts(unittest.TestCase):
             paths = self.fragments(root)
             merged = release.merge(paths, root)
             self.assertEqual(len(merged['assets']), 2)
+            sums=(root/'SHA256SUMS').read_text().splitlines()
+            self.assertEqual(len(sums),3)
+            for line in sums:
+                checksum,name=line.split('  ')
+                self.assertEqual(checksum,release.digest(root/name))
             original = (root/'update-manifest.json').read_bytes()
             with self.assertRaises(ValueError):
                 release.merge(paths, root)

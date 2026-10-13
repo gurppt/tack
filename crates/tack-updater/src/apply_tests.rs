@@ -23,6 +23,11 @@ fn fixture(install: &Path) -> Result<(std::path::PathBuf, Manifest), Error> {
         ("tack-server", b"new server"),
         ("tack-updater", b"new helper"),
         ("tack-jpeg-decoder", b"new decoder"),
+        ("tack-diagnostics", b"new diagnostic exporter"),
+        (
+            "Export-Diagnostic-Report.sh",
+            b"#!/bin/sh\nexec ./tack-diagnostics export\n",
+        ),
         ("tack-about.png", b"about"),
         ("tack-about-logo.png", b"logo"),
         ("gfx/icons/pointer.png", b"default icon"),
@@ -89,6 +94,18 @@ fn verified_archive_is_reextracted_then_applied_and_personal_data_survives() -> 
     );
     assert_eq!(std::fs::read(root.0.join("artist.tack"))?, b"board");
     assert_eq!(std::fs::read(root.0.join("preferences.json"))?, b"profile");
+    assert_eq!(
+        std::fs::read(root.0.join("tack-diagnostics"))?,
+        b"new diagnostic exporter"
+    );
+    use std::os::unix::fs::PermissionsExt;
+    assert_eq!(
+        std::fs::metadata(root.0.join("Export-Diagnostic-Report.sh"))?
+            .permissions()
+            .mode()
+            & 0o777,
+        0o755
+    );
     assert!(!stage.exists());
     assert!(!transaction::recover(&root.0)?);
     Ok(())

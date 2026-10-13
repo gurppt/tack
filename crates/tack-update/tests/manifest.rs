@@ -29,6 +29,26 @@ fn identity_and_semver() -> Result<(), Error> {
     Ok(())
 }
 #[test]
+fn test_track_is_isolated_and_manual_channel_switch_works_both_ways() -> Result<(), Error> {
+    let mut m = sample();
+    m.channel = Channel::Test;
+    m.version = "0.1.0-test.2".into();
+    m.validate()?;
+    assert!(m.newer_than("0.1.0-test.1")?);
+    assert!(!m.newer_than("0.1.0-test.2")?);
+    assert!(m.newer_than("0.1.0-dev.99")?);
+    assert!(!m.newer_than("0.2.0-dev.1")?);
+    let version = semver::Version::parse(&m.version)?;
+    assert!(!Channel::Dev.accepts(&version));
+    assert!(!Channel::Stable.accepts(&version));
+    m.channel = Channel::Dev;
+    m.version = "0.1.0-dev.3".into();
+    assert!(m.newer_than("0.1.0-test.2")?);
+    m.version = "0.1.0-dev.preview".into();
+    assert!(m.validate().is_err());
+    Ok(())
+}
+#[test]
 fn malformed_source_and_schema_are_refused() {
     for change in 0..7 {
         let mut m = sample();

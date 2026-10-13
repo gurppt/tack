@@ -7,7 +7,7 @@ on:
         required: true
       channel:
         type: choice
-        options: [dev, stable]
+        options: [dev, test, stable]
         default: dev
       mode:
         description: Public publication requires a separate owner decision
@@ -51,8 +51,10 @@ jobs:
           cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
           cargo test --workspace --all-features --locked
           cargo check -p tack-app --no-default-features --all-targets --locked
-          cargo build --release --locked -p tack-app -p tack-server -p tack-updater
-          python tools/package_release.py --binary-dir target/release --platform ${{ matrix.platform }} --channel ${{ inputs.channel }} --output release-assets
+          cargo build --release --locked -p tack-app -p tack-server -p tack-updater --bins
+          flags=()
+          if [ "${{ inputs.channel }}" = test ]; then flags+=(--with-diagnostics); fi
+          python tools/package_release.py --binary-dir target/release --platform ${{ matrix.platform }} --channel ${{ inputs.channel }} --output release-assets "${flags[@]}"
       - if: runner.os == 'Linux'
         run: |
           cargo install cargo-deny --version 0.20.2 --locked
@@ -96,5 +98,6 @@ jobs:
           if git ls-remote --exit-code --tags origin "refs/tags/v$version"; then exit 1; fi
           channel=$(python3 -c 'import json; print(json.load(open("release-assets/update-manifest.json"))["channel"])')
           flags=()
-          if [ "$channel" = dev ]; then flags+=(--prerelease); fi
-          gh release create "v$version" --target "$commit" --draft "${flags[@]}" --title "Tack $version" --notes-file CHANGELOG.md release-assets/tack-linux-x86_64.zip release-assets/tack-windows-x86_64.zip release-assets/update-manifest.json
+          if [ "$channel" != stable ]; then flags+=(--prerelease); fi
+          python3 tools/release_notes.py "$version" release-assets/release-notes.md
+          gh release create "v$version" --target "$commit" --draft "${flags[@]}" --title "Tack $version" --notes-file release-assets/release-notes.md release-assets/tack-linux-x86_64.zip release-assets/tack-windows-x86_64.zip release-assets/update-manifest.json release-assets/SHA256SUMS

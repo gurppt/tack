@@ -17,7 +17,7 @@ fn run() -> Result<(), Error> {
     let args: Vec<_> = std::env::args_os().skip(1).collect();
     let response=match args.first().and_then(|s|s.to_str()){
         Some("check") if args.len()==3=>{
-            let channel=match args[1].to_str(){Some("dev")=>Channel::Dev,Some("stable")=>Channel::Stable,_=>return Err("Invalid update channel".into())};
+            let channel=match args[1].to_str(){Some("dev")=>Channel::Dev,Some("test")=>Channel::Test,Some("stable")=>Channel::Stable,_=>return Err("Invalid update channel".into())};
             network::check(channel,args[2].to_str().ok_or("Invalid version")?)?
         }
         Some("stage") if args.len()==3=>{
@@ -34,7 +34,7 @@ fn run() -> Result<(), Error> {
             apply::apply(std::path::Path::new(&args[1]),std::path::Path::new(&args[2]),pid)?;
             return Ok(());
         }
-        _=>return Err("Usage: tack-updater check <dev|stable> <version> | stage <manifest> <install> | apply <stage> <install> <pid> | recover <install>".into())
+        _=>return Err("Usage: tack-updater check <dev|test|stable> <version> | stage <manifest> <install> | apply <stage> <install> <pid> | recover <install>".into())
     };
     println!("{}", serde_json::to_string(&response)?);
     Ok(())

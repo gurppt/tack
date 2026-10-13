@@ -364,10 +364,7 @@ impl App {
                     if self.local.worker.active() {
                         return Ok(true);
                     }
-                    self.local.profile.update_channel = match self.local.profile.update_channel {
-                        tack_update::Channel::Dev => tack_update::Channel::Stable,
-                        tack_update::Channel::Stable => tack_update::Channel::Dev,
-                    };
+                    self.local.profile.update_channel = self.local.profile.update_channel.next();
                     self.local.profile_changed = true;
                     self.local.profile_pending = true;
                     self.check_for_updates()?;

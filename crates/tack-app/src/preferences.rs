@@ -186,7 +186,7 @@ impl Preferences {
             }],
             active_toolbar_set: 0,
             status_bar: true,
-            update_channel: Default::default(),
+            update_channel: tack_update::Channel::for_build(env!("TACK_BUILD_CHANNEL")),
             grid: false,
             grid_lines: false,
             native_title_bar: false,

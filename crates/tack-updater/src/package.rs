@@ -42,6 +42,13 @@ pub fn allowed(path: &Path) -> bool {
             | "tack-server.exe"
             | "tack-updater"
             | "tack-updater.exe"
+            | "tack-diagnostics"
+            | "tack-diagnostics.exe"
+            | "Start-Tack-Diagnostics.cmd"
+            | "Export-Diagnostic-Report.cmd"
+            | "Start-Tack-Diagnostics.sh"
+            | "Export-Diagnostic-Report.sh"
+            | "README_DIAGNOSTICS.txt"
             | "tack-jpeg-decoder"
             | "tack-jpeg-decoder.exe"
             | "tack-about.png"
@@ -148,7 +155,15 @@ pub fn extract(archive: &Path, destination: &Path) -> Result<Vec<PathBuf>, Error
         if relative.components().count() == 1
             && matches!(
                 relative.to_str(),
-                Some("tack" | "tack-server" | "tack-updater" | "tack-jpeg-decoder")
+                Some(
+                    "tack"
+                        | "tack-server"
+                        | "tack-updater"
+                        | "tack-jpeg-decoder"
+                        | "tack-diagnostics"
+                        | "Start-Tack-Diagnostics.sh"
+                        | "Export-Diagnostic-Report.sh"
+                )
             )
         {
             use std::os::unix::fs::PermissionsExt;
@@ -169,6 +184,7 @@ pub fn identity(package: &Path, manifest: &Manifest) -> Result<(), Error> {
         || record.get("channel").and_then(|v| v.as_str())
             != Some(match manifest.channel {
                 tack_update::Channel::Dev => "dev",
+                tack_update::Channel::Test => "test",
                 tack_update::Channel::Stable => "stable",
             })
         || record.get("protocol_major").and_then(|v| v.as_u64())

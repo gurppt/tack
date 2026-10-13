@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.0-dev.3 — updater bridge to isolated testing
+
+Owner-authorized pre-alpha bridge release from the `testing` branch.
+
+- Adds the manual Test update channel, separate from Dev and Stable; same-core prerelease tracks can be switched explicitly.
+- Keeps this bridge archive compatible with the old dev.2 updater (no new diagnostic file names). After updating, select Test in Update to receive the test kit.
+- Carries native Windows COM picker fixes and bounded JPEG/PNG admission above 64 MiB, precise import failures and copy progress.
+- Preserves CRC/fsync, boards, profiles and editable artwork. No background updater or new runtime codec dependency.
+
+Known limits: 1.33/1.478 GB inputs, giant progressive JPEG, GIF and incremental Embedded saves remain gated. Physical Windows large-image/GPU and cross-machine LAN acceptance are pending; Linux errno 113 is not solved by a version change. `.tack` remains container 1; LAN major 4 is unchanged.
+
+This bridge excludes the optional diagnostic launcher/scripts for old-updater compatibility; the next Test archive includes the ZIP/STORE report exporter. Existing public dev.2 remains unchanged.
+
 ## 0.1.0-dev.2 — portable development release
 
 - Reduced toolbar catalog while keeping commands in menus/keymap; optional note alignment with explicit left/center/right/mixed icons.

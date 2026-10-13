@@ -7,7 +7,9 @@ use std::{
     process::{Command, Stdio},
 };
 use tack_storage::diagnostics as diag;
-const MARKER: &str = "Tack P0-WIN-IMAGE-CORE-02-CD owned diagnostics\n";
+#[path = "diagnostics_zip.rs"]
+mod report_zip;
+const MARKER: &str = "Tack testing owned diagnostics\n";
 fn base() -> Result<PathBuf, Box<dyn std::error::Error>> {
     if let Some(root) = env::var_os("TACK_DIAGNOSTICS_HOME") {
         return Ok(std::path::absolute(root)?);
@@ -20,9 +22,7 @@ fn base() -> Result<PathBuf, Box<dyn std::error::Error>> {
         })
     }
     .ok_or("diagnostic home unavailable")?;
-    Ok(PathBuf::from(root)
-        .join("TackDiagnostics")
-        .join("P0-WIN-IMAGE-CORE-02-CD"))
+    Ok(PathBuf::from(root).join("TackDiagnostics").join("Testing"))
 }
 fn owned(root: &Path) -> std::io::Result<()> {
     tack_storage::create_private_directory(root, true)?;
@@ -134,9 +134,19 @@ fn export(root: &Path) -> Result<PathBuf, Box<dyn std::error::Error>> {
                 summary.push_str("Older logs omitted at export quota (96 MiB).\n");
                 continue;
             }
-            let bytes = fs::read(&path)?;
+            let mut bytes = Vec::new();
+            fs::File::open(&path)?
+                .take(4 * 1024 * 1024 + 1)
+                .read_to_end(&mut bytes)?;
+            if bytes.len() > 4 * 1024 * 1024 {
+                continue;
+            }
             let target = folder.join(&name);
-            copy_new(&path, &target)?;
+            let mut captured = fs::File::options()
+                .write(true)
+                .create_new(true)
+                .open(&target)?;
+            captured.write_all(&bytes)?;
             manifest.push(json!({"file":format!("session-{index}/{text}"),"bytes":bytes.len(),"sha256":diag::fingerprint(&bytes)}));
             for line in bytes.split(|b| *b == b'\n') {
                 if line.len() > 16384 {
@@ -183,9 +193,29 @@ fn export(root: &Path) -> Result<PathBuf, Box<dyn std::error::Error>> {
         output.join("SHA256_MANIFEST.json"),
         serde_json::to_vec_pretty(&manifest)?,
     )?;
-    Ok(output)
+    let mut files: Vec<PathBuf> = manifest
+        .iter()
+        .filter_map(|entry| entry["file"].as_str().map(PathBuf::from))
+        .collect();
+    files.push("SHA256_MANIFEST.json".into());
+    let archive = output.join(format!(
+        "{}.zip",
+        output
+            .file_name()
+            .ok_or("report filename")?
+            .to_string_lossy()
+    ));
+    report_zip::store(&output, &archive, &files)?;
+    Ok(archive)
 }
 fn run() -> Result<(), Box<dyn std::error::Error>> {
+    if env::args_os().nth(1).is_some_and(|v| v == "--build-info") {
+        println!(
+            "{}",
+            json!({"version":env!("CARGO_PKG_VERSION"),"git_sha":env!("TACK_GIT_SHA"),"channel":env!("TACK_BUILD_CHANNEL"),"protocol_major":tack_update::PROTOCOL_MAJOR})
+        );
+        return Ok(());
+    }
     let root = base()?;
     owned(&root)?;
     let command = env::args_os().nth(1).unwrap_or_else(|| "launch".into());
@@ -193,7 +223,9 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         let output = export(&root)?;
         println!("Diagnostic report: {}", output.display());
         if cfg!(windows) {
-            let _ = Command::new("explorer.exe").arg(&output).spawn();
+            let mut selection = std::ffi::OsString::from("/select,");
+            selection.push(&output);
+            let _ = Command::new("explorer.exe").arg(selection).spawn();
         }
         return Ok(());
     }
@@ -209,7 +241,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     // the explicit initializer below; child settings use Command::env only.
     let _session = diag::Session::start_at(
         "tack-diagnostics",
-        json!({"mission":"P0-WIN-IMAGE-CORE-02-CD","git_sha":env!("TACK_GIT_SHA")}),
+        json!({"mission":"testing","git_sha":env!("TACK_GIT_SHA")}),
         &logs,
     )?;
     let executable =
