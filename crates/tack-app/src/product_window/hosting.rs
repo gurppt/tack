@@ -179,7 +179,10 @@ impl App {
                 } else if let Some(s) = &self.shared {
                     rows.push(format!("{} / {}", s.address, s.board));
                 }
-                rows.push("Protocol 2 - shared cache max 512 MiB".into());
+                rows.push(format!(
+                    "Protocol {} - shared cache max 512 MiB",
+                    tack_shared::PROTOCOL_MAJOR
+                ));
                 self.daily_panel(
                     Panel::Info,
                     DailyPanel {

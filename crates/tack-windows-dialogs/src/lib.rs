@@ -1,5 +1,5 @@
 //! Lazy Common Item Dialog facade. No shell, child process or resident thread.
-//! FFI is isolated here; callers retain an Arc<Window> throughout the operation.
+//! FFI is isolated here; callers retain an `Arc<Window>` throughout the operation.
 use std::fmt;
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct DialogError {
