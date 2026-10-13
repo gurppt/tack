@@ -17,6 +17,8 @@ commits on `testing`; a branch alone does not deliver binary updates.
    **Download**, save the board, then **Restart and Update**. `0.1.0-dev.3` is the
    transition release: its archive uses the legacy file allowlist so dev.2 can
    extract it. The bridge updater learns Test and the optional diagnostic kit.
+   Very old Dev.1 installations using update protocol 3 need one initial compatible
+   portable installation; preserve their artwork and profiles when migrating.
 2. In Dev.3, click **Channel** once to select **Test**, then **Check**, **Download**
    and **Restart and Update**. `0.1.0-test.1` includes the diagnostic executable,
    launch/export scripts and the same application fixes.

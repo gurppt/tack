@@ -62,7 +62,9 @@ Your workspace is customizable without turning into a complicated application: t
 
 ## Getting started
 
-**Portable development builds are available for Linux x64 and Windows x64:** [download the pre-alpha release](https://github.com/gurppt/tack/releases/tag/v0.1.0-dev.2). Extract the complete archive and run `tack` (Linux) or `tack.exe` (Windows); keep the decoder and graphics folders beside the executable. These are test builds, with wider desktop and LAN acceptance still in progress.
+**Portable test builds are available for Linux x64 and Windows x64:** [download Test.1](https://github.com/gurppt/tack/releases/tag/v0.1.0-test.1). Extract the complete archive and run `tack` (Linux) or `tack.exe` (Windows); keep the decoder and graphics folders beside the executable. These are pre-alpha test builds, with wider desktop and LAN acceptance still in progress.
+
+Already using Dev.2? Update to **Dev.3**, then select **Test** in Update to receive Test.1 and future test builds through Tack. The optional diagnostic scripts export ready-to-send ZIP reports without compression. See [test updates and reports](docs/TESTING_RELEASES.md).
 
 If you're building it now, the shortest path on a suitably configured development machine is:
 
@@ -108,7 +110,7 @@ Most shortcuts can be remapped through **Keymap**. The [feature inventory](docs/
 
 ## Current status
 
-Tack is actively developed and **not production-ready**. Its current development version is `0.1.0-dev.2`.
+Tack is actively developed and **not production-ready**. The current testing release is `0.1.0-test.1`, maintained on the [`testing` branch](https://github.com/gurppt/tack/tree/testing).
 
 - **Local boards:** available in the development builds, with local saving, recovery, image manipulation, organization and annotations.
 - **LAN collaboration:** implemented for trusted local networks, with explicit invites, synchronized accepted edits, conflict handling and local-copy workflows. Physical multi-machine acceptance is still in progress.
